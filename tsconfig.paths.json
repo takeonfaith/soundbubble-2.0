@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"baseUrl": "/src",
+		"paths": {
+			"@song/*": [
+				"entities/song/*"
+			],
+			"@components/*": [
+				"shared/components/*"
+			],
+			"@shared/*": [
+				"shared/*"
+			]
+		}
+	}
+}
