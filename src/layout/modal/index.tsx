@@ -21,8 +21,8 @@ export const Modal = () => {
       <ModalStyled>
         <ModalTitle>{title}</ModalTitle>
         <CloseButton onClick={handleClose} />
+        <ModalContent>{content}</ModalContent>
       </ModalStyled>
-      <ModalContent>{content}</ModalContent>
     </ModalBackground>
   );
 };

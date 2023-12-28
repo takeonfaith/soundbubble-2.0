@@ -1,42 +1,66 @@
+import { Flex } from "@components/flex";
+import { Loading } from "@components/loading";
+import { secondsToTimeStr } from "@shared/funcs/secondsToTimeStr";
+import { LoopMode, SongState } from "@song/model/types";
 import {
+  IconArrowsShuffle,
   IconPlayerPauseFilled,
   IconPlayerPlayFilled,
   IconPlayerTrackNextFilled,
   IconPlayerTrackPrevFilled,
+  IconRepeat,
+  IconRepeatOnce,
 } from "@tabler/icons-react";
+import { useMemo } from "react";
 import {
   ControlButton,
-  MusicControlsStyled,
+  SmallControlButton,
   CustomSlider,
   DurationText,
+  MusicControlsStyled,
 } from "./styles";
-import { SongState } from "@song/model/types";
-import { Loading } from "@components/loading";
-import { Flex } from "@components/flex";
-import { useState } from "react";
-import { secondsToTimeStr } from "@shared/funcs/secondsToTimeStr";
 
 type Props = {
   state: SongState | null;
+  colors: string[] | undefined;
+  duration: number;
+  currentTime: number;
+  loopMode: LoopMode;
+  shuffle: boolean;
+  handleShuffle: () => void;
+  handleLoopMode: () => void;
   onPlay: () => void;
   onPrev: () => void;
   onNext: () => void;
-  colors: string[] | undefined;
-  duration: number | undefined;
+  handleChangeTime: React.ChangeEventHandler<HTMLInputElement>;
+  handleMouseUp: React.MouseEventHandler<HTMLInputElement>;
 };
 
 export const MusicControls = ({
   state,
   colors,
-  duration = 10,
+  duration,
+  currentTime,
+  loopMode,
+  shuffle,
+  handleShuffle,
+  handleLoopMode,
   onPlay,
   onNext,
   onPrev,
+  handleChangeTime,
+  handleMouseUp,
 }: Props) => {
-  const [value, setValue] = useState(0);
-  const getBackgroundSize = {
-    backgroundSize: `${(value * 100) / duration}% 100%`,
-  };
+  const { getBackgroundSize, currentTimeStr, durationStr } = useMemo(
+    () => ({
+      getBackgroundSize: {
+        backgroundSize: `${(currentTime * 100) / duration + 1}% 100%`,
+      },
+      currentTimeStr: secondsToTimeStr(currentTime),
+      durationStr: secondsToTimeStr(duration),
+    }),
+    [duration, currentTime]
+  );
 
   return (
     <MusicControlsStyled>
@@ -44,31 +68,49 @@ export const MusicControls = ({
         style={getBackgroundSize}
         color1={colors?.[0]}
         type="range"
-        value={value}
+        value={currentTime}
         max={duration}
         min={0}
-        onChange={(e) => setValue(+e.target.value)}
+        onChange={handleChangeTime}
+        onMouseUp={handleMouseUp}
       />
       <Flex jc="space-between" width="100%">
-        <DurationText>{secondsToTimeStr(value)}</DurationText>
-        <DurationText>{secondsToTimeStr(duration)}</DurationText>
+        <DurationText>{currentTimeStr}</DurationText>
+        <DurationText>{durationStr}</DurationText>
       </Flex>
-      <Flex gap={20}>
-        <ControlButton onClick={onPrev}>
-          <IconPlayerTrackPrevFilled />
-        </ControlButton>
-        <ControlButton onClick={onPlay}>
-          {state === "loading" ? (
-            <Loading />
-          ) : state === "playing" ? (
-            <IconPlayerPauseFilled />
-          ) : (
-            <IconPlayerPlayFilled />
-          )}
-        </ControlButton>
-        <ControlButton onClick={onNext}>
-          <IconPlayerTrackNextFilled />
-        </ControlButton>
+      <Flex jc="space-between" width="100%">
+        <SmallControlButton
+          $color1={colors?.[0]}
+          className={shuffle ? "selected" : ""}
+          onClick={handleShuffle}
+        >
+          <IconArrowsShuffle />
+        </SmallControlButton>
+        <Flex gap={20}>
+          <ControlButton onClick={onPrev}>
+            <IconPlayerTrackPrevFilled />
+          </ControlButton>
+          <ControlButton onClick={onPlay}>
+            {state === "loading" ? (
+              <Loading />
+            ) : state === "playing" ? (
+              <IconPlayerPauseFilled />
+            ) : (
+              <IconPlayerPlayFilled />
+            )}
+          </ControlButton>
+          <ControlButton onClick={onNext}>
+            <IconPlayerTrackNextFilled />
+          </ControlButton>
+        </Flex>
+        <SmallControlButton
+          className={loopMode !== LoopMode.noloop ? "selected" : ""}
+          onClick={handleLoopMode}
+          $color1={colors?.[0]}
+        >
+          {loopMode === LoopMode.loopone && <IconRepeatOnce />}
+          {loopMode !== LoopMode.loopone && <IconRepeat />}
+        </SmallControlButton>
       </Flex>
     </MusicControlsStyled>
   );

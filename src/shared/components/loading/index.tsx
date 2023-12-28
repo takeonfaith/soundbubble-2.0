@@ -3,7 +3,7 @@ import { LoadingStyled } from "./styles";
 
 export const Loading = () => {
   return (
-    <LoadingStyled>
+    <LoadingStyled className="loading">
       <IconLoader2 />
     </LoadingStyled>
   );

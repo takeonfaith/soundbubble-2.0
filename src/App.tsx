@@ -1,5 +1,5 @@
-import { songModel } from "@song/model";
-import { useEffect, useRef } from "react";
+import { ErrorBoundary } from "@components/errorBoundary";
+import { AppAudio } from "AppAudio";
 import { BrowserRouter } from "react-router-dom";
 import { AppRouter } from "routing/AppRouter";
 import styled from "styled-components";
@@ -22,44 +22,14 @@ export const Header = styled.header`
   padding: 16px;
 `;
 
-const useAppAudio = () => {
-  const { state } = songModel.useSong();
-  const audioRef = useRef<HTMLAudioElement>(null);
-
-  const handleOnCanPlay: React.ReactEventHandler<HTMLAudioElement> = () => {
-    songModel.events.loaded();
-    songModel.events.play();
-  };
-
-  useEffect(() => {
-    if (audioRef.current) {
-      if (state === "playing") {
-        audioRef.current.play();
-      } else {
-        audioRef.current?.pause();
-      }
-    }
-  }, [state]);
-
-  return {
-    audioRef,
-    handleOnCanPlay,
-  };
-};
-
 function App() {
-  const { audioRef, handleOnCanPlay } = useAppAudio();
-  const { currentSong } = songModel.useSong();
-
   return (
     <BrowserRouter>
-      <audio
-        src={currentSong?.songSrc}
-        ref={audioRef}
-        onCanPlay={handleOnCanPlay}
-      />
       <AppStyled>
-        <AppRouter />
+        <ErrorBoundary>
+          <AppAudio />
+          <AppRouter />
+        </ErrorBoundary>
       </AppStyled>
     </BrowserRouter>
   );

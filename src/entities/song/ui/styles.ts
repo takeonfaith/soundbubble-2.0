@@ -1,3 +1,4 @@
+import { Button } from "@components/button";
 import styled from "styled-components";
 
 export const PlayButton = styled.div`
@@ -62,20 +63,30 @@ export const SongLeft = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
+  width: 100%;
+
+  @container (min-width: 700px) {
+    gap: 20px;
+  }
+
+  @container (max-width: 699px) {
+    gap: 12px;
+  }
 `;
 
 export const SongStyled = styled.div`
   width: 100%;
   height: 55px;
   background: transparent;
-  padding: 4px;
-  border-radius: ${({ theme }) => theme.borderRadius.mild};
+  padding: 4px 8px;
+  border-radius: calc(${({ theme }) => theme.borderRadius.mild} + 6px);
   display: flex;
   align-items: center;
   justify-content: space-between;
   color: #fff;
   cursor: pointer;
   border: none;
+  container-type: size;
 
   &:hover {
     background: ${({ theme }) => theme.colors.hover};
@@ -98,6 +109,16 @@ export const SongCover = styled.div<{ color1: string }>`
   position: relative;
   overflow: hidden;
 
+  @container (min-width: 700px) {
+    height: 35px;
+    min-width: 35px;
+  }
+
+  @container (max-width: 699px) {
+    height: 46px;
+    min-width: 46px;
+  }
+
   svg {
     width: 20px;
     height: 20px;
@@ -108,29 +129,36 @@ export const SongCover = styled.div<{ color1: string }>`
 
 export const SongInfo = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
+  width: 100%;
+
+  @container (min-width: 700px) {
+    flex-direction: row;
+  }
+
+  @container (max-width: 699px) {
+    flex-direction: column;
+  }
 `;
 
 export const SongName = styled.div`
   font-weight: 200;
   opacity: 0.85;
   font-size: 1rem;
-`;
 
-export const SongImage = styled.img<{ $imageLoaded: boolean }>`
-  height: 100%;
-  object-fit: cover;
-  transition: 0.4s;
-  opacity: ${({ $imageLoaded }) => ($imageLoaded ? "1" : "0")};
-  transform: ${({ $imageLoaded }) =>
-    $imageLoaded ? "scale(1)" : "scale(1.2)"};
+  @container (min-width: 700px) {
+    white-space: nowrap;
+  }
 `;
 
 export const SongNameAndListens = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+
+  @container (min-width: 700px) {
+    width: 100%;
+  }
 `;
 
 export const Listens = styled.div`
@@ -140,8 +168,34 @@ export const Listens = styled.div`
   opacity: 0.7;
   font-size: 0.8rem;
 
+  @container (min-width: 700px) {
+    display: none;
+  }
+
+  &.outside {
+    @container (min-width: 700px) {
+      display: flex;
+      min-width: 200px;
+    }
+
+    @container (max-width: 699px) {
+      display: none;
+    }
+  }
+
   svg {
     width: 12px;
     height: 12px;
+  }
+`;
+
+export const LikeButton = styled(Button)`
+  width: 30px;
+  min-height: 30px;
+  color: ${({ theme }) => theme.colors.greyText};
+
+  svg {
+    width: 22px;
+    height: 22px;
   }
 `;

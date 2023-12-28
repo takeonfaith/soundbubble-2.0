@@ -1,5 +1,6 @@
 import {
   IconBrandSafari,
+  IconHeart,
   IconHistory,
   IconMessage,
   IconMusic,
@@ -9,6 +10,7 @@ import {
 } from "@tabler/icons-react";
 import { Library } from "./library";
 import { Search } from "./search";
+import { SongPage } from "./song";
 
 type Section = "features" | "your activities" | "your music";
 
@@ -44,13 +46,14 @@ export const menuRoutes: TRoute[] = [
     section: "features",
   },
   {
-    url: "library",
-    title: "Library",
-    icon: <IconMusic />,
+    url: "liked",
+    title: "Liked",
+    icon: <IconHeart />,
     component: <Library />,
     section: "your music",
     private: true,
   },
+
   {
     url: "history",
     title: "History",
@@ -83,6 +86,14 @@ export const appRoutes: TRoute[] = [
     url: "author/:id",
     title: "Author",
     component: <>Author</>,
+  },
+  {
+    url: "song/:id",
+    title: "Song",
+    icon: <IconMusic />,
+    component: <SongPage />,
+    section: "your music",
+    private: true,
   },
 ];
 

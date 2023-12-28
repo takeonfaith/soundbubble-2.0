@@ -23,6 +23,11 @@ export const CustomSlider = styled.input<{ color1: string | undefined }>`
     white 50%
   );
   background-repeat: no-repeat;
+  transition: 0.2s filter;
+
+  &:hover {
+    filter: brightness(1.2);
+  }
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -59,20 +64,53 @@ export const ControlButton = styled.button`
   border-radius: 100px;
   cursor: pointer;
 
+  .loading {
+    width: 30px;
+    height: 30px;
+  }
+
   svg {
     width: 30px;
     height: 30px;
+    transition: 0.2s transform;
   }
 
   &:hover {
     background: ${({ theme }) => theme.colors.lightHover};
 
     svg {
-      filter: drop-shadow(0 0 10px ${({ theme }) => theme.colors.lightHover});
+      filter: drop-shadow(0 0 15px black);
+    }
+  }
+
+  &:active {
+    svg {
+      transform: scale(0.9);
     }
   }
 `;
 
 export const DurationText = styled.div`
   font-size: 0.8rem;
+`;
+
+export const SmallControlButton = styled(ControlButton)<{
+  $color1: string | undefined;
+}>`
+  width: 40px;
+  height: 40px;
+
+  &.selected {
+    svg {
+      color: ${({ $color1 }) => $color1};
+      opacity: 1;
+      filter: brightness(1.5);
+    }
+  }
+
+  svg {
+    opacity: 0.3;
+    width: 20px;
+    height: 20px;
+  }
 `;

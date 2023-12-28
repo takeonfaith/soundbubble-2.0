@@ -5,6 +5,12 @@
 			"@song/*": [
 				"entities/song/*"
 			],
+			"@user/*": [
+				"entities/user/*"
+			],
+			"@playlist/*": [
+				"entities/playlist/*"
+			],
 			"@components/*": [
 				"shared/components/*"
 			],

@@ -1,4 +1,9 @@
-export type User = unknown;
+export type TUser = {
+  uid: string;
+  displayName: string;
+  ownSongs?: string[];
+  ownPlaylists?: string[];
+};
 
 export type LoginCreditsType = {
   email: string;
@@ -6,7 +11,7 @@ export type LoginCreditsType = {
 };
 
 export type TStore = {
-  data: User | null;
+  data: TUser | null;
   error: Error | null;
   loggining?: boolean;
 };

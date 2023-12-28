@@ -1,8 +1,13 @@
+import { Button } from "@components/button";
 import { Flex } from "@components/flex";
 import { IconText } from "@components/iconText";
 import { Logo } from "@components/logo";
+import { THEME } from "@shared/constants/theme";
 import { groupByField } from "@shared/funcs/groupByField";
+import { usePrivateAction } from "@shared/hooks/usePrivateAction";
+import { songModel } from "@song/model";
 import { IconPlus } from "@tabler/icons-react";
+import { modalModel } from "layout/modal/model";
 import { menuRoutes } from "routing/routes";
 import {
   LogoWrapper,
@@ -11,23 +16,32 @@ import {
   SidebarSectionTitle,
   SidebarStyled,
 } from "./styles";
-import { modalModel } from "layout/modal/model";
+import { TEMP_USER } from "@shared/constants";
 
 export const Sidebar = () => {
   const preparedRoutes = groupByField(menuRoutes, "section");
+  const { loggedIn } = usePrivateAction();
+
+  const handleAddPlaylist = loggedIn(() => {
+    modalModel.events.open({
+      title: "Test",
+      content: "Дарова",
+    });
+  });
 
   return (
     <SidebarStyled>
       <LogoWrapper>
         <Logo />
       </LogoWrapper>
-      {Object.keys(preparedRoutes).map((route) => {
+      {Object.keys(preparedRoutes).map((route, index) => {
         return (
-          <SidebarSection>
+          <SidebarSection key={index}>
             <SidebarSectionTitle>{route}</SidebarSectionTitle>
             {preparedRoutes[route].map((link) => {
               return (
                 <SidebarLink
+                  key={link.url}
                   to={link.url}
                   className={({ isActive }) => (isActive ? "active" : "")}
                 >
@@ -42,18 +56,15 @@ export const Sidebar = () => {
       <SidebarSection>
         <Flex jc="space-between" width="100%">
           <SidebarSectionTitle>Your Playlists</SidebarSectionTitle>
-          <button
-            onClick={() =>
-              modalModel.events.open({
-                title: "Войдите в аккаунт",
-                content: <>Acc</>,
-              })
-            }
-          >
+          <button onClick={handleAddPlaylist}>
             <IconPlus />
           </button>
         </Flex>
       </SidebarSection>
+      {!TEMP_USER && (
+        <Button style={{ background: THEME.colors.blue.main }}>Login</Button>
+      )}
+      <IconPlus onClick={() => songModel.fullscreen.open()} />
     </SidebarStyled>
   );
 };

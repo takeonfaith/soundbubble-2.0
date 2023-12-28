@@ -17,11 +17,18 @@ export const ModalStyled = styled.div`
   transform: translate(-50%, -50%);
   border-radius: ${({ theme }) => theme.borderRadius.middle};
   color: #fff;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const ModalTitle = styled.h3`
-  margin: 22px;
+  margin: 25px;
   font-weight: 300;
 `;
 
-export const ModalContent = styled.div``;
+export const ModalContent = styled.div`
+  height: 100%;
+  padding: 25px;
+  padding-top: 0;
+  overflow-y: auto;
+`;

@@ -7,7 +7,9 @@ export const AppRouter = () => {
     <Routes>
       <Route path="/" element={<Layout />}>
         {allRoutes.map((route) => {
-          return <Route element={route.component} path={route.url} />;
+          return (
+            <Route key={route.url} element={route.component} path={route.url} />
+          );
         })}
         <Route path="*" element={<>404</>} />
       </Route>

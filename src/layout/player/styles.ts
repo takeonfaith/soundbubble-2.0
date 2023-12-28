@@ -92,7 +92,7 @@ export const LeftSide = styled.div`
 
 export const PlayerTitle = styled.div`
   font-size: 1.5rem;
-  width: 400px;
+  width: 360px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -104,22 +104,41 @@ export const RightSide = styled.div`
   height: 100%;
   padding: 260px 100px;
   overflow-y: auto;
+  scroll-padding-top: 260px;
 `;
 
 export const Lyrics = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  font-size: 2.2rem;
+  gap: 30px;
   color: #fff;
-  font-weight: 500;
+  font-size: 1.8rem;
 `;
 
 export const Lyric = styled.div`
   padding: 10px;
-  transition: 0.2s background;
+  transition: 0.2s background, 0.2s opacity, 0.3s transform;
   cursor: pointer;
+  opacity: 0.4;
+  transform: scale(0.9);
+  transform-origin: left center;
   border-radius: ${({ theme }) => theme.borderRadius.middle};
+  font-weight: 500;
+
+  &.ordinary {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &.current {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &.farFromCurrent {
+    opacity: 0.05;
+    transform: scale(0.8);
+  }
 
   &:hover {
     background: #ffffff3d;
@@ -139,11 +158,81 @@ export const SmallButton = styled.button`
   cursor: pointer;
 
   svg {
-    width: 25px;
-    height: 25px;
+    stroke-width: 2;
+    width: 20px;
+    height: 20px;
   }
 
   &:hover {
     background: ${({ theme }) => theme.colors.lightHover};
+  }
+`;
+
+export const LyricLoadingAnimation = styled.div<{
+  $duration: number;
+}>`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transition: 0.5s opacity;
+
+  & span {
+    width: 10px;
+    height: 10px;
+    background: ${({ theme }) => theme.colors.lightHover};
+    border-radius: 10px;
+  }
+
+  &.current {
+    animation: dissapear 1s forwards ease-in-out;
+    transform-origin: left center;
+    opacity: 1;
+    animation-delay: ${({ $duration }) => `calc(${$duration}s - 1s)`};
+
+    & span:nth-child(1) {
+      animation: lyricloading ${({ $duration }) => $duration / 3}s forwards;
+      animation-delay: 0;
+    }
+
+    & span:nth-child(2) {
+      animation: lyricloading ${({ $duration }) => $duration / 3}s forwards;
+      animation-delay: ${({ $duration }) => $duration / 3}s;
+    }
+
+    & span:nth-child(3) {
+      animation: lyricloading ${({ $duration }) => $duration / 3}s forwards;
+      animation-delay: ${({ $duration }) => ($duration * 2) / 3}s;
+    }
+
+    @keyframes lyricloading {
+      0% {
+        transform: scale(1);
+        background: ${({ theme }) => theme.colors.lightHover};
+      }
+      100% {
+        transform: scale(1.2);
+        background: #fff;
+      }
+    }
+
+    @keyframes dissapear {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      30% {
+        transform: scale(0.95);
+        opacity: 1;
+      }
+      60% {
+        transform: scale(1.05);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+    }
   }
 `;

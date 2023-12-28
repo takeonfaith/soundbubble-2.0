@@ -40,7 +40,7 @@ export const SidebarSection = styled.div`
 
     &:hover {
       background: ${({ theme }) => theme.colors.hover};
-      color: ${({ theme }) => theme.colors.blue};
+      color: ${({ theme }) => theme.colors.blue.main};
     }
   }
 `;
@@ -54,10 +54,9 @@ export const SidebarLink = styled(NavLink)`
   }
 
   &.active {
-    background: ${({ theme }) => theme.colors.blue};
-
-    &:hover {
-      filter: brightness(1.1);
+    & > div {
+      opacity: 1;
+      color: ${({ theme }) => theme.colors.blue.main};
     }
   }
 `;

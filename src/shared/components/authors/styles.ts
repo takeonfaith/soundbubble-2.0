@@ -15,6 +15,8 @@ export const AuthorStyled = styled(Link)`
   color: #fff;
   opacity: 0.8;
   text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
 
   &:hover {
     text-decoration: underline;

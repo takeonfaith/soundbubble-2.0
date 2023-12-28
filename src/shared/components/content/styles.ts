@@ -10,7 +10,7 @@ export const ContentWrapper = styled.div`
 export const ContentStyled = styled.div`
   width: 100%;
   color: #fff;
-  padding: 30px 200px;
+  padding: 50px;
   font-weight: 200;
   background: ${({ theme }) => theme.colors.pageBackground};
   position: relative;

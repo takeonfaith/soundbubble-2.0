@@ -3,6 +3,7 @@ import { Sidebar } from "./sidebar";
 import { Modal } from "./modal";
 import { styled } from "styled-components";
 import { Player } from "./player";
+import { songModel } from "@song/model";
 
 export const LayoutStyled = styled.div`
   height: 100dvh;
@@ -10,9 +11,10 @@ export const LayoutStyled = styled.div`
 `;
 
 export const Layout = () => {
+  const fullScreen = songModel.fullscreen.useFullScreen();
   return (
     <>
-      <Player />
+      {fullScreen && <Player />}
       <Modal />
       <LayoutStyled>
         <Sidebar />
