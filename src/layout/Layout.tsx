@@ -10,6 +10,10 @@ export const LayoutStyled = styled.div`
   display: flex;
 `;
 
+const RightSide = styled.aside`
+  min-width: 400px;
+`;
+
 export const Layout = () => {
   const fullScreen = songModel.fullscreen.useFullScreen();
   return (
@@ -19,6 +23,7 @@ export const Layout = () => {
       <LayoutStyled>
         <Sidebar />
         <Outlet />
+        <RightSide></RightSide>
       </LayoutStyled>
     </>
   );

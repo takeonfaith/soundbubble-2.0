@@ -8,4 +8,7 @@ export const GlobalStyles = createGlobalStyle`
 		font-family: 'Geologica', sans-serif;
 	}
 
+	body {
+		color: #fff;
+	}
 `;

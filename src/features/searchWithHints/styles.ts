@@ -22,6 +22,7 @@ export const HintsStyled = styled.div`
   color: ${({ theme }) => theme.colors.greyText};
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-top: none;
+  z-index: 10;
 
   & > * {
     animation: appear 0.5s;
