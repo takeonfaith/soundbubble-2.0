@@ -15,8 +15,11 @@ export const THEME = {
     greyText: "#a2a2a2",
     blue: {
       main: "#75a8fa",
+      action: "#3481fe",
+      transparent: "#5394ff4f",
     },
     red: {
+      text: "#ffb3b3",
       transparent: "#ff63632e",
       main: "#ff6f6f",
     },

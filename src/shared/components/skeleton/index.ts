@@ -16,3 +16,10 @@ export const Skeleton = styled.div`
     }
   }
 `;
+
+export const SkeletonShape = styled(Skeleton) <{ width: string; height: string; radius?: string }>`
+  width: ${({ width }) => width ?? '100px'};
+  min-width: ${({ width }) => width ?? '100px'};
+  height: ${({ height }) => height ?? '100px'};
+  border-radius: ${({ radius }) => radius ?? '10px'};
+`

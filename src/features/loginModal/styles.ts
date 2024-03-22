@@ -1,6 +1,5 @@
-import { Button } from "@components/button";
 import styled from "styled-components";
 
-export const LoginButton = styled(Button)`
-  background: ${({ theme }) => theme.colors.blue};
+export const LeftSection = styled.div`
+  min-width: 350px;
 `;

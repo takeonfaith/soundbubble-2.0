@@ -1,13 +1,15 @@
 import { MusicControls } from "@components/musicControls";
 import { songModel } from "@song/model";
+import { useCallback, useEffect } from "react";
 
 export const PlayerMusicControls = () => {
   const { currentSong, state } = songModel.useSong();
   const { currentTime, duration } = songModel.playblack.usePlayback();
+  const { queue } = songModel.queue.useQueue()
   const { next, previous, play } = songModel.useControls();
   const { loop } = songModel.queue.useQueue();
 
-  const handlePlay = () => play();
+  const handlePlay = useCallback(() => play(), [play]);
 
   const handleChangeTime: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     songModel.playblack.setIsSliding(true);
@@ -24,7 +26,22 @@ export const PlayerMusicControls = () => {
     songModel.queue.changeLoopMode();
   };
 
-  const handleShuffle = () => {};
+  const handleShuffle = () => { };
+
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    console.log(event.key);
+
+    if (event.key === 'Space') {
+      handlePlay()
+    }
+
+  }, [handlePlay])
+
+  useEffect(() => {
+    addEventListener('keydown', handleKeyDown)
+
+    return () => removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
 
   return (
     <MusicControls
@@ -34,6 +51,7 @@ export const PlayerMusicControls = () => {
       state={state}
       loopMode={loop}
       shuffle={true}
+      disableNextSongButton={queue.songs.length < 2}
       handleShuffle={handleShuffle}
       handleLoopMode={handleLoopMode}
       onPlay={handlePlay}

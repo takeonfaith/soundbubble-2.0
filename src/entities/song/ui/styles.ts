@@ -1,5 +1,6 @@
 import { Button } from "@components/button";
 import styled from "styled-components";
+import { THEME } from "../../../shared/constants/theme";
 
 export const PlayButton = styled.div`
   border: none;
@@ -20,7 +21,6 @@ const Overlay = styled.div`
   align-items: center;
   justify-content: center;
   background: ${({ theme }) => theme.colors.overlay};
-  transition: 0.2s opacity;
 `;
 
 export const MoreInfoButton = styled.button`
@@ -74,10 +74,10 @@ export const SongLeft = styled.div`
   }
 `;
 
-export const SongStyled = styled.div`
+export const SongStyled = styled.div<{ playing: boolean }>`
   width: 100%;
-  height: 55px;
-  background: transparent;
+  height: 50px;
+  background: ${({ playing }) => playing ? THEME.colors.lightHover : 'transparent'};
   padding: 4px 8px;
   border-radius: calc(${({ theme }) => theme.borderRadius.mild} + 6px);
   display: flex;
@@ -96,6 +96,14 @@ export const SongStyled = styled.div`
   &:hover ${PlayOverlay}, &:hover ${MoreInfoButton} {
     opacity: 1;
   }
+
+  ${MoreInfoButton} {
+    ${({ playing }) => playing ? 'opacity: 1' : 'opacity:0'};
+  }
+
+  /* @container (max-width: 699px) {
+    height: 60px;
+  } */
 `;
 
 export const SongCover = styled.div<{ color1: string }>`
@@ -111,18 +119,22 @@ export const SongCover = styled.div<{ color1: string }>`
 
   @container (min-width: 700px) {
     height: 35px;
+    max-width: 35px;
     min-width: 35px;
   }
 
   @container (max-width: 699px) {
-    height: 46px;
-    min-width: 46px;
+    height: 42px;
+    min-width: 42px;
   }
 
-  svg {
+  .action-icon {
     width: 20px;
     height: 20px;
     opacity: 0.9;
+  }
+
+  svg {
     color: ${({ color1 }) => color1};
   }
 `;
@@ -134,6 +146,7 @@ export const SongInfo = styled.div`
 
   @container (min-width: 700px) {
     flex-direction: row;
+    align-items: center;
   }
 
   @container (max-width: 699px) {

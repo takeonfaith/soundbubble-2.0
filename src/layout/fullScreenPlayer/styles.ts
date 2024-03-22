@@ -1,54 +1,15 @@
 import styled from "styled-components";
+import { BeautifulBackground } from "../../shared/components/beautifulBackground";
 
-export const PlayerStyled = styled.div<{ $colors: string[] | undefined }>`
+export const FullScreenPlayerStyled = styled(BeautifulBackground)`
   position: absolute;
-  z-index: 10;
+  z-index: 1000;
   width: 100%;
   height: 100%;
-  background: #000;
   display: flex;
+  transition: 0.2s, 0.5s background;
+  bottom: 0;
   align-items: center;
-  background-color: ${({ $colors }) => $colors?.[0] ?? "grey"};
-  animation: bg 8s infinite;
-  background-size: 200% 200%;
-  background-image: linear-gradient(#000000b0, #00000057),
-    radial-gradient(
-      at 40% 20%,
-      ${({ $colors }) => $colors?.[0] ?? "grey"} 0px,
-      transparent 50%
-    ),
-    radial-gradient(
-      at 80% 0%,
-      ${({ $colors }) => $colors?.[1] ?? "grey"} 0px,
-      transparent 50%
-    ),
-    radial-gradient(
-      at 0% 50%,
-      ${({ $colors }) => $colors?.[2] ?? "darkgrey"} 0px,
-      transparent 50%
-    ),
-    radial-gradient(
-      at 80% 50%,
-      ${({ $colors }) => $colors?.[3] ?? "lightgrey"} 0px,
-      transparent 50%
-    ),
-    radial-gradient(
-      at 0% 100%,
-      ${({ $colors }) => $colors?.[4] ?? "grey"} 0px,
-      transparent 50%
-    );
-
-  @keyframes bg {
-    0% {
-      background-size: 100% 100%;
-    }
-    50% {
-      background-size: 120% 120%;
-    }
-    100% {
-      background-size: 100% 100%;
-    }
-  }
 `;
 
 export const PlayerWrapper = styled.div`
@@ -64,8 +25,6 @@ export const PlayerWrapper = styled.div`
 `;
 
 export const PlayerCover = styled.div<{ $color1: string | undefined }>`
-  width: 400px;
-  height: 400px;
   overflow: hidden;
   border-radius: ${({ theme }) => theme.borderRadius.middle};
   background: ${({ $color1 }) => $color1 ?? "darkgrey"};
@@ -73,10 +32,63 @@ export const PlayerCover = styled.div<{ $color1: string | undefined }>`
   justify-content: center;
   align-items: center;
   box-shadow: 0 0 130px #000000ab;
+  width: 400px;
+  height: 400px;
 
   svg {
+    color: dimgray;
     width: 100px;
     height: 100px;
+  }
+`;
+
+export const OtherCovers = styled.div`
+  display: flex;
+  height: 100%;
+  width: 200%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  z-index: -1;
+  opacity: 0.2;
+
+  transition: 0.2s;
+
+  img {
+    height: 100%;
+  }
+
+  & .song-cover:nth-child(1) {
+    position: absolute;
+    transform: translateX(-60px) scale(0.8);
+  }
+
+  & .song-cover:nth-child(2) {
+    position: absolute;
+    transform: translateX(60px) scale(0.8);
+  }
+`;
+
+export const CoverWrapper = styled.div`
+  position: relative;
+  transition: 0.2s;
+
+  .song-cover {
+    transform-origin: top left;
+    transition: 0.2s;
+  }
+
+  &:hover {
+    ${OtherCovers} {
+      opacity: 1;
+      & .song-cover:nth-child(1) {
+        transform: translateX(-120px) scale(0.7);
+      }
+
+      & .song-cover:nth-child(2) {
+        transform: translateX(120px) scale(0.7);
+      }
+    }
   }
 `;
 
@@ -88,6 +100,11 @@ export const LeftSide = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 10px;
+
+  &.close {
+    display: block;
+    height: 100%;
+  }
 `;
 
 export const PlayerTitle = styled.div`
@@ -184,25 +201,32 @@ export const LyricLoadingAnimation = styled.div<{
     border-radius: 10px;
   }
 
+  & span:nth-child(1) {
+    animation: lyricloading ${({ $duration }) => $duration / 3}s forwards;
+    animation-delay: 0;
+    animation-play-state: paused;
+  }
+
+  & span:nth-child(2) {
+    animation: lyricloading ${({ $duration }) => $duration / 3}s forwards;
+    animation-delay: ${({ $duration }) => $duration / 3}s;
+    animation-play-state: paused;
+  }
+
+  & span:nth-child(3) {
+    animation: lyricloading ${({ $duration }) => $duration / 3}s forwards;
+    animation-delay: ${({ $duration }) => ($duration * 2) / 3}s;
+    animation-play-state: paused;
+  }
+
   &.current {
-    animation: dissapear 1s forwards ease-in-out;
+    animation: dissapear 0.8s forwards;
     transform-origin: left center;
     opacity: 1;
     animation-delay: ${({ $duration }) => `calc(${$duration}s - 1s)`};
 
-    & span:nth-child(1) {
-      animation: lyricloading ${({ $duration }) => $duration / 3}s forwards;
-      animation-delay: 0;
-    }
-
-    & span:nth-child(2) {
-      animation: lyricloading ${({ $duration }) => $duration / 3}s forwards;
-      animation-delay: ${({ $duration }) => $duration / 3}s;
-    }
-
-    & span:nth-child(3) {
-      animation: lyricloading ${({ $duration }) => $duration / 3}s forwards;
-      animation-delay: ${({ $duration }) => ($duration * 2) / 3}s;
+    & span {
+      animation-play-state: running;
     }
 
     @keyframes lyricloading {

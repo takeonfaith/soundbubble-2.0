@@ -2,6 +2,7 @@ import { Input } from "@components/input";
 import { debounce } from "@shared/funcs/debounce";
 import { normalizeString } from "@shared/funcs/normalizeString";
 import {
+  IconDiscountCheckFilled,
   IconMicrophone2,
   IconMusic,
   IconSearch,
@@ -20,12 +21,22 @@ import {
 import { Loading } from "@components/loading";
 import { Authors } from "@components/authors";
 import { Flex } from "@components/flex";
+import { THint } from "./types";
+import { THEME } from "../../shared/constants/theme";
 
-export const SearchWithHints = () => {
+type Props = {
+  initialValue?: string | null;
+  onSuggestionSubmit?: (hint: THint) => void;
+};
+
+export const SearchWithHints = ({
+  initialValue = "",
+  onSuggestionSubmit,
+}: Props) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [hints, setHints] = useState<any[]>([]);
   const [showHints, setShowHints] = useState(false);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(initialValue ?? "");
   const [suggestedIndex, setSuggestedIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -42,11 +53,13 @@ export const SearchWithHints = () => {
         Database.SearchSuggestions.getSearchSuggestions(
           normalizeString(value)
         ).then((suggestions) => {
+          console.log('suggestions', suggestions);
+
           setLoading(false);
           setHints(suggestions);
           setShowHints(suggestions.length > 0);
         }),
-      200
+      150
     );
   }, [value]);
 
@@ -60,10 +73,15 @@ export const SearchWithHints = () => {
 
   const handleSubmitSuggestion = (index: number | null) => {
     if (index !== null) {
-      setValue(hints[index].displayName ?? hints[index].name);
-      setHints([]);
-      setShowHints(false);
-      setSuggestedIndex(null);
+      if (!onSuggestionSubmit) {
+        setValue(hints[index].displayName ?? hints[index].name);
+        setHints([]);
+        setShowHints(false);
+        setSuggestedIndex(null);
+        return;
+      }
+
+      onSuggestionSubmit(hints[index]);
     }
   };
 
@@ -99,11 +117,13 @@ export const SearchWithHints = () => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleSubmitSuggestion(suggestedIndex);
+
       return;
     }
 
     if (suggestedIndex !== null) {
-      handleSubmitSuggestion(suggestedIndex);
+      setValue(e.currentTarget.value)
+      setSuggestedIndex(null)
     }
   };
 
@@ -150,6 +170,7 @@ export const SearchWithHints = () => {
                   )}
                   {index !== 0 && <HintIcon>{icon}</HintIcon>}
                   <HintName>{el.name ?? el.displayName}</HintName>
+                  {el.isVerified && <IconDiscountCheckFilled size={18} style={{ color: THEME.colors.blue.main}} />}
                 </Flex>
                 {el.authors && <Authors authors={el.authors} />}
               </HintItemStyled>

@@ -53,7 +53,7 @@ export const HintItemStyled = styled.div`
   }
 
   &.selected {
-    background: ${({ theme }) => theme.colors.blue.main};
+    background: ${({ theme }) => theme.colors.blue.transparent};
     color: #fff;
     font-weight: 400;
   }

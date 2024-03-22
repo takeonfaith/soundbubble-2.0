@@ -1,19 +1,18 @@
+import { TUser } from "@user/model/types";
 import { THint } from "features/searchWithHints/types";
 import {
   QueryFilterConstraint,
   and,
-  collection,
   getDocs,
   limit,
   or,
   orderBy,
   query,
-  where,
+  where
 } from "firebase/firestore";
 import { Playlists, Songs, Users } from ".";
-import { firestore } from "../../firebase";
+import { FB } from "../../firebase";
 import { getDataFromDoc } from "../lib/getDataFromDoc";
-import { TUser } from "@user/model/types";
 
 type Place = "songs" | "users" | "playlists";
 
@@ -24,8 +23,8 @@ type Suggestion = {
   variantsOfName: string[];
 };
 
-export class SearchSuggestions {
-  static ref = collection(firestore, "search");
+class PrivateSearchSuggestions {
+  static ref = FB.get('search');
   static savedSuggestion: {
     place: Place;
     id: string;
@@ -34,7 +33,7 @@ export class SearchSuggestions {
   static lastSuggestions: Suggestion[] = [];
   static lastResult: (THint | null)[] = [];
 
-  private static async getAuthorsSong(songName: string, author?: TUser) {
+  protected static async getAuthorsSong(songName: string, author?: TUser) {
     const orFilter: QueryFilterConstraint[] = [];
 
     const user = author ?? (await Users.getUserByUid(this.savedSuggestion!.id));
@@ -73,7 +72,7 @@ export class SearchSuggestions {
    * @returns Если пользователь ввел уточнение по типу <имя автора> <название песни>,
    * тогда эта функция вернеет тот трек, который имелся в виду
    */
-  private static async getFinalSuggestions(
+  protected static async getFinalSuggestions(
     suggestions: Suggestion[],
     searchString: string
   ) {
@@ -132,7 +131,7 @@ export class SearchSuggestions {
     }
   }
 
-  private static async getSearch(searchString: string) {
+  protected static async getSearch(searchString: string) {
     try {
       const snapshot = await getDocs(
         query(
@@ -152,7 +151,7 @@ export class SearchSuggestions {
     }
   }
 
-  private static removeDuplicateSongs(hints: (THint | null)[]) {
+  protected static removeDuplicateSongs(hints: (THint | null)[]) {
     const uniqueHints: Record<string, boolean> = {};
     const result: THint[] = [];
 
@@ -170,7 +169,7 @@ export class SearchSuggestions {
     return result;
   }
 
-  private static async getResult(suggestions: Suggestion[]) {
+  protected static async getResult(suggestions: Suggestion[]) {
     const requests = {
       playlists: Playlists.getPlaylistByUid,
       songs: Songs.getSongByUid,
@@ -219,7 +218,9 @@ export class SearchSuggestions {
 
     return result;
   }
+}
 
+export class SearchSuggestions extends PrivateSearchSuggestions {
   static async getSearchSuggestions(searchString: string) {
     try {
       if (searchString.length === 0) return [];
