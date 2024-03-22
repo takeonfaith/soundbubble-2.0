@@ -1,4 +1,4 @@
-import { Author } from "@song/model/types";
+import { TAuthor } from "@song/model/types";
 
 export type TPlaylist = {
   name: string;
@@ -11,5 +11,5 @@ export type TPlaylist = {
   image: string;
   id: string;
   creationDate: string;
-  authors: Author[];
+  authors: TAuthor[];
 };

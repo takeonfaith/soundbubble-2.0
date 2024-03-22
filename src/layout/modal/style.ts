@@ -7,7 +7,8 @@ export const ModalBackground = styled(DarkBackground)`
 `;
 
 export const ModalStyled = styled.div`
-  width: 500px;
+  min-width: 500px;
+  max-width: 800px;
   height: 500px;
   background: ${({ theme }) => theme.colors.modal};
   border: 2px solid ${({ theme }) => theme.colors.border};

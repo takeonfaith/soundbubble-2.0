@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ContentWrapper, ContentStyled, ContentImage } from "./styles";
+import { ContentImage, ContentStyled, ContentWrapper } from "./styles";
 
 type Props = {
   image: string;
@@ -20,7 +20,7 @@ export const Content = ({ image, children }: Props) => {
       <ContentImage
         style={{
           transform: `translateY(${scroll / 2}px)`,
-          opacity: 1 - scroll / 300,
+          opacity: 1 - scroll / 200,
         }}
         src={image}
       />

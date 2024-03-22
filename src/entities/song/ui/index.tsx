@@ -2,18 +2,17 @@ import { Authors } from "@components/authors";
 import { Cover } from "@components/cover";
 import { Flex } from "@components/flex";
 import { Loading } from "@components/loading";
+import { LikeButton } from "@shared/components/likeButton";
 import {
   IconDots,
   IconHeadphones,
-  IconHeart,
   IconMusic,
   IconPlayerPauseFilled,
-  IconPlayerPlayFilled,
+  IconPlayerPlayFilled
 } from "@tabler/icons-react";
 import { memo } from "react";
 import { TSong } from "../model/types";
 import {
-  LikeButton,
   Listens,
   LoadingOverlay,
   MoreInfoButton,
@@ -53,20 +52,21 @@ export const SongItem = memo(
         tabIndex={0}
         role="button"
         aria-pressed="false"
+        playing={playing}
       >
         <SongLeft>
           <SongCover color1={imageColors[0]}>
             {!loading && !playing && (
               <PlayOverlay>
                 <PlayButton>
-                  <IconPlayerPlayFilled />
+                  <IconPlayerPlayFilled className="action-icon" />
                 </PlayButton>
               </PlayOverlay>
             )}
             {!loading && playing && (
               <PauseOverlay>
                 <PlayButton>
-                  <IconPlayerPauseFilled />
+                  <IconPlayerPauseFilled className="action-icon" />
                 </PlayButton>
               </PauseOverlay>
             )}
@@ -94,9 +94,7 @@ export const SongItem = memo(
           <IconHeadphones />
         </Listens>
         <Flex gap={4}>
-          <LikeButton onClick={handleMore}>
-            <IconHeart />
-          </LikeButton>
+          <LikeButton isLiked={false} likeColor={imageColors[1]} onClick={() => null} />
           <MoreInfoButton onClick={handleMore}>
             <IconDots />
           </MoreInfoButton>

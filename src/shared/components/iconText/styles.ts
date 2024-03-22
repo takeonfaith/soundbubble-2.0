@@ -9,15 +9,15 @@ export const IconTextStyled = styled.div`
 `;
 
 export const Icon = styled.div`
-  width: 23px;
-  height: 23px;
+  width: 21px;
+  height: 21px;
   display: flex;
   align-items: center;
   justify-content: center;
 
   svg {
-    width: 23px;
-    height: 23px;
+    width: 21px;
+    height: 21px;
   }
 `;
 

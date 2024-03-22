@@ -1,23 +1,21 @@
 import { Flex } from "@components/flex";
-import { Loading } from "@components/loading";
 import { secondsToTimeStr } from "@shared/funcs/secondsToTimeStr";
 import { LoopMode, SongState } from "@song/model/types";
 import {
   IconArrowsShuffle,
-  IconPlayerPauseFilled,
-  IconPlayerPlayFilled,
   IconPlayerTrackNextFilled,
   IconPlayerTrackPrevFilled,
   IconRepeat,
-  IconRepeatOnce,
+  IconRepeatOnce
 } from "@tabler/icons-react";
 import { useMemo } from "react";
+import { PlayPauseIcon } from "../play-pause-icon";
 import {
   ControlButton,
-  SmallControlButton,
   CustomSlider,
   DurationText,
   MusicControlsStyled,
+  SmallControlButton,
 } from "./styles";
 
 type Props = {
@@ -27,6 +25,7 @@ type Props = {
   currentTime: number;
   loopMode: LoopMode;
   shuffle: boolean;
+  disableNextSongButton: boolean
   handleShuffle: () => void;
   handleLoopMode: () => void;
   onPlay: () => void;
@@ -43,6 +42,7 @@ export const MusicControls = ({
   currentTime,
   loopMode,
   shuffle,
+  disableNextSongButton,
   handleShuffle,
   handleLoopMode,
   onPlay,
@@ -80,7 +80,7 @@ export const MusicControls = ({
       </Flex>
       <Flex jc="space-between" width="100%">
         <SmallControlButton
-          $color1={colors?.[0]}
+          $color1={colors?.[1]}
           className={shuffle ? "selected" : ""}
           onClick={handleShuffle}
         >
@@ -88,25 +88,21 @@ export const MusicControls = ({
         </SmallControlButton>
         <Flex gap={20}>
           <ControlButton onClick={onPrev}>
-            <IconPlayerTrackPrevFilled />
+            <IconPlayerTrackPrevFilled className="prev-icon-2" />
+            <IconPlayerTrackPrevFilled className="prev-icon-1" />
           </ControlButton>
-          <ControlButton onClick={onPlay}>
-            {state === "loading" ? (
-              <Loading />
-            ) : state === "playing" ? (
-              <IconPlayerPauseFilled />
-            ) : (
-              <IconPlayerPlayFilled />
-            )}
+          <ControlButton disabled={state === 'loading'} onClick={onPlay}>
+            <PlayPauseIcon loading={state === 'loading'} playling={state === 'playing'} />
           </ControlButton>
-          <ControlButton onClick={onNext}>
-            <IconPlayerTrackNextFilled />
+          <ControlButton disabled={disableNextSongButton} onClick={onNext}>
+            <IconPlayerTrackNextFilled className="next-icon-1" />
+            <IconPlayerTrackNextFilled className="next-icon-2" />
           </ControlButton>
         </Flex>
         <SmallControlButton
           className={loopMode !== LoopMode.noloop ? "selected" : ""}
           onClick={handleLoopMode}
-          $color1={colors?.[0]}
+          $color1={colors?.[1]}
         >
           {loopMode === LoopMode.loopone && <IconRepeatOnce />}
           {loopMode !== LoopMode.loopone && <IconRepeat />}

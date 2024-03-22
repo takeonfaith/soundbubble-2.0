@@ -1,15 +1,10 @@
-import { Loading } from "@components/loading";
 import { songModel } from "@song/model";
 import { TQueueStore, TSong } from "@song/model/types";
 import { SongItem } from "..";
 import { SongsVerticalListStyled, Title, Titles } from "./styles";
-import { Flex } from "@components/flex";
 
 type Props = {
   songs: TSong[];
-  /**
-   * If true, will set queue when clicked on song, if not, ignores it
-   */
   listName: string | null;
   listIcon: React.ReactNode;
   listUrl: string | null;
@@ -42,11 +37,6 @@ export const VerticalSongsList = (props: Props) => {
           <Title>Author</Title>
           <Title>Listenings</Title>
         </Titles>
-      )}
-      {!songs.length && (
-        <Flex width="100%" jc="center">
-          <Loading />
-        </Flex>
       )}
       {songs.map((song, index) => {
         const isCurrent = song.id === currentSong?.id;

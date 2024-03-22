@@ -2,7 +2,7 @@ import { songModel } from "@song/model";
 import { useEffect, useRef } from "react";
 import { Lyric, LyricLoadingAnimation, Lyrics, RightSide } from "./styles";
 
-export const PlayerRightSide = () => {
+export const FullScreenPlayerRightSide = () => {
   // const { songs, name, icon, url } = songModel.queue.useQueue();
   const { state } = songModel.useSong();
   const { lyrics, currentLyricIndex } = songModel.lyrics.useLyrics();
@@ -18,7 +18,6 @@ export const PlayerRightSide = () => {
   };
 
   useEffect(() => {
-    console.count("PlayerRightSide");
     if (currentLyricRef.current) {
       currentLyricRef.current.scrollIntoView({
         behavior: "smooth",
@@ -41,10 +40,10 @@ export const PlayerRightSide = () => {
           const className = noKaraoke
             ? "ordinary"
             : isCurrent
-            ? "current"
-            : farFromCurrent
-            ? "farFromCurrent"
-            : "";
+              ? "current"
+              : farFromCurrent
+                ? "farFromCurrent"
+                : "";
 
           return (
             <Lyric
@@ -57,7 +56,7 @@ export const PlayerRightSide = () => {
                 lyric.text
               ) : (
                 <LyricLoadingAnimation
-                  className={isCurrent ? "current" : ""}
+                  className={isCurrent && state === 'playing' ? "current" : ""}
                   $duration={duration}
                 >
                   <span></span>

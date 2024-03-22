@@ -1,14 +1,13 @@
-import { Button } from "@components/button";
 import { Flex } from "@components/flex";
 import { IconText } from "@components/iconText";
 import { Logo } from "@components/logo";
-import { THEME } from "@shared/constants/theme";
 import { groupByField } from "@shared/funcs/groupByField";
 import { usePrivateAction } from "@shared/hooks/usePrivateAction";
 import { songModel } from "@song/model";
 import { IconPlus } from "@tabler/icons-react";
 import { modalModel } from "layout/modal/model";
 import { menuRoutes } from "routing/routes";
+import { DefaultButton } from "../../shared/components/button/DefaultButton";
 import {
   LogoWrapper,
   SidebarLink,
@@ -16,18 +15,27 @@ import {
   SidebarSectionTitle,
   SidebarStyled,
 } from "./styles";
-import { TEMP_USER } from "@shared/constants";
+import { userModel } from "../../entities/user/model";
+import { AddPlaylistModal } from "../../features/addPlaylistModal";
+import { playlistModel } from "../../entities/playlist/model";
+import { PlaylistItem } from "../../entities/playlist/ui";
 
 export const Sidebar = () => {
   const preparedRoutes = groupByField(menuRoutes, "section");
-  const { loggedIn } = usePrivateAction();
+  const { loggedIn, openLoginModal } = usePrivateAction();
+  const { data } = userModel.useUser()
+  const { addedPlaylists } = playlistModel.usePlaylist()
 
   const handleAddPlaylist = loggedIn(() => {
     modalModel.events.open({
-      title: "Test",
-      content: "Дарова",
+      title: "Create Playlist",
+      content: <AddPlaylistModal />,
     });
   });
+
+  const handleOpenFullScreenPlayer = () => {
+    songModel.fullscreen.open()
+  }
 
   return (
     <SidebarStyled>
@@ -60,11 +68,10 @@ export const Sidebar = () => {
             <IconPlus />
           </button>
         </Flex>
+        {addedPlaylists?.map((playlist) => <PlaylistItem playlist={playlist} key={playlist.id} />)}
       </SidebarSection>
-      {!TEMP_USER && (
-        <Button style={{ background: THEME.colors.blue.main }}>Login</Button>
-      )}
-      <IconPlus onClick={() => songModel.fullscreen.open()} />
+      {data === null && <DefaultButton onClick={openLoginModal()} appearance="primary">Login</DefaultButton>}
+      <IconPlus onClick={handleOpenFullScreenPlayer} />
     </SidebarStyled>
   );
 };

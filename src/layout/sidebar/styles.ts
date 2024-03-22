@@ -2,8 +2,8 @@ import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 
 export const SidebarStyled = styled.aside`
-  min-width: 240px;
-  width: 240px;
+  min-width: 250px;
+  width: 250px;
   height: 100dvh;
   padding: 10px;
   background: ${({ theme }) => theme.colors.sidebar};

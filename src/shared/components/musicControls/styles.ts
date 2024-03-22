@@ -63,38 +63,104 @@ export const ControlButton = styled.button`
   justify-content: center;
   border-radius: 100px;
   cursor: pointer;
+  transition: 0.2s transform;
+  overflow: hidden;
 
   .loading {
     width: 30px;
     height: 30px;
   }
 
+  .prev-icon-1 {
+    margin-right: 60px;
+  }
+
+  .prev-icon-2 {
+    margin-right: 30px;
+  }
+
+  .next-icon-1 {
+    margin-left: 60px;
+  }
+
+  .next-icon-2 {
+    margin-left: 30px;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+  }
+  
+  &:not(:active) {
+    .prev-icon-1, .prev-icon-2, .next-icon-1, .next-icon-2 {
+      transition: margin-left 0.25s, margin-right 0.25s;
+    }
+  }
+
+  &:not(:disabled) {
+    &:hover {
+      background: ${({ theme }) => theme.colors.lightHover};
+
+      svg {
+        filter: drop-shadow(0 0 15px black);
+      }
+    }
+
+    &:active {
+      transform: scale(0.9);
+
+      .prev-icon-1 {
+        margin-left: 30px;
+        margin-right: 0px;
+      }
+
+      .prev-icon-2 {
+        margin-right: 0;
+        margin-left: 60px;
+      }
+
+      .next-icon-1 {
+        margin-right: 30px;
+        margin-left: 0px;
+      }
+
+      .next-icon-2 {
+        margin-left: 0;
+        margin-right: 60px;
+      }
+
+      svg {
+        transform: scale(0.9);
+      }
+
+      @keyframes shift {
+        0%{
+          margin-left: 30px; 
+        }
+        100%{
+          margin-left: 0;
+          margin-right: 60px;
+        }
+      }
+    }
+  }
+
   svg {
-    width: 30px;
+    min-width: 30px;
     height: 30px;
     transition: 0.2s transform;
   }
 
-  &:hover {
-    background: ${({ theme }) => theme.colors.lightHover};
+  
 
-    svg {
-      filter: drop-shadow(0 0 15px black);
-    }
-  }
-
-  &:active {
-    svg {
-      transform: scale(0.9);
-    }
-  }
+  
 `;
 
 export const DurationText = styled.div`
   font-size: 0.8rem;
 `;
 
-export const SmallControlButton = styled(ControlButton)<{
+export const SmallControlButton = styled(ControlButton) <{
   $color1: string | undefined;
 }>`
   width: 40px;
@@ -104,12 +170,11 @@ export const SmallControlButton = styled(ControlButton)<{
     svg {
       color: ${({ $color1 }) => $color1};
       opacity: 1;
-      filter: brightness(1.5);
     }
   }
 
   svg {
-    opacity: 0.3;
+    opacity: 1;
     width: 20px;
     height: 20px;
   }

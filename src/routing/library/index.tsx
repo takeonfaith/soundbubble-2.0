@@ -1,12 +1,11 @@
 import { Content } from "@components/content";
-import { TSong } from "@song/model/types";
 import { VerticalSongsList } from "@song/ui/verticalList";
 import { IconMusic } from "@tabler/icons-react";
-import { Database } from "database";
-import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { userModel } from "../../entities/user/model";
+import { useEffect } from "react";
 
-const LibraryStyld = styled.div`
+const LibraryStyled = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -14,26 +13,22 @@ const LibraryStyld = styled.div`
 `;
 
 export const Library = () => {
-  const [songs, setSongs] = useState<TSong[]>([]);
-
-  // console.log(songs);
+  const { data, library } = userModel.useUser()
 
   useEffect(() => {
-    if (!songs.length) {
-      Database.Songs.getTop10Songs().then((res) => setSongs(res));
-    }
-  }, [songs]);
+    userModel.events.getLibrary()
+  }, [data])
 
   return (
-    <LibraryStyld>
+    <LibraryStyled>
       <Content image="https://static.vecteezy.com/system/resources/previews/000/275/492/original/abstract-gradient-heart-background-vector.jpg">
         <VerticalSongsList
           listName="Library"
           listIcon={<IconMusic />}
           listUrl="/library"
-          songs={songs}
+          songs={library}
         />
       </Content>
-    </LibraryStyld>
+    </LibraryStyled>
   );
 };

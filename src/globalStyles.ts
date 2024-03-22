@@ -10,5 +10,6 @@ export const GlobalStyles = createGlobalStyle`
 
 	body {
 		color: #fff;
+		overflow: hidden;
 	}
 `;

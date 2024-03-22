@@ -15,8 +15,9 @@ export const ContentStyled = styled.div`
   background: ${({ theme }) => theme.colors.pageBackground};
   position: relative;
   margin-top: 300px;
+  box-shadow: 0 -20px 200px #000;
 
-  &::before {
+  /* &::before {
     content: "";
     display: block;
     position: absolute;
@@ -29,7 +30,15 @@ export const ContentStyled = styled.div`
       ${({ theme }) => theme.colors.pageBackground},
       #0000005e
     );
-  }
+  } */
+`;
+
+export const ContentHeader = styled.header`
+  position: fixed;
+  left: 240px;
+  width: calc(100% - 240px);
+  height: 60px;
+  background: #fff;
 `;
 
 export const ContentImage = styled.img`
