@@ -62,7 +62,7 @@ export const HintItemStyled = styled.div`
     width: 30px;
     height: 30px;
     object-fit: cover;
-    border-radius: ${({ theme }) => theme.borderRadius.mild};
+    /* border-radius: ${({ theme }) => theme.borderRadius.mild}; */
   }
 
   &:hover {

@@ -1,5 +1,6 @@
 import { IconArrowsShuffle } from '@tabler/icons-react';
 import { playlistModel } from '../../entities/playlist/model';
+import { PlaylistCover } from '../../entities/playlist/ui/PlaylistCover';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { Authors } from '../../shared/components/authors';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
@@ -10,7 +11,7 @@ import { SkeletonPageAnimation } from '../../shared/components/skeleton/Skeleton
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
 import { ButtonsStyled } from '../author/styles';
 import { SkeletonLoading } from './Skeleton';
-import { PlaylistImageStyled, PlaylistPageSongs, PlaylistPageStyled, PlaylistSimilar } from './styles';
+import { PlaylistPageSongs, PlaylistPageStyled, PlaylistSimilar } from './styles';
 
 export const PlaylistPage = () => {
 
@@ -30,9 +31,7 @@ export const PlaylistPage = () => {
 					numberOfListenersPerMonth={currentPlaylist?.listens}
 					subscribers={currentPlaylist?.subscribers}
 					imageComponent={(
-						<PlaylistImageStyled>
-							<img src={currentPlaylist?.image} alt="" />
-						</PlaylistImageStyled>
+						<PlaylistCover size='200px' src={currentPlaylist?.image} color={currentPlaylist?.imageColors[0]} />
 					)}
 					colors={currentPlaylist?.imageColors}
 					playButtonLoading={false}

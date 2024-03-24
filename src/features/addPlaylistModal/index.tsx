@@ -44,12 +44,12 @@ const CenterButton = styled.div`
 const DownloadPhoto = () => {
 	const [photo, setPhoto] = useState<File | null>(null)
 
-	const handleFile = (e)=>{
+	const handleFile = (e) => {
 		setPhoto()
 	}
 
 	return <DownloadPhotoStyled>
-		<input type="file" onChange={handleFile}/>
+		<input type="file" onChange={handleFile} />
 		<CenterButton>
 			<IconCamera />
 		</CenterButton>
@@ -61,7 +61,7 @@ export const AddPlaylistModal = () => {
 		<Flex d='column' gap={20} width='100%'>
 			<DownloadPhoto />
 			<Input required placeholder='Enter name' label='Playlist name' />
-			<DefaultButton appearance='primary' >Create</DefaultButton>
+			<DefaultButton appearance='primary' disabled >Create</DefaultButton>
 		</Flex >
 	)
 }

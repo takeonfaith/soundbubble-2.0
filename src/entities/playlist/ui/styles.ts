@@ -56,22 +56,31 @@ export const ControlButton = styled(Button) <{ $color: string }>`
   }
 `
 
-export const PlaylistCover = styled.div<{ $color1: string }>`
-  width: var(--size);
-  height: var(--size);
-  min-width: 140px;
-  min-height: 140px;
+export const PlaylistCoverStyled = styled.div<{ $color1: string | undefined; $size?: string }>`
+  width: ${({ $size }) => $size ?? 'var(--size)'};
+  height: ${({ $size }) => $size ?? 'var(--size)'};
+  /* min-width: 140px;
+  min-height: 140px; */
   max-width: 300px;
   max-height: 300px;
   overflow: hidden;
   display: flex;
   justify-content: center;
-  background: ${({ $color1 }) => $color1};
-  border-radius: ${({ theme }) => theme.borderRadius.middle};
+  background: ${({ $color1 }) => $color1 ?? 'grey'};
+  border-radius: ${({ theme }) => theme.borderRadius.huge};
   position: relative;
 
   img {
+    width: 100%;
     transition: 0.3s transform ease-in-out;
+  }
+
+  .playlist-icon {
+    width: 50%;
+    height: 50%;
+    opacity: 0.8;
+    margin: auto;
+    color:#fff;
   }
 
   &:hover {
@@ -97,4 +106,3 @@ export const PalylistTitle = styled.div`
 export const PalylistAuthors = styled.div`
   font-size: 0.8rem;
 `;
-

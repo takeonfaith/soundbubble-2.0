@@ -17,8 +17,9 @@ export const SkeletonSection = styled.div<{ $color: string }>`
 	background: linear-gradient(360deg, ${({ theme }) => `${theme.colors.pageBackground}, ${theme.colors.pageBackground}, ${theme.colors.pageBackground}`}, transparent);
 	background-size: 100% 500%;
 	background-position: 0 0;
-	transition: 0.7s background-position, 0.4s opacity;
 	pointer-events: none;
+	transition: 0.7s background-position, 0.4s opacity;
+
 	opacity: 0;
 	overflow: hidden;
 

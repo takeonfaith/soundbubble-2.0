@@ -23,6 +23,7 @@ import { Authors } from "@components/authors";
 import { Flex } from "@components/flex";
 import { THint } from "./types";
 import { THEME } from "../../shared/constants/theme";
+import { PlaylistCover } from "../../entities/playlist/ui/PlaylistCover";
 
 type Props = {
   initialValue?: string | null;
@@ -148,6 +149,7 @@ export const SearchWithHints = ({
           {hints.map((el, index) => {
             if (!el) return null;
             //  console.log(el);
+            const isPlaylist = !el.displayName && el.subscribers !== undefined
             const icon = el.isAuthor ? (
               <IconMicrophone2 />
             ) : el.displayName !== undefined ? (
@@ -166,11 +168,11 @@ export const SearchWithHints = ({
               >
                 <Flex gap={8} width="100%">
                   {index === 0 && (
-                    <img src={el?.cover ?? el.photoURL ?? el.image} />
+                    isPlaylist ? <PlaylistCover src={el.image} color={el.imageColors?.[0]} size="30px" /> : <img src={el?.cover ?? el.photoURL ?? el.image} />
                   )}
                   {index !== 0 && <HintIcon>{icon}</HintIcon>}
                   <HintName>{el.name ?? el.displayName}</HintName>
-                  {el.isVerified && <IconDiscountCheckFilled size={18} style={{ color: THEME.colors.blue.main}} />}
+                  {el.isVerified && <IconDiscountCheckFilled size={18} style={{ color: THEME.colors.blue.main }} />}
                 </Flex>
                 {el.authors && <Authors authors={el.authors} />}
               </HintItemStyled>
