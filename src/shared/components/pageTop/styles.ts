@@ -43,10 +43,11 @@ export const TopBackground = styled.div`
 	padding-top: 270px ;
 	overflow: hidden;
 	z-index: 0;
+	pointer-events: none;
 
 	img {
 		width: 300%;
-		animation: bgWave 4s linear infinite;
+		animation: bgWave 3s linear infinite;
 
 
 		@keyframes bgWave {
@@ -60,9 +61,3 @@ export const TopBackground = styled.div`
 	}
 `
 
-export const WaveSection = styled.div`
-	width: 300%;
-	transform: translateY(6%);
-
-	
-`

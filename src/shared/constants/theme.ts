@@ -2,6 +2,8 @@ export const THEME = {
   borderRadius: {
     mild: "6px",
     middle: "10px",
+    big: "14px",
+    huge: "10%",
   },
   colors: {
     hover: "#212121",

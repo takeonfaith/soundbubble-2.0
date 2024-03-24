@@ -12,6 +12,7 @@ import {
   PlayerWrapper
 } from "./styles";
 import { LikeButton } from "../../shared/components/likeButton";
+import { userModel } from "../../entities/user/model";
 
 type SongCover = {
   imageColors: string[] | undefined;
@@ -29,6 +30,7 @@ const SongCover = ({ imageColors, cover }: SongCover) => {
 
 
 export const FullScreenPlayerLeftSide = () => {
+  const { library } = userModel.useUser()
   const { currentSong } = songModel.useSong();
 
   const onAuthorClick = () => songModel.fullscreen.close();
@@ -45,7 +47,7 @@ export const FullScreenPlayerLeftSide = () => {
         <Flex d="column" gap={2}>
           <Flex width="100%" gap={10}>
             <PlayerTitle>{currentSong?.name ?? "Untitled"}</PlayerTitle>
-            <LikeButton isLiked onClick={() => null} likeColor={currentSong?.imageColors[1]} />
+            <LikeButton isLiked={library.some((song) => song.id === currentSong?.id) ?? false} onClick={() => null} likeColor={currentSong?.imageColors[1]} />
           </Flex>
           <Authors
             authors={currentSong?.authors}

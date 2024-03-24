@@ -22,7 +22,6 @@ const loadLibraryFx = createEffect(async (store: TStore) => {
   return tryWrapper<TSong[]>(async () => {
     const addedSongs = store.data?.addedSongs ?? []
     const result = await Database.Songs.getSongsByUids(addedSongs)
-    console.log(result, addedSongs);
 
     return result
   }, 'operationFailed')

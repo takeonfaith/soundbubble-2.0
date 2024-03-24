@@ -15,6 +15,7 @@ import { Search } from "./search";
 import { SongPage } from "./song";
 import { PlaylistPage } from "./playlist";
 import { AuthorPage } from "./author";
+import { TrendsPage } from "./trends";
 
 type Section = "features" | "your activities" | "your music";
 
@@ -46,7 +47,7 @@ export const menuRoutes: TRoute[] = [
     url: "trends",
     title: "Trends",
     icon: <IconTrendingUp />,
-    component: <>Trends</>,
+    component: <TrendsPage />,
     section: "features",
   },
   {

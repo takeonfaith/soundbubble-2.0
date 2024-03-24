@@ -1,4 +1,7 @@
-import { IconDiscountCheckFilled, IconDots, IconHeadphones, IconHeart, IconUserPlus } from '@tabler/icons-react';
+import { IconDiscountCheckFilled, IconHeadphones, IconHeart, IconInfoCircle, IconShare3, IconUserPlus } from '@tabler/icons-react';
+import { ShareModal } from '../../../features/shareModal';
+import { modalModel } from '../../../layout/modal/model';
+import { THEME } from '../../constants/theme';
 import { Wave } from '../../images';
 import { Button } from '../button';
 import { Flex } from '../flex';
@@ -21,6 +24,11 @@ type Props = {
 }
 
 export const PageTop = ({ name, subtitle, bottomButtons, numberOfListenersPerMonth, subscribers, imageComponent, colors, isVerified }: Props) => {
+
+	const handleClickShare = () => {
+		modalModel.events.open({ content: <ShareModal />, title: 'Share with friends' })
+	}
+
 	return (
 		<PageTopStyled $colors={colors}>
 			{imageComponent}
@@ -43,11 +51,14 @@ export const PageTop = ({ name, subtitle, bottomButtons, numberOfListenersPerMon
 					</Flex>
 				</Flex>
 				<TopRightCorner>
-					<Button $width='40px'>
+					<Button $height='32px' $width='40px' $background={THEME.colors.lightHover}>
 						<IconHeart size={20} />
 					</Button>
-					<Button $width='40px'>
-						<IconDots size={20} />
+					<Button $height='32px' $width='40px' onClick={handleClickShare} $background={THEME.colors.lightHover}>
+						<IconShare3 size={20} />
+					</Button>
+					<Button $height='32px' $width='40px' $background={THEME.colors.lightHover}>
+						<IconInfoCircle size={20} />
 					</Button>
 				</TopRightCorner>
 			</Flex>

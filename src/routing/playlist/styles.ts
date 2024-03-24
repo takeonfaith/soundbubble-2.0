@@ -37,6 +37,15 @@ export const PlaylistImageStyled = styled.div`
 	height: 200px;
 	overflow: hidden;
 	border-radius: 20px;
+	background: grey;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	svg{ 
+		width:70px;
+		height:70px;
+	}
 
 	img {
 		width: 200px;

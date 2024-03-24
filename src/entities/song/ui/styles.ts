@@ -212,3 +212,24 @@ export const LikeButton = styled(Button)`
     height: 22px;
   }
 `;
+
+export const SongSkeletonStyled = styled.div`
+  container-type: size;
+  width: 100%;
+  height: 50px
+`
+
+export const HorizontalSongStyled = styled.div`
+width: 100%;
+  @container (max-width: 699px) {
+    display: none;
+  }
+`
+
+export const VerticalSongStyled = styled.div`
+  height: 60px;
+
+  @container (min-width: 700px) {
+    display: none;
+  }
+`

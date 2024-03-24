@@ -37,6 +37,9 @@ export const Sidebar = () => {
     songModel.fullscreen.open()
   }
 
+  console.log(addedPlaylists);
+  
+
   return (
     <SidebarStyled>
       <LogoWrapper>
@@ -72,6 +75,7 @@ export const Sidebar = () => {
       </SidebarSection>
       {data === null && <DefaultButton onClick={openLoginModal()} appearance="primary">Login</DefaultButton>}
       <IconPlus onClick={handleOpenFullScreenPlayer} />
+      {data?.displayName}
     </SidebarStyled>
   );
 };

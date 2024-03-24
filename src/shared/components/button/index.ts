@@ -1,13 +1,13 @@
 import styled from "styled-components";
 
-export const Button = styled.button<{ $background?: string; $width?: string }>`
+export const Button = styled.button<{ $background?: string; $width?: string; $height?: string }>`
   border: none;
   background: ${({ $background }) => $background ?? "transparent"};
   border-radius: ${({ theme }) => theme.borderRadius.mild};
   color: #fff;
   font-size: 1rem;
   width: ${({ $width }) => $width ?? "100%"};
-  min-height: 40px;
+  min-height: ${({ $height }) => $height ?? '40px'};
   cursor: pointer;
   display: flex;
   align-items: center;

@@ -34,10 +34,11 @@ type Props = {
   loaded: boolean;
   index: number;
   onClick: (song: TSong, index: number) => void;
+  noImage?: boolean;
 };
 
 export const SongItem = memo(
-  ({ song, playing, loading, index, onClick }: Props) => {
+  ({ song, playing, loading, index, noImage, onClick }: Props) => {
     const { name, authors, imageColors, cover, listens } = song;
 
     const handleMore: React.MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -55,7 +56,7 @@ export const SongItem = memo(
         playing={playing}
       >
         <SongLeft>
-          <SongCover color1={imageColors[0]}>
+          {!noImage && <SongCover color1={imageColors[0]}>
             {!loading && !playing && (
               <PlayOverlay>
                 <PlayButton>
@@ -77,7 +78,7 @@ export const SongItem = memo(
             )}
             {!cover && <IconMusic />}
             <Cover src={cover} />
-          </SongCover>
+          </SongCover>}
           <SongInfo>
             <SongNameAndListens>
               <SongName>{name}</SongName>
