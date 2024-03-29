@@ -20,7 +20,7 @@ const handleCalculateLyric = (
 
 const handleNextCurrentLyric = (store: TLyricsStore, currentTime: number) => {
   const { lyrics, currentLyricIndex } = store;
-
+  
   if (!lyrics.length || isNaN(lyrics[0].startTime)) return store;
 
   if (lyrics[currentLyricIndex + 1].startTime < currentTime) {

@@ -1,29 +1,18 @@
 import { Input } from "@components/input";
+import { Loading } from "@components/loading";
 import { debounce } from "@shared/funcs/debounce";
 import { normalizeString } from "@shared/funcs/normalizeString";
 import {
-  IconDiscountCheckFilled,
-  IconMicrophone2,
-  IconMusic,
-  IconSearch,
-  IconUser,
-  IconVinyl,
+  IconSearch
 } from "@tabler/icons-react";
 import { Database } from "database";
 import { useEffect, useState } from "react";
+import { HintItem } from "./HintItem";
 import {
-  HintIcon,
-  HintItemStyled,
   HintsStyled,
-  HintName,
-  SearchWithHintsStyled,
+  SearchWithHintsStyled
 } from "./styles";
-import { Loading } from "@components/loading";
-import { Authors } from "@components/authors";
-import { Flex } from "@components/flex";
 import { THint } from "./types";
-import { THEME } from "../../shared/constants/theme";
-import { PlaylistCover } from "../../entities/playlist/ui/PlaylistCover";
 
 type Props = {
   initialValue?: string | null;
@@ -128,8 +117,12 @@ export const SearchWithHints = ({
     }
   };
 
+
+
   return (
-    <SearchWithHintsStyled>
+    <SearchWithHintsStyled
+
+    >
       <Input
         icon={<IconSearch />}
         value={
@@ -140,46 +133,19 @@ export const SearchWithHints = ({
         onFocus={handleFocus}
         onKeyDown={handleKeyDown}
         onChange={handleChange}
-        onBlur={handleBlur}
         placeholder="Search..."
         rightIcon={loading && <Loading />}
       />
-      {showHints && (
-        <HintsStyled>
-          {hints.map((el, index) => {
-            if (!el) return null;
-            //  console.log(el);
-            const isPlaylist = !el.displayName && el.subscribers !== undefined
-            const icon = el.isAuthor ? (
-              <IconMicrophone2 />
-            ) : el.displayName !== undefined ? (
-              <IconUser />
-            ) : el.subscribers !== undefined ? (
-              <IconVinyl />
-            ) : (
-              <IconMusic />
-            );
+      {showHints && <HintsStyled onClick={e => e.preventDefault()}>
+        {normalizeString(value) !== normalizeString(hints[0].displayName ?? hints[0].name) ? <HintItem suggestedIndex={suggestedIndex} item={{ name: value }} icon={<IconSearch />} index={null} key={-1} handleSubmitSuggestion={handleSubmitSuggestion} /> : null}
+        {hints.map((el, index) => {
+          if (!el) return null;
 
-            return (
-              <HintItemStyled
-                className={suggestedIndex === index ? "selected" : ""}
-                key={el.id ?? el.uid + index}
-                onClick={() => handleSubmitSuggestion(index)}
-              >
-                <Flex gap={8} width="100%">
-                  {index === 0 && (
-                    isPlaylist ? <PlaylistCover src={el.image} color={el.imageColors?.[0]} size="30px" /> : <img src={el?.cover ?? el.photoURL ?? el.image} />
-                  )}
-                  {index !== 0 && <HintIcon>{icon}</HintIcon>}
-                  <HintName>{el.name ?? el.displayName}</HintName>
-                  {el.isVerified && <IconDiscountCheckFilled size={18} style={{ color: THEME.colors.blue.main }} />}
-                </Flex>
-                {el.authors && <Authors authors={el.authors} />}
-              </HintItemStyled>
-            );
-          })}
-        </HintsStyled>
-      )}
+          return (
+            <HintItem suggestedIndex={suggestedIndex} item={el} index={index} key={el.id ?? el.uid} handleSubmitSuggestion={handleSubmitSuggestion} />
+          );
+        })}
+      </HintsStyled>}
     </SearchWithHintsStyled>
   );
 };

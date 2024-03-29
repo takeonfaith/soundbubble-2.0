@@ -1,10 +1,11 @@
-import { Flex } from "@components/flex";
-import { PlaylistItem } from "@playlist/ui";
 import { songModel } from "@song/model";
 import { SearchWithHints } from "features/searchWithHints";
 import { THint } from "features/searchWithHints/types";
 import React from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { getEntityType } from "../../features/searchWithHints/lib/getEntityType";
+import { TUser } from "../../entities/user/model/types";
+import { TSong } from "../../entities/song/model/types";
 
 export const Search = () => {
   const [params, setParams] = useSearchParams();
@@ -18,23 +19,27 @@ export const Search = () => {
 
   const handleSuggestionSubmit = (hint: THint) => {
     let to = "";
-    if ("displayName" in hint) {
-      to = `/author/${hint.uid}`;
-      setParams({ query: hint.displayName });
-    } else if ("lyrics" in hint) {
-      play(hint);
-      setParams({ query: hint.name });
+    const type = getEntityType(hint)
+    if (type === 'author' || type === 'user') {
+      const thint = (hint as TUser)
+      to = `/author/${thint.uid}`;
+      setParams({ query: thint.displayName });
+    } else if (type === 'song') {
+      const thint = (hint as TSong)
+      play(thint);
+      setParams({ query: thint.name });
       return;
     } else {
-      to = `/playlist/${hint.id}`;
-      setParams({ query: hint.name });
+      const thint = (hint as TSong)
+      to = `/playlist/${thint.id}`;
+      setParams({ query: thint.name });
     }
 
     navigate(to);
   };
 
   return (
-    <div style={{ width: "100%", maxWidth: "700px", margin: "60px auto" }}>
+    <div style={{ width: "100%", maxWidth: "600px", margin: "60px auto" }}>
       <SearchWithHints
         initialValue={params.get("query")}
         onSuggestionSubmit={handleSuggestionSubmit}

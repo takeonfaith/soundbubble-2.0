@@ -1,0 +1,1 @@
+export type TRightSideType = 'queue' | 'lyrics' | null

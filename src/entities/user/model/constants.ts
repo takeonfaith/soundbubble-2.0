@@ -5,7 +5,8 @@ export const DEFAULT_STORE: TStore = {
   error: null,
   loggining: false,
   library: [],
-  loadingLibrary: false
+  loadingLibrary: false,
+  userPlaylists: []
 };
 
 export const DEFAULT_PAGE_STORE: TPageStore = {
@@ -14,4 +15,6 @@ export const DEFAULT_PAGE_STORE: TPageStore = {
   loading: false,
   songs: [],
   playlists: [],
+  similarAuthors: [],
+  similarAuthorsLoading: true,
 }

@@ -1,35 +1,29 @@
 import { Authors } from "@components/authors";
-import { Cover } from "@components/cover";
 import { Flex } from "@components/flex";
 import { songModel } from "@song/model";
-import { IconMusic } from "@tabler/icons-react";
+import { IconPlaylist, IconQuote, IconVolume } from "@tabler/icons-react";
+import { SongCover } from "../../entities/song/ui/SongCover";
+import { userModel } from "../../entities/user/model";
+import { LikeButton } from "../../shared/components/likeButton";
+import { SmallControlButton } from "../../shared/components/musicControls/styles";
 import { PlayerMusicControls } from "./PlayerMusicControls";
 import {
-  CoverWrapper,
+  BottomControlButtons,
   LeftSide,
   PlayerCover,
   PlayerTitle,
   PlayerWrapper
 } from "./styles";
-import { LikeButton } from "../../shared/components/likeButton";
-import { userModel } from "../../entities/user/model";
+import { TRightSideType } from "./types";
 
-type SongCover = {
-  imageColors: string[] | undefined;
-  cover: string | undefined;
-};
+type Props = {
+  type: TRightSideType
+  hasQueue: boolean
+  hasLyrics: boolean
+  handleClickControlButton: (type: TRightSideType) => () => void
+}
 
-const SongCover = ({ imageColors, cover }: SongCover) => {
-  return (
-    <PlayerCover className={"song-cover"} $color1={imageColors?.[0]}>
-      {!cover && <IconMusic />}
-      <Cover src={cover} />
-    </PlayerCover>
-  );
-};
-
-
-export const FullScreenPlayerLeftSide = () => {
+export const FullScreenPlayerLeftSide = ({ type, hasLyrics, hasQueue, handleClickControlButton }: Props) => {
   const { library } = userModel.useUser()
   const { currentSong } = songModel.useSong();
 
@@ -38,12 +32,14 @@ export const FullScreenPlayerLeftSide = () => {
   return (
     <LeftSide>
       <PlayerWrapper>
-        <CoverWrapper>
+        <PlayerCover $color1={currentSong?.imageColors[0]}>
           <SongCover
-            imageColors={currentSong?.imageColors}
-            cover={currentSong?.cover}
+            size="400px"
+            color={currentSong?.imageColors[0]}
+            src={currentSong?.cover}
           />
-        </CoverWrapper>
+        </PlayerCover>
+
         <Flex d="column" gap={2}>
           <Flex width="100%" gap={10}>
             <PlayerTitle>{currentSong?.name ?? "Untitled"}</PlayerTitle>
@@ -55,6 +51,19 @@ export const FullScreenPlayerLeftSide = () => {
           />
         </Flex>
         <PlayerMusicControls />
+        <BottomControlButtons>
+          <SmallControlButton>
+            <IconVolume opacity={0.9} />
+          </SmallControlButton>
+          <Flex gap={20}>
+            <SmallControlButton disabled={!hasQueue} className={type === 'queue' ? 'selected' : ''} onClick={handleClickControlButton('queue')}>
+              <IconPlaylist opacity={0.9} />
+            </SmallControlButton>
+            <SmallControlButton disabled={!hasLyrics} className={type === 'lyrics' ? 'selected' : ''} onClick={handleClickControlButton('lyrics')}>
+              <IconQuote opacity={0.9} />
+            </SmallControlButton>
+          </Flex>
+        </BottomControlButtons>
       </PlayerWrapper>
     </LeftSide>
   );

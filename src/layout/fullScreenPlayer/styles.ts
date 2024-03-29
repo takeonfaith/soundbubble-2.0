@@ -10,6 +10,7 @@ export const FullScreenPlayerStyled = styled(BeautifulBackground)`
   transition: 0.2s, 0.5s background;
   bottom: 0;
   align-items: center;
+  will-change: transform, opacity;
 `;
 
 export const PlayerWrapper = styled.div`
@@ -31,9 +32,10 @@ export const PlayerCover = styled.div<{ $color1: string | undefined }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 0 130px #000000ab;
+  box-shadow: 0 0 130px #00000057;
   width: 400px;
   height: 400px;
+  overflow: hidden;
 
   svg {
     color: dimgray;
@@ -69,29 +71,6 @@ export const OtherCovers = styled.div`
   }
 `;
 
-export const CoverWrapper = styled.div`
-  position: relative;
-  transition: 0.2s;
-
-  .song-cover {
-    transform-origin: top left;
-    transition: 0.2s;
-  }
-
-  &:hover {
-    ${OtherCovers} {
-      opacity: 1;
-      & .song-cover:nth-child(1) {
-        transform: translateX(-120px) scale(0.7);
-      }
-
-      & .song-cover:nth-child(2) {
-        transform: translateX(120px) scale(0.7);
-      }
-    }
-  }
-`;
-
 export const LeftSide = styled.div`
   width: 100%;
   height: 100%;
@@ -100,6 +79,7 @@ export const LeftSide = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 10px;
+  position: relative;
 
   &.close {
     display: block;
@@ -117,11 +97,32 @@ export const PlayerTitle = styled.div`
 `;
 
 export const RightSide = styled.div`
-  width: 100%;
+  width: 0%;
   height: 100%;
-  padding: 260px 100px;
+  padding: 180px 110px;
   overflow-y: auto;
   scroll-padding-top: 260px;
+  opacity: 0;
+  animation: slide-appear 0.5s forwards reverse;
+
+  &.visible {
+    animation: slide-appear 0.5s forwards;
+  }
+
+  @keyframes slide-appear {
+    0%{
+      opacity: 0;
+      width: 0;
+    }
+    30%{
+      opacity: 0;
+      width: 100%;
+    }
+    100%{
+      opacity: 1;
+      width: 100%;
+    }
+  }
 `;
 
 export const Lyrics = styled.div`
@@ -260,3 +261,12 @@ export const LyricLoadingAnimation = styled.div<{
     }
   }
 `;
+
+export const BottomControlButtons = styled.div`
+  position: absolute;
+  left: 40px;
+  bottom: 40px;
+  width: calc(100% - 80px);
+  display: flex;
+  justify-content: space-between;
+`

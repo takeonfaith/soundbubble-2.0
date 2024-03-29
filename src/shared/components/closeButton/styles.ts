@@ -14,6 +14,7 @@ export const CloseButtonStyled = styled.button`
   align-items: center;
   border-radius: ${({ theme }) => theme.borderRadius.mild};
   cursor: pointer;
+  z-index: 10;
 
   svg {
     width: 20px;

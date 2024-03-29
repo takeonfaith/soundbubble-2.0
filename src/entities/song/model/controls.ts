@@ -24,13 +24,19 @@ export const useControls = () => {
 
       return play();
     },
-    next: () => next(),
+    next: () => {
+      console.log('next');
+      
+      next()
+    },
     previous: () => {
       if (currentTime < PREVIOUS_TRACK_THRESHOLD) {
         previous();
         return;
       }
 
+      console.log(state);
+      
       setLastRangeValue(0);
       setCurrentLyricIndex(0);
     },

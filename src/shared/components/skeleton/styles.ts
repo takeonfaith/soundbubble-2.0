@@ -17,15 +17,17 @@ export const SkeletonSection = styled.div<{ $color: string }>`
 	background: linear-gradient(360deg, ${({ theme }) => `${theme.colors.pageBackground}, ${theme.colors.pageBackground}, ${theme.colors.pageBackground}`}, transparent);
 	background-size: 100% 500%;
 	background-position: 0 0;
-	pointer-events: none;
-	transition: 0.7s background-position, 0.4s opacity;
 
+	transition: 0.7s background-position, 0.4s opacity;
+	pointer-events: none;
 	opacity: 0;
-	overflow: hidden;
+	overflow-y: auto;
+	overflow-x: hidden;
 
 
 	&.loading {
 		opacity: 1;
+		height: fit-content;
 	   background-position: 0 100%;
 	}
 `

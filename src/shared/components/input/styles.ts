@@ -75,9 +75,9 @@ export const InputStyled = styled.input<{
   height: 40px;
   font-size: 0.95rem;
   width: 100%;
-  border: 1px solid
+  /* border: 1px solid
     ${({ theme, $hasError }) =>
-      $hasError ? theme.colors.red.main : theme.colors.border};
+      $hasError ? theme.colors.red.main : theme.colors.border}; */
   padding-left: ${({ $hasIcon }) => ($hasIcon ? "40px" : "10px")};
   padding-right: ${({ $hasRightIcon }) => ($hasRightIcon ? "40px" : "10px")};
 

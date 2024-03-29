@@ -1,11 +1,19 @@
 import { songModel } from "@song/model";
 import { useEffect, useRef } from "react";
+import { PlaneSongList } from "../../entities/song/ui/planeList";
+import { Flex } from "../../shared/components/flex";
 import { Lyric, LyricLoadingAnimation, Lyrics, RightSide } from "./styles";
+import { TRightSideType } from "./types";
 
-export const FullScreenPlayerRightSide = () => {
+type Props = {
+  type: TRightSideType
+}
+
+export const FullScreenPlayerRightSide = ({ type }: Props) => {
   // const { songs, name, icon, url } = songModel.queue.useQueue();
   const { state } = songModel.useSong();
   const { lyrics, currentLyricIndex } = songModel.lyrics.useLyrics();
+  const { queue } = songModel.queue.useQueue()
   const currentLyricRef = useRef<HTMLDivElement>(null);
 
   const handleClickLyrics = (startTime: number | string) => {
@@ -26,9 +34,11 @@ export const FullScreenPlayerRightSide = () => {
     }
   }, [currentLyricIndex]);
 
+  if (type === null) return null
+
   return (
-    <RightSide>
-      <Lyrics>
+    <RightSide className={type !== null ? 'visible' : ''}>
+      {type === 'lyrics' && <Lyrics>
         {lyrics.map((lyric, index) => {
           const noKaraoke = state === "pause" || isNaN(+lyric.startTime);
           const isCurrent = index === currentLyricIndex;
@@ -67,7 +77,10 @@ export const FullScreenPlayerRightSide = () => {
             </Lyric>
           );
         })}
-      </Lyrics>
+      </Lyrics>}
+      {type === 'queue' && <Flex d="column" gap={4} width="100%">
+        <PlaneSongList songs={queue.songs} listName={null} listIcon={undefined} listUrl={null} />
+      </Flex>}
     </RightSide>
   );
 };

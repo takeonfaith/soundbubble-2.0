@@ -4,9 +4,12 @@ import { Logo } from "@components/logo";
 import { groupByField } from "@shared/funcs/groupByField";
 import { usePrivateAction } from "@shared/hooks/usePrivateAction";
 import { songModel } from "@song/model";
-import { IconPlus } from "@tabler/icons-react";
+import { IconMaximize, IconPlus, IconZoomIn } from "@tabler/icons-react";
 import { modalModel } from "layout/modal/model";
 import { menuRoutes } from "routing/routes";
+import { PlaylistItem } from "../../entities/playlist/ui";
+import { userModel } from "../../entities/user/model";
+import { AddPlaylistModal } from "../../features/addPlaylistModal";
 import { DefaultButton } from "../../shared/components/button/DefaultButton";
 import {
   LogoWrapper,
@@ -15,16 +18,12 @@ import {
   SidebarSectionTitle,
   SidebarStyled,
 } from "./styles";
-import { userModel } from "../../entities/user/model";
-import { AddPlaylistModal } from "../../features/addPlaylistModal";
-import { playlistModel } from "../../entities/playlist/model";
-import { PlaylistItem } from "../../entities/playlist/ui";
 
 export const Sidebar = () => {
   const preparedRoutes = groupByField(menuRoutes, "section");
   const { loggedIn, openLoginModal } = usePrivateAction();
-  const { data } = userModel.useUser()
-  const { addedPlaylists } = playlistModel.usePlaylist()
+  const { data, userPlaylists } = userModel.useUser()
+  console.log(userPlaylists);
 
   const handleAddPlaylist = loggedIn(() => {
     modalModel.events.open({
@@ -37,8 +36,6 @@ export const Sidebar = () => {
     songModel.fullscreen.open()
   }
 
-  console.log(addedPlaylists);
-  
 
   return (
     <SidebarStyled>
@@ -71,10 +68,12 @@ export const Sidebar = () => {
             <IconPlus />
           </button>
         </Flex>
-        {addedPlaylists?.map((playlist) => <PlaylistItem playlist={playlist} key={playlist.id} />)}
+        <Flex d="column" gap={8} padding="10px">
+          {userPlaylists?.slice(0, 3)?.map((playlist) => <PlaylistItem orientation="horizontal" playlist={playlist} key={playlist.id} />)}
+        </Flex>
       </SidebarSection>
       {data === null && <DefaultButton onClick={openLoginModal()} appearance="primary">Login</DefaultButton>}
-      <IconPlus onClick={handleOpenFullScreenPlayer} />
+      <IconMaximize onClick={handleOpenFullScreenPlayer} />
       {data?.displayName}
     </SidebarStyled>
   );

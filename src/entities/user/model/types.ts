@@ -5,9 +5,9 @@ export type TUser = {
   uid: string;
   displayName: string;
   ownSongs?: string[];
-  ownPlaylists?: string[];
+  ownPlaylists: string[];
   addedAuthors?: string[];
-  addedPlaylists?: string[];
+  addedPlaylists: string[];
   addedSongs?: string[];
   friends?: string[];
   imageColors: string[]
@@ -41,6 +41,7 @@ export type TStore = {
   loggining?: boolean;
   library: TSong[]
   loadingLibrary: boolean
+  userPlaylists: TPlaylist[]
 };
 
 export type TPageStore = {
@@ -49,4 +50,6 @@ export type TPageStore = {
   loading: boolean,
   songs: TSong[],
   playlists: TPlaylist[],
+  similarAuthors: TUser[]
+  similarAuthorsLoading: boolean
 }

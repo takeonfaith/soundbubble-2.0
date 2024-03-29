@@ -46,6 +46,7 @@ export const HintItemStyled = styled.div`
   justify-content: space-between;
   cursor: pointer;
   font-weight: 300;
+  width: 100%;
 
   .authors {
     width: fit-content;
@@ -56,13 +57,6 @@ export const HintItemStyled = styled.div`
     background: ${({ theme }) => theme.colors.blue.transparent};
     color: #fff;
     font-weight: 400;
-  }
-
-  img {
-    width: 30px;
-    height: 30px;
-    object-fit: cover;
-    /* border-radius: ${({ theme }) => theme.borderRadius.mild}; */
   }
 
   &:hover {

@@ -1,13 +1,14 @@
 import { MusicControls } from "@components/musicControls";
 import { songModel } from "@song/model";
 import { useCallback, useEffect } from "react";
+import { LoopMode } from "../../entities/song/model/types";
 
 export const PlayerMusicControls = () => {
   const { currentSong, state } = songModel.useSong();
   const { currentTime, duration } = songModel.playblack.usePlayback();
-  const { queue } = songModel.queue.useQueue()
+  const { queue, loop } = songModel.queue.useQueue()
   const { next, previous, play } = songModel.useControls();
-  const { loop } = songModel.queue.useQueue();
+  const disableNextSongButton = queue.songs.length < 2 || loop === LoopMode.loopone || loop === LoopMode.noloop && queue.currentSongIndex === queue.songs.length - 1
 
   const handlePlay = useCallback(() => play(), [play]);
 
@@ -51,7 +52,7 @@ export const PlayerMusicControls = () => {
       state={state}
       loopMode={loop}
       shuffle={true}
-      disableNextSongButton={queue.songs.length < 2}
+      disableNextSongButton={disableNextSongButton}
       handleShuffle={handleShuffle}
       handleLoopMode={handleLoopMode}
       onPlay={handlePlay}
