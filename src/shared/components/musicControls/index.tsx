@@ -62,6 +62,8 @@ export const MusicControls = ({
     [duration, currentTime]
   );
 
+  const buttonColor = colors?.[1]
+
   return (
     <MusicControlsStyled>
       <CustomSlider
@@ -80,7 +82,7 @@ export const MusicControls = ({
       </Flex>
       <Flex jc="space-between" width="100%">
         <SmallControlButton
-          $color1={colors?.[1]}
+          $color1={buttonColor}
           className={shuffle ? "selected" : ""}
           onClick={handleShuffle}
         >
@@ -102,7 +104,7 @@ export const MusicControls = ({
         <SmallControlButton
           className={loopMode !== LoopMode.noloop ? "selected" : ""}
           onClick={handleLoopMode}
-          $color1={colors?.[1]}
+          $color1={buttonColor}
         >
           {loopMode === LoopMode.loopone && <IconRepeatOnce />}
           {loopMode !== LoopMode.loopone && <IconRepeat />}

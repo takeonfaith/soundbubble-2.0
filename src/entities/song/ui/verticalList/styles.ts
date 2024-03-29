@@ -11,7 +11,7 @@ export const Titles = styled.div`
   padding: 8px;
   grid-template-columns: 55px 1fr 1fr 200px 70px;
 
-  @media (max-width: 1070px) {
+  @media (max-width: 1080px) {
     display: none;
   }
 `;

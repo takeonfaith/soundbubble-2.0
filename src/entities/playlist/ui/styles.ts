@@ -1,18 +1,20 @@
 import { Link } from "react-router-dom";
 import { styled } from "styled-components";
 import { Button } from "../../../shared/components/button";
+import { TOrientation } from "../../user/types";
 
-export const PlaylistStyled = styled(Link) <{ $color1: string }>`
+export const PlaylistStyled = styled(Link) <{ $color1: string; $orientation: TOrientation }>`
   gap: 10px;
   display: flex;
-  flex-direction: column;
+  flex-direction: ${({ $orientation }) => $orientation === 'vertical' ? 'column' : 'row'};
+  align-items: ${({ $orientation }) => $orientation === 'vertical' ? 'flex-start' : 'center'};
   height: fit-content;
   color: #fff;
   position: relative;
   text-decoration: none;
-  --size: calc(100vw / 8);
+  --size: ${({ $orientation }) => $orientation === 'vertical' ? 'calc(100vw / 8)' : '34px'};
 
-  width: var(--size);
+  width: ${({ $orientation }) => $orientation === 'vertical' ? 'var(--size)' : '100%'};
   
   .authors {
     font-size: 0.75rem;
@@ -22,8 +24,8 @@ export const PlaylistStyled = styled(Link) <{ $color1: string }>`
     content: "";
     display: block;
     position: absolute;
-    width: calc(100vw / 9);
-    height: calc(100vw / 9);
+    width: var(--size);
+    height: var(--size);
     transition: 0.2s opacity;
     box-shadow: 0 50px 100px ${({ $color1 }) => $color1};
     top: 0%;
@@ -34,21 +36,31 @@ export const PlaylistStyled = styled(Link) <{ $color1: string }>`
     opacity: 0.5;
   }
 
+  .cover-children {
+    opacity: 0;
+    transition: 0.2s opacity;
+  }
+
+  &:hover {
+    .cover-children {
+      opacity: 0.9;
+    }
+  }
+
   @media (max-width:1200px) {
     --size: calc(100vw / 6); 
   }
 `;
 
-export const ControlButton = styled(Button) <{ $color: string }>`
+export const ControlButton = styled(Button) <{ $color: string; $orientation: TOrientation }>`
   position: absolute;
-  bottom: 16px;
-  left: 16px;
-  width: 40px;
-  height: 40px;
-  opacity: 0;
-  border-radius: 100%;
+  bottom: ${({ $orientation }) => $orientation === 'vertical' ? '16px' : '0px'};
+  left: ${({ $orientation }) => $orientation === 'vertical' ? '16px' : '0px'};
+  width: 38px;
+  height: 38px;
+  border-radius: 0;
   color: ${({ $color }) => $color};
-  background: ${({ theme }) => theme.colors.hover};
+  background: ${({ theme }) => theme.colors.modal};
   transition: 0.2s opacity;
 
   &:hover {
@@ -83,13 +95,11 @@ export const PlaylistCoverStyled = styled.div<{ $color1: string | undefined; $si
     color:#fff;
   }
 
+  
+
   &:hover {
     img {
       transform: scale(1.1);
-    }
-
-    ${ControlButton} {
-      opacity: 0.9;
     }
   }
 `;

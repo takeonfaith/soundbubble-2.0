@@ -3,10 +3,10 @@ export const THEME = {
     mild: "6px",
     middle: "10px",
     big: "14px",
-    huge: "10%",
+    huge: "5%",
   },
   colors: {
-    hover: "#212121",
+    hover: "#ffffff14",
     pageBackground: "#18191b",
     overlay: "#0e0e0ed4",
     input: "#2b2b2b",

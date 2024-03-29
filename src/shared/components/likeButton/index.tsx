@@ -10,7 +10,7 @@ type Props = {
 
 export const LikeButton = ({ isLiked, likeColor = THEME.colors.greyText, onClick }: Props) => {
 	return (
-		<LikeButtonStyled onClick={onClick} isLiked={isLiked} likeColor={likeColor}>
+		<LikeButtonStyled className='like-button' onClick={onClick} isLiked={isLiked} likeColor={likeColor}>
 			{isLiked ? <IconHeartFilled /> : <IconHeart />}
 		</LikeButtonStyled>
 	)

@@ -1,17 +1,15 @@
 import { Authors } from "@components/authors";
-import { Cover } from "@components/cover";
-import { Flex } from "@components/flex";
 import { Loading } from "@components/loading";
 import { LikeButton } from "@shared/components/likeButton";
 import {
   IconDots,
   IconHeadphones,
-  IconMusic,
   IconPlayerPauseFilled,
   IconPlayerPlayFilled
 } from "@tabler/icons-react";
 import { memo } from "react";
 import { TSong } from "../model/types";
+import { SongCover } from "./SongCover";
 import {
   Listens,
   LoadingOverlay,
@@ -19,7 +17,7 @@ import {
   PauseOverlay,
   PlayButton,
   PlayOverlay,
-  SongCover,
+  SongButtons,
   SongInfo,
   SongLeft,
   SongName,
@@ -38,7 +36,7 @@ type Props = {
 };
 
 export const SongItem = memo(
-  ({ song, playing, loading, index, noImage, onClick }: Props) => {
+  ({ song, playing, loading, index, onClick }: Props) => {
     const { name, authors, imageColors, cover, listens } = song;
 
     const handleMore: React.MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -55,8 +53,8 @@ export const SongItem = memo(
         aria-pressed="false"
         playing={playing}
       >
-        <SongLeft>
-          {!noImage && <SongCover color1={imageColors[0]}>
+        <SongLeft $color1={imageColors[0]}>
+          <SongCover size="35px" src={cover} color={imageColors[0]}>
             {!loading && !playing && (
               <PlayOverlay>
                 <PlayButton>
@@ -76,9 +74,7 @@ export const SongItem = memo(
                 <Loading />
               </LoadingOverlay>
             )}
-            {!cover && <IconMusic />}
-            <Cover src={cover} />
-          </SongCover>}
+          </SongCover>
           <SongInfo>
             <SongNameAndListens>
               <SongName>{name}</SongName>
@@ -94,12 +90,12 @@ export const SongItem = memo(
           {listens}
           <IconHeadphones />
         </Listens>
-        <Flex gap={4}>
+        <SongButtons>
           <LikeButton isLiked={false} likeColor={imageColors[1]} onClick={() => null} />
           <MoreInfoButton onClick={handleMore}>
             <IconDots />
           </MoreInfoButton>
-        </Flex>
+        </SongButtons>
       </SongStyled>
     );
   }

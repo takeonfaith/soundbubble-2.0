@@ -3,6 +3,7 @@ import { PlaylistItem } from '../../entities/playlist/ui'
 import { songModel } from '../../entities/song/model'
 import { GridSongList } from '../../entities/song/ui/gridList'
 import { userModel } from '../../entities/user/model'
+import { UserCover } from '../../entities/user/ui/UserCover'
 import { DefaultButton } from '../../shared/components/button/DefaultButton'
 import { Flex } from '../../shared/components/flex'
 import { PageTop } from '../../shared/components/pageTop'
@@ -10,13 +11,15 @@ import { PlayPauseIcon } from '../../shared/components/play-pause-icon'
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation'
 import { useHandleSongPlay } from '../../shared/hooks/useHandleSongPlay'
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId'
+import { SimilarAuthors } from './SimilarAuthors'
 import { SkeletonLoading } from './Skeleton'
-import { AuthorPageStyled, ButtonsStyled, ContentWrapperStyled, SongsStyled, UserImageStyled } from './styles'
+import { AuthorPageStyled, ButtonsStyled, ContentWrapperStyled, SongsStyled } from './styles'
 
 export const AuthorPage = () => {
 	const { user, songs, playlists, loading } = userModel.useUserPage()
 	const { state } = songModel.useSong()
 	const { queue } = songModel.queue.useQueue()
+
 	useUrlParamId({ page: 'author', onChangeId: (id) => userModel.events.loadUserPageFx(id) })
 	const queueInfo = {
 		listName: user?.displayName ?? 'Author',
@@ -37,7 +40,7 @@ export const AuthorPage = () => {
 					numberOfListenersPerMonth={user?.numberOfListenersPerMonth}
 					isVerified={user?.isVerified}
 					subscribers={user?.subscribers}
-					imageComponent={<UserImageStyled><img src={user?.photoURL} alt="" /></UserImageStyled>}
+					imageComponent={<UserCover isAuthor={user?.isAuthor} color={user?.imageColors[0]} src={user?.photoURL} size='200px' />}
 					colors={user?.imageColors}
 					playButtonLoading={false}
 					shuffleButtonLoading={false}
@@ -56,13 +59,14 @@ export const AuthorPage = () => {
 						<h3>Top songs</h3>
 						<GridSongList {...queueInfo} />
 					</SongsStyled>
-					<SongsStyled>
-						<h3>Top Playlists</h3>
+					{playlists.length !== 0 && <SongsStyled>
+						<h3>Top Albums</h3>
 						<Flex gap={14}>
 							{playlists.map((playlist) => <PlaylistItem playlist={playlist} key={playlist.id} />)}
 						</Flex>
-					</SongsStyled>
+					</SongsStyled>}
 				</ContentWrapperStyled>
+				{!loading && <SimilarAuthors songs={songs} currentPageUser={user} />}
 			</AuthorPageStyled>
 		</SkeletonPageAnimation>
 	)

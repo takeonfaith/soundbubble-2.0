@@ -5,7 +5,7 @@ export const IconTextStyled = styled.div`
   align-items: center;
   gap: 12px;
   color: #fff;
-  opacity: 0.6;
+  opacity: 0.7;
 `;
 
 export const Icon = styled.div`

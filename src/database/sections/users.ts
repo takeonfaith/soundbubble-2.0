@@ -32,7 +32,7 @@ export class Users {
     }
   }
 
-  static getUserByUid = async (uid: string | undefined) => {
+  static async getUserByUid(uid: string | undefined) {
     try {
       if (!uid) throw new Error(ERRORS.loginFailed("UID must be provided"))
 
@@ -41,7 +41,28 @@ export class Users {
       console.error(error);
       return null;
     }
-  };
+  }
+
+  static async getUsersByUids(uids: string[], sortByListners?: boolean) {
+    try {
+      if (uids.length === 0) return []
+
+      const additionalParams = []
+
+      if (sortByListners) {
+        additionalParams.push(orderBy("numberOfListenersPerMonth", "desc"))
+      }
+
+      const snapshot = await getDocs(
+        query(this.ref, where('uid', 'in', uids), ...additionalParams)
+      )
+
+      return getDataFromDoc<TUser>(snapshot)
+    } catch (error) {
+      console.error(error);
+      return []
+    }
+  }
 
   static onAuthStateChanged = async (func: NextOrObserver<User>) => {
     try {
@@ -65,6 +86,31 @@ export class Users {
         )
       );
       return getDataFromDoc<TSong>(snapshot);
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  static async getSimilarAuthorsBySongs(songs: TSong[]) {
+    try {
+      if (songs.length === 0) return []
+
+      const ids = [...new Set(songs.flatMap((song) => song.authors.map((author) => author.uid)))]
+
+      return await this.getUsersByUids(ids, true)
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  static async getTopAuthorsByListenings(topQuantity = 10) {
+    try {
+      const snapshot = await getDocs(
+        query(this.ref, where('isAuthor', '==', true), orderBy("numberOfListenersPerMonth", "desc"), limit(topQuantity))
+      );
+      return getDataFromDoc<TUser>(snapshot);
     } catch (error) {
       console.error(error);
       return [];

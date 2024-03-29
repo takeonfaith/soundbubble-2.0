@@ -1,19 +1,12 @@
-import { IconVinyl } from '@tabler/icons-react'
-import { Cover } from '../../../shared/components/cover'
-import { PlaylistCoverStyled } from './styles'
+import { GeneralCover } from '../../../shared/components/cover/GeneralCover'
+import { GeneralCoverProps } from '../../../shared/components/cover/types'
+import { ENTITIES_ICONS } from '../../../shared/constants/icons'
+import { PLAYLIST_RADIUS } from '../constants'
 
-type Props = {
-	src: string | undefined
-	color: string | undefined
-	children?: React.ReactNode
-	size?: string
-}
+type Props = Omit<GeneralCoverProps, 'fallbackIcon'>
 
-export const PlaylistCover = ({ src, color, children, size }: Props) => {
+export const PlaylistCover = (props: Props) => {
 	return (
-		<PlaylistCoverStyled $size={size} $color1={color}>
-			{src ? <Cover src={src} /> : <IconVinyl className='playlist-icon' />}
-			{children}
-		</PlaylistCoverStyled>
+		<GeneralCover {...props} borderRadius={props.borderRadius ?? PLAYLIST_RADIUS} fallbackIcon={ENTITIES_ICONS.playlist} />
 	)
 }

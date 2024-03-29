@@ -59,3 +59,12 @@ export const ButtonsStyled = styled.div`
 		box-shadow: 0 20px 40px #00000054;
 	}
 `
+
+export const SimilarAuthorsStyled = styled.div`
+	width: 100%;
+	background: #161616;
+	padding: 30px 40px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+`

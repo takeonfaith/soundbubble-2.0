@@ -117,6 +117,7 @@ sample({
   target: $loopMode,
 });
 
+// Отслеживаем очередь, чтобы при изменении текущего трека его загружать
 createWatch({
   unit: $queue,
   fn: (queue) => {

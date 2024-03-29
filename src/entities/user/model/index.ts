@@ -8,6 +8,7 @@ import { DEFAULT_PAGE_STORE, DEFAULT_STORE } from "./constants";
 import { CreateUserCreditsType, LoginCreditsType, TPageStore, TStore, TUser } from "./types";
 import { loadingEffect } from "../../../shared/effector/loadingEffect";
 import { errorEffect } from "../../../shared/effector/errorEffect";
+import { Playlists, Users } from "../../../database/sections";
 
 const loginFx = createEffect(async (credits: LoginCreditsType): Promise<TUser | null> => {
   return tryWrapper(async () => {
@@ -27,6 +28,21 @@ const loadLibraryFx = createEffect(async (store: TStore) => {
   }, 'operationFailed')
 })
 
+const loadUserPlaylistsFx = createEffect(async (store: TStore) => {
+  try {
+    console.log('loadUserPlaylists');
+
+    if (!store.data) throw new Error("Failed to load added playlists")
+
+    const addedPlaylists = await Playlists.getPlaylistsByUids(store.data.addedPlaylists)
+    const ownPlaylists = await Playlists.getPlaylistsByUids(store.data.ownPlaylists)
+
+    return [...ownPlaylists, ...addedPlaylists]
+  } catch (error) {
+    throw new Error("Failed to load added playlists");
+  }
+})
+
 const loadUserPageFx = createEffect(async (userId: string) => {
   try {
     const user = await Database.Users.getUserByUid(userId)
@@ -38,15 +54,26 @@ const loadUserPageFx = createEffect(async (userId: string) => {
   }
 })
 
+const loadSimilarAuthorsFx = createEffect(async (songs: TSong[]) => {
+  try {
+    const authors = await Users.getSimilarAuthorsBySongs(songs)
+    return authors
+  } catch (error) {
+    throw new Error("Failed to load similar authors");
+  }
+})
+
 const login = createEvent<LoginCreditsType>();
 const createUser = createEvent<CreateUserCreditsType>()
 const setUser = createEvent<TUser>()
 const getLibrary = createEvent()
 const setLoggining = createEvent<boolean>()
 const getUserPage = createEvent<string>()
+const loadSimilarAuthors = createEvent<TSong[]>()
+const resetUserPage = createEvent()
 
 const user = createStore<TStore>(DEFAULT_STORE);
-const $userPage = createStore<TPageStore>(DEFAULT_PAGE_STORE)
+const $userPage = createStore<TPageStore>(DEFAULT_PAGE_STORE).reset(resetUserPage)
 
 sample({
   clock: login,
@@ -64,7 +91,14 @@ sample({
   clock: loginFx.doneData,
   source: user,
   fn: (store) => ({ ...store, loggining: false }),
-  target: user,
+  target: user
+})
+
+sample({
+  clock: loadUserPlaylistsFx.doneData,
+  source: user,
+  fn: (store, userPlaylists) => ({ ...store, userPlaylists }),
+  target: user
 })
 
 sample({
@@ -78,7 +112,7 @@ sample({
   clock: setUser,
   source: user,
   fn: (store, data) => ({ ...store, data, loggining: false }),
-  target: user
+  target: [user, loadUserPlaylistsFx]
 })
 
 sample({
@@ -108,13 +142,27 @@ sample({
   target: loadUserPageFx,
 })
 
-loadingEffect(loadUserPageFx, $userPage)
+loadingEffect(loadUserPageFx, $userPage, 'loading')
 errorEffect(loadUserPageFx, $userPage)
 
 sample({
   clock: loadUserPageFx.doneData,
   source: $userPage,
-  fn: (store, data) => ({ ...store, ...data }),
+  fn: (store, data) => ({ ...store, ...data, similarAuthors: [] }),
+  target: $userPage,
+})
+
+sample({
+  clock: loadSimilarAuthors,
+  target: loadSimilarAuthorsFx,
+})
+
+loadingEffect(loadSimilarAuthorsFx, $userPage, 'similarAuthorsLoading')
+
+sample({
+  clock: loadSimilarAuthorsFx.doneData,
+  source: $userPage,
+  fn: (store, similarAuthors) => ({ ...store, similarAuthors }),
   target: $userPage,
 })
 
@@ -123,10 +171,12 @@ export const userModel = {
   useUserPage: () => useUnit($userPage),
   events: {
     login,
+    loadSimilarAuthors,
     createUser,
     setUser,
     getLibrary,
     setLoggining,
     loadUserPageFx,
+    resetUserPage,
   }
 }

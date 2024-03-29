@@ -169,7 +169,7 @@ class PrivateSearchSuggestions {
     return result;
   }
 
-  protected static async getResult(suggestions: Suggestion[]) {
+  protected static async getResult(suggestions: Suggestion[], shouldLoadAuthorTopTracks?: boolean) {
     const requests = {
       playlists: Playlists.getPlaylistByUid,
       songs: Songs.getSongByUid,
@@ -200,7 +200,7 @@ class PrivateSearchSuggestions {
     const isAuthor =
       "isAuthor" in first && first?.isAuthor && "ownSongs" in first;
 
-    if (isAuthor) {
+    if (isAuthor && shouldLoadAuthorTopTracks) {
       const authorTopTracks = await Users.getAuthorTopSongs(
         first.ownSongs as string[]
       );
@@ -232,7 +232,19 @@ export class SearchSuggestions extends PrivateSearchSuggestions {
         searchString
       );
 
-      return await this.getResult(suggestions);
+      return await this.getResult(suggestions, true);
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  static async getTopSearches(topQuantity = 10) {
+    try {
+      const snapshot = await getDocs(
+        query(this.ref, orderBy("rank", "desc"), limit(topQuantity))
+      );
+      return await this.getResult(getDataFromDoc<Suggestion>(snapshot), false)
     } catch (error) {
       console.error(error);
       return [];

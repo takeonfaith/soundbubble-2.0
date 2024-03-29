@@ -3,6 +3,7 @@ import React from "react";
 export type TAuthor = {
   uid: string;
   displayName: string;
+  photoURL: string;
 };
 
 export type TLyric = { text: string; startTime: number };

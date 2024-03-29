@@ -69,6 +69,11 @@ export const ControlButton = styled.button`
   .loading {
     width: 30px;
     height: 30px;
+
+    svg {
+      width: 30px;
+      height: 30px;
+    }
   }
 
   .prev-icon-1 {
@@ -167,6 +172,7 @@ export const SmallControlButton = styled(ControlButton) <{
   height: 40px;
 
   &.selected {
+    background: ${({ theme }) => theme.colors.lightHover};
     svg {
       color: ${({ $color1 }) => $color1};
       opacity: 1;
@@ -174,7 +180,6 @@ export const SmallControlButton = styled(ControlButton) <{
   }
 
   svg {
-    opacity: 1;
     width: 20px;
     height: 20px;
   }

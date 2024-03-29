@@ -15,12 +15,21 @@ export const TrendBox = styled.div`
 	border-radius: 10px;
 	background: #00000029;
 	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	color: ${({ theme }) => theme.colors.greyText};
 
-	svg {
-		opacity: 0.5;
+
+	.title {
+		svg {
+			width: 18px;
+			height: 18px;
+		}
 	}
 
 	h3 {
+		color: #fff;
 		font-weight: 300;
 		opacity: 0.9;
 	}
