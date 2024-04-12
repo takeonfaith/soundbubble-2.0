@@ -1,9 +1,9 @@
 import { Content } from "@components/content";
 import { VerticalSongsList } from "@song/ui/verticalList";
 import { IconMusic } from "@tabler/icons-react";
+import { useEffect } from "react";
 import styled from "styled-components";
 import { userModel } from "../../entities/user/model";
-import { useEffect } from "react";
 
 const LibraryStyled = styled.div`
   display: flex;

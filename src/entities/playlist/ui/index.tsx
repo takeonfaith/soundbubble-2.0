@@ -1,6 +1,10 @@
 import { Authors } from "@components/authors";
 import { Flex } from "@components/flex";
-import { PlayPauseIcon } from "../../../shared/components/play-pause-icon";
+import { Songs } from "../../../database/sections";
+import { PlayPauseIcon } from "../../../shared/components/playPauseIcon";
+import { songModel } from "../../song/model";
+import { TQueueStore, TSong } from "../../song/model/types";
+import { TOrientation } from "../../user/types";
 import { TPlaylist } from "../model/types";
 import { PlaylistCover } from "./PlaylistCover";
 import {
@@ -8,7 +12,6 @@ import {
   PalylistTitle,
   PlaylistStyled,
 } from "./styles";
-import { TOrientation } from "../../user/types";
 
 type Props = {
   playlist: TPlaylist;
@@ -16,15 +19,33 @@ type Props = {
 };
 
 export const PlaylistItem = ({ playlist, orientation = 'vertical' }: Props) => {
-  const { image, name, imageColors, authors, id } = playlist;
-  // const handleClickPlay = () => {
+  const { image, name, imageColors, authors, id, songs } = playlist;
+  const { play } = songModel.useControls();
 
-  // }
+  const handlePlay = (songs: TSong[], index: number) => {
+    const queue: TQueueStore | undefined = {
+      currentSongIndex: index,
+      name,
+      icon: image,
+      url: `/playlist/${id}`,
+      songs: songs,
+      shuffle: false,
+    };
+
+    play(songs[0], queue);
+  };
+
+  const handleLoadPlaylistSongs = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    Songs.getSongsByUids(songs).then((songs) => {
+      handlePlay(songs, 0)
+    })
+  }
 
   return (
-    <PlaylistStyled $orientation={orientation} to={`/playlist/${id}`} $color1={imageColors[0]}>
+    <PlaylistStyled $orientation={orientation} to={`/playlist/${id}`} $color1={imageColors[0]} onClick={e => e.stopPropagation()}>
       <PlaylistCover borderRadius={orientation === 'vertical' ? undefined : '3px'} size="var(--size)" src={image} color={imageColors[0]}>
-        <ControlButton $orientation={orientation} $color={imageColors[0]}>
+        <ControlButton $orientation={orientation} $color={imageColors[0]} onClick={handleLoadPlaylistSongs}>
           <PlayPauseIcon loading={false} playling={false} size={18} />
         </ControlButton>
       </PlaylistCover>

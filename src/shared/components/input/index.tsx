@@ -45,7 +45,7 @@ export const Input = ({
           required={required}
           {...props}
         />
-        <RightIcon onClick={onRightIconClick}>{rightIcon}</RightIcon>
+        {rightIcon && <RightIcon onClick={onRightIconClick}>{rightIcon}</RightIcon>}
       </InputFieldWrapper>
       {error && <InputError>{error}</InputError>}
     </InputWrapper>

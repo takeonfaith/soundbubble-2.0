@@ -24,6 +24,7 @@ import {
   SongNameAndListens,
   SongStyled,
 } from "./styles";
+import { PlayingAnimation } from "../../../shared/components/playingAnimation";
 
 type Props = {
   song: TSong;
@@ -67,6 +68,7 @@ export const SongItem = memo(
                 <PlayButton>
                   <IconPlayerPauseFilled className="action-icon" />
                 </PlayButton>
+                <PlayingAnimation color={imageColors[1]} playing />
               </PauseOverlay>
             )}
             {loading && (

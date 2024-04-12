@@ -9,7 +9,7 @@ import {
   IconRepeatOnce
 } from "@tabler/icons-react";
 import { useMemo } from "react";
-import { PlayPauseIcon } from "../play-pause-icon";
+import { PlayPauseIcon } from "../playPauseIcon";
 import {
   ControlButton,
   CustomSlider,

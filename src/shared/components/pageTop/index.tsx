@@ -15,11 +15,7 @@ type Props = {
 	imageComponent: React.ReactNode,
 	colors: string[] | undefined
 	isVerified?: boolean
-	playButtonLoading: boolean
-	shuffleButtonLoading: boolean
 	subtitle?: React.ReactNode
-	onPlay: () => void
-	onShuffle: () => void
 	bottomButtons?: React.ReactNode
 }
 

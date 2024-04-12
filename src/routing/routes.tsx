@@ -8,6 +8,7 @@ import {
   IconMusic,
   IconSearch,
   IconTrendingUp,
+  IconUser,
   IconUsers,
 } from "@tabler/icons-react";
 import { Library } from "./library";
@@ -16,6 +17,7 @@ import { SongPage } from "./song";
 import { PlaylistPage } from "./playlist";
 import { AuthorPage } from "./author";
 import { TrendsPage } from "./trends";
+import { MePage } from "./me";
 
 type Section = "features" | "your activities" | "your music";
 
@@ -108,6 +110,14 @@ export const appRoutes: TRoute[] = [
     title: "Author",
     icon: <IconMicrophone />,
     component: <AuthorPage />,
+    section: "your music",
+    private: true,
+  },
+  {
+    url: "me",
+    title: "Me",
+    icon: <IconUser />,
+    component: <MePage />,
     section: "your music",
     private: true,
   },

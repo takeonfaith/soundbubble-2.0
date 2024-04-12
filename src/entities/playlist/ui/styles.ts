@@ -56,15 +56,15 @@ export const ControlButton = styled(Button) <{ $color: string; $orientation: TOr
   position: absolute;
   bottom: ${({ $orientation }) => $orientation === 'vertical' ? '16px' : '0px'};
   left: ${({ $orientation }) => $orientation === 'vertical' ? '16px' : '0px'};
-  width: 38px;
-  height: 38px;
-  border-radius: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
   color: ${({ $color }) => $color};
   background: ${({ theme }) => theme.colors.modal};
   transition: 0.2s opacity;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.hover};
+    background: ${({ theme }) => theme.colors.pageBackground};
   }
 `
 

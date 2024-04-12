@@ -74,6 +74,7 @@ export const InputStyled = styled.input<{
   color: #fff;
   height: 40px;
   font-size: 0.95rem;
+  font-weight: 300;
   width: 100%;
   /* border: 1px solid
     ${({ theme, $hasError }) =>

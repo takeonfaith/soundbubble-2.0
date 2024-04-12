@@ -6,7 +6,7 @@ import { Authors } from '../../shared/components/authors';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { PageTop } from '../../shared/components/pageTop';
-import { PlayPauseIcon } from '../../shared/components/play-pause-icon';
+import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
 import { ButtonsStyled } from '../author/styles';
@@ -34,17 +34,13 @@ export const PlaylistPage = () => {
 						<PlaylistCover size='200px' src={currentPlaylist?.image} color={currentPlaylist?.imageColors[0]} />
 					)}
 					colors={currentPlaylist?.imageColors}
-					playButtonLoading={false}
-					shuffleButtonLoading={false}
 					bottomButtons={
 						<ButtonsStyled>
 							<DefaultButton loading={false} onClick={() => null} style={{ background: '#262626', color: currentPlaylist?.imageColors?.[1] }}><PlayPauseIcon size={20} loading={false} playling={false} />Play</DefaultButton>
 							<DefaultButton loading={false} onClick={() => null} style={{ background: '#262626', color: currentPlaylist?.imageColors?.[1] }}><IconArrowsShuffle size={20} />Shuffle</DefaultButton>
-							{/* <DefaultButton width='95px' style={{ background: user?.imageColors[0] }}><IconHeart size={20}/></DefaultButton> */}
 						</ButtonsStyled>
 					}
-					onPlay={() => null}
-					onShuffle={() => null} />
+				/>
 				<PlaylistPageSongs>
 					<VerticalSongsList songs={currentPlaylistSongs ?? []} listName={currentPlaylist?.name ?? ''} listIcon={currentPlaylist?.image ?? ''} listUrl={`/playlist/${currentPlaylist?.id ?? ''}`} />
 				</PlaylistPageSongs>

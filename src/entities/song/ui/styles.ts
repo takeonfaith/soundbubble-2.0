@@ -61,6 +61,17 @@ export const PauseOverlay = styled(Overlay)`
   left: 0;
   top: 0;
 
+  .playing-animation {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  ${PlayButton} {
+    opacity: 0;
+  }
+
   svg {
     stroke-width: 1;
   }
@@ -110,16 +121,17 @@ export const SongStyled = styled.div<{ playing: boolean }>`
   &:hover {
     background: ${({ theme }) => theme.colors.hover};
     box-shadow: 0 0 20px #14141473;
-  }
 
-  .cover-children {
-    svg {
-      width: var(--icon-size);
-      height: var(--icon-size);
+    ${PauseOverlay} {
+      ${PlayButton}{
+        opacity: 1;
+      }
+
+      .playing-animation {
+        opacity: 0;
+      }
     }
-  }
 
-  &:hover {
     .cover-children {
       ${PlayOverlay} {
         opacity: 1;
@@ -131,8 +143,15 @@ export const SongStyled = styled.div<{ playing: boolean }>`
     }
   }
 
+  .cover-children {
+    svg {
+      width: var(--icon-size);
+      height: var(--icon-size);
+    }
+  }
+
   ${MoreInfoButton} {
-    ${({ playing }) => playing ? 'opacity: 1' : 'opacity:0'};
+    ${({ playing }) => playing ? 'opacity: 1' : 'opacity: 0'};
   }
 
   /* @container (max-width: 699px) {
