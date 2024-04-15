@@ -1,9 +1,28 @@
 import { songModel } from "@song/model";
 import { useEffect, useRef } from "react";
+import { TQueueStore } from "../../entities/song/model/types";
 import { PlaneSongList } from "../../entities/song/ui/planeList";
 import { Flex } from "../../shared/components/flex";
 import { Lyric, LyricLoadingAnimation, Lyrics, RightSide } from "./styles";
 import { TRightSideType } from "./types";
+import { UserItem } from "../../entities/user/ui";
+import { Divider } from "../../shared/components/divider";
+
+const Queue = ({ queue }: { queue: TQueueStore }) => {
+  return <Flex d="column" gap={4} width="100%">
+
+    {queue.url?.includes('author') ? <UserItem onClick={() => songModel.fullscreen.close()} orientation="horizontal" user={{
+      displayName: queue.name ?? '',
+      uid: queue.url.split('/author/')[1],
+      imageColors: [],
+      photoURL: queue.icon as string,
+      isVerified: true,
+      isAuthor: true
+    }} /> : null}
+    <Divider />
+    <PlaneSongList songs={queue.songs} listName={null} listIcon={undefined} listUrl={null} />
+  </Flex>
+}
 
 type Props = {
   type: TRightSideType
@@ -78,9 +97,7 @@ export const FullScreenPlayerRightSide = ({ type }: Props) => {
           );
         })}
       </Lyrics>}
-      {type === 'queue' && <Flex d="column" gap={4} width="100%">
-        <PlaneSongList songs={queue.songs} listName={null} listIcon={undefined} listUrl={null} />
-      </Flex>}
+      {type === 'queue' && <Queue queue={queue} />}
     </RightSide>
   );
 };

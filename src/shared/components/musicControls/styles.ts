@@ -172,7 +172,7 @@ export const SmallControlButton = styled(ControlButton) <{
   height: 40px;
 
   &.selected {
-    background: ${({ theme }) => theme.colors.lightHover};
+    background: ${({ theme }) => theme.colors.darkHover};
     svg {
       color: ${({ $color1 }) => $color1};
       opacity: 1;

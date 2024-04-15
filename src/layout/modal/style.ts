@@ -33,3 +33,16 @@ export const ModalContent = styled.div`
   padding-top: 0;
   overflow-y: auto;
 `;
+
+export const ModalButtons = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+`
+
+export const ScrollingPart = styled.div`
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+`

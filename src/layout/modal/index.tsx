@@ -1,11 +1,11 @@
 import { CloseButton } from "@components/closeButton";
+import { modalModel } from "./model";
 import {
   ModalBackground,
-  ModalStyled,
-  ModalTitle,
   ModalContent,
+  ModalStyled,
+  ModalTitle
 } from "./style";
-import { modalModel } from "./model";
 
 export const Modal = () => {
   const { opened, title, content } = modalModel.useModal();
@@ -15,6 +15,7 @@ export const Modal = () => {
   const handleClose = () => {
     modalModel.events.close();
   };
+
 
   return (
     <ModalBackground>

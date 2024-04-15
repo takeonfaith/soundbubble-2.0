@@ -9,10 +9,11 @@ export const THEME = {
     hover: "#ffffff14",
     pageBackground: "#18191b",
     overlay: "#0e0e0ed4",
-    input: "#2b2b2b",
+    input: "#323232",
     border: "#92929257",
     sidebar: "#101011",
     lightHover: "#ffffff1f",
+    darkHover: "#0000002b",
     modal: "#242629",
     greyText: "#a2a2a2",
     blue: {

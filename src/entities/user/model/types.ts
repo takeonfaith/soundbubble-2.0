@@ -12,6 +12,7 @@ export type TUser = {
   friends?: string[];
   imageColors: string[]
   isVerified: boolean
+  isAdmin?: boolean
   isAuthor?: boolean
   lastQueue: {
     image: string;
