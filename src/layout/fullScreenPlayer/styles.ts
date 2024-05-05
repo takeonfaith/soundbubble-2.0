@@ -154,7 +154,7 @@ export const Lyric = styled.div`
   }
 
   &.farFromCurrent {
-    opacity: 0.05;
+    opacity: 0.1;
     transform: scale(0.8);
   }
 

@@ -88,14 +88,14 @@ class PrivateSearchSuggestions {
         return suggestions;
       }
 
-      // console.log(this.savedSuggestion);
 
       const remainingSearchString = searchString.replace(
-        this.savedSuggestion!.lastSearch,
+        this.savedSuggestion?.lastSearch ?? '',
         ""
       );
+      console.log(remainingSearchString);
 
-      if (this.savedSuggestion!.place === "users") {
+      if (this.savedSuggestion?.place === "users") {
         return await this.getAuthorsSong(remainingSearchString);
       }
 

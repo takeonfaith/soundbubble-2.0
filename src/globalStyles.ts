@@ -12,4 +12,8 @@ export const GlobalStyles = createGlobalStyle`
 		color: #fff;
 		overflow: hidden;
 	}
+
+	input:focus, button:focus, select:focus, textarea:focus, a:focus {
+		outline: 1px solid ${({ theme }) => theme.colors.blue.main};
+	}
 `;

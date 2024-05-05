@@ -3,6 +3,8 @@ import { NextOrObserver, User, createUserWithEmailAndPassword, getAuth, onAuthSt
 import { collection, doc, getDoc, initializeFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
+console.log(import.meta.env);
+
 const config = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,

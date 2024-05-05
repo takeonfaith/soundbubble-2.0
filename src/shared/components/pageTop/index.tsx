@@ -2,10 +2,9 @@ import { IconDiscountCheckFilled, IconHeadphones, IconHeart, IconInfoCircle, Ico
 import { ShareModal } from '../../../features/shareModal';
 import { modalModel } from '../../../layout/modal/model';
 import { THEME } from '../../constants/theme';
-import { Wave } from '../../images';
 import { Button } from '../button';
 import { Flex } from '../flex';
-import { PageTopStyled, TopBackground, TopRightCorner } from './styles';
+import { PageTopStyled, TopRightCorner } from './styles';
 
 type Props = {
 	id: string | undefined
@@ -47,20 +46,20 @@ export const PageTop = ({ name, subtitle, bottomButtons, numberOfListenersPerMon
 					</Flex>
 				</Flex>
 				<TopRightCorner>
-					<Button $height='32px' $width='40px' $background={THEME.colors.lightHover}>
+					<Button $height='32px' $width='45px' $background={THEME.colors.lightHover}>
 						<IconHeart size={20} />
 					</Button>
-					<Button $height='32px' $width='40px' onClick={handleClickShare} $background={THEME.colors.lightHover}>
+					<Button $height='32px' $width='45px' onClick={handleClickShare} $background={THEME.colors.lightHover}>
 						<IconShare3 size={20} />
 					</Button>
-					<Button $height='32px' $width='40px' $background={THEME.colors.lightHover}>
+					<Button $height='32px' $width='45px' $background={THEME.colors.lightHover}>
 						<IconInfoCircle size={20} />
 					</Button>
 				</TopRightCorner>
 			</Flex>
-			<TopBackground>
+			{/* <TopBackground>
 				<img src={Wave} />
-			</TopBackground>
+			</TopBackground> */}
 			{bottomButtons}
 		</PageTopStyled>
 	)

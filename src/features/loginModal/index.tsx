@@ -5,6 +5,7 @@ import { Input } from "@components/input";
 import { PasswordInput } from "@components/input/PasswordInput";
 import { useState } from "react";
 import { userModel } from "../../entities/user/model";
+import { IconAt } from "@tabler/icons-react";
 
 type Props = {
   actionAfterLogin?: () => void;
@@ -13,11 +14,32 @@ type Props = {
 export const LoginModal = ({ actionAfterLogin }: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const { data, loggining, error } = userModel.useUser()
 
+  const validateFields = () => {
+    const errors: Record<string, string> = {};
+    if (!email) {
+      errors.email = "Email is required"
+    }
+
+    if (!password) {
+      errors.password = "Password is required"
+    }
+    setErrors(errors);
+    console.log(errors);
+
+    return Object.keys(errors).length !== 0;
+  }
+
   const handleLogin = () => {
+    const hasErrors = validateFields()
+    console.log(hasErrors, errors);
+
     // if (actionAfterLogin) actionAfterLogin();
-    userModel.events.login({ email, password })
+    if (!hasErrors) {
+      userModel.events.login({ email, password })
+    }
   };
 
   console.log(error);
@@ -45,11 +67,14 @@ export const LoginModal = ({ actionAfterLogin }: Props) => {
           type="email"
           onError={(e) => console.log(e)}
           required
+          icon={<IconAt />}
+          error={errors?.email}
         />
         <PasswordInput
           onChange={handleChangePassword}
           value={password}
           required
+          error={errors?.password}
         />
       </Flex>
       <DefaultButton

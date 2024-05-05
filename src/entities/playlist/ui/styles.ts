@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import { styled } from "styled-components";
 import { Button } from "../../../shared/components/button";
 import { TOrientation } from "../../user/types";
+import { PLAYLIST_RADIUS } from "../constants";
 
-export const PlaylistStyled = styled(Link) <{ $color1: string; $orientation: TOrientation }>`
+export const PlaylistStyled = styled(Link)<{ $color1: string; $orientation: TOrientation }>`
   gap: 10px;
   display: flex;
   flex-direction: ${({ $orientation }) => $orientation === 'vertical' ? 'column' : 'row'};
@@ -30,6 +31,7 @@ export const PlaylistStyled = styled(Link) <{ $color1: string; $orientation: TOr
     box-shadow: 0 50px 100px ${({ $color1 }) => $color1};
     top: 0%;
     opacity: 0.2;
+    border-radius: ${PLAYLIST_RADIUS};
   }
 
   &:hover:before {
@@ -47,8 +49,12 @@ export const PlaylistStyled = styled(Link) <{ $color1: string; $orientation: TOr
     }
   }
 
-  @media (max-width:1200px) {
+  @media (max-width: 1200px) {
     --size: calc(100vw / 6); 
+  }
+
+  @media (max-width: 800px) {
+    --size: calc(100vw / 4);
   }
 `;
 
@@ -67,42 +73,6 @@ export const ControlButton = styled(Button) <{ $color: string; $orientation: TOr
     background: ${({ theme }) => theme.colors.pageBackground};
   }
 `
-
-export const PlaylistCoverStyled = styled.div<{ $color1: string | undefined; $size?: string }>`
-  width: ${({ $size }) => $size ?? 'var(--size)'};
-  height: ${({ $size }) => $size ?? 'var(--size)'};
-  /* min-width: 140px;
-  min-height: 140px; */
-  max-width: 300px;
-  max-height: 300px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  background: ${({ $color1 }) => $color1 ?? 'grey'};
-  border-radius: ${({ theme }) => theme.borderRadius.huge};
-  position: relative;
-
-  img {
-    width: 100%;
-    transition: 0.3s transform ease-in-out;
-  }
-
-  .playlist-icon {
-    width: 50%;
-    height: 50%;
-    opacity: 0.8;
-    margin: auto;
-    color:#fff;
-  }
-
-  
-
-  &:hover {
-    img {
-      transform: scale(1.1);
-    }
-  }
-`;
 
 export const PalylistTitle = styled.div`
   font-size: 0.95rem;

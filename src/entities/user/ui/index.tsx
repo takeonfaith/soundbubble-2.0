@@ -21,7 +21,7 @@ export const UserItem = ({ user, onClick, orientation = 'vertical' }: Props) => 
 
 	return (
 		<UserItemStyled to={`/author/${uid}`} $orientation={orientation} onClick={onClick}>
-			<UserCover color={imageColors?.[0]} src={photoURL} size={isVertical ? 'calc(100vw / 11)' : '38px'} isAuthor={isAuthor} />
+			<UserCover color={imageColors?.[0]} src={photoURL} size={isVertical ? 'var(--size)' : '38px'} isAuthor={isAuthor} />
 			<Flex d='column' gap={isVertical ? 4 : 1} width='100%' ai={isVertical ? 'center' : 'flex-start'}>
 				<Flex jc={isVertical ? 'center' : 'flex-start'} gap={8} width='100%'>
 					<h4>{displayName}</h4>

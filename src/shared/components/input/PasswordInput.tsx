@@ -1,4 +1,4 @@
-import { IconEye, IconEyeClosed } from "@tabler/icons-react";
+import { IconEye, IconEyeClosed, IconPassword } from "@tabler/icons-react";
 import { useState } from "react";
 import { Input } from ".";
 
@@ -21,6 +21,7 @@ export const PasswordInput = (props: Props) => {
       rightIcon={rightIcon}
       onRightIconClick={handleShowPassword}
       type={localType}
+      icon={<IconPassword />}
       {...props}
     />
   );

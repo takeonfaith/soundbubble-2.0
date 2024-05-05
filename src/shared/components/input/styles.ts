@@ -15,7 +15,7 @@ const Icon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  top: 9px;
+  top: 8px;
 
   svg {
     width: 18px;
@@ -76,15 +76,11 @@ export const InputStyled = styled.input<{
   font-size: 0.95rem;
   font-weight: 300;
   width: 100%;
-  /* border: 1px solid
+  border: 1px solid
     ${({ theme, $hasError }) =>
-      $hasError ? theme.colors.red.main : theme.colors.border}; */
+      $hasError ? theme.colors.red.text : 'none'};
   padding-left: ${({ $hasIcon }) => ($hasIcon ? "40px" : "10px")};
   padding-right: ${({ $hasRightIcon }) => ($hasRightIcon ? "40px" : "10px")};
-
-  &:focus {
-    outline: none;
-  }
 
   &:disabled {
     background: ${({ theme }) => theme.colors.border};

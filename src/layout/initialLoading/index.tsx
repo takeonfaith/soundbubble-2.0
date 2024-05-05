@@ -33,7 +33,7 @@ export const InitialLoading = () => {
 
 
 	return (
-		<InitialLoadingStyled className={!data ? 'loading' : 'loaded'}>
+		<InitialLoadingStyled className={loggining ? 'loading' : 'loaded'}>
 			<Logo short />
 			{showSlowInternetMessage && <span>It seems like You have slow internet connection...</span>}
 			{loggining && <Loading />}

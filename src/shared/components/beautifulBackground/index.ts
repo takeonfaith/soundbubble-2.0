@@ -2,8 +2,8 @@ import styled from "styled-components";
 
 export const BeautifulBackground = styled.div<{ $colors: string[] | undefined }>`
   background-color: ${({ $colors }) => $colors?.[1] ?? "grey"};
-  animation: bg 8s infinite;
-  background-size: 200% 200%;
+  animation: bg 15s infinite;
+  background-size: 150% 150%;
   //linear-gradient(#000000b0, #00000057)
   background-image: linear-gradient(#00000042, #00000038),
     radial-gradient(
@@ -40,16 +40,16 @@ export const BeautifulBackground = styled.div<{ $colors: string[] | undefined }>
 
   @keyframes bg {
     0% {
-		background-position: 0 0;
-      background-size: 100% 100%;
+		  background-position: 0 0;
+      background-size: 150% 150%;
     }
     50% {
-		background-position: -100px -120px;
-      background-size: 120% 120%;
+		  background-position: -200px -220px;
+      background-size: 130% 130%;
     }
     100% {
-		background-position: 0 0;
-      background-size: 100% 100%;
+		  background-position: 0 0;
+      background-size: 150% 150%;
     }
   }
 `

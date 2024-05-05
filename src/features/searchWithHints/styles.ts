@@ -20,7 +20,6 @@ export const HintsStyled = styled.div`
   gap: 4px;
   justify-content: center;
   color: ${({ theme }) => theme.colors.greyText};
-  border: 1px solid ${({ theme }) => theme.colors.border};
   border-top: none;
   z-index: 10;
 

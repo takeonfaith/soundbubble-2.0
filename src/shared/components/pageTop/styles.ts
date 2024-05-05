@@ -9,21 +9,8 @@ export const PageTopStyled = styled(BeautifulBackground)`
 	flex-direction: column;
 	gap: 20px;
 	position: relative;
-	background-size: 300% 300%;
+	background-size: 150% 200%;
 	animation: none;
-`
-
-
-export const ButtonsStyled = styled.div`
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	width: 300px;
-	margin-bottom: -70px;
-
-	button {
-		box-shadow: 0 20px 40px #00000054;
-	}
 `
 
 export const TopRightCorner = styled.div`
@@ -40,7 +27,7 @@ export const TopBackground = styled.div`
 	position: absolute;
 	height: 100%;
 	left: 0;
-	padding-top: 270px ;
+	padding-top: 100px ;
 	overflow: hidden;
 	z-index: 0;
 	pointer-events: none;

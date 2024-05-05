@@ -29,9 +29,11 @@ export const Header = styled.header`
 function App() {
   useEffect(() => {
     Database.Users.onAuthStateChanged(async (userCred) => {
+      console.log(userCred);
+      if (userCred === null) return
       userModel.events.setLoggining(true)
       const user = await Database.Users.getUserByUid(userCred?.uid)
-      console.log(user)
+      // console.log(user)
       userModel.events.setUser({ ...userCred, ...user } as TUser)
     })
   }, [])

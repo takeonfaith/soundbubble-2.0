@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const getPlayingAnimation = () => {
-	const heights = [10, 15, 8, 6, 12, 14, 7, 13, 10, 5, 9, 11]
+	const heights = [10, 11, 8, 4, 12, 13, 7, 13, 10, 5, 9, 8, 10, 12, 4, 12, 5, 13, 12, 11, 5, 9, 8, 10]
 
 	const result = `@keyframes playing {
 		${heights.map((h, i) => {
@@ -50,7 +50,7 @@ export const PlayingAnimationStyled = styled.div<{ $color: string }>`
 
 export const PlayingAnimationItem = styled.div`
 	width: 2.5px;
-	animation: playing 3s infinite linear;
+	animation: playing 8s infinite;
 	height: 12px;
 	border-radius: 2px;
 

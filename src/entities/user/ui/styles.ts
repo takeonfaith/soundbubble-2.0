@@ -3,13 +3,15 @@ import styled from "styled-components";
 import { TOrientation } from "../types";
 
 export const UserItemStyled = styled(Link) <{ $orientation: TOrientation }>`
+	--size: calc(100vw / 11);
+
 	display: flex;
 	flex-direction: ${({ $orientation }) => $orientation === 'vertical' ? 'column' : 'row'};
 	align-items: center;
 	gap: ${({ $orientation }) => $orientation === 'vertical' ? '10px' : '12px'};
 	text-decoration: none;
 	color: #fff;
-	width: ${({ $orientation }) => $orientation === 'vertical' ? 'calc(100vw / 11)' : '100%'};
+	width: ${({ $orientation }) => $orientation === 'vertical' ? 'var(--size)' : '100%'};
 	padding: ${({ $orientation }) => $orientation === 'vertical' ? '0' : '6px'};
 	border-radius: ${({theme})=>theme.borderRadius.big};
 
@@ -30,13 +32,19 @@ export const UserItemStyled = styled(Link) <{ $orientation: TOrientation }>`
 		font-size: 0.75rem;
 	}
 
-	@media (max-width: 900px) {
+	@media (max-width: 1200px) {
+		--size: calc(100vw / 9);
+	}
+
+	@media (max-width: 1000px) {
+		--size: calc(100vw / 7);
+		
 		h4 {
-			font-size: 0.7rem;
+			font-size: 0.86rem;
 		}
 
 		span {
-			font-size: 0.6rem;
+			font-size: 0.7rem;
 		}
 	}
 `
