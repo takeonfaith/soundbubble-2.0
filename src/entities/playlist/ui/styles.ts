@@ -10,13 +10,15 @@ export const PlaylistStyled = styled(Link)<{ $color1: string; $orientation: TOri
   flex-direction: ${({ $orientation }) => $orientation === 'vertical' ? 'column' : 'row'};
   align-items: ${({ $orientation }) => $orientation === 'vertical' ? 'flex-start' : 'center'};
   height: fit-content;
-  color: #fff;
+  color: ${({theme})=>theme.colors.textColor};
   position: relative;
   text-decoration: none;
-  --size: ${({ $orientation }) => $orientation === 'vertical' ? 'calc(100vw / 8)' : '34px'};
+  --size: ${({ $orientation }) => $orientation === 'vertical' ? 'calc(100vw / 8 + 3px)' : '34px'};
 
   width: ${({ $orientation }) => $orientation === 'vertical' ? 'var(--size)' : '100%'};
-  
+  /* padding: 4px;*/
+  border-radius: 6px; 
+
   .authors {
     font-size: 0.75rem;
   }
@@ -44,6 +46,7 @@ export const PlaylistStyled = styled(Link)<{ $color1: string; $orientation: TOri
   }
 
   &:hover {
+    background: ${({theme})=>theme.colors.hover};
     .cover-children {
       opacity: 0.9;
     }
@@ -58,15 +61,15 @@ export const PlaylistStyled = styled(Link)<{ $color1: string; $orientation: TOri
   }
 `;
 
-export const ControlButton = styled(Button) <{ $color: string; $orientation: TOrientation }>`
+export const ControlButton = styled(Button)<{ $color: string; $orientation: TOrientation }>`
   position: absolute;
-  bottom: ${({ $orientation }) => $orientation === 'vertical' ? '16px' : '0px'};
-  left: ${({ $orientation }) => $orientation === 'vertical' ? '16px' : '0px'};
+  bottom: ${({ $orientation }) => $orientation === 'vertical' ? '16px' : '-2px'};
+  left: ${({ $orientation }) => $orientation === 'vertical' ? '16px' : '2px'};
   width: 40px;
   height: 40px;
   border-radius: 100px;
   color: ${({ $color }) => $color};
-  background: ${({ theme }) => theme.colors.modal};
+  background: ${({ theme }) => theme.colors.modal} !important;
   transition: 0.2s opacity;
 
   &:hover {
@@ -76,7 +79,7 @@ export const ControlButton = styled(Button) <{ $color: string; $orientation: TOr
 
 export const PalylistTitle = styled.div`
   font-size: 0.95rem;
-  font-weight: 300;
+  font-weight: 200;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;

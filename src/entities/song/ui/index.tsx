@@ -1,6 +1,6 @@
 import { Authors } from "@components/authors";
 import { Loading } from "@components/loading";
-import { LikeButton } from "@shared/components/likeButton";
+import { LikeButton } from "@features/likeButton";
 import {
   IconDots,
   IconHeadphones,
@@ -38,7 +38,7 @@ type Props = {
 
 export const SongItem = memo(
   ({ song, playing, loading, index, onClick }: Props) => {
-    const { name, authors, imageColors, cover, listens } = song;
+    const { id, name, authors, imageColors, cover, listens } = song;
 
     const handleMore: React.MouseEventHandler<HTMLButtonElement> = (e) => {
       e.stopPropagation();
@@ -93,7 +93,7 @@ export const SongItem = memo(
           <IconHeadphones />
         </Listens>
         <SongButtons>
-          <LikeButton isLiked={false} likeColor={imageColors[1]} onClick={() => null} />
+          <LikeButton $width="40px" songId={id} likeColor={imageColors[1]} onClick={() => null} />
           <MoreInfoButton onClick={handleMore}>
             <IconDots />
           </MoreInfoButton>

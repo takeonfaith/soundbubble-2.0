@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyles = createGlobalStyle`
 	* {
@@ -9,11 +9,20 @@ export const GlobalStyles = createGlobalStyle`
 	}
 
 	body {
-		color: #fff;
+		color: ${({ theme }) => theme.colors.textColor};
 		overflow: hidden;
 	}
 
-	input:focus, button:focus, select:focus, textarea:focus, a:focus {
+	a {
+		color: ${({ theme }) => theme.colors.textColor};
+      text-decoration: none;
+	}
+
+	button {
+		color: ${({ theme }) => theme.colors.textColor};
+	}
+
+	input[type=text]:focus, select:focus, textarea:focus {
 		outline: 1px solid ${({ theme }) => theme.colors.blue.main};
 	}
 `;

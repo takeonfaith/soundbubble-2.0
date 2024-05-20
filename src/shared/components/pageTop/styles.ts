@@ -1,50 +1,57 @@
-import { styled } from "styled-components";
-import { BeautifulBackground } from "../beautifulBackground";
+import { styled } from 'styled-components';
+import { BeautifulBackground } from '../beautifulBackground';
 
 export const PageTopStyled = styled(BeautifulBackground)`
-	height: 400px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
-	gap: 20px;
-	position: relative;
-	background-size: 150% 200%;
-	animation: none;
-`
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    background-size: 150% 250%;
+    animation: none;
+    color: #fff;
+	 
+	 a {
+		 color: #fff;
+	 }
+`;
 
 export const TopRightCorner = styled.div`
-	display: flex;
-	align-items: center;
-	position: absolute;
-	top: 30px;
-	right: 30px;
-	gap: 10px;
-`
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    gap: 10px;
+
+    button {
+        color: #fff;
+    }
+`;
 
 export const TopBackground = styled.div`
-	width: 100%;
-	position: absolute;
-	height: 100%;
-	left: 0;
-	padding-top: 100px ;
-	overflow: hidden;
-	z-index: 0;
-	pointer-events: none;
+    width: 100%;
+    position: absolute;
+    height: 100%;
+    left: 0;
+    padding-top: 100px;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
 
-	img {
-		width: 300%;
-		animation: bgWave 3s linear infinite;
+    img {
+        width: 300%;
+        animation: bgWave 3s linear infinite;
 
-
-		@keyframes bgWave {
-			0%{
-				transform: translateX(0%);
-			}
-			100% {
-				transform: translate(-50%);
-			}
-		}
-	}
-`
-
+        @keyframes bgWave {
+            0% {
+                transform: translateX(0%);
+            }
+            100% {
+                transform: translate(-50%);
+            }
+        }
+    }
+`;

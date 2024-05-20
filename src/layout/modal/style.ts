@@ -17,7 +17,6 @@ export const ModalStyled = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: ${({ theme }) => theme.borderRadius.middle};
-  color: #fff;
   display: flex;
   flex-direction: column;
 `;

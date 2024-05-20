@@ -1,44 +1,46 @@
-import { useUnit } from "effector-react";
-import { $songStore, load, pause, play } from ".";
-import { PREVIOUS_TRACK_THRESHOLD } from "./constants";
-import { $playback, setLastRangeValue } from "./playback";
-import { next, previous } from "./queue";
-import { TQueueStore } from "./types";
-import { setCurrentLyricIndex } from "./lyrics";
+import { useUnit } from 'effector-react';
+import { $songStore, load, pause, play } from '.';
+import { PREVIOUS_TRACK_THRESHOLD } from './constants';
+import { $playback, setLastRangeValue } from './playback';
+import { next, previous } from './queue';
+import { TQueueStore } from './types';
+import { setCurrentLyricIndex } from './lyrics';
 
 export const useControls = () => {
-  const { loaded, state, currentSong } = useUnit($songStore);
-  const { currentTime } = useUnit($playback);
+    const [{ loaded, state, currentSong }, { currentTime }] = useUnit([
+        $songStore,
+        $playback,
+    ]);
 
-  return {
-    play: (song = currentSong, queue?: TQueueStore) => {
-      if (!song) return null;
+    return {
+        play: (song = currentSong, queue?: TQueueStore) => {
+            if (!song) return null;
 
-      if (!loaded || song?.id !== currentSong?.id) {
-        return load({ song, queue });
-      }
+            if (!loaded || song?.id !== currentSong?.id) {
+                return load({ song, queue });
+            }
 
-      if (state === "playing") {
-        return pause();
-      }
+            if (state === 'playing') {
+                return pause();
+            }
 
-      return play();
-    },
-    next: () => {
-      console.log('next');
-      
-      next()
-    },
-    previous: () => {
-      if (currentTime < PREVIOUS_TRACK_THRESHOLD) {
-        previous();
-        return;
-      }
+            return play();
+        },
+        next: () => {
+            console.log('next');
 
-      console.log(state);
-      
-      setLastRangeValue(0);
-      setCurrentLyricIndex(0);
-    },
-  };
+            next();
+        },
+        previous: () => {
+            if (currentTime < PREVIOUS_TRACK_THRESHOLD) {
+                previous();
+                return;
+            }
+
+            console.log(state);
+
+            setLastRangeValue(0);
+            setCurrentLyricIndex(0);
+        },
+    };
 };

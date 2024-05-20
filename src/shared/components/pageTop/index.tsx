@@ -1,7 +1,8 @@
 import { IconDiscountCheckFilled, IconHeadphones, IconHeart, IconInfoCircle, IconShare3, IconUserPlus } from '@tabler/icons-react';
+import { useTheme } from 'styled-components';
 import { ShareModal } from '../../../features/shareModal';
 import { modalModel } from '../../../layout/modal/model';
-import { THEME } from '../../constants/theme';
+import { formatBigNumber } from '../../funcs/formatBigNumber';
 import { Button } from '../button';
 import { Flex } from '../flex';
 import { PageTopStyled, TopRightCorner } from './styles';
@@ -19,6 +20,7 @@ type Props = {
 }
 
 export const PageTop = ({ name, subtitle, bottomButtons, numberOfListenersPerMonth, subscribers, imageComponent, colors, isVerified }: Props) => {
+	const theme = useTheme()
 
 	const handleClickShare = () => {
 		modalModel.events.open({ content: <ShareModal />, title: 'Share with friends' })
@@ -37,22 +39,22 @@ export const PageTop = ({ name, subtitle, bottomButtons, numberOfListenersPerMon
 				</Flex>
 				<Flex gap={20} style={{ opacity: '0.8', fontWeight: '300' }}>
 					<Flex gap={4}>
-						{numberOfListenersPerMonth}
+						{formatBigNumber(numberOfListenersPerMonth)}
 						<IconHeadphones size={16} />
 					</Flex>
 					<Flex gap={4}>
-						{subscribers}
+						{formatBigNumber(subscribers)}
 						<IconUserPlus size={16} />
 					</Flex>
 				</Flex>
 				<TopRightCorner>
-					<Button $height='32px' $width='45px' $background={THEME.colors.lightHover}>
+					<Button $height='32px' $width='45px' $background={theme.colors.darkHover}>
 						<IconHeart size={20} />
 					</Button>
-					<Button $height='32px' $width='45px' onClick={handleClickShare} $background={THEME.colors.lightHover}>
+					<Button $height='32px' $width='45px' onClick={handleClickShare} $background={theme.colors.darkHover}>
 						<IconShare3 size={20} />
 					</Button>
-					<Button $height='32px' $width='45px' $background={THEME.colors.lightHover}>
+					<Button $height='32px' $width='45px' $background={theme.colors.darkHover}>
 						<IconInfoCircle size={20} />
 					</Button>
 				</TopRightCorner>

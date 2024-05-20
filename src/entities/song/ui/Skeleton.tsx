@@ -20,7 +20,10 @@ export const SongSkeleton = () => {
 			<HorizontalSongStyled>
 				<Flex width='100%' gap={20}>
 					<SkeletonShape width='35px' height='35px' radius='6px' />
-					<SkeletonShape width='90%' height='20px' radius='6px' />
+					<SkeletonShape width='25%' height='18px' radius='6px' />
+					<SkeletonShape width='25%' height='18px' radius='6px' />
+					<SkeletonShape width='20%' height='18px' radius='6px' />
+					<SkeletonShape width='18%' height='18px' radius='6px' />
 				</Flex>
 			</HorizontalSongStyled>
 		</SongSkeletonStyled>

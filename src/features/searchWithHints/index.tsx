@@ -3,7 +3,8 @@ import { Loading } from "@components/loading";
 import { debounce } from "@shared/funcs/debounce";
 import { normalizeString } from "@shared/funcs/normalizeString";
 import {
-  IconSearch
+  IconSearch,
+  IconX
 } from "@tabler/icons-react";
 import { Database } from "database";
 import { useEffect, useState } from "react";
@@ -29,6 +30,9 @@ export const SearchWithHints = ({
   const [value, setValue] = useState(initialValue ?? "");
   const [suggestedIndex, setSuggestedIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const inputValue = suggestedIndex !== null
+    ? hints[suggestedIndex]?.displayName ?? hints[suggestedIndex]?.name
+    : value
 
   // TODO: оптимизировать запрос так, чтобы при наборе слова он сверялся
   // с уже имеющимися подсказками и если они не изменились не делал лишних
@@ -49,7 +53,7 @@ export const SearchWithHints = ({
           setHints(suggestions);
           setShowHints(suggestions.length > 0);
         }),
-      150
+      0
     );
   }, [value]);
 
@@ -120,24 +124,20 @@ export const SearchWithHints = ({
 
 
   return (
-    <SearchWithHintsStyled
-
-    >
+    <SearchWithHintsStyled>
       <Input
         icon={<IconSearch />}
-        value={
-          suggestedIndex !== null
-            ? hints[suggestedIndex]?.displayName ?? hints[suggestedIndex]?.name
-            : value
-        }
+        value={inputValue}
         onFocus={handleFocus}
         onKeyDown={handleKeyDown}
+        // onBlur={handleBlur}
         onChange={handleChange}
         placeholder="Search..."
-        rightIcon={loading && <Loading />}
+        rightIcon={loading ? <Loading /> : inputValue ? <IconX /> : null}
+        onRightIconClick={() => setValue("")}
+        type="text"
       />
       {showHints && <HintsStyled onClick={e => e.preventDefault()}>
-        {normalizeString(value) !== normalizeString(hints[0].displayName ?? hints[0].name) ? <HintItem suggestedIndex={suggestedIndex} item={{ name: value }} icon={<IconSearch />} index={null} key={-1} handleSubmitSuggestion={handleSubmitSuggestion} /> : null}
         {hints.map((el, index) => {
           if (!el) return null;
 

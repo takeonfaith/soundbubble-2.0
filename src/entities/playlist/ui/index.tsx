@@ -12,6 +12,7 @@ import {
   PalylistTitle,
   PlaylistStyled,
 } from "./styles";
+import { LikeButton } from "../../../features/likeButton";
 
 type Props = {
   playlist: TPlaylist;
@@ -49,9 +50,12 @@ export const PlaylistItem = ({ playlist, orientation = 'vertical' }: Props) => {
           <PlayPauseIcon loading={false} playling={false} size={18} />
         </ControlButton>
       </PlaylistCover>
-      <Flex d="column" width="100%" gap={2} ai="flex-start">
-        <PalylistTitle>{name}</PalylistTitle>
-        <Authors authors={authors} />
+      <Flex width="100%" jc="space-between">
+        <Flex d="column" width="100%" gap={2} ai="flex-start">
+          <PalylistTitle>{name}</PalylistTitle>
+          {orientation === 'vertical' ? <Authors authors={authors} /> : null}
+        </Flex>
+        <LikeButton $width="48px" songId={id} likeColor={imageColors[0]} />
       </Flex>
     </PlaylistStyled>
   );

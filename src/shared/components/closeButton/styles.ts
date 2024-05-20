@@ -6,12 +6,12 @@ export const CloseButtonStyled = styled.button`
   right: 3%;
   border: none;
   background: transparent;
-  color: #fff;
   width: 40px;
   height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: ${({ theme }) => theme.colors.textColor};
   border-radius: ${({ theme }) => theme.borderRadius.mild};
   cursor: pointer;
   z-index: 10;

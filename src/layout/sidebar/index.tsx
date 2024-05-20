@@ -3,13 +3,13 @@ import { IconText } from "@components/iconText";
 import { Logo } from "@components/logo";
 import { groupByField } from "@shared/funcs/groupByField";
 import { usePrivateAction } from "@shared/hooks/usePrivateAction";
-import { songModel } from "@song/model";
-import { IconMaximize, IconPlus, IconZoomIn } from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 import { modalModel } from "layout/modal/model";
 import { menuRoutes } from "routing/routes";
 import { PlaylistItem } from "../../entities/playlist/ui";
 import { userModel } from "../../entities/user/model";
-import { AddPlaylistModal } from "../../features/addPlaylistModal";
+import { CreatePlaylistModal } from "../../features/createPlaylistModal";
+import { ThemeButton } from "../../features/themeButton";
 import { DefaultButton } from "../../shared/components/button/DefaultButton";
 import {
   LogoWrapper,
@@ -23,24 +23,19 @@ export const Sidebar = () => {
   const preparedRoutes = groupByField(menuRoutes, "section");
   const { loggedIn, openLoginModal } = usePrivateAction();
   const { data, userPlaylists } = userModel.useUser()
-  console.log(userPlaylists);
 
   const handleAddPlaylist = loggedIn(() => {
     modalModel.events.open({
       title: "Create Playlist",
-      content: <AddPlaylistModal />,
+      content: <CreatePlaylistModal />,
     });
   });
-
-  const handleOpenFullScreenPlayer = () => {
-    songModel.fullscreen.open()
-  }
-
 
   return (
     <SidebarStyled>
       <LogoWrapper>
         <Logo />
+        <ThemeButton />
       </LogoWrapper>
       {Object.keys(preparedRoutes).map((route, index) => {
         return (
@@ -68,13 +63,12 @@ export const Sidebar = () => {
             <IconPlus />
           </button>
         </Flex>
-        <Flex d="column" gap={8} padding="10px">
+        <Flex d="column" gap={0} padding="10px">
           {userPlaylists?.slice(0, 3)?.map((playlist) => <PlaylistItem orientation="horizontal" playlist={playlist} key={playlist.id} />)}
         </Flex>
       </SidebarSection>
       {data === null && <DefaultButton onClick={openLoginModal()} appearance="primary">Login</DefaultButton>}
-      <IconMaximize onClick={handleOpenFullScreenPlayer} />
-      {data?.displayName}
+      <Flex height="90px"></Flex>
     </SidebarStyled>
   );
 };

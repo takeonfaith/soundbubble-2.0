@@ -1,5 +1,5 @@
 import { Loading } from "@components/loading";
-import { THEME } from "@shared/constants/theme";
+import { DARK_THEME } from "@shared/constants/theme";
 import styled from "styled-components";
 import { Button } from ".";
 
@@ -43,8 +43,8 @@ export const DefaultButton = ({
   ...restProps
 }: Props) => {
   const backgrounds: Record<ButtonAppearance, string> = {
-    primary: THEME.colors.blue.action,
-    secondary: THEME.colors.blue.transparent,
+    primary: DARK_THEME.colors.blue.action,
+    secondary: DARK_THEME.colors.blue.transparent,
     ghost: "transparent",
   };
 

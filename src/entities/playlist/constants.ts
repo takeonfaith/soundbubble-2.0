@@ -1,3 +1,3 @@
-import { THEME } from "../../shared/constants/theme";
+import { DARK_THEME } from '../../shared/constants/theme';
 
-export const PLAYLIST_RADIUS = THEME.borderRadius.huge
+export const PLAYLIST_RADIUS = DARK_THEME.borderRadius.huge;

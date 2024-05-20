@@ -30,8 +30,6 @@ export const InitialLoading = () => {
 
 	}, [data])
 
-
-
 	return (
 		<InitialLoadingStyled className={loggining ? 'loading' : 'loaded'}>
 			<Logo short />

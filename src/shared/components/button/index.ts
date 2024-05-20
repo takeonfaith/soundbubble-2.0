@@ -4,7 +4,6 @@ export const Button = styled.button<{ $background?: string; $width?: string; $he
   border: none;
   background: ${({ $background }) => $background ?? "transparent"};
   border-radius: ${({ theme }) => theme.borderRadius.mild};
-  color: #fff;
   font-size: 0.95rem;
   width: ${({ $width }) => $width ?? "100%"};
   min-height: ${({ $height }) => $height ?? '40px'};

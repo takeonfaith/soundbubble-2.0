@@ -7,7 +7,7 @@ import { getEntityType } from "../../features/searchWithHints/lib/getEntityType"
 import { TUser } from "../../entities/user/model/types";
 import { TSong } from "../../entities/song/model/types";
 
-export const Search = () => {
+export const SearchPage = () => {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const { play } = songModel.useControls();

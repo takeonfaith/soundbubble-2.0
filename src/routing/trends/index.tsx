@@ -4,12 +4,12 @@ import { SearchSuggestions, Songs, Users } from '../../database/sections'
 import { TSong } from '../../entities/song/model/types'
 import { VerticalSongsList } from '../../entities/song/ui/verticalList'
 import { TUser } from '../../entities/user/model/types'
+import { UserItem } from '../../entities/user/ui'
 import { HintItem } from '../../features/searchWithHints/HintItem'
 import { THint } from '../../features/searchWithHints/types'
 import { Flex } from '../../shared/components/flex'
 import { ENTITIES_ICONS } from '../../shared/constants/icons'
 import { TrendBox, TrendsPageStyled } from './styles'
-import { UserItem } from '../../entities/user/ui'
 
 export const TrendsPage = () => {
 	const [topSearches, setTopSearches] = useState<(THint | null)[]>([])

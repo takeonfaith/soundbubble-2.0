@@ -13,7 +13,7 @@ import { SkeletonLoading } from './Skeleton'
 import { AuthorPageStyled, ContentWrapperStyled, SongsStyled } from './styles'
 
 type Props = {
-	userData: TUser | null
+	userData?: TUser | null
 }
 
 export const AuthorPage = ({ userData }: Props) => {
@@ -49,7 +49,7 @@ export const AuthorPage = ({ userData }: Props) => {
 					subscribers={userPageData?.subscribers}
 					imageComponent={<UserCover isAuthor={isAuthor} color={userPageData?.imageColors[0]} src={userPageData?.photoURL} size='200px' />}
 					colors={userPageData?.imageColors}
-					bottomButtons={<BottomButtons user={userPageData} isAdmin={isAdmin} isPageOwner={isPageOwner} queueInfo={queueInfo} />}
+					bottomButtons={<BottomButtons buttonColor={userPageData?.imageColors[1]} isAdmin={isAdmin} isPageOwner={isPageOwner} queueInfo={queueInfo} />}
 				/>
 				<ContentWrapperStyled>
 					<SongsStyled>

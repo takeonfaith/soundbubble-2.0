@@ -3,10 +3,12 @@ import { AppAudio } from "AppAudio";
 import { useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { AppRouter } from "routing/AppRouter";
-import styled from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
+import { useTheme } from "./app/theme";
 import { Database } from "./database";
 import { userModel } from "./entities/user/model";
 import { TUser } from "./entities/user/model/types";
+import { GlobalStyles } from "./globalStyles";
 
 const AppStyled = styled.div`
   height: 100dvh;
@@ -19,14 +21,9 @@ const AppStyled = styled.div`
   width: 100%;
 `;
 
-export const Header = styled.header`
-  width: 100%;
-  height: 60px;
-  background: ${({ theme }) => theme.colors.pageBackground};
-  padding: 16px;
-`;
-
 function App() {
+  const { themeParams } = useTheme()
+
   useEffect(() => {
     Database.Users.onAuthStateChanged(async (userCred) => {
       console.log(userCred);
@@ -39,14 +36,17 @@ function App() {
   }, [])
 
   return (
-    <BrowserRouter>
-      <AppStyled>
-        <ErrorBoundary>
-          <AppAudio />
-          <AppRouter />
-        </ErrorBoundary>
-      </AppStyled>
-    </BrowserRouter>
+    <ThemeProvider theme={themeParams}>
+      <GlobalStyles />
+      <BrowserRouter>
+        <AppStyled>
+          <ErrorBoundary>
+            <AppAudio />
+            <AppRouter />
+          </ErrorBoundary>
+        </AppStyled>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

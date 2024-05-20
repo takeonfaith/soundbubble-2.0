@@ -18,7 +18,27 @@ export const SkeletonLoading = () => {
 				</Flex> */}
 			</Flex>
 		</SkeletonShape>
-		<Flex d="column" padding="78px 40px 40px 58px" width="100%" gap={0}>
+		<Flex d="column" padding="42px 40px 40px 58px" width="100%" gap={0}>
+			<Flex width="100%" gap={20} style={{ marginTop: '4px', marginBottom: '14px' }}>
+				<div style={{ width: '35px' }} />
+				<div style={{ width: '25%', height: '18px' }}>
+					<SkeletonShape width='50%' height='18px' radius='6px' />
+				</div>
+				<div style={{ width: '25%', height: '18px' }}>
+					<SkeletonShape width='50%' height='18px' radius='6px' />
+				</div>
+				<div style={{ width: '20%', height: '18px' }}>
+					<SkeletonShape width='50%' height='18px' radius='6px' />
+				</div>
+				<div style={{ width: '18%', height: '18px' }}>
+					<SkeletonShape width='50%' height='18px' radius='6px' />
+				</div>
+			</Flex>
+			<SongSkeleton />
+			<SongSkeleton />
+			<SongSkeleton />
+			<SongSkeleton />
+			<SongSkeleton />
 			<SongSkeleton />
 			<SongSkeleton />
 			<SongSkeleton />

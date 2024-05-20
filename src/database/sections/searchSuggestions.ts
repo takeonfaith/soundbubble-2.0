@@ -36,7 +36,7 @@ class PrivateSearchSuggestions {
   protected static async getAuthorsSong(songName: string, author?: TUser) {
     const orFilter: QueryFilterConstraint[] = [];
 
-    const user = author ?? (await Users.getUserByUid(this.savedSuggestion!.id));
+    const user = author
 
     if (!user) return [];
 
@@ -95,9 +95,9 @@ class PrivateSearchSuggestions {
       );
       console.log(remainingSearchString);
 
-      if (this.savedSuggestion?.place === "users") {
-        return await this.getAuthorsSong(remainingSearchString);
-      }
+      // if (this.savedSuggestion?.place === "users") {
+      //   return await this.getAuthorsSong(remainingSearchString);
+      // }
 
       const userSuggestions = getDataFromDoc<Suggestion>(
         await getDocs(
@@ -131,6 +131,9 @@ class PrivateSearchSuggestions {
     }
   }
 
+  /**
+   * Ищем все документы внутри сущности suggestions 
+   */
   protected static async getSearch(searchString: string) {
     try {
       const snapshot = await getDocs(
@@ -227,6 +230,8 @@ export class SearchSuggestions extends PrivateSearchSuggestions {
 
       const initialSuggestions = await this.getSearch(searchString);
 
+      console.log(searchString, initialSuggestions);
+      
       const suggestions = await this.getFinalSuggestions(
         initialSuggestions,
         searchString

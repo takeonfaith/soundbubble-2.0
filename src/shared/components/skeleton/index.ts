@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const Skeleton = styled.div`
-  background: ${({ theme }) => theme.colors.lightHover};
+  background: ${({ theme }) => theme.colors.skeleton};
   animation: pulse 2s infinite;
 
   @keyframes pulse {
