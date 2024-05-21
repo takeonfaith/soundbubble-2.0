@@ -7,8 +7,10 @@ const useAppAudio = () => {
   const { state } = songModel.useSong();
   const { loop, queue } = songModel.queue.useQueue()
   const { lastRangeValue, isSliding } = songModel.playblack.usePlayback();
-  const { play, next, previous } = songModel.useControls()
+  const { next, previous } = songModel.useControls()
   const audioRef = useRef<HTMLAudioElement>(null);
+
+
 
   const handleOnCanPlay: React.ReactEventHandler<HTMLAudioElement> = (e) => {
     songModel.events.loaded();
@@ -27,7 +29,7 @@ const useAppAudio = () => {
     console.log('ended');
     if (loop === LoopMode.noloop && queue.currentSongIndex === queue.songs.length - 1) {
       previous()
-      return 
+      return
     }
     next()
   };
@@ -67,6 +69,13 @@ export const AppAudio = () => {
   const { audioRef, loop, handleOnCanPlay, handlePlaying, handleEnded } =
     useAppAudio();
   const { currentSong } = songModel.useSong();
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = 5
+    }
+  }, [audioRef])
+
 
   return (
     <audio

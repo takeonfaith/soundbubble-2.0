@@ -54,7 +54,7 @@ export const MusicControls = ({
   const { getBackgroundSize, currentTimeStr, durationStr } = useMemo(
     () => ({
       getBackgroundSize: {
-        backgroundSize: `${(currentTime * 100) / duration + 1}% 100%`,
+        backgroundSize: `calc(${((currentTime * 100) / duration)}% + 1px) 100%`,
       },
       currentTimeStr: secondsToTimeStr(currentTime),
       durationStr: secondsToTimeStr(duration),
@@ -62,10 +62,10 @@ export const MusicControls = ({
     [duration, currentTime]
   );
 
-  const buttonColor = colors?.[1]
+  const buttonColor = colors?.[0]
 
   return (
-    <MusicControlsStyled>
+    <MusicControlsStyled className="music-controls">
       <CustomSlider
         style={getBackgroundSize}
         color1={colors?.[0]}
@@ -75,34 +75,35 @@ export const MusicControls = ({
         min={0}
         onChange={handleChangeTime}
         onMouseUp={handleMouseUp}
+        className="song-slider"
       />
-      <Flex jc="space-between" width="100%">
+      <Flex jc="space-between" width="100%" className="duration-numbers">
         <DurationText>{currentTimeStr}</DurationText>
         <DurationText>{durationStr}</DurationText>
       </Flex>
-      <Flex jc="space-between" width="100%">
+      <Flex jc="space-between" width="100%" className="control-buttons">
         <SmallControlButton
           $color1={buttonColor}
-          className={shuffle ? "selected" : ""}
+          className={shuffle ? "queue-button selected" : "queue-button"}
           onClick={handleShuffle}
         >
           <IconArrowsShuffle />
         </SmallControlButton>
-        <Flex gap={20}>
-          <ControlButton onClick={onPrev}>
+        <Flex gap={20} className="playback-buttons">
+          <ControlButton className="control-button" onClick={onPrev}>
             <IconPlayerTrackPrevFilled className="prev-icon-2" />
             <IconPlayerTrackPrevFilled className="prev-icon-1" />
           </ControlButton>
-          <ControlButton disabled={state === 'loading'} onClick={onPlay}>
+          <ControlButton className="control-button" disabled={state === 'loading'} onClick={onPlay}>
             <PlayPauseIcon loading={state === 'loading'} playling={state === 'playing'} />
           </ControlButton>
-          <ControlButton disabled={disableNextSongButton} onClick={onNext}>
+          <ControlButton className="control-button" disabled={disableNextSongButton} onClick={onNext}>
             <IconPlayerTrackNextFilled className="next-icon-1" />
             <IconPlayerTrackNextFilled className="next-icon-2" />
           </ControlButton>
         </Flex>
         <SmallControlButton
-          className={loopMode !== LoopMode.noloop ? "selected" : ""}
+          className={loopMode !== LoopMode.noloop ? "queue-button selected" : "queue-button"}
           onClick={handleLoopMode}
           $color1={buttonColor}
         >

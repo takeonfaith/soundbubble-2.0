@@ -11,13 +11,16 @@ import {
   IconUser,
   IconUsers,
 } from "@tabler/icons-react";
-import { Library } from "./library";
-import { Search } from "./search";
-import { SongPage } from "./song";
-import { PlaylistPage } from "./playlist";
 import { AuthorPage } from "./author";
-import { TrendsPage } from "./trends";
+import { DiscoverPage } from "./discover";
+import { Library } from "./library";
 import { MePage } from "./me";
+import { PlaylistPage } from "./playlist";
+import { SearchPage } from "./search";
+import { SongPage } from "./song";
+import { TrendsPage } from "./trends";
+import { HistoryPage } from "./history";
+import { FriendsPage } from "./friends";
 
 type Section = "features" | "your activities" | "your music";
 
@@ -35,16 +38,10 @@ export const menuRoutes: TRoute[] = [
     url: "discover",
     title: "Discover",
     icon: <IconBrandSafari />,
-    component: <>Discover</>,
+    component: <DiscoverPage />,
     section: "features",
   },
-  {
-    url: "search",
-    title: "Search",
-    icon: <IconSearch />,
-    component: <Search />,
-    section: "features",
-  },
+
   {
     url: "trends",
     title: "Trends",
@@ -65,7 +62,7 @@ export const menuRoutes: TRoute[] = [
     url: "history",
     title: "History",
     icon: <IconHistory />,
-    component: <>History</>,
+    component: <HistoryPage />,
     section: "your music",
     private: true,
   },
@@ -82,7 +79,7 @@ export const menuRoutes: TRoute[] = [
     url: "friends",
     title: "Friends",
     icon: <IconUsers />,
-    component: <>Friends</>,
+    component: <FriendsPage />,
     section: "your activities",
     private: true,
   },
@@ -96,6 +93,13 @@ export const appRoutes: TRoute[] = [
     component: <SongPage />,
     section: "your music",
     private: true,
+  },
+  {
+    url: "search",
+    title: "Search",
+    icon: <IconSearch />,
+    component: <SearchPage />,
+    section: "features",
   },
   {
     url: "playlist/:id",

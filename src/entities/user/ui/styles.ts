@@ -10,7 +10,6 @@ export const UserItemStyled = styled(Link) <{ $orientation: TOrientation }>`
 	align-items: center;
 	gap: ${({ $orientation }) => $orientation === 'vertical' ? '10px' : '12px'};
 	text-decoration: none;
-	color: #fff;
 	width: ${({ $orientation }) => $orientation === 'vertical' ? 'var(--size)' : '100%'};
 	padding: ${({ $orientation }) => $orientation === 'vertical' ? '0' : '6px'};
 	border-radius: ${({theme})=>theme.borderRadius.big};

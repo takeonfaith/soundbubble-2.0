@@ -23,7 +23,7 @@ export const Authors = ({ authors, onAuthorClick, width }: Props) => {
           <AuthorStyled
             onClick={handleAuthorClick(author)}
             to={`/author/${author.uid}`}
-            key={author.uid}
+            key={author.uid + index}
           >
             {author.displayName}
           </AuthorStyled>

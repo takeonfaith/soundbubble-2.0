@@ -9,7 +9,7 @@ const DownloadPhotoStyled = styled.label`
 	width: 255px;
 	height: 255px;
 	border-radius: ${({ theme }) => theme.borderRadius.middle};
-	background: ${({ theme }) => theme.colors.pageBackground};
+	background: ${({ theme }) => theme.colors.input};
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -33,6 +33,7 @@ const CenterButton = styled.div`
 	justify-content: center;
 	border-radius: 100%;
 	background: ${({ theme }) => theme.colors.blue.action};
+	color: #fff;
 	box-shadow: 0 4px 50px ${({ theme }) => theme.colors.blue.action} ;
 
 	svg {
@@ -56,7 +57,7 @@ const DownloadPhoto = () => {
 	</DownloadPhotoStyled>
 }
 
-export const AddPlaylistModal = () => {
+export const CreatePlaylistModal = () => {
 	return (
 		<Flex d='column' gap={20} width='100%'>
 			<DownloadPhoto />

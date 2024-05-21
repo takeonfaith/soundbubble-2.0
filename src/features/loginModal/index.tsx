@@ -3,9 +3,9 @@ import { DefaultButton } from "@components/button/DefaultButton";
 import { Flex } from "@components/flex";
 import { Input } from "@components/input";
 import { PasswordInput } from "@components/input/PasswordInput";
+import { IconAt } from "@tabler/icons-react";
 import { useState } from "react";
 import { userModel } from "../../entities/user/model";
-import { IconAt } from "@tabler/icons-react";
 
 type Props = {
   actionAfterLogin?: () => void;

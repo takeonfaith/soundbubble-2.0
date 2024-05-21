@@ -34,9 +34,14 @@ export const ErrorTitle = styled.h3`
 `;
 
 export const ErrorMessage = styled.span`
-  max-width: 30%;
+  max-width: 40%;
   line-height: 1.4rem;
   text-align: center;
-  font-size: 1.1rem;
-  color: ${({ theme }) => theme.colors.greyText};
+  font-size: 1rem;
+  text-align: left;
+  font-family: monospace;
+  color: ${({ theme }) => theme.colors.red.text};
+  background: ${({theme})=>theme.colors.red.transparent};
+  padding: 16px;
+  border-radius: 10px;
 `;

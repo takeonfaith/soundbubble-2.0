@@ -4,6 +4,7 @@ export const BeautifulBackground = styled.div<{ $colors: string[] | undefined }>
   background-color: ${({ $colors }) => $colors?.[1] ?? "grey"};
   animation: bg 15s infinite;
   background-size: 150% 150%;
+
   //linear-gradient(#000000b0, #00000057)
   background-image: linear-gradient(#00000042, #00000038),
     radial-gradient(

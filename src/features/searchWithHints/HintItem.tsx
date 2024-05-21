@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IconDiscountCheckFilled } from "@tabler/icons-react";
+import { useTheme } from "styled-components";
 import { TPlaylist } from "../../entities/playlist/model/types";
 import { PlaylistCover } from "../../entities/playlist/ui/PlaylistCover";
 import { TSong } from "../../entities/song/model/types";
@@ -9,7 +10,6 @@ import { UserCover } from "../../entities/user/ui/UserCover";
 import { Authors } from "../../shared/components/authors";
 import { Flex } from "../../shared/components/flex";
 import { ENTITIES_ICONS } from "../../shared/constants/icons";
-import { THEME } from "../../shared/constants/theme";
 import { getEntityType } from "./lib/getEntityType";
 import { HintIcon, HintItemStyled, HintName } from "./styles";
 
@@ -24,6 +24,7 @@ type Props = {
 export const HintItem = ({ item, handleSubmitSuggestion, suggestedIndex, index, icon }: Props) => {
   const type = getEntityType(item)
   const hintIcon = icon ?? ENTITIES_ICONS[type]
+  const theme = useTheme()
 
   const coverDictionary = (type: keyof typeof ENTITIES_ICONS, el: any) => {
     const covers = {
@@ -45,7 +46,7 @@ export const HintItem = ({ item, handleSubmitSuggestion, suggestedIndex, index, 
       {index === 0 && coverDictionary(type, item)}
       {index !== 0 && <HintIcon>{hintIcon}</HintIcon>}
       <HintName>{item.name ?? item.displayName}</HintName>
-      {item.isVerified && <IconDiscountCheckFilled size={18} style={{ color: THEME.colors.blue.main }} />}
+      {item.isVerified && <IconDiscountCheckFilled size={18} style={{ color: theme.colors.blue.main }} />}
     </Flex>
     {item.authors && <Authors authors={item.authors} />}
   </HintItemStyled>

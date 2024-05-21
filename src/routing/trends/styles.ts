@@ -18,7 +18,6 @@ export const TrendBox = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-	color: ${({ theme }) => theme.colors.greyText};
 
 
 	.title {

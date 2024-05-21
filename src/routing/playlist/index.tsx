@@ -1,15 +1,12 @@
-import { IconArrowsShuffle } from '@tabler/icons-react';
 import { playlistModel } from '../../entities/playlist/model';
 import { PlaylistCover } from '../../entities/playlist/ui/PlaylistCover';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { Authors } from '../../shared/components/authors';
-import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { PageTop } from '../../shared/components/pageTop';
-import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
-import { ButtonsStyled } from '../author/styles';
+import { BottomButtons } from '../author/BottomButtons';
 import { SkeletonLoading } from './Skeleton';
 import { PlaylistPageSongs, PlaylistPageStyled, PlaylistSimilar } from './styles';
 
@@ -35,10 +32,12 @@ export const PlaylistPage = () => {
 					)}
 					colors={currentPlaylist?.imageColors}
 					bottomButtons={
-						<ButtonsStyled>
-							<DefaultButton loading={false} onClick={() => null} style={{ background: '#262626', color: currentPlaylist?.imageColors?.[1] }}><PlayPauseIcon size={20} loading={false} playling={false} />Play</DefaultButton>
-							<DefaultButton loading={false} onClick={() => null} style={{ background: '#262626', color: currentPlaylist?.imageColors?.[1] }}><IconArrowsShuffle size={20} />Shuffle</DefaultButton>
-						</ButtonsStyled>
+						<BottomButtons buttonColor={currentPlaylist?.imageColors[0]} isAdmin={false} isPageOwner={false} queueInfo={{
+							listName: currentPlaylist?.name ?? '',
+							listIcon: undefined,
+							listUrl: `/playlist/${currentPlaylist?.id ?? ''}`,
+							songs: currentPlaylistSongs ?? []
+						}} />
 					}
 				/>
 				<PlaylistPageSongs>

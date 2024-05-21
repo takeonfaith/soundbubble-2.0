@@ -32,6 +32,14 @@ export class Users {
     }
   }
 
+  static async logout() {
+    try {
+      return FB.logout();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   static async getUserByUid(uid: string | undefined) {
     try {
       if (!uid) throw new Error(ERRORS.loginFailed("UID must be provided"))

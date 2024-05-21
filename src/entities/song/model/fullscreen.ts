@@ -8,14 +8,12 @@ export const close = createEvent();
 
 sample({
   clock: open,
-  source: $fullScreen,
   fn: () => true,
   target: $fullScreen,
 });
 
 sample({
   clock: close,
-  source: $fullScreen,
   fn: () => false,
   target: $fullScreen,
 });
