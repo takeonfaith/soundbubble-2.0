@@ -5,6 +5,8 @@ export const getEntityType = (entity: any): keyof typeof ENTITIES_ICONS => {
 
 	if (entity.displayName) return 'user'
 
+	if(entity.isAlbum) return 'album'
+
 	if (entity.subscribers !== undefined) return 'playlist'
 
 	return 'song'

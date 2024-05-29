@@ -53,6 +53,7 @@ export const DefaultButton = ({
       disabled={disabled || loading}
       $background={backgrounds[appearance]}
       $width={width}
+      color={appearance === 'primary' ? '#fff' : ''}
       {...restProps}
     >
       <AnimationWrapper className={loading ? "show" : "hide"}>

@@ -10,7 +10,7 @@ export const LikeButtonStyled = styled(Button)<{
     filter: brightness(1.2);
 
     svg {
-        width: 22px;
-        height: 22px;
+        width: 20px;
+        height: 20px;
     }
 `;

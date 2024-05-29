@@ -66,7 +66,7 @@ export const ButtonsStyled = styled.div`
 
 export const SimilarAuthorsStyled = styled.div`
     width: 100%;
-    background: ${({ theme }) => theme.colors.hover};
+    background: ${({ theme }) => theme.colors.pageBackground2};
     padding: 30px 40px;
     display: flex;
     flex-direction: column;

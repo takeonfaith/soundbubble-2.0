@@ -1,5 +1,6 @@
-import { IconDiscountCheckFilled, IconHeadphones, IconHeart, IconInfoCircle, IconShare3, IconUserPlus } from '@tabler/icons-react';
+import { IconDiscountCheckFilled, IconHeadphones, IconInfoCircle, IconShare3, IconUserPlus } from '@tabler/icons-react';
 import { useTheme } from 'styled-components';
+import { LikeButton } from '../../../features/likeButton';
 import { ShareModal } from '../../../features/shareModal';
 import { modalModel } from '../../../layout/modal/model';
 import { formatBigNumber } from '../../funcs/formatBigNumber';
@@ -48,9 +49,7 @@ export const PageTop = ({ name, subtitle, bottomButtons, numberOfListenersPerMon
 					</Flex>
 				</Flex>
 				<TopRightCorner>
-					<Button $height='32px' $width='45px' $background={theme.colors.darkHover}>
-						<IconHeart size={20} />
-					</Button>
+					<LikeButton songId={undefined} likeColor={undefined} background={theme.colors.darkHover} height='32px' width='45px' />
 					<Button $height='32px' $width='45px' onClick={handleClickShare} $background={theme.colors.darkHover}>
 						<IconShare3 size={20} />
 					</Button>

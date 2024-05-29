@@ -10,9 +10,9 @@ import { PlaylistItem } from "../../entities/playlist/ui";
 import { userModel } from "../../entities/user/model";
 import { CreatePlaylistModal } from "../../features/createPlaylistModal";
 import { ThemeButton } from "../../features/themeButton";
-import { DefaultButton } from "../../shared/components/button/DefaultButton";
 import {
   LogoWrapper,
+  PlaylistsStyled,
   SidebarLink,
   SidebarSection,
   SidebarSectionTitle,
@@ -21,8 +21,8 @@ import {
 
 export const Sidebar = () => {
   const preparedRoutes = groupByField(menuRoutes, "section");
-  const { loggedIn, openLoginModal } = usePrivateAction();
-  const { data, userPlaylists } = userModel.useUser()
+  const { loggedIn } = usePrivateAction();
+  const [ownPlaylists] = userModel.useOwnPlaylists()
 
   const handleAddPlaylist = loggedIn(() => {
     modalModel.events.open({
@@ -59,16 +59,14 @@ export const Sidebar = () => {
       <SidebarSection>
         <Flex jc="space-between" width="100%">
           <SidebarSectionTitle>Your Playlists</SidebarSectionTitle>
-          <button onClick={handleAddPlaylist}>
+          <button className="add-playlist" onClick={handleAddPlaylist}>
             <IconPlus />
           </button>
         </Flex>
-        <Flex d="column" gap={0} padding="10px">
-          {userPlaylists?.slice(0, 3)?.map((playlist) => <PlaylistItem orientation="horizontal" playlist={playlist} key={playlist.id} />)}
-        </Flex>
+        <PlaylistsStyled>
+          {ownPlaylists?.slice(0, 4)?.map((playlist) => <PlaylistItem orientation="horizontal" playlist={playlist} key={playlist.id} />)}
+        </PlaylistsStyled>
       </SidebarSection>
-      {data === null && <DefaultButton onClick={openLoginModal()} appearance="primary">Login</DefaultButton>}
-      <Flex height="90px"></Flex>
     </SidebarStyled>
   );
 };

@@ -13,6 +13,9 @@ import {
   PlaylistStyled,
 } from "./styles";
 import { LikeButton } from "../../../features/likeButton";
+import { Subtext } from "../../../shared/components/subtext";
+import { useState } from "react";
+import { PlayingAnimation } from "../../../shared/components/playingAnimation";
 
 type Props = {
   playlist: TPlaylist;
@@ -20,15 +23,20 @@ type Props = {
 };
 
 export const PlaylistItem = ({ playlist, orientation = 'vertical' }: Props) => {
-  const { image, name, imageColors, authors, id, songs } = playlist;
+  const { image, name, imageColors, authors, id, songs, isAlbum } = playlist;
   const { play } = songModel.useControls();
+  const { state } = songModel.useSong()
+  const { queue } = songModel.queue.useQueue()
+  const [loading, setLoading] = useState(false)
+  const url = `/playlist/${id}`
+  const isCurrentPlaying = state === 'playing' && queue.url === url
 
   const handlePlay = (songs: TSong[], index: number) => {
     const queue: TQueueStore | undefined = {
       currentSongIndex: index,
       name,
       icon: image,
-      url: `/playlist/${id}`,
+      url,
       songs: songs,
       shuffle: false,
     };
@@ -38,24 +46,27 @@ export const PlaylistItem = ({ playlist, orientation = 'vertical' }: Props) => {
 
   const handleLoadPlaylistSongs = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
+    setLoading(true)
     Songs.getSongsByUids(songs).then((songs) => {
       handlePlay(songs, 0)
+      setLoading(false)
     })
   }
 
   return (
-    <PlaylistStyled $orientation={orientation} to={`/playlist/${id}`} $color1={imageColors[0]} onClick={e => e.stopPropagation()}>
-      <PlaylistCover borderRadius={orientation === 'vertical' ? undefined : '3px'} size="var(--size)" src={image} color={imageColors[0]}>
-        <ControlButton $orientation={orientation} $color={imageColors[0]} onClick={handleLoadPlaylistSongs}>
-          <PlayPauseIcon loading={false} playling={false} size={18} />
-        </ControlButton>
-      </PlaylistCover>
+    <PlaylistStyled $orientation={orientation} className={isCurrentPlaying ? 'playing' : ''} to={`/playlist/${id}`} $color1={imageColors[0]} onClick={e => e.stopPropagation()}>
+      <ControlButton $orientation={orientation} $color={imageColors[0]} onClick={handleLoadPlaylistSongs}>
+        {isCurrentPlaying ? <PlayingAnimation playing color={imageColors[1]} /> : <PlayPauseIcon loading={loading} playling={false} size={18} />}
+      </ControlButton>
+      <PlaylistCover size={undefined} borderRadius={orientation === 'vertical' ? undefined : '3px'} src={image} color={imageColors[0]} isAlbum={isAlbum} />
       <Flex width="100%" jc="space-between">
-        <Flex d="column" width="100%" gap={2} ai="flex-start">
+        <Flex d="column" width="100%" gap={0} ai="flex-start">
           <PalylistTitle>{name}</PalylistTitle>
-          {orientation === 'vertical' ? <Authors authors={authors} /> : null}
+          {orientation === 'vertical' ? <Authors authors={authors} /> : <Flex width="100%" gap={4}>
+            <Subtext style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{isAlbum ? 'Album' : "Playlist"} /</Subtext>
+            <Authors width="fit-content" authors={authors} />
+          </Flex>}
         </Flex>
-        <LikeButton $width="48px" songId={id} likeColor={imageColors[0]} />
       </Flex>
     </PlaylistStyled>
   );

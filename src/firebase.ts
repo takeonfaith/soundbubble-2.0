@@ -13,7 +13,7 @@ const config = {
   measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 }
 
-type TCollections = "playlists" | "songs" | "users" | 'searchHistory' | 'search' | 'history' | 'chats' | 'chatWallpapers'
+export type TCollections = "playlists" | "songs" | "users" | 'searchHistory' | 'search' | 'history' | 'chats' | 'chatWallpapers'
 
 export class FB {
   static app = initializeApp(config);

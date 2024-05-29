@@ -19,7 +19,7 @@ export const Authors = ({ authors, onAuthorClick, width }: Props) => {
     <AuthorsStyled className="authors" $width={width}>
       {authors?.map((author, index) => (
         <>
-          {index !== 0 ? "•" : " "}
+          {index !== 0 ? "&" : " "}
           <AuthorStyled
             onClick={handleAuthorClick(author)}
             to={`/author/${author.uid}`}

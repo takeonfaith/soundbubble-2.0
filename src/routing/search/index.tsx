@@ -1,49 +1,38 @@
-import { songModel } from "@song/model";
-import { SearchWithHints } from "features/searchWithHints";
-import { THint } from "features/searchWithHints/types";
-import React from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { getEntityType } from "../../features/searchWithHints/lib/getEntityType";
-import { TUser } from "../../entities/user/model/types";
-import { TSong } from "../../entities/song/model/types";
+import { useUnit } from "effector-react";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { $isLoadingResult, $searchResult, getSearchResult } from "../../entities/search/model";
+import { Header } from "../../layout/header";
+import { Flex } from "../../shared/components/flex";
+import { SkeletonPageAnimation } from "../../shared/components/skeleton/SkeletonPageAnimation";
+import { normalizeString } from "../../shared/funcs/normalizeString";
+import { SearchResult } from "./SearchResult";
+import { SearchSkeleton } from "./SearchSkeleton";
+
+/**
+ * Разница между getSuggestions и getSearchResult
+ * getResult дает полный результат, то есть запрашивает инфу о
+ * плейлистах исполнителя, топ 5 его треков, а элементы сортирует не по 
+ * индексу внутри поиска, а по прослушиваниям
+ */
 
 export const SearchPage = () => {
-  const [params, setParams] = useSearchParams();
-  const navigate = useNavigate();
-  const { play } = songModel.useControls();
-  // console.log(params.get("query"));
+  const [params] = useSearchParams();
+  const queryValue = params.get("query")
+  const [result, isLoading, getResult] = useUnit([$searchResult, $isLoadingResult, getSearchResult])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setParams({ query: e.target.value });
-  };
-
-  const handleSuggestionSubmit = (hint: THint) => {
-    let to = "";
-    const type = getEntityType(hint)
-    if (type === 'author' || type === 'user') {
-      const thint = (hint as TUser)
-      to = `/author/${thint.uid}`;
-      setParams({ query: thint.displayName });
-    } else if (type === 'song') {
-      const thint = (hint as TSong)
-      play(thint);
-      setParams({ query: thint.name });
-      return;
-    } else {
-      const thint = (hint as TSong)
-      to = `/playlist/${thint.id}`;
-      setParams({ query: thint.name });
+  useEffect(() => {
+    if (queryValue) {
+      getResult(normalizeString(queryValue))
     }
-
-    navigate(to);
-  };
+  }, [getResult, queryValue])
 
   return (
-    <div style={{ width: "100%", maxWidth: "600px", margin: "60px auto" }}>
-      <SearchWithHints
-        initialValue={params.get("query")}
-        onSuggestionSubmit={handleSuggestionSubmit}
-      />
-    </div>
+    <Flex d="column" width="100%" height="100%">
+      <Header />
+      <SkeletonPageAnimation color="" loading={isLoading} skeleton={<SearchSkeleton />}>
+        <SearchResult result={result} />
+      </SkeletonPageAnimation>
+    </Flex>
   );
 };

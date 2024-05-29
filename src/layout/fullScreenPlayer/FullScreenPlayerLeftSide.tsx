@@ -42,7 +42,7 @@ export const FullScreenPlayerLeftSide = ({ type, hasLyrics, hasQueue, handleClic
         <Flex d="column" gap={2}>
           <Flex width="100%" gap={10}>
             <PlayerTitle>{currentSong?.name ?? "Untitled"}</PlayerTitle>
-            <LikeButton songId={currentSong?.id} onClick={() => null} likeColor={currentSong?.imageColors[1]} />
+            <LikeButton height="30px" songId={currentSong?.id} onClick={() => null} likeColor={currentSong?.imageColors[1]} />
           </Flex>
           <Authors
             authors={currentSong?.authors}

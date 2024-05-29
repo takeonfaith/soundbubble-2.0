@@ -1,21 +1,21 @@
+import { LikeButton } from "@features/likeButton";
 import { songModel } from "@song/model";
-import { IconDots, IconMaximize, IconShare3 } from "@tabler/icons-react";
+import { IconDots, IconMaximize, IconShare3, IconSquareRoundedPlus } from "@tabler/icons-react";
 import { Outlet } from "react-router";
 import { styled } from "styled-components";
 import { SongCover } from "../entities/song/ui/SongCover";
+import { AddSongToPlaylistModal } from "../features/addSongToPlaylistModal";
+import { ShareModal } from "../features/shareModal";
 import { Authors } from "../shared/components/authors";
 import { Button } from "../shared/components/button";
 import { Flex } from "../shared/components/flex";
-import { LikeButton } from "@features/likeButton";
 import { MusicControls } from "../shared/components/musicControls";
 import { FullScreenFullScreenPlayer } from "./fullScreenPlayer";
 import { usePlayerMusicControls } from "./fullScreenPlayer/PlayerMusicControls";
 import { InitialLoading } from "./initialLoading";
 import { Modal } from "./modal";
-import { Sidebar } from "./sidebar";
 import { modalModel } from "./modal/model";
-import { ShareModal } from "../features/shareModal";
-import { Header } from "./header";
+import { Sidebar } from "./sidebar";
 
 export const LayoutStyled = styled.div`
   height: calc(100dvh - 80px);
@@ -128,6 +128,10 @@ const Player = () => {
     modalModel.events.open({ title: `Share "${currentSong?.name}" with friends`, content: <ShareModal /> })
   }
 
+  const handleAddToPlaylist = () => {
+    modalModel.events.open({ title: `Add "${currentSong?.name}" to playlist`, content: <AddSongToPlaylistModal /> })
+  }
+
   return (
     <PlayerStyled $background={currentSong?.imageColors[0] ?? 'darkgrey'}>
       <SongStyled>
@@ -140,11 +144,14 @@ const Player = () => {
       <Flex gap={30} width="100%">
         <MusicControls {...controls} />
         <div style={{ minWidth: '270px', display: 'flex', justifyContent: 'flex-end', gap: '20px' }}>
-          <LikeButton $width="42px" songId={currentSong?.id} likeColor={currentSong?.imageColors[0]} />
+          <LikeButton disabled={!currentSong} width="42px" songId={currentSong?.id} likeColor={currentSong?.imageColors[0]} />
+          <Button $width="42px" disabled={!currentSong} onClick={handleAddToPlaylist}>
+            <IconSquareRoundedPlus size={20} />
+          </Button>
           <Button $width="42px" disabled={!currentSong} onClick={handleShare}>
             <IconShare3 size={20} />
           </Button>
-          <Button $width="42px">
+          <Button $width="42px" disabled={!currentSong}>
             <IconDots size={20} />
           </Button>
           <Button $width="42px" onClick={handleOpenFullScreenPlayer}>

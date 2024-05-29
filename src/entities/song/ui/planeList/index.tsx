@@ -1,7 +1,8 @@
-import React from 'react'
+import React from 'react';
 import { SongItem } from '..';
+import { useHandleSongPlay } from '../../../../shared/hooks/useHandleSongPlay';
 import { songModel } from '../../model';
-import { TSong, TQueueStore } from '../../model/types';
+import { TSong } from '../../model/types';
 
 type Props = {
 	songs: TSong[];
@@ -13,20 +14,7 @@ type Props = {
 export const PlaneSongList = (props: Props) => {
 	const { currentSong, state, loaded } = songModel.useSong();
 	const { songs } = props;
-	const { play } = songModel.useControls();
-
-	const handlePlay = (song: TSong, index: number) => {
-		const queue: TQueueStore | undefined = {
-			currentSongIndex: index,
-			name: props.listName,
-			icon: props.listIcon,
-			url: props.listUrl,
-			songs: props.songs,
-			shuffle: false,
-		};
-
-		play(song, queue);
-	};
+	const { handlePlay } = useHandleSongPlay(props)
 
 	return (
 		<>{songs.map((song, index) => {

@@ -25,7 +25,7 @@ export const SidebarSection = styled.div`
     gap: 0px;
     margin: 30px 0;
 
-    button {
+    & .add-playlist {
         color: ${({ theme }) => theme.colors.textColor};
         background: transparent;
         border: none;
@@ -72,4 +72,11 @@ export const SidebarSectionTitle = styled.div`
     color: ${({ theme }) => theme.colors.textColor};
     padding: 4px 10px;
     text-transform: uppercase;
+`;
+
+export const PlaylistsStyled = styled.div`
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 0 2px;
 `;

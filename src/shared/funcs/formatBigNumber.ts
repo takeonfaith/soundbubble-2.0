@@ -1,5 +1,5 @@
 export const formatBigNumber = (num: number | undefined) => {
-    if (!num) return null;
+    if (num === undefined) return null;
 
     if (num >= 1_000 && num < 1_000_000) return (num / 1_000).toFixed(1) + 'K';
 

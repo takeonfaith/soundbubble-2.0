@@ -28,7 +28,7 @@ export const PlaylistPage = () => {
 					numberOfListenersPerMonth={currentPlaylist?.listens}
 					subscribers={currentPlaylist?.subscribers}
 					imageComponent={(
-						<PlaylistCover size='200px' src={currentPlaylist?.image} color={currentPlaylist?.imageColors[0]} />
+						<PlaylistCover size='200px' isAlbum={currentPlaylist?.isAlbum ?? false} src={currentPlaylist?.image} color={currentPlaylist?.imageColors[0]} />
 					)}
 					colors={currentPlaylist?.imageColors}
 					bottomButtons={

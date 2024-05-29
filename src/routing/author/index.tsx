@@ -21,7 +21,7 @@ export const AuthorPage = ({ userData }: Props) => {
 	const { data } = userModel.useUser()
 	const userPageData = userData ?? user
 
-	const [isAuthor, isAdmin, isPageOwner] = [userPageData?.isAuthor ?? false, userPageData?.isAdmin ?? false, (data?.uid === userPageData?.uid) ?? false]
+	const [isAuthor, isAdmin, isPageOwner] = [userPageData?.isAuthor ?? false, userPageData?.isAdmin ?? false, (data?.uid === userPageData?.uid)]
 
 	useUrlParamId({
 		page: 'author', onChangeId: (id) => {
