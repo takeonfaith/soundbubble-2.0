@@ -105,7 +105,7 @@ export const RightSide = styled.div`
     height: 100%;
     padding: 180px 110px;
     overflow-y: auto;
-    scroll-padding-top: 260px;
+    scroll-padding-bottom: 700px;
     opacity: 0;
     animation: slide-appear 0.5s forwards reverse;
 
@@ -129,7 +129,7 @@ export const RightSide = styled.div`
     }
 `;
 
-export const Lyrics = styled.div`
+export const LyricsStyled = styled.div`
     display: flex;
     flex-direction: column;
     gap: 30px;

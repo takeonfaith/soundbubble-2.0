@@ -6,6 +6,7 @@ import { userModel } from "../../entities/user/model";
 import { Header } from "../../layout/header";
 import { Flex } from "../../shared/components/flex";
 import { SkeletonPageAnimation } from "../../shared/components/skeleton/SkeletonPageAnimation";
+import { Subtext } from "../../shared/components/subtext";
 
 const LibraryStyled = styled.div`
   width: 100%;
@@ -45,6 +46,7 @@ const SkeletonLoading = () => {
 
 export const Library = () => {
   const [library, loading] = userModel.useSongLibrary()
+  const [{ data }] = userModel.useUser()
 
   return (
     <LibraryStyled>
@@ -57,6 +59,14 @@ export const Library = () => {
             listUrl="/library"
             songs={library}
           />
+          {!data && <Flex d="column" gap={10} width="100%" height="100%" jc="center">
+            <IconMusic opacity={0.5} size={100} />
+            <Subtext style={{ fontSize: '1.1rem' }}>Need to log in into account to see your library</Subtext>
+          </Flex>}
+          {data && !library.length && <Flex d="column" gap={10} width="100%">
+            <IconMusic opacity={0.5} size={100} />
+            <Subtext style={{ fontSize: '1.1rem' }}>No songs added to library</Subtext>
+          </Flex>}
         </ContentStyled>
       </SkeletonPageAnimation>
     </LibraryStyled>

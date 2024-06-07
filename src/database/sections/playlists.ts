@@ -1,7 +1,7 @@
 import { FB } from '../../firebase';
 
 import { TPlaylist } from '@playlist/model/types';
-import { getDocs, query, where } from 'firebase/firestore';
+import { arrayUnion, getDocs, query, where } from 'firebase/firestore';
 import { ERRORS } from '../../shared/constants';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
 
@@ -14,7 +14,7 @@ export class Playlists {
                 throw new Error(ERRORS.operationFailed('UID must be provided'));
             }
 
-            return FB.getById<TPlaylist>('playlists', uid);
+            return FB.getById('playlists', uid);
         } catch (error) {
             throw new Error('Failed to get playlist by uid ' + uid);
         }
@@ -28,4 +28,24 @@ export class Playlists {
 
         return getDataFromDoc<TPlaylist>(snapshot);
     };
+
+    static async addSongToPlaylists(songId: string, playlistIds: string[]) {
+        try {
+            if (!songId) throw new Error('Song id not specified');
+            if (!playlistIds.length)
+                throw new Error('Playlist ids not specified');
+
+            const requests = playlistIds.map((id) => {
+                return FB.updateById('playlists', id, {
+                    songs: arrayUnion(songId),
+                });
+            });
+
+            return Promise.all(requests);
+        } catch (error) {
+            throw new Error(
+                `Failed to add song to playlists ${songId}, ${playlistIds}, ${error}`
+            );
+        }
+    }
 }

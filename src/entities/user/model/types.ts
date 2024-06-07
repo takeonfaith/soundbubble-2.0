@@ -42,7 +42,6 @@ export type CreateUserCreditsType = LoginCreditsType & {
 export type TStore = {
     data: TUser | null;
     error: Error | null;
-    loggining?: boolean;
     userPlaylists: TPlaylist[];
 };
 

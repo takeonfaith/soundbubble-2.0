@@ -1,4 +1,4 @@
-import { IconDiscountCheckFilled, IconHeadphones, IconInfoCircle, IconShare3, IconUserPlus } from '@tabler/icons-react';
+import { IconDiscountCheckFilled, IconHeadphones, IconInfoCircle, IconLock, IconShare3, IconUserPlus } from '@tabler/icons-react';
 import { useTheme } from 'styled-components';
 import { LikeButton } from '../../../features/likeButton';
 import { ShareModal } from '../../../features/shareModal';
@@ -16,11 +16,12 @@ type Props = {
 	imageComponent: React.ReactNode,
 	colors: string[] | undefined
 	isVerified?: boolean
+	isPrivate?: boolean
 	subtitle?: React.ReactNode
 	bottomButtons?: React.ReactNode
 }
 
-export const PageTop = ({ name, subtitle, bottomButtons, numberOfListenersPerMonth, subscribers, imageComponent, colors, isVerified }: Props) => {
+export const PageTop = ({ name, subtitle, bottomButtons, isPrivate, numberOfListenersPerMonth, subscribers, imageComponent, colors, isVerified }: Props) => {
 	const theme = useTheme()
 
 	const handleClickShare = () => {
@@ -32,9 +33,10 @@ export const PageTop = ({ name, subtitle, bottomButtons, numberOfListenersPerMon
 			{imageComponent}
 			<Flex gap={8} d='column' ai='center'>
 				<Flex gap={4} d='column'>
-					<Flex gap={4}>
+					<Flex gap={6}>
 						<h2>{name}</h2>
 						{isVerified && <IconDiscountCheckFilled color={colors?.[1]} />}
+						{isPrivate && <IconLock size={20}/>}
 					</Flex>
 					{subtitle}
 				</Flex>

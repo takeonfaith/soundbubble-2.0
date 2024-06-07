@@ -1,8 +1,10 @@
 import { PlaylistItem } from '../../entities/playlist/ui'
 import { GridSongList } from '../../entities/song/ui/gridList'
+import { getLastSeen } from '../../entities/user/lib/getLastSeen'
 import { userModel } from '../../entities/user/model'
 import { TUser } from '../../entities/user/model/types'
 import { UserCover } from '../../entities/user/ui/UserCover'
+import { UserStatus } from '../../entities/user/ui/UserStatus'
 import { Flex } from '../../shared/components/flex'
 import { PageTop } from '../../shared/components/pageTop'
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation'
@@ -17,11 +19,13 @@ type Props = {
 }
 
 export const AuthorPage = ({ userData }: Props) => {
-	const { user, songs, playlists, loading } = userModel.useUserPage()
-	const { data } = userModel.useUser()
-	const userPageData = userData ?? user
-
-	const [isAuthor, isAdmin, isPageOwner] = [userPageData?.isAuthor ?? false, userPageData?.isAdmin ?? false, (data?.uid === userPageData?.uid)]
+	const { user: currentPageUser, songs, playlists, loading } = userModel.useUserPage()
+	const { data: currentUser } = userModel.useUser()
+	const [friends] = userModel.useFriends()
+	const userPageData = userData ?? currentPageUser
+	const isFriend = !!friends.find(f => f.uid === currentPageUser?.uid)
+	const { status } = getLastSeen(currentPageUser?.online)
+	const [isAuthor, isAdmin, isPageOwner] = [userPageData?.isAuthor ?? false, userPageData?.isAdmin ?? false, (currentUser?.uid === userPageData?.uid)]
 
 	useUrlParamId({
 		page: 'author', onChangeId: (id) => {
@@ -43,7 +47,7 @@ export const AuthorPage = ({ userData }: Props) => {
 				<PageTop
 					id={userPageData?.uid}
 					name={userPageData?.displayName}
-					subtitle={<span style={{ fontWeight: '300', fontSize: '0.8rem', opacity: '0.6' }}>{userPageData?.isAuthor ? "Author" : 'User'}</span>}
+					subtitle={<UserStatus color={currentPageUser?.imageColors[1]} isAuthor={isAuthor} status={status} showLastSeen={isFriend || currentUser?.isAdmin} />}
 					numberOfListenersPerMonth={userPageData?.numberOfListenersPerMonth}
 					isVerified={userPageData?.isVerified}
 					subscribers={userPageData?.subscribers}

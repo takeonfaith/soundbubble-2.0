@@ -20,6 +20,9 @@ export const GlobalStyles = createGlobalStyle`
 
 	button {
 		color: ${({ theme }) => theme.colors.textColor};
+		border: none;
+		background: transparent;
+		cursor: pointer;
 	}
 
 	input[type=text]:focus, select:focus, textarea:focus {

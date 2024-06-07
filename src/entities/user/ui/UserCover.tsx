@@ -4,10 +4,12 @@ import { ENTITIES_ICONS } from '../../../shared/constants/icons'
 
 type Props = Omit<GeneralCoverProps, 'borderRadius' | 'fallbackIcon'> & {
 	isAuthor: boolean | undefined
+	children?: React.ReactNode
+	fallbackIcon?: React.ReactNode
 }
 
 export const UserCover = (props: Props) => {
 	return (
-		<GeneralCover fallbackIcon={props.isAuthor ? ENTITIES_ICONS.author : ENTITIES_ICONS.user} borderRadius={'100%'} {...props} />
+		<GeneralCover {...props} fallbackIcon={props.fallbackIcon ?? (props.isAuthor ? ENTITIES_ICONS.author : ENTITIES_ICONS.user)} borderRadius={'100%'} />
 	)
 }

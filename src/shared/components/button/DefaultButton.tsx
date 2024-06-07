@@ -13,7 +13,9 @@ const AnimationWrapper = styled.div`
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  width: 100%;
 
   &.show {
     opacity: 1;

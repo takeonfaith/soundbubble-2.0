@@ -78,7 +78,7 @@ getResultFx.use(async (value: string) => {
     try {
         //TODO: change to own async function
         const suggestions =
-            await Database.SearchSuggestions.getSearchSuggestions(value);
+            await Database.SearchSuggestions.getSearchResult(value);
 
         return suggestions;
     } catch (error) {

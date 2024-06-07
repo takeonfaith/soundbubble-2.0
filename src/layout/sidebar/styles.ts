@@ -80,3 +80,18 @@ export const PlaylistsStyled = styled.div`
     overflow-y: auto;
     padding: 0 2px;
 `;
+
+export const NotificationBadge = styled.span`
+    min-width: 20px;
+    width: fit-content;
+    height: 20px;
+    font-size: 0.7rem;
+    padding: 0 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: ${({ theme }) => theme.colors.red.main};
+    border-radius: 10px;
+    color: #fff;
+    font-weight: 400;
+`;

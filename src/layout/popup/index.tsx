@@ -1,61 +1,28 @@
-import { useEffect, useRef, useState } from "react";
-import { PopupStyled, PopupWrapper } from "./styles";
-import { POPUP_WIDTH } from "./constants";
+import { useRef } from "react";
+import { useClickOutside } from "../../shared/hooks/useClickOutside";
+import { popupModel } from "./model";
+import { PopupStyled } from "./styles";
 
 export const Popup = () => {
-  const [posX, setPosX] = useState(10);
-  const [posY, setPosY] = useState(0);
-  const [transformOrigin, setTransformOrigin] = useState("top left");
-  const [open, setOpen] = useState(false);
+  const { content, height, width, isOpen, x, y, origin } = popupModel.usePopup()
   const ref = useRef<HTMLDivElement>(null);
-
-  const onClick = (e: MouseEvent) => {
-    setOpen(true);
-    let Y, X;
-
-    if (e.clientX + POPUP_WIDTH > window.innerWidth) {
-      setPosX(e.clientX - POPUP_WIDTH);
-      X = "right";
-    } else {
-      X = "left";
-      setPosX(e.clientX);
+  useClickOutside(ref, () => {
+    if (isOpen) {
+      popupModel.events.close()
     }
-
-    const shiftHeight = ref.current?.clientHeight ?? 300;
-
-    if (e.clientY + shiftHeight > window.innerHeight) {
-      Y = "bottom";
-      setPosY(e.clientY - shiftHeight);
-    } else {
-      Y = "top";
-      setPosY(e.clientY);
-    }
-
-    setTransformOrigin(`${Y} ${X}`);
-  };
-
-  useEffect(() => {
-    window.addEventListener("click", onClick);
-
-    return () => {
-      window.removeEventListener("click", onClick);
-    };
-  }, []);
+  })
 
   return (
-    open && (
-      <PopupWrapper onClick={() => setOpen(false)}>
-        {open && (
-          <PopupStyled
-            $transformOrigin={transformOrigin}
-            ref={ref}
-            $posX={posX}
-            $posY={posY}
-          >
-            Popup
-          </PopupStyled>
-        )}
-      </PopupWrapper>
-    )
+    <PopupStyled
+      $isOpen={isOpen}
+      $transformOrigin={origin}
+      ref={ref}
+      $posX={x}
+      $posY={y}
+      $height={height}
+      $width={width}
+    >
+      {content}
+    </PopupStyled>
   );
 };

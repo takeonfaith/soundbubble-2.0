@@ -1,5 +1,6 @@
 import { Button } from '@components/button';
 import styled from 'styled-components';
+import { SONG_RADIUS } from '../constants';
 
 export const PlayButton = styled.div`
     border: none;
@@ -20,6 +21,7 @@ const Overlay = styled.div`
     align-items: center;
     justify-content: center;
     background: ${({ theme }) => theme.colors.overlay};
+    border-radius: ${SONG_RADIUS};
 `;
 
 export const MoreInfoButton = styled.button`
@@ -27,6 +29,8 @@ export const MoreInfoButton = styled.button`
     align-items: center;
     justify-content: center;
     background: transparent;
+    width: 35px;
+    height: 35px;
     color: ${({ theme }) => theme.colors.textColor};
     border: none;
     padding: 4px;
@@ -235,7 +239,7 @@ export const LikeButton = styled(Button)`
 export const SongButtons = styled.div`
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 6px;
 
     @container (max-width: 699px) {
         .like-button {

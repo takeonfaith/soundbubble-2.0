@@ -1,4 +1,3 @@
-import { TSearchHistory } from '../../entities/user/model/types';
 import { FB } from '../../firebase';
 import { Playlists } from './playlists';
 import { Songs } from './songs';
@@ -18,10 +17,7 @@ export class SearchHistory {
                 users: Users.getUserByUid,
             };
 
-            const data = await FB.getById<{ history: TSearchHistory[] }>(
-                'searchHistory',
-                userId
-            );
+            const data = await FB.getById('searchHistory', userId);
 
             const searchHistory = data.history.slice(0, 10).map(async (el) => {
                 return await requests[el.type](el.id);

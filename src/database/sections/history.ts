@@ -6,12 +6,9 @@ export class History {
 
     static async getHistoryByUserId(userId: string) {
         try {
-            const historyIds = await FB.getById<{ history: string[] }>(
-                'history',
-                userId
-            );
+            const historyIds = await FB.getById('history', userId);
 
-				const ids = new Set(historyIds.history)
+            const ids = new Set(historyIds.history);
 
             const songs = await Songs.getSongsByUids(Array.from(ids));
             return songs;

@@ -26,13 +26,17 @@ export const DARK_THEME = {
         greyText: '#a2a2a2',
         blue: {
             main: '#75a8fa',
-            action: '#3481fe',
+            action: '#5193ff',
+            mild: '#1b2c4e',
             transparent: '#5394ff4f',
+        },
+        purple: {
+            main: '#9332d1',
         },
         red: {
             text: '#ffb3b3',
-            transparent: '#ff63632e',
-            main: '#ff6f6f',
+            transparent: '#ff636314',
+            main: '#d64040',
         },
     },
 };
@@ -68,11 +72,15 @@ export const LIGHT_THEME: TTheme = {
         blue: {
             main: '#5275b5',
             action: '#3481fe',
+            mild: '#dfeaff',
             transparent: '#5394ff4f',
+        },
+        purple: {
+            main: '#9332d1',
         },
         red: {
             text: '#e15353',
-            transparent: '#ff63632e',
+            transparent: '#ff636314',
             main: '#ff6f6f',
         },
     },

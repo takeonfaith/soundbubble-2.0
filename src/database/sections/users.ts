@@ -6,10 +6,11 @@ import {
 } from '@user/model/types';
 import { getDataFromDoc } from 'database/lib/getDataFromDoc';
 import { getDocs, limit, orderBy, query, where } from 'firebase/firestore';
-import { Songs } from '.';
+import { Playlists, Songs } from '.';
 import { FB } from '../../firebase';
 import { ERRORS } from '../../shared/constants';
 import { NextOrObserver, User } from 'firebase/auth';
+import { TPlaylist } from '../../entities/playlist/model/types';
 
 export class Users {
     static ref = FB.get('users');
@@ -43,7 +44,7 @@ export class Users {
             if (!uid)
                 throw new Error(ERRORS.loginFailed('UID must be provided'));
 
-            return FB.getById<TUser>('users', uid);
+            return FB.getById('users', uid);
         } catch (error) {
             throw new Error('Failed to get user by id: ' + uid);
         }
@@ -103,6 +104,27 @@ export class Users {
         }
     }
 
+    static async getAuthorTopAlbums(albums: string[], count = 3) {
+        try {
+            if (albums.length === 0) return [];
+
+            console.log(albums);
+            const snapshot = await getDocs(
+                query(
+                    Playlists.ref,
+                    where('id', 'in', albums),
+                    // orderBy('listens', 'desc'),
+                    limit(count)
+                )
+            );
+
+            return getDataFromDoc<TPlaylist>(snapshot);
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
     static async getSimilarAuthorsBySongs(songs: TSong[]) {
         try {
             if (songs.length === 0) return [];
@@ -136,6 +158,22 @@ export class Users {
         } catch (error) {
             console.error(error);
             return [];
+        }
+    }
+
+    static async listenToUsersChanges(
+        userIds: string[],
+        callback: (users: TUser[]) => void
+    ) {
+        try {
+            return await FB.listenTo(
+                'users',
+                callback,
+                where('uid', 'in', userIds),
+                orderBy('online', 'desc')
+            );
+        } catch (error) {
+            throw new Error('Failed to listen to users changes');
         }
     }
 }

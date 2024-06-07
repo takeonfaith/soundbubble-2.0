@@ -18,6 +18,7 @@ const SearchResultStyled = styled.div`
   width: 100%;
   margin: auto;
   margin-top: 20px;
+  margin-bottom: 30px;
   max-width: 650px;
 `
 

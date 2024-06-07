@@ -1,0 +1,25 @@
+import styled from 'styled-components'
+
+const UserStatusStyled = styled.span`
+	font-size: 0.8rem;
+	font-weight: 300;
+	opacity: 0.5;
+
+	&.online {
+		color: ${({ theme, color }) => color ?? theme.colors.blue.action};
+		opacity: 1;
+	}
+`
+
+type Props = {
+	isAuthor: boolean | undefined
+	showLastSeen: boolean | undefined
+	status: string | undefined
+	color?: string
+}
+
+export const UserStatus = ({ isAuthor, showLastSeen, status, color }: Props) => {
+	return (
+		<UserStatusStyled color={color} className={status === 'online' && showLastSeen ? 'online' : ''}>{isAuthor ? 'Author' : showLastSeen ? status : 'User'}</UserStatusStyled>
+	)
+}

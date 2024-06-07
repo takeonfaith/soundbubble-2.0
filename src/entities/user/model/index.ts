@@ -1,5 +1,5 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
-import { useUnit } from 'effector-react';
+import { createGate, useGate, useUnit } from 'effector-react';
 import { Database } from '../../../database';
 import { Playlists, Users } from '../../../database/sections';
 import { THint } from '../../../features/searchWithHints/types';
@@ -43,6 +43,7 @@ const loadLibraryFx = createEffect(async (store: TStore) => {
     return tryWrapper<TSong[]>(async () => {
         const addedSongs = store.data?.addedSongs?.reverse() ?? [];
         const result = await Database.Songs.getSongsByUids(addedSongs);
+        console.log({ result });
 
         return result;
     }, 'operationFailed');
@@ -113,14 +114,15 @@ const loadUserSearchHistoryFx = createEffect(
     }
 );
 
+// TODO: отписка на logout
 const loadFriendsFx = createEffect(async (store: TStore) => {
     try {
-        const friends = store.data?.friends
-            ?.filter((friend) => friend.status === 'added')
-            .map((friend) => friend.uid);
-        const res = await Database.Users.getUsersByUids(friends);
+        const friends =
+            store.data?.friends
+                ?.filter((friend) => friend.status === 'added')
+                .map((friend) => friend.uid) ?? [];
 
-        return res;
+        await Database.Users.listenToUsersChanges(friends, updateFriends);
     } catch (error) {
         throw new Error('Failed to load user friends');
     }
@@ -138,6 +140,18 @@ const loadLastSongPlayedFx = createEffect(async (store: TStore) => {
     }
 });
 
+const getUserFx = createEffect(async () => {
+    try {
+        await Database.Users.onAuthStateChanged(async (userCred) => {
+            const user = await Database.Users.getUserByUid(userCred?.uid);
+            console.log({ userCred, user });
+            setUser(user);
+        });
+    } catch (error) {
+        throw new Error('Failed to load user data');
+    }
+});
+
 const login = createEvent<LoginCreditsType>();
 export const logout = createEvent();
 const createUser = createEvent<CreateUserCreditsType>();
@@ -146,6 +160,9 @@ const setLoggining = createEvent<boolean>();
 const getUserPage = createEvent<string>();
 const loadSimilarAuthors = createEvent<TSong[]>();
 const resetUserPage = createEvent();
+const updateFriends = createEvent<TUser[]>();
+
+const userGate = createGate();
 
 export const $user = createStore<TStore>(DEFAULT_STORE);
 $user.reset(logout);
@@ -174,6 +191,11 @@ $searchHistory.reset(logout);
 const $userPage =
     createStore<TPageStore>(DEFAULT_PAGE_STORE).reset(resetUserPage);
 $userPage.reset(logout);
+
+sample({
+    clock: userGate.open,
+    target: getUserFx,
+});
 
 sample({
     clock: login,
@@ -207,6 +229,12 @@ sample({
 });
 
 sample({
+    clock: updateFriends,
+    fn: (friends) => friends,
+    target: $friends,
+});
+
+sample({
     clock: setUser,
     source: $user,
     fn: (store, data) => ({ ...store, data, loggining: false }),
@@ -226,7 +254,6 @@ getDataFromEffect(loadOwnPlaylistsFx, $ownPlaylists);
 getDataFromEffect(loadLastSongPlayedFx, $lastSongPlayed);
 getDataFromEffect(loadAddedPlaylistsFx, $addedPlaylists);
 getDataFromEffect(loadUserSearchHistoryFx, $searchHistory);
-getDataFromEffect(loadFriendsFx, $friends);
 
 sample({
     clock: setLoggining,
@@ -265,7 +292,7 @@ sample({
 });
 
 export const userModel = {
-    useUser: () => useUnit($user),
+    useUser: () => useUnit([$user, getUserFx.pending]),
     useSongLibrary: () => useUnit([$library, loadLibraryFx.pending]),
     useOwnPlaylists: () => useUnit([$ownPlaylists, loadOwnPlaylistsFx.pending]),
     useAddedPlaylists: () =>
@@ -282,5 +309,9 @@ export const userModel = {
         setLoggining,
         loadUserPageFx,
         resetUserPage,
+        updateFriends,
+    },
+    gates: {
+        useLoadUser: () => useGate(userGate),
     },
 };

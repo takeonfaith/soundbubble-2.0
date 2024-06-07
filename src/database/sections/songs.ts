@@ -46,7 +46,7 @@ export class Songs {
                 throw new Error(ERRORS.operationFailed('UID must be provided'));
             }
 
-            return FB.getById<TSong>('songs', uid);
+            return FB.getById('songs', uid);
         } catch (error) {
             throw new Error('Failed to get song by uid ' + uid);
         }

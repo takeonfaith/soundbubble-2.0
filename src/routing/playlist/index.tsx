@@ -30,6 +30,7 @@ export const PlaylistPage = () => {
 					imageComponent={(
 						<PlaylistCover size='200px' isAlbum={currentPlaylist?.isAlbum ?? false} src={currentPlaylist?.image} color={currentPlaylist?.imageColors[0]} />
 					)}
+					isPrivate={currentPlaylist?.isPrivate}
 					colors={currentPlaylist?.imageColors}
 					bottomButtons={
 						<BottomButtons buttonColor={currentPlaylist?.imageColors[0]} isAdmin={false} isPageOwner={false} queueInfo={{

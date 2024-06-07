@@ -37,16 +37,42 @@ const loadPlaylistFx = createEffect(async (store: TStore) => {
     }
 });
 
-const loadAddedPlaylistsFx = createEffect(async (userId: string) => {
-    try {
-        return '';
-    } catch (error) {
-        throw new Error('Error');
+// const loadAddedPlaylistsFx = createEffect(async (userId: string) => {
+//     try {
+//         return '';
+//     } catch (error) {
+//         throw new Error('Error');
+//     }
+// });
+
+const addSongToPlaylistsFx = createEffect(
+    async ({
+        songId,
+        playlistIds,
+    }: {
+        songId: string;
+        playlistIds: string[];
+    }) => {
+        try {
+            if (!songId) throw new Error('Song id not specified');
+            if (!playlistIds.length)
+                throw new Error('Playlist ids not specified');
+
+            return await Database.Playlists.addSongToPlaylists(
+                songId,
+                playlistIds
+            );
+        } catch (error) {
+            throw new Error((error as Error).message);
+        }
     }
-});
+);
 
 const loadPlaylist = createEvent<string>();
-const loadPlaylistsByUserId = createEvent<string>();
+const addSongToPlaylists = createEvent<{
+    songId: string;
+    playlistIds: string[];
+}>();
 
 const $store = createStore<TStore>(DEFAULT_STORE);
 
@@ -69,16 +95,24 @@ sample({
     target: $store,
 });
 
+// sample({
+//     clock: loadPlaylistsByUserId,
+//     source: $store,
+//     fn: (store) => ({ ...store, loadingAddedPlaylists: true }),
+//     target: [loadAddedPlaylistsFx, $store],
+// });
+
 sample({
-    clock: loadPlaylistsByUserId,
-    source: $store,
-    fn: (store) => ({ ...store, loadingAddedPlaylists: true }),
-    target: [loadAddedPlaylistsFx, $store],
+    clock: addSongToPlaylists,
+    target: addSongToPlaylistsFx,
 });
 
 export const playlistModel = {
     usePlaylist: () => useUnit($store),
+    useAddingSongToPlaylists: () =>
+        useUnit([addSongToPlaylistsFx.pending]),
     events: {
         loadPlaylist,
+        addSongToPlaylists,
     },
 };

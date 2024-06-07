@@ -6,12 +6,14 @@ import { usePrivateAction } from "@shared/hooks/usePrivateAction";
 import { IconPlus } from "@tabler/icons-react";
 import { modalModel } from "layout/modal/model";
 import { menuRoutes } from "routing/routes";
+import { chatModel } from "../../entities/chat/model";
 import { PlaylistItem } from "../../entities/playlist/ui";
 import { userModel } from "../../entities/user/model";
 import { CreatePlaylistModal } from "../../features/createPlaylistModal";
 import { ThemeButton } from "../../features/themeButton";
 import {
   LogoWrapper,
+  NotificationBadge,
   PlaylistsStyled,
   SidebarLink,
   SidebarSection,
@@ -23,6 +25,11 @@ export const Sidebar = () => {
   const preparedRoutes = groupByField(menuRoutes, "section");
   const { loggedIn } = usePrivateAction();
   const [ownPlaylists] = userModel.useOwnPlaylists()
+  const chatUnreadCount = chatModel.useChatUnreadCount()
+
+  const notificationsDic: Record<string, number> = {
+    'chat': chatUnreadCount
+  }
 
   const handleAddPlaylist = loggedIn(() => {
     modalModel.events.open({
@@ -48,7 +55,12 @@ export const Sidebar = () => {
                   to={link.url}
                   className={({ isActive }) => (isActive ? "active" : "")}
                 >
-                  <IconText icon={link.icon} text={link.title} />
+                  <Flex width="100%" jc="space-between">
+                    <IconText icon={link.icon} text={link.title} />
+                    {!!notificationsDic[link.url] && <NotificationBadge>
+                      {notificationsDic[link.url]}
+                    </NotificationBadge>}
+                  </Flex>
                 </SidebarLink>
               );
             })}

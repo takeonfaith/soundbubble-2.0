@@ -33,11 +33,6 @@ export const UserItemStyled = styled(Link)<{ $orientation: TOrientation }>`
             $orientation === 'vertical' ? '400' : '300'};
     }
 
-    span {
-        color: ${({ theme }) => theme.colors.greyText};
-        font-size: 0.75rem;
-    }
-
     @media (max-width: 1200px) {
         --size: calc(100vw / 9);
     }
@@ -53,4 +48,15 @@ export const UserItemStyled = styled(Link)<{ $orientation: TOrientation }>`
             font-size: 0.7rem;
         }
     }
+`;
+
+export const OnlineIndicator = styled.div`
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    background: ${({ theme }) => theme.colors.blue.action};
+    outline: 2px solid ${({ theme }) => theme.colors.pageBackground};
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
 `;

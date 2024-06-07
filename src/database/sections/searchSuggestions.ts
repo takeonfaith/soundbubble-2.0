@@ -94,9 +94,9 @@ class PrivateSearchSuggestions {
             );
             console.log(remainingSearchString);
 
-            // if (this.savedSuggestion?.place === "users") {
-            //   return await this.getAuthorsSong(remainingSearchString);
-            // }
+            if (this.savedSuggestion?.place === 'users') {
+                return await this.getAuthorsSong(remainingSearchString);
+            }
 
             const userSuggestions = getDataFromDoc<Suggestion>(
                 await getDocs(
@@ -181,7 +181,7 @@ class PrivateSearchSuggestions {
 
     protected static async getResult(
         suggestions: Suggestion[],
-        shouldLoadAuthorTopTracks?: boolean
+        authorTopSongsCount = 0
     ) {
         const requests = {
             playlists: Playlists.getPlaylistByUid,
@@ -214,14 +214,24 @@ class PrivateSearchSuggestions {
         const isAuthor =
             'isAuthor' in first && first?.isAuthor && 'ownSongs' in first;
 
-        if (isAuthor && shouldLoadAuthorTopTracks) {
+        if (isAuthor && authorTopSongsCount !== 0) {
             const authorTopTracks = await Users.getAuthorTopSongs(
-                first.ownSongs as string[]
+                first.ownSongs as string[],
+                authorTopSongsCount
             );
+
+            const authorTopAlbums = await Users.getAuthorTopAlbums(
+                first.ownPlaylists,
+                3
+            );
+
+            console.log(authorTopAlbums);
+            
 
             const preresult: (THint | null)[] = [
                 first,
                 ...authorTopTracks,
+                ...authorTopAlbums,
                 ...result,
             ];
 
@@ -248,7 +258,7 @@ export class SearchSuggestions extends PrivateSearchSuggestions {
                 searchString
             );
 
-            return await this.getResult(suggestions, true);
+            return await this.getResult(suggestions, 3);
         } catch (error) {
             throw new Error('Failed to get suggestions');
         }
@@ -266,6 +276,15 @@ export class SearchSuggestions extends PrivateSearchSuggestions {
         } catch (error) {
             console.error(error);
             return [];
+        }
+    }
+
+    static async getSearchResult(searchString: string) {
+        try {
+            const searchSuggestions = await this.getSearch(searchString);
+            return this.getResult(searchSuggestions, 6);
+        } catch (error) {
+            throw new Error('Failed to get search result');
         }
     }
 }

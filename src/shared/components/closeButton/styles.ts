@@ -22,6 +22,6 @@ export const CloseButtonStyled = styled.button`
   }
 
   &:hover {
-    background: ${({ theme }) => theme.colors.lightHover};
+    background: ${({ theme }) => theme.colors.hover};
   }
 `;
