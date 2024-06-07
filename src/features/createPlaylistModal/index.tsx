@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { DefaultButton } from '../../shared/components/button/DefaultButton'
 import { Flex } from '../../shared/components/flex'
 import { Input } from '../../shared/components/input'
-import { useState } from 'react'
 
 const DownloadPhotoStyled = styled.label`
 	width: 255px;
@@ -43,14 +42,14 @@ const CenterButton = styled.div`
 `
 
 const DownloadPhoto = () => {
-	const [photo, setPhoto] = useState<File | null>(null)
+	// const [photo, setPhoto] = useState<File | null>(null)
 
-	const handleFile = (e) => {
-		setPhoto()
-	}
+	// const handleFile = (e) => {
+	// 	setPhoto()
+	// }
 
 	return <DownloadPhotoStyled>
-		<input type="file" onChange={handleFile} />
+		<input type="file" />
 		<CenterButton>
 			<IconCamera />
 		</CenterButton>

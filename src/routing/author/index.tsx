@@ -5,6 +5,8 @@ import { userModel } from '../../entities/user/model'
 import { TUser } from '../../entities/user/model/types'
 import { UserCover } from '../../entities/user/ui/UserCover'
 import { UserStatus } from '../../entities/user/ui/UserStatus'
+import { ShareModal } from '../../features/shareModal'
+import { modalModel } from '../../layout/modal/model'
 import { Flex } from '../../shared/components/flex'
 import { PageTop } from '../../shared/components/pageTop'
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation'
@@ -20,7 +22,7 @@ type Props = {
 
 export const AuthorPage = ({ userData }: Props) => {
 	const { user: currentPageUser, songs, playlists, loading } = userModel.useUserPage()
-	const { data: currentUser } = userModel.useUser()
+	const [{ data: currentUser }] = userModel.useUser()
 	const [friends] = userModel.useFriends()
 	const userPageData = userData ?? currentPageUser
 	const isFriend = !!friends.find(f => f.uid === currentPageUser?.uid)
@@ -40,11 +42,16 @@ export const AuthorPage = ({ userData }: Props) => {
 		songs: songs.slice(0, 9),
 	}
 
+	const handleClickShare = () => {
+		modalModel.events.open({ title: `Share ${currentPageUser?.displayName} with friends`, content: <ShareModal entity={currentPageUser} /> })
+	}
+
 
 	return (
 		<SkeletonPageAnimation color={userPageData?.imageColors[0] ?? 'grey'} loading={loading} skeleton={<SkeletonLoading />}>
 			<AuthorPageStyled>
 				<PageTop
+					handleClickShare={handleClickShare}
 					id={userPageData?.uid}
 					name={userPageData?.displayName}
 					subtitle={<UserStatus color={currentPageUser?.imageColors[1]} isAuthor={isAuthor} status={status} showLastSeen={isFriend || currentUser?.isAdmin} />}

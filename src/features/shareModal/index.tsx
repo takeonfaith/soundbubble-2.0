@@ -10,7 +10,7 @@ import { Flex } from "../../shared/components/flex"
 import { Input } from "../../shared/components/input"
 import { THint } from "../searchWithHints/types"
 import { BadgeStyled, ButtonWrapper } from "./styles"
-import { chatModel } from "../../entities/chat/model"
+
 
 type Props = {
 	entity: THint | null
@@ -43,6 +43,7 @@ export const ShareModal = ({ entity }: Props) => {
 	}
 
 	const handleShare = () => {
+		console.log(entity);
 	}
 
 	return (

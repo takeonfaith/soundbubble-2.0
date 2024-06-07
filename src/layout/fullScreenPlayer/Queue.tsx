@@ -18,6 +18,7 @@ export const Queue = ({ queue }: Props) => {
 			isVerified: true,
 			isAuthor: true,
 			online: 0,
+			lastSongPlayed: ''
 		}} /> : null}
 		<Divider />
 		<PlaneSongList songs={queue.songs} listName={null} listIcon={undefined} listUrl={null} />

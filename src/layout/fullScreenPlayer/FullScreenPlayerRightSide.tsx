@@ -11,14 +11,12 @@ type Props = {
 export const FullScreenPlayerRightSide = ({ type }: Props) => {
   // const { songs, name, icon, url } = songModel.queue.useQueue();
   const { queue } = songModel.queue.useQueue()
-  const { lyrics, currentLyricIndex } = songModel.lyrics.useLyrics();
-  const { state } = songModel.useSong()
 
   if (type === null) return null
 
   return (
     <RightSide className={type !== null ? 'visible' : ''}>
-      {type === 'lyrics' && <Lyrics lyrics={lyrics} state={state} currentLyricIndex={currentLyricIndex} />}
+      {type === 'lyrics' && <Lyrics />}
       {type === 'queue' && <Queue queue={queue} />}
     </RightSide>
   );

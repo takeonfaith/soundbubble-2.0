@@ -2,9 +2,7 @@ import { IconFiles, IconInfoCircle, IconPhoto } from '@tabler/icons-react'
 import { Button } from '../../../shared/components/button'
 import { DefaultContextMenuStyled } from '../../../shared/components/defaultContextMenu'
 
-type Props = {}
-
-export const ChatDialogContextMenu = (props: Props) => {
+export const ChatDialogContextMenu = () => {
 	return (
 		<DefaultContextMenuStyled>
 			<Button>

@@ -37,7 +37,7 @@ export const LoginModal = ({ actionAfterLogin }: Props) => {
     const hasErrors = validateFields()
     console.log(hasErrors, errors);
 
-    // if (actionAfterLogin) actionAfterLogin();
+    if (actionAfterLogin) actionAfterLogin();
     if (!hasErrors) {
       userModel.events.login({ email, password })
     }

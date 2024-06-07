@@ -1,7 +1,8 @@
 import { IconArrowDown, IconArrowUp, IconCirclePlus, IconDots } from "@tabler/icons-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SYSTEM_MESSAGE_SENDER } from "../../../entities/chat/lib/getLastMessageSender";
 import { chatModel } from "../../../entities/chat/model";
+import { TMessage } from "../../../entities/chat/model/types";
 import { ChatTitle } from "../../../entities/chat/ui/styles";
 import { getLastSeen } from "../../../entities/user/lib/getLastSeen";
 import { userModel } from "../../../entities/user/model";
@@ -11,10 +12,13 @@ import { UserCoverBackground } from "../../../entities/user/ui/UserCoverBackgrou
 import { UserStatus } from "../../../entities/user/ui/UserStatus";
 import { OnlineIndicator } from "../../../entities/user/ui/styles";
 import { popupModel } from "../../../layout/popup/model";
+import { NotificationBadge } from "../../../layout/sidebar/styles";
 import { Button } from "../../../shared/components/button";
 import { Flex } from "../../../shared/components/flex";
-import { SkeletonShape } from "../../../shared/components/skeleton";
+import { Loading } from "../../../shared/components/loading";
 import { Subtext } from "../../../shared/components/subtext";
+import { areDatesEqual } from "../../../shared/funcs/areDatesEqual";
+import getUID from "../../../shared/funcs/getUID";
 import { useUrlParamId } from "../../../shared/hooks/useUrlParamId";
 import { prepareMessages } from "../lib/prepareMessages";
 import { ChatDialogContextMenu } from "./ChatDialogContextMenu";
@@ -22,42 +26,36 @@ import { ChatTypingIndicator } from "./ChatTypingIndicator";
 import { MessageItem } from "./MessageItem";
 import { SystemMessageItem } from "./SystemMessageItem";
 import { AvatarSection, ChatDialogStyled, ChatHeaderStyled, ChatInput, ChatInputArea, ChatMessagesStyled, MessageSecton, MessagesDate, MessagesSection, ScrollToChatBottomButton, SendButton, UserAvatarStyled } from "./styles";
-import getUID from "../../../shared/funcs/getUID";
-import { TMessage } from "../../../entities/chat/model/types";
-import { Loading } from "../../../shared/components/loading";
-import { areDatesEqual } from "../../../shared/funcs/areDatesEqual";
-import React from "react";
-import { NotificationBadge } from "../../../layout/sidebar/styles";
 
-const MessageItemSkeleton = () => {
-	return <Flex gap={16} ai="flex-end">
-		<SkeletonShape minWidth="35px" width="35px" height="35px" radius="100%" />
-		<SkeletonShape width="fit-content" height="60px" radius="8px 16px 16px 8px">
-			<Flex gap={4} padding="12px" d="column" ai="flex-start">
-				<SkeletonShape width="200px" height="12px" />
-				<SkeletonShape width="80px" height="10px" />
-			</Flex>
-		</SkeletonShape >
-	</Flex>
-}
+// const MessageItemSkeleton = () => {
+// 	return <Flex gap={16} ai="flex-end">
+// 		<SkeletonShape minWidth="35px" width="35px" height="35px" radius="100%" />
+// 		<SkeletonShape width="fit-content" height="60px" radius="8px 16px 16px 8px">
+// 			<Flex gap={4} padding="12px" d="column" ai="flex-start">
+// 				<SkeletonShape width="200px" height="12px" />
+// 				<SkeletonShape width="80px" height="10px" />
+// 			</Flex>
+// 		</SkeletonShape >
+// 	</Flex>
+// }
 
-const ChatDialogSkeleton = () => {
-	return <Flex d="column" ai="flex-start" width="100%" height="100%" padding="20px" gap={10}>
-		<MessageItemSkeleton />
-		<MessageItemSkeleton />
-		<MessageItemSkeleton />
-		<MessageItemSkeleton />
-		<MessageItemSkeleton />
-		<MessageItemSkeleton />
-		<MessageItemSkeleton />
-		<MessageItemSkeleton />
-		<MessageItemSkeleton />
-		<MessageItemSkeleton />
-		<MessageItemSkeleton />
-		<MessageItemSkeleton />
-		<MessageItemSkeleton />
-	</Flex>
-}
+// const ChatDialogSkeleton = () => {
+// 	return <Flex d="column" ai="flex-start" width="100%" height="100%" padding="20px" gap={10}>
+// 		<MessageItemSkeleton />
+// 		<MessageItemSkeleton />
+// 		<MessageItemSkeleton />
+// 		<MessageItemSkeleton />
+// 		<MessageItemSkeleton />
+// 		<MessageItemSkeleton />
+// 		<MessageItemSkeleton />
+// 		<MessageItemSkeleton />
+// 		<MessageItemSkeleton />
+// 		<MessageItemSkeleton />
+// 		<MessageItemSkeleton />
+// 		<MessageItemSkeleton />
+// 		<MessageItemSkeleton />
+// 	</Flex>
+// }
 
 const createNewMessage = (userId: string, message: string): TMessage => {
 	return {

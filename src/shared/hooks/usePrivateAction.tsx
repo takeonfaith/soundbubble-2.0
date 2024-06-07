@@ -4,7 +4,7 @@ import { modalModel } from "layout/modal/model";
 import { userModel } from "../../entities/user/model";
 
 export const usePrivateAction = () => {
-  const { data } = userModel.useUser();
+  const [{ data }] = userModel.useUser();
 
   const openLoginModal = <T = void>(fn?: () => T) => () => {
     modalModel.events.open({

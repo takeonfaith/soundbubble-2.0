@@ -226,7 +226,6 @@ class PrivateSearchSuggestions {
             );
 
             console.log(authorTopAlbums);
-            
 
             const preresult: (THint | null)[] = [
                 first,
@@ -271,7 +270,7 @@ export class SearchSuggestions extends PrivateSearchSuggestions {
             );
             return await this.getResult(
                 getDataFromDoc<Suggestion>(snapshot),
-                false
+                3
             );
         } catch (error) {
             console.error(error);

@@ -1,18 +1,17 @@
-import { TPageStore, TStore } from "./types";
+import { TPageStore, TStore } from './types';
 
 export const DEFAULT_STORE: TStore = {
-  data: null,
-  error: null,
-  loggining: false,
-  userPlaylists: []
+    data: null,
+    error: null,
+    userPlaylists: [],
 };
 
 export const DEFAULT_PAGE_STORE: TPageStore = {
-  user: null,
-  error: null,
-  loading: false,
-  songs: [],
-  playlists: [],
-  similarAuthors: [],
-  similarAuthorsLoading: true,
-}
+    user: null,
+    error: null,
+    loading: false,
+    songs: [],
+    playlists: [],
+    similarAuthors: [],
+    similarAuthorsLoading: true,
+};

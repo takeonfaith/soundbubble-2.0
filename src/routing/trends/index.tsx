@@ -41,7 +41,7 @@ export const TrendsPage = () => {
 				<Flex d='column' gap={4} ai="flex-start" width='100%'>
 					{topSearches.map((item) => {
 						if (!item) return
-						return <HintItem index={1} item={item} key={'id' in item ? item.id : item.uid} handleSubmitSuggestion={() => null} />
+						return <HintItem value='' index={1} item={item} key={'id' in item ? item.id : item.uid} handleSubmitSuggestion={() => null} />
 					})}
 				</Flex>
 			</TrendBox>

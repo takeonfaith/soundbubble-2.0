@@ -15,7 +15,7 @@ type Props = {
 }
 
 export const SongMoreContextMenu = ({ song }: Props) => {
-	const { data } = userModel.useUser()
+	const [{ data }] = userModel.useUser()
 	const isLiked = data?.addedSongs?.find(s => s === song?.id)
 
 	const handleShare = () => {
