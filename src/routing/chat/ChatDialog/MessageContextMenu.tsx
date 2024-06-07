@@ -1,14 +1,12 @@
-import React from 'react'
-import { TMessage } from '../../../entities/chat/model/types'
-import { DefaultContextMenuStyled } from '../../../shared/components/defaultContextMenu'
-import { Button } from '../../../shared/components/button'
 import { IconCopy, IconShare3 } from '@tabler/icons-react'
+import { Button } from '../../../shared/components/button'
+import { DefaultContextMenuStyled } from '../../../shared/components/defaultContextMenu'
 
-type Props = {
-	message: TMessage
-}
+// type Props = {
+// 	message: TMessage
+// }
 
-export const MessageContextMenu = ({ message }: Props) => {
+export const MessageContextMenu = () => {
 	return (
 		<DefaultContextMenuStyled>
 			<Button>

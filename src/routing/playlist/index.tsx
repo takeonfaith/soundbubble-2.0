@@ -1,6 +1,8 @@
 import { playlistModel } from '../../entities/playlist/model';
 import { PlaylistCover } from '../../entities/playlist/ui/PlaylistCover';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
+import { ShareModal } from '../../features/shareModal';
+import { modalModel } from '../../layout/modal/model';
 import { Authors } from '../../shared/components/authors';
 import { Flex } from '../../shared/components/flex';
 import { PageTop } from '../../shared/components/pageTop';
@@ -15,10 +17,15 @@ export const PlaylistPage = () => {
 	const { currentPlaylist, currentPlaylistSongs, loading } = playlistModel.usePlaylist()
 	useUrlParamId({ page: 'playlist', onChangeId: (id) => playlistModel.events.loadPlaylist(id) })
 
+	const handleClickShare = () => {
+		modalModel.events.open({ title: `Share ${currentPlaylist?.name} with friends`, content: <ShareModal entity={currentPlaylist} /> })
+	}
+
 	return (
 		<SkeletonPageAnimation color='' loading={loading} skeleton={<SkeletonLoading />}>
 			<PlaylistPageStyled>
 				<PageTop
+					handleClickShare={handleClickShare}
 					id={''}
 					name={currentPlaylist?.name}
 					subtitle={<Flex gap={3}>

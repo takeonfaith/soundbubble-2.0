@@ -34,6 +34,7 @@ export const InitialLoading = () => {
 		<InitialLoadingStyled className={loading ? 'loading' : 'loaded'}>
 			<Logo short />
 			{showSlowInternetMessage && <span>It seems like You have slow internet connection...</span>}
+			{timeoutError && <span>Failed to load Soundbubble. Please try again later</span>}
 			{loading && <Loading />}
 		</InitialLoadingStyled>
 	)

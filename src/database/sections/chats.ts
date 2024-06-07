@@ -113,7 +113,9 @@ export class Chats {
 
             await setDoc(ref, message);
         } catch (error) {
-            throw new Error('Failed to send message' + error.toString());
+            throw new Error(
+                'Failed to send message' + (error as Error).toString()
+            );
         }
     }
 }

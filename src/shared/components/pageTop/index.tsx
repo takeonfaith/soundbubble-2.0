@@ -1,8 +1,6 @@
 import { IconDiscountCheckFilled, IconHeadphones, IconInfoCircle, IconLock, IconShare3, IconUserPlus } from '@tabler/icons-react';
 import { useTheme } from 'styled-components';
 import { LikeButton } from '../../../features/likeButton';
-import { ShareModal } from '../../../features/shareModal';
-import { modalModel } from '../../../layout/modal/model';
 import { formatBigNumber } from '../../funcs/formatBigNumber';
 import { Button } from '../button';
 import { Flex } from '../flex';
@@ -19,14 +17,11 @@ type Props = {
 	isPrivate?: boolean
 	subtitle?: React.ReactNode
 	bottomButtons?: React.ReactNode
+	handleClickShare: () => void
 }
 
-export const PageTop = ({ name, subtitle, bottomButtons, isPrivate, numberOfListenersPerMonth, subscribers, imageComponent, colors, isVerified }: Props) => {
+export const PageTop = ({ name, subtitle, bottomButtons, isPrivate, numberOfListenersPerMonth, subscribers, imageComponent, colors, isVerified, handleClickShare }: Props) => {
 	const theme = useTheme()
-
-	const handleClickShare = () => {
-		modalModel.events.open({ content: <ShareModal />, title: 'Share with friends' })
-	}
 
 	return (
 		<PageTopStyled $colors={colors}>
@@ -36,7 +31,7 @@ export const PageTop = ({ name, subtitle, bottomButtons, isPrivate, numberOfList
 					<Flex gap={6}>
 						<h2>{name}</h2>
 						{isVerified && <IconDiscountCheckFilled color={colors?.[1]} />}
-						{isPrivate && <IconLock size={20}/>}
+						{isPrivate && <IconLock size={20} />}
 					</Flex>
 					{subtitle}
 				</Flex>

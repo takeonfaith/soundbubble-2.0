@@ -82,6 +82,7 @@ export const MessageItem = ({ message, isNotSeen, isMine, chatData, isPrevByTheS
 		if (isVisible && isNotSeen) {
 			onSeen(message.id)
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isVisible, isNotSeen])
 
 
@@ -89,7 +90,7 @@ export const MessageItem = ({ message, isNotSeen, isMine, chatData, isPrevByTheS
 		e.stopPropagation()
 		e.preventDefault()
 		popupModel.events.open({
-			content: <MessageContextMenu message={message} />,
+			content: <MessageContextMenu />,
 			height: 96,
 			e
 		})
