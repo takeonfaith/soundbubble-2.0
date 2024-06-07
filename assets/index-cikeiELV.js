@@ -5990,4 +5990,4 @@ ${this.customData.serverResponse}`:this.message=this._baseMessage}}var ur;(funct
   flex-direction: column;
   gap: 10px;
   width: 100%;
-`;function eB(){const{themeParams:e}=pP();return Ie.gates.useLoadUser(),c.jsxs(Bj,{theme:e,children:[c.jsx(J8,{}),c.jsx(aL,{children:c.jsx(Z8,{children:c.jsxs(rT,{children:[c.jsx(l4,{}),c.jsx(X8,{})]})})})]})}ng.createRoot(document.getElementById("root")).render(c.jsx(pe.StrictMode,{children:c.jsx(rT,{children:c.jsx(eB,{})})}));
+`;function eB(){const{themeParams:e}=pP();return Ie.gates.useLoadUser(),c.jsxs(Bj,{theme:e,children:[c.jsx(J8,{}),c.jsx(aL,{basename:"/soundbubble-2.0",children:c.jsx(Z8,{children:c.jsxs(rT,{children:[c.jsx(l4,{}),c.jsx(X8,{})]})})})]})}ng.createRoot(document.getElementById("root")).render(c.jsx(pe.StrictMode,{children:c.jsx(rT,{children:c.jsx(eB,{})})}));
