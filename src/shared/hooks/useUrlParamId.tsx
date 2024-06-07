@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useMatch } from 'react-router'
 
 type Props = {
-	page: 'song' | 'playlist' | 'author'
+	page: 'song' | 'playlist' | 'author' | 'chat'
 	onChangeId: (id: string) => void
 }
 

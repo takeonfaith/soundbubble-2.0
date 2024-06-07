@@ -7,10 +7,12 @@ type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 	songId: string | undefined
 	likeColor: string | undefined
 	onClick?: (songId: string) => void
-	$width?: string;
+	width?: string;
+	height?: string;
+	background?: string
 }
 
-export const LikeButton = ({ songId, likeColor = DARK_THEME.colors.greyText, onClick, $width = '30px', ...props }: Props) => {
+export const LikeButton = ({ songId, likeColor = DARK_THEME.colors.greyText, onClick, background, height, width = '30px', ...props }: Props) => {
 	const [isLiked, setIsLiked] = useState(false)
 
 	useEffect(() => {
@@ -26,7 +28,7 @@ export const LikeButton = ({ songId, likeColor = DARK_THEME.colors.greyText, onC
 
 
 	return (
-		<LikeButtonStyled {...props} $width={$width} className='like-button' onClick={onLikeClick} isLiked={isLiked} likeColor={likeColor}>
+		<LikeButtonStyled {...props} $width={width} $height={height} $background={background} className='like-button' onClick={onLikeClick} isLiked={isLiked} likeColor={likeColor}>
 			{isLiked ? <IconHeartFilled /> : <IconHeart />}
 		</LikeButtonStyled>
 	)

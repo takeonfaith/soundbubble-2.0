@@ -10,6 +10,8 @@ export const HintsStyled = styled.div`
     background: ${({ theme }) => theme.colors.input};
     height: fit-content;
     min-height: 45px;
+    max-height: 504px;
+    overflow-y: auto;
     padding: 4px;
     border-radius: ${({ theme }) =>
         `0 0 ${theme.borderRadius.mild} ${theme.borderRadius.mild}`};
@@ -18,10 +20,10 @@ export const HintsStyled = styled.div`
     display: flex;
     flex-direction: column;
     gap: 4px;
-    justify-content: center;
     color: ${({ theme }) => theme.colors.textColor};
     border-top: none;
-    z-index: 10;
+    z-index: 1;
+    box-shadow: ${({ theme }) => theme.colors.shadow};
 
     & > * {
         animation: appear 0.5s;
@@ -39,6 +41,7 @@ export const HintsStyled = styled.div`
 
 export const HintItemStyled = styled.div`
     padding: 8px 6px;
+    padding-right: 15px;
     border-radius: ${({ theme }) => `calc(${theme.borderRadius.mild} - 2px)`};
     display: flex;
     align-items: center;

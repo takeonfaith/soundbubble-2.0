@@ -6,13 +6,15 @@ import { usePrivateAction } from "@shared/hooks/usePrivateAction";
 import { IconPlus } from "@tabler/icons-react";
 import { modalModel } from "layout/modal/model";
 import { menuRoutes } from "routing/routes";
+import { chatModel } from "../../entities/chat/model";
 import { PlaylistItem } from "../../entities/playlist/ui";
 import { userModel } from "../../entities/user/model";
 import { CreatePlaylistModal } from "../../features/createPlaylistModal";
 import { ThemeButton } from "../../features/themeButton";
-import { DefaultButton } from "../../shared/components/button/DefaultButton";
 import {
   LogoWrapper,
+  NotificationBadge,
+  PlaylistsStyled,
   SidebarLink,
   SidebarSection,
   SidebarSectionTitle,
@@ -21,8 +23,13 @@ import {
 
 export const Sidebar = () => {
   const preparedRoutes = groupByField(menuRoutes, "section");
-  const { loggedIn, openLoginModal } = usePrivateAction();
-  const { data, userPlaylists } = userModel.useUser()
+  const { loggedIn } = usePrivateAction();
+  const [ownPlaylists] = userModel.useOwnPlaylists()
+  const chatUnreadCount = chatModel.useChatUnreadCount()
+
+  const notificationsDic: Record<string, number> = {
+    'chat': chatUnreadCount
+  }
 
   const handleAddPlaylist = loggedIn(() => {
     modalModel.events.open({
@@ -48,7 +55,12 @@ export const Sidebar = () => {
                   to={link.url}
                   className={({ isActive }) => (isActive ? "active" : "")}
                 >
-                  <IconText icon={link.icon} text={link.title} />
+                  <Flex width="100%" jc="space-between">
+                    <IconText icon={link.icon} text={link.title} />
+                    {!!notificationsDic[link.url] && <NotificationBadge>
+                      {notificationsDic[link.url]}
+                    </NotificationBadge>}
+                  </Flex>
                 </SidebarLink>
               );
             })}
@@ -59,16 +71,14 @@ export const Sidebar = () => {
       <SidebarSection>
         <Flex jc="space-between" width="100%">
           <SidebarSectionTitle>Your Playlists</SidebarSectionTitle>
-          <button onClick={handleAddPlaylist}>
+          <button className="add-playlist" onClick={handleAddPlaylist}>
             <IconPlus />
           </button>
         </Flex>
-        <Flex d="column" gap={0} padding="10px">
-          {userPlaylists?.slice(0, 3)?.map((playlist) => <PlaylistItem orientation="horizontal" playlist={playlist} key={playlist.id} />)}
-        </Flex>
+        <PlaylistsStyled>
+          {ownPlaylists?.slice(0, 4)?.map((playlist) => <PlaylistItem orientation="horizontal" playlist={playlist} key={playlist.id} />)}
+        </PlaylistsStyled>
       </SidebarSection>
-      {data === null && <DefaultButton onClick={openLoginModal()} appearance="primary">Login</DefaultButton>}
-      <Flex height="90px"></Flex>
     </SidebarStyled>
   );
 };

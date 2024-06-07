@@ -1,24 +1,51 @@
-import { FB } from "../../firebase";
+import { FB } from '../../firebase';
 
-import { TPlaylist } from "@playlist/model/types";
-import { doc, getDoc, getDocs, query, where } from "firebase/firestore";
-import { getDataFromDoc } from "../lib/getDataFromDoc";
+import { TPlaylist } from '@playlist/model/types';
+import { arrayUnion, getDocs, query, where } from 'firebase/firestore';
+import { ERRORS } from '../../shared/constants';
+import { getDataFromDoc } from '../lib/getDataFromDoc';
 
 export class Playlists {
-  static ref = FB.get('playlists');
+    static ref = FB.get('playlists');
 
-  static getPlaylistByUid = async (uid: string) => {
-    const docRef = doc(this.ref, uid);
-    const data = await getDoc(docRef);
-    return data.data() as TPlaylist;
-  };
+    static getPlaylistByUid = async (uid: string) => {
+        try {
+            if (!uid) {
+                throw new Error(ERRORS.operationFailed('UID must be provided'));
+            }
 
-  static getPlaylistsByUids = async (uids: string[]) => {
-    if (uids.length === 0) return []
+            return FB.getById('playlists', uid);
+        } catch (error) {
+            throw new Error('Failed to get playlist by uid ' + uid);
+        }
+    };
 
-    const q = query(FB.get('playlists'), where('id', 'in', uids))
-    const snapshot = await getDocs(q)
+    static getPlaylistsByUids = async (uids: string[]) => {
+        if (uids.length === 0) return [];
 
-    return getDataFromDoc<TPlaylist>(snapshot)
-  };
+        const q = query(FB.get('playlists'), where('id', 'in', uids));
+        const snapshot = await getDocs(q);
+
+        return getDataFromDoc<TPlaylist>(snapshot);
+    };
+
+    static async addSongToPlaylists(songId: string, playlistIds: string[]) {
+        try {
+            if (!songId) throw new Error('Song id not specified');
+            if (!playlistIds.length)
+                throw new Error('Playlist ids not specified');
+
+            const requests = playlistIds.map((id) => {
+                return FB.updateById('playlists', id, {
+                    songs: arrayUnion(songId),
+                });
+            });
+
+            return Promise.all(requests);
+        } catch (error) {
+            throw new Error(
+                `Failed to add song to playlists ${songId}, ${playlistIds}, ${error}`
+            );
+        }
+    }
 }

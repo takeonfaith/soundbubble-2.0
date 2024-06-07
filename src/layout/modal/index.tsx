@@ -16,12 +16,11 @@ export const Modal = () => {
     modalModel.events.close();
   };
 
-
   return (
     <ModalBackground>
       <ModalStyled>
-        <ModalTitle>{title}</ModalTitle>
         <CloseButton onClick={handleClose} />
+        <ModalTitle>{title}</ModalTitle>
         <ModalContent>{content}</ModalContent>
       </ModalStyled>
     </ModalBackground>

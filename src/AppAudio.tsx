@@ -70,13 +70,6 @@ export const AppAudio = () => {
     useAppAudio();
   const { currentSong } = songModel.useSong();
 
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.playbackRate = 5
-    }
-  }, [audioRef])
-
-
   return (
     <audio
       onEnded={handleEnded}

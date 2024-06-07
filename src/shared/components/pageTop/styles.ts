@@ -12,6 +12,7 @@ export const PageTopStyled = styled(BeautifulBackground)`
     background-size: 150% 250%;
     animation: none;
     color: #fff;
+    z-index: 4;
 	 
 	 a {
 		 color: #fff;

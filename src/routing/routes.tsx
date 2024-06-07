@@ -12,15 +12,17 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import { AuthorPage } from "./author";
+import { ChatPage } from "./chat";
+import { ChatDialog } from "./chat/ChatDialog/ChatDialog";
 import { DiscoverPage } from "./discover";
+import { FriendsPage } from "./friends";
+import { HistoryPage } from "./history";
 import { Library } from "./library";
 import { MePage } from "./me";
 import { PlaylistPage } from "./playlist";
 import { SearchPage } from "./search";
 import { SongPage } from "./song";
 import { TrendsPage } from "./trends";
-import { HistoryPage } from "./history";
-import { FriendsPage } from "./friends";
 
 type Section = "features" | "your activities" | "your music";
 
@@ -28,6 +30,7 @@ type TRoute = {
   url: string;
   title: string;
   component: React.ReactNode;
+  children?: TRoute[]
   section?: Section;
   icon?: React.ReactNode;
   private?: boolean;
@@ -66,12 +69,21 @@ export const menuRoutes: TRoute[] = [
     section: "your music",
     private: true,
   },
-
   {
     url: "chat",
     title: "Chat",
     icon: <IconMessage />,
-    component: <>chat</>,
+    component: <ChatPage />,
+    children: [
+      {
+        url: ":id",
+        title: "Chat",
+        icon: <IconMessage />,
+        component: <ChatDialog />,
+        section: "your activities",
+        private: true,
+      }
+    ],
     section: "your activities",
     private: true,
   },

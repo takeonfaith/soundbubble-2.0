@@ -4,8 +4,9 @@ import { Flex } from "@components/flex";
 import { Input } from "@components/input";
 import { PasswordInput } from "@components/input/PasswordInput";
 import { IconAt } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { userModel } from "../../entities/user/model";
+import { modalModel } from "../../layout/modal/model";
 
 type Props = {
   actionAfterLogin?: () => void;
@@ -15,7 +16,7 @@ export const LoginModal = ({ actionAfterLogin }: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const { data, loggining, error } = userModel.useUser()
+  const [{ data, error }, loading] = userModel.useUser()
 
   const validateFields = () => {
     const errors: Record<string, string> = {};
@@ -42,22 +43,39 @@ export const LoginModal = ({ actionAfterLogin }: Props) => {
     }
   };
 
+  useEffect(() => {
+    if (data) {
+      modalModel.events.close()
+    }
+  }, [data])
+
+
   console.log(error);
 
 
   const handleChangeLogin: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setEmail(e.currentTarget.value);
+    setErrors(prev => {
+      const errors = { ...prev }
+      delete errors.email
+      return errors
+    })
   };
 
   const handleChangePassword: React.ChangeEventHandler<HTMLInputElement> = (
     e
   ) => {
     setPassword(e.currentTarget.value);
+    setErrors(prev => {
+      const errors = { ...prev }
+      delete errors.password
+      return errors
+    })
   };
 
   return (
-    <Flex d="column" width="100%" jc="space-between" height="100%" gap={20}>
-      <Flex d="column" jc="center" width="100%" height="100%" gap={20}>
+    <Flex d="column" width="100%" jc="space-between" height="100%" gap={20} padding="0 25px">
+      <Flex d="column" jc="center" width="100%" height="300px" gap={20} onKeyDown={e => e.key === 'Enter' && handleLogin()}>
         {error?.message}
         <Input
           value={email}
@@ -78,7 +96,7 @@ export const LoginModal = ({ actionAfterLogin }: Props) => {
         />
       </Flex>
       <DefaultButton
-        loading={loggining}
+        loading={loading}
         onClick={handleLogin}
         appearance="primary"
       >

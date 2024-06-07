@@ -1,5 +1,6 @@
-import { IconDiscountCheckFilled, IconHeadphones, IconHeart, IconInfoCircle, IconShare3, IconUserPlus } from '@tabler/icons-react';
+import { IconDiscountCheckFilled, IconHeadphones, IconInfoCircle, IconLock, IconShare3, IconUserPlus } from '@tabler/icons-react';
 import { useTheme } from 'styled-components';
+import { LikeButton } from '../../../features/likeButton';
 import { ShareModal } from '../../../features/shareModal';
 import { modalModel } from '../../../layout/modal/model';
 import { formatBigNumber } from '../../funcs/formatBigNumber';
@@ -15,11 +16,12 @@ type Props = {
 	imageComponent: React.ReactNode,
 	colors: string[] | undefined
 	isVerified?: boolean
+	isPrivate?: boolean
 	subtitle?: React.ReactNode
 	bottomButtons?: React.ReactNode
 }
 
-export const PageTop = ({ name, subtitle, bottomButtons, numberOfListenersPerMonth, subscribers, imageComponent, colors, isVerified }: Props) => {
+export const PageTop = ({ name, subtitle, bottomButtons, isPrivate, numberOfListenersPerMonth, subscribers, imageComponent, colors, isVerified }: Props) => {
 	const theme = useTheme()
 
 	const handleClickShare = () => {
@@ -31,9 +33,10 @@ export const PageTop = ({ name, subtitle, bottomButtons, numberOfListenersPerMon
 			{imageComponent}
 			<Flex gap={8} d='column' ai='center'>
 				<Flex gap={4} d='column'>
-					<Flex gap={4}>
+					<Flex gap={6}>
 						<h2>{name}</h2>
 						{isVerified && <IconDiscountCheckFilled color={colors?.[1]} />}
+						{isPrivate && <IconLock size={20}/>}
 					</Flex>
 					{subtitle}
 				</Flex>
@@ -48,9 +51,7 @@ export const PageTop = ({ name, subtitle, bottomButtons, numberOfListenersPerMon
 					</Flex>
 				</Flex>
 				<TopRightCorner>
-					<Button $height='32px' $width='45px' $background={theme.colors.darkHover}>
-						<IconHeart size={20} />
-					</Button>
+					<LikeButton songId={undefined} likeColor={undefined} background={theme.colors.darkHover} height='32px' width='45px' />
 					<Button $height='32px' $width='45px' onClick={handleClickShare} $background={theme.colors.darkHover}>
 						<IconShare3 size={20} />
 					</Button>

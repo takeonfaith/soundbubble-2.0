@@ -7,8 +7,12 @@ export const Titles = styled.div`
     width: 100%;
     display: grid;
     padding: 8px;
-    grid-template-columns: 55px 1fr 1fr 200px 96px;
+    grid-template-columns: 55px 1fr 1fr 200px 86px;
     color: ${({ theme }) => theme.colors.textColor};
+    position: sticky;
+    top: 0;
+    background: ${({ theme }) => theme.colors.pageBackground};
+    z-index: 2;
 
     @media (max-width: 1080px) {
         display: none;

@@ -18,13 +18,15 @@ export const SongSkeleton = () => {
 				</SkeletonShape>
 			</VerticalSongStyled>
 			<HorizontalSongStyled>
-				<Flex width='100%' gap={20}>
-					<SkeletonShape width='35px' height='35px' radius='6px' />
-					<SkeletonShape width='25%' height='18px' radius='6px' />
-					<SkeletonShape width='25%' height='18px' radius='6px' />
-					<SkeletonShape width='20%' height='18px' radius='6px' />
-					<SkeletonShape width='18%' height='18px' radius='6px' />
-				</Flex>
+				<SkeletonShape width='100%' height='46px' radius='10px'>
+					<Flex width='100%' gap={20} padding='6px'>
+						<SkeletonShape width='35px' height='35px' radius='6px' />
+						<SkeletonShape width='25%' height='18px' radius='6px' />
+						<SkeletonShape width='25%' height='18px' radius='6px' />
+						<SkeletonShape width='20%' height='18px' radius='6px' />
+						<SkeletonShape width='18%' height='18px' radius='6px' />
+					</Flex>
+				</SkeletonShape>
 			</HorizontalSongStyled>
 		</SongSkeletonStyled>
 	)

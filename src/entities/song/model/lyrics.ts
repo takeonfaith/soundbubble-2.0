@@ -1,70 +1,87 @@
-import { createEvent, createStore, sample } from "effector";
-import { useUnit } from "effector-react";
-import { LYRICS_DEFAULT_STORE } from "./constants";
-import { TLyric, TLyricsStore } from "./types";
+import { createEvent, createStore, sample } from 'effector';
+import { useUnit } from 'effector-react';
+import { LYRICS_DEFAULT_STORE } from './constants';
+import { TLyric, TLyricsStore } from './types';
 
 const handleCalculateLyric = (
-  store: TLyricsStore,
-  currentTime: number
+    { lyrics: store }: { lyrics: TLyricsStore },
+    currentTime: number
 ): TLyricsStore => {
-  const { lyrics } = store;
+    console.log(store, currentTime);
 
-  const found = lyrics.findIndex((_, index, arr) => {
-    return (arr[index + 1]?.startTime ?? -Infinity) > currentTime;
-  });
+    const { lyrics } = store;
 
-  if (found === store.currentLyricIndex) return store;
+    const found = lyrics.findIndex((_, index, arr) => {
+        return (arr[index + 1]?.startTime ?? -Infinity) > currentTime;
+    });
 
-  return { ...store, currentLyricIndex: found };
+    if (found === store.currentLyricIndex) return store;
+
+    return { ...store, currentLyricIndex: found };
 };
 
-const handleNextCurrentLyric = (store: TLyricsStore, currentTime: number) => {
-  const { lyrics, currentLyricIndex } = store;
-  
-  if (!lyrics.length || isNaN(lyrics[0].startTime)) return store;
+const handleNextCurrentLyric = (
+    { lyrics: store }: { lyrics: TLyricsStore },
+    currentTime: number
+) => {
+    console.log('test', store, currentTime);
 
-  if (lyrics[currentLyricIndex + 1].startTime < currentTime) {
-    return { ...store, currentLyricIndex: currentLyricIndex + 1 };
-  }
+    const { lyrics, currentLyricIndex } = store;
 
-  return store;
+    if (!lyrics.length || isNaN(lyrics[0].startTime)) return store;
+
+    if (lyrics[currentLyricIndex + 1].startTime < currentTime) {
+        return { ...store, currentLyricIndex: currentLyricIndex + 1 };
+    }
+
+    return store;
 };
 
 export const calculateCurrentLyric = createEvent<number>();
 export const nextCurrentLyric = createEvent<number>();
 export const setLyrics = createEvent<TLyric[]>();
 export const setCurrentLyricIndex = createEvent<number>();
+export const setShouldCalculateLyrics = createEvent<boolean>();
 
 const $lyrics = createStore<TLyricsStore>(LYRICS_DEFAULT_STORE);
+const $shouldCalculateLyrics = createStore(false);
 
 sample({
-  clock: calculateCurrentLyric,
-  source: $lyrics,
-  fn: handleCalculateLyric,
-  target: $lyrics,
+    clock: calculateCurrentLyric,
+    source: { shouldCalculateLyrics: $shouldCalculateLyrics, lyrics: $lyrics },
+    filter: ({ shouldCalculateLyrics }) => shouldCalculateLyrics,
+    fn: handleCalculateLyric,
+    target: $lyrics,
 });
 
 sample({
-  clock: nextCurrentLyric,
-  source: $lyrics,
-  fn: handleNextCurrentLyric,
-  target: $lyrics,
+    clock: nextCurrentLyric,
+    source: { shouldCalculateLyrics: $shouldCalculateLyrics, lyrics: $lyrics },
+    filter: ({ shouldCalculateLyrics }) => shouldCalculateLyrics,
+    fn: handleNextCurrentLyric,
+    target: $lyrics,
 });
 
 sample({
-  clock: setLyrics,
-  source: $lyrics,
-  fn: (store, lyrics) => ({ ...store, lyrics }),
-  target: $lyrics,
+    clock: setLyrics,
+    source: $lyrics,
+    fn: (store, lyrics) => ({ ...store, lyrics }),
+    target: $lyrics,
 });
 
 sample({
-  clock: setCurrentLyricIndex,
-  source: $lyrics,
-  fn: (store, currentLyricIndex) => ({ ...store, currentLyricIndex }),
-  target: $lyrics,
+    clock: setCurrentLyricIndex,
+    source: $lyrics,
+    fn: (store, currentLyricIndex) => ({ ...store, currentLyricIndex }),
+    target: $lyrics,
+});
+
+sample({
+    clock: setShouldCalculateLyrics,
+    fn: (should) => should,
+    target: $shouldCalculateLyrics,
 });
 
 export const useLyrics = () => {
-  return useUnit($lyrics);
+    return useUnit([$lyrics, $shouldCalculateLyrics]);
 };

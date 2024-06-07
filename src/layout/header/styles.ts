@@ -2,11 +2,11 @@ import styled from 'styled-components';
 
 export const HeaderStyled = styled.header`
     width: 100%;
-    padding: 0 7px;
-    min-height: 40px;
+    min-height: 70px;
     display: flex;
     flex-direction: column;
-    padding: 20px 55px 0 55px;
+    justify-content: flex-end;
+    padding: 0px 55px 0 55px;
     top: 0px;
     position: sticky;
     scroll-padding-top: 150px;
@@ -17,8 +17,17 @@ export const HeaderStyled = styled.header`
 `;
 
 export const HeaderPageTitle = styled.h2`
-    width: 300px;
+    width: 150px;
     display: flex;
     align-items: center;
     gap: 8px;
+`;
+
+export const SearchStyled = styled.div`
+    width: 100%;
+    max-width: 650px;
+
+    @media (max-width: 1000px) {
+        width: 100%;
+    }
 `;

@@ -5,6 +5,7 @@ export const Flex = styled.div<{
   ai?: "center" | "flex-start" | "flex-end";
   gap?: number;
   d?: "column" | "row";
+  wrap?: "wrap" | "nowrap";
   width?: string;
   height?: string;
   padding?: string
@@ -13,6 +14,7 @@ export const Flex = styled.div<{
   align-items: ${({ ai }) => ai ?? "center"};
   justify-content: ${({ jc }) => jc ?? "flex-start"};
   flex-direction: ${({ d }) => d ?? "row"};
+  flex-wrap: ${({ wrap }) => wrap};
   gap: ${({ gap }) => `${gap ?? 0}px`};
   width: ${({ width }) => width ?? "fit-content"};
   height: ${({ height }) => height ?? "fit-content"};

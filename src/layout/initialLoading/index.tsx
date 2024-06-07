@@ -10,7 +10,7 @@ const TIMEOUTS = {
 }
 
 export const InitialLoading = () => {
-	const { data, loggining } = userModel.useUser()
+	const [{ data }, loading] = userModel.useUser()
 	const [showSlowInternetMessage, setShowSlowInternetMessage] = useState(false)
 	const [timeoutError, setTimeoutError] = useState(false)
 
@@ -31,10 +31,10 @@ export const InitialLoading = () => {
 	}, [data])
 
 	return (
-		<InitialLoadingStyled className={loggining ? 'loading' : 'loaded'}>
+		<InitialLoadingStyled className={loading ? 'loading' : 'loaded'}>
 			<Logo short />
 			{showSlowInternetMessage && <span>It seems like You have slow internet connection...</span>}
-			{loggining && <Loading />}
+			{loading && <Loading />}
 		</InitialLoadingStyled>
 	)
 }

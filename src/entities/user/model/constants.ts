@@ -4,8 +4,6 @@ export const DEFAULT_STORE: TStore = {
   data: null,
   error: null,
   loggining: false,
-  library: [],
-  loadingLibrary: false,
   userPlaylists: []
 };
 

@@ -8,7 +8,10 @@ import {
   IconPlayerPlayFilled
 } from "@tabler/icons-react";
 import { memo } from "react";
+import { popupModel } from "../../../layout/popup/model";
+import { PlayingAnimation } from "../../../shared/components/playingAnimation";
 import { TSong } from "../model/types";
+import { SongMoreContextMenu } from "./SongMoreContextMenu";
 import { SongCover } from "./SongCover";
 import {
   Listens,
@@ -24,7 +27,6 @@ import {
   SongNameAndListens,
   SongStyled,
 } from "./styles";
-import { PlayingAnimation } from "../../../shared/components/playingAnimation";
 
 type Props = {
   song: TSong;
@@ -42,6 +44,12 @@ export const SongItem = memo(
 
     const handleMore: React.MouseEventHandler<HTMLButtonElement> = (e) => {
       e.stopPropagation();
+
+      popupModel.events.open({
+        content: <SongMoreContextMenu song={song} />,
+        height: 329,
+        e
+      })
     };
 
     const handleClick = () => onClick(song, index);
@@ -93,7 +101,7 @@ export const SongItem = memo(
           <IconHeadphones />
         </Listens>
         <SongButtons>
-          <LikeButton $width="40px" songId={id} likeColor={imageColors[1]} onClick={() => null} />
+          <LikeButton width="35px" height="35px" songId={id} likeColor={imageColors[1]} onClick={() => null} />
           <MoreInfoButton onClick={handleMore}>
             <IconDots />
           </MoreInfoButton>

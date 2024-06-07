@@ -3,10 +3,10 @@ import styled from 'styled-components';
 export const CoverStyled = styled.img<{ $coverLoaded: boolean }>`
     height: 100%;
     object-fit: cover;
-    transition: 0.7s;
-    opacity: ${({ $coverLoaded }) => ($coverLoaded ? '1' : '0')};
+    /* transition: 0.4s; */
+    /* opacity: ${({ $coverLoaded }) => ($coverLoaded ? '1' : '0')};
     transform: ${({ $coverLoaded }) =>
-        $coverLoaded ? 'scale(1)' : 'scale(1.2)'};
+        $coverLoaded ? 'scale(1)' : 'scale(1.2)'}; */
 `;
 
 export const GeneralCoverStyled = styled.div<{
@@ -17,15 +17,15 @@ export const GeneralCoverStyled = styled.div<{
     width: ${({ $size }) => $size ?? 'var(--size)'};
     min-width: ${({ $size }) => $size ?? 'var(--size)'};
     height: ${({ $size }) => $size ?? 'var(--size)'};
-    overflow: hidden;
     display: flex;
     justify-content: center;
     background: ${({ $color1 }) => $color1 ?? 'grey'};
-    border-radius: ${({ $borderRadius }) => $borderRadius};
     position: relative;
-    overflow: hidden;
+    border-radius: ${({ $borderRadius }) => $borderRadius};
+    /* overflow: hidden; */
 
     img {
+        border-radius: ${({ $borderRadius }) => $borderRadius};
         width: 100%;
     }
 

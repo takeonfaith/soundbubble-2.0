@@ -13,7 +13,9 @@ const AnimationWrapper = styled.div`
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  width: 100%;
 
   &.show {
     opacity: 1;
@@ -53,6 +55,7 @@ export const DefaultButton = ({
       disabled={disabled || loading}
       $background={backgrounds[appearance]}
       $width={width}
+      color={appearance === 'primary' ? '#fff' : ''}
       {...restProps}
     >
       <AnimationWrapper className={loading ? "show" : "hide"}>

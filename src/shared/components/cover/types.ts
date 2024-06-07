@@ -4,5 +4,5 @@ export type GeneralCoverProps = {
 	fallbackIcon: React.ReactNode
 	borderRadius?: string
 	children?: React.ReactNode
-	size: string
+	size: string | undefined
 }
