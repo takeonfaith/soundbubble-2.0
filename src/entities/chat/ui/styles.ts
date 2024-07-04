@@ -6,9 +6,8 @@ export const ChatItemStyled = styled(Link)`
     align-items: center;
     width: 100%;
     padding: 10px 25px;
-    padding-right: 8px;
     gap: 12px;
-    background: ${({ theme }) => theme.colors.pageBackground2};
+    background: ${({ theme }) => theme.colors.pageBackground};
 
     &.selected {
         background: ${({ theme }) => theme.colors.blue.transparent};
@@ -24,15 +23,18 @@ export const ChatTitle = styled.div`
     font-weight: 300;
 `;
 
-export const LastMessageStyled = styled.span`
+export const LastMessageStyled = styled.div`
     height: 32px;
+    font-size: 0.8rem;
+    font-weight: 200;
+`;
+
+export const LastMessageTextStyled = styled.span`
+    opacity: 0.5;
     overflow: hidden;
     display: inline-flex;
     flex-wrap: wrap;
     column-gap: 6px;
-    font-size: 0.8rem;
-    font-weight: 200;
-    opacity: 0.5;
 `;
 
 export const LastMessageAttachmentStyled = styled.div`

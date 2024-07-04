@@ -9,19 +9,25 @@ export const MessageWrapper = styled.div`
 `;
 
 export const MessageSender = styled.div`
-    font-weight: 300;
-    font-size: 0.8rem;
-    color: ${({ theme }) => theme.colors.purple.main};
+    font-size: 0.7rem;
+    margin-left: 10px;
+    color: ${({ theme }) => theme.colors.greyText};
     font-weight: 300;
 `;
 
 export const MessageStyled = styled.div`
     width: 100%;
     display: flex;
-    gap: 10px;
+    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
 `;
 
-export const MessageBubble = styled.div<{ $background: string }>`
+export const MessageBubble = styled.div<{
+    $background: string;
+    $isFirst: boolean;
+}>`
     padding: 8px 10px;
     padding-bottom: 4px;
     border-radius: 8px 10px 10px 12px;
@@ -67,7 +73,8 @@ export const MessageBubble = styled.div<{ $background: string }>`
     }
 
     &.isPrevByTheSameSender {
-        border-radius: 8px 14px 14px 8px;
+        border-radius: ${({ $isFirst }) =>
+            $isFirst ? '14px 14px 14px 8px' : '8px 14px 14px 8px'};
 
         &::before {
             display: none;
@@ -100,7 +107,7 @@ export const ChatMessagesStyled = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0px;
+    gap: 4px;
     padding-top: 20px;
     overflow-y: auto;
 `;

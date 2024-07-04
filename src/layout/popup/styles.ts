@@ -23,4 +23,8 @@ export const PopupStyled = styled.div<{
     transition: 0.15s opacity, 0.15s visibility, 0.15s transform;
     transform-origin: ${({ $transformOrigin }) => $transformOrigin};
     overflow: hidden;
+
+    @media (max-width: 768px) {
+        transform: ${({ $isOpen }) => ($isOpen ? 'scale(1.05)' : 'scale(0.8)')};
+    }
 `;

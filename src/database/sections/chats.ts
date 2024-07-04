@@ -8,12 +8,12 @@ import {
     where,
 } from 'firebase/firestore';
 import { TChat, TChatData, TMessage } from '../../entities/chat/model/types';
-import { THint } from '../../features/searchWithHints/types';
 import { FB } from '../../firebase';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { Playlists } from './playlists';
 import { Songs } from './songs';
 import { Users } from './users';
+import { TEntity } from '../../entities/search/model/types';
 
 export class Chats {
     static ref = FB.get('newChats');
@@ -94,7 +94,7 @@ export class Chats {
                 });
 
                 return acc;
-            }, {} as Record<string, THint>);
+            }, {} as Record<string, TEntity>);
 
             return { messages, chatData: res };
         } catch (error) {
@@ -104,14 +104,12 @@ export class Chats {
 
     static async sendMessage(chatId: string, message: TMessage) {
         try {
-            console.log(chatId, message);
-
             const ref = doc(
                 FB.firestore,
                 `newChats/${chatId}/messages/${message.id}`
             );
 
-            await setDoc(ref, message);
+            return await setDoc(ref, message);
         } catch (error) {
             throw new Error(
                 'Failed to send message' + (error as Error).toString()

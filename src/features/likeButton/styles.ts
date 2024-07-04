@@ -3,11 +3,13 @@ import { Button } from '../../shared/components/button';
 
 export const LikeButtonStyled = styled(Button)<{
     likeColor: string;
-    isLiked: boolean;
 }>`
-    color: ${({ isLiked, likeColor, theme }) =>
-        isLiked ? likeColor : theme.colors.textColor};
+    color: ${({ theme }) => theme.colors.textColor};
     filter: brightness(1.2);
+
+    &.liked {
+        color: ${({ likeColor }) => likeColor};
+    }
 
     svg {
         width: 20px;

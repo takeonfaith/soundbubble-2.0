@@ -5,7 +5,7 @@ import {
   ModalContent,
   ModalStyled,
   ModalTitle
-} from "./style";
+} from "./styles";
 
 export const Modal = () => {
   const { opened, title, content } = modalModel.useModal();

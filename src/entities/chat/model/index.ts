@@ -1,7 +1,7 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { createGate, useGate, useUnit } from 'effector-react';
 import { Database } from '../../../database';
-import { THint } from '../../search/model/types';
+import { TEntity } from '../../search/model/types';
 import { $user, logout } from '../../user/model';
 import { TChat, TChatData, TMessage } from './types';
 
@@ -24,21 +24,20 @@ const getChatDataFx = createEffect(
         chatDataObject,
     }: {
         chats: TChat[];
-        chatDataObject: Record<string, THint>;
+        chatDataObject: Record<string, TEntity>;
     }) => {
         try {
             const allParticipants = chats
                 .flatMap((chat) => chat.participants)
                 .filter((user) => !chatDataObject[user]);
 
-            const participants = allParticipants.map(async (userId) => {
-                const user = await Database.Users.getUserByUid(userId);
-                return user;
+            const participants = allParticipants.map((userId) => {
+                return Database.Users.getUserByUid(userId);
             });
 
-            const res: THint[] = (await Promise.all([...participants])).flatMap(
-                (s) => s
-            );
+            const res: TEntity[] = (
+                await Promise.all([...participants])
+            ).flatMap((s) => s);
 
             return res.reduce(
                 (acc, el) => {
@@ -199,7 +198,7 @@ sample({
 sample({
     clock: sendMessage,
     source: $currentChatMessages,
-    fn: (store, {message}) => [...store, message],
+    fn: (store, { message }) => [...store, message],
     target: $currentChatMessages,
 });
 
@@ -224,14 +223,15 @@ sample({
     clock: sendMessageFx.done,
     source: $currentChatMessages,
     fn: (store, { params }) => {
-        console.log('done');
+        return store.map((storeMessage) => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { status, ...messageWithoutStatus } = storeMessage;
 
-        return store.map(({ status, ...message }) => {
-            if (params.message.id === message.id) {
-                return message;
+            if (params.message.id === storeMessage.id) {
+                return messageWithoutStatus;
             }
 
-            return { status, ...message };
+            return storeMessage;
         });
     },
     target: $currentChatMessages,
@@ -250,7 +250,7 @@ sample({
     filter: (_, { message }) => !!message,
     fn: (lastMessage, { chatId, message }) => ({
         ...lastMessage,
-        [chatId]: message as TMessage,
+        [chatId]: message!,
     }),
     target: [$lastMessage, sortChats],
 });

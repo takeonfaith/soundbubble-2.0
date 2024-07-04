@@ -16,6 +16,7 @@ type Props = {
 	showLastSeen: boolean | undefined
 	status: string | undefined
 	color?: string
+	isGroupChat?: boolean
 }
 
 export const UserStatus = ({ isAuthor, showLastSeen, status, color }: Props) => {

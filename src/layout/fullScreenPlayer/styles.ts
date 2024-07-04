@@ -1,23 +1,63 @@
 import styled from 'styled-components';
 import { BeautifulBackground } from '../../shared/components/beautifulBackground';
 
+const DESKTOP_COVER_WIDTH = '${DESKTOP_COVER_WIDTH}';
+const MOBILE_COVER_WIDTH = '86vw';
+
 export const FullScreenPlayerStyled = styled(BeautifulBackground)`
     position: absolute;
     z-index: 1000;
     width: 100%;
     height: 100%;
     display: flex;
-    transition: 0.2s, 0.5s background;
+    transition: 0.2s;
     bottom: 0;
     align-items: center;
-    will-change: transform, opacity;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(100px);
+
+    & > button {
+        color: #fff;
+    }
+
+    @media (max-width: 1000px) {
+        &::before {
+            content: '';
+            display: block;
+            width: 25px;
+            height: 5px;
+            border-radius: 4px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 20px;
+            background: ${({ theme }) => theme.colors.lightHover};
+        }
+
+        & > button {
+            opacity: 0;
+            width: 100%;
+            left: 0;
+        }
+    }
+
+    &.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0px);
+    }
 `;
 
 export const PlayerWrapper = styled.div`
-    width: 400px;
+    width: ${DESKTOP_COVER_WIDTH};
     display: flex;
     flex-direction: column;
     gap: 20px;
+
+    @media (max-width: 700px) {
+        width: ${MOBILE_COVER_WIDTH};
+    }
 
     & .authors {
         font-size: 1rem;
@@ -26,6 +66,10 @@ export const PlayerWrapper = styled.div`
         a {
             color: #fff;
         }
+    }
+
+    & .like-button {
+        color: #fff;
     }
 `;
 
@@ -37,9 +81,23 @@ export const PlayerCover = styled.div<{ $color1: string | undefined }>`
     justify-content: center;
     align-items: center;
     box-shadow: 0 0 130px #00000057;
-    width: 400px;
-    height: 400px;
+    width: ${DESKTOP_COVER_WIDTH};
+    height: ${DESKTOP_COVER_WIDTH};
     overflow: hidden;
+
+    @media (max-width: 700px) {
+        width: ${MOBILE_COVER_WIDTH};
+        height: ${MOBILE_COVER_WIDTH};
+
+        .general-cover {
+            img {
+                width: ${MOBILE_COVER_WIDTH};
+                height: ${MOBILE_COVER_WIDTH};
+            }
+        }
+
+        margin-bottom: 30px;
+    }
 
     svg {
         color: dimgray;
@@ -89,15 +147,23 @@ export const LeftSide = styled.div`
         display: block;
         height: 100%;
     }
+
+    @media (max-width: 768px) {
+        padding-bottom: 40px;
+    }
 `;
 
 export const PlayerTitle = styled.div`
     font-size: 1.5rem;
-    width: 360px;
+    width: calc(${DESKTOP_COVER_WIDTH} - 40px);
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     color: #fff;
+
+    @media (max-width: 1000px) {
+        width: calc(${MOBILE_COVER_WIDTH} - 40px);
+    }
 `;
 
 export const RightSide = styled.div`
@@ -273,4 +339,27 @@ export const BottomControlButtons = styled.div`
     width: calc(100% - 80px);
     display: flex;
     justify-content: space-between;
+
+    @media (max-width: 1000px) {
+        width: calc(100% - 40px);
+        left: 20px;
+    }
+`;
+
+export const QueueStyled = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    & button {
+        color: #fff;
+    }
+
+    & a {
+        color: #fff;
+    }
+
+    & > * {
+        color: #fff !important;
+    }
 `;

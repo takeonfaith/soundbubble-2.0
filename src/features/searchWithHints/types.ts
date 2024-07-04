@@ -1,16 +1,12 @@
-import { TPlaylist } from '@playlist/model/types';
-import { TSong } from '@song/model/types';
-import { TUser } from '@user/model/types';
-
-export type THint = TSong | TPlaylist | TUser;
+import { TEntity } from '../../entities/search/model/types';
 
 export type SearchSuggestionProps = {
     initialValue: string;
-    suggestions: THint[];
-    historySuggestions: THint[];
+    suggestions: TEntity[];
+    historySuggestions: TEntity[];
     areSuggestionsLoading: boolean;
     onChange: (value: string) => void;
-    onChangeSuggestions: (suggestions: THint[]) => void;
+    onChangeSuggestions: (suggestions: TEntity[]) => void;
     onSumbit: (value: string) => void;
-    onSuggestionSubmit: (suggestion: THint, index: number) => void;
+    onSuggestionSubmit: (suggestion: TEntity) => void;
 };

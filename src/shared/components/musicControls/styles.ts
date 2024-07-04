@@ -50,6 +50,10 @@ export const CustomSlider = styled.input<{ color1: string | undefined }>`
         border: none;
         background: transparent;
     }
+
+    @media (max-width: 768px) {
+        height: 5px;
+    }
 `;
 
 export const ControlButton = styled.button`
@@ -110,11 +114,19 @@ export const ControlButton = styled.button`
     }
 
     &:not(:disabled) {
-        &:hover {
-            background: ${({ theme }) => theme.colors.lightHover};
+        @media (hover: hover) {
+            &:hover {
+                background: ${({ theme }) => theme.colors.hover};
 
-            svg {
-                filter: drop-shadow(0 0 15px black);
+                svg {
+                    filter: drop-shadow(0 0 15px black);
+                }
+            }
+        }
+
+        @media (hover: none) {
+            &:active {
+                background: ${({ theme }) => theme.colors.lightHover};
             }
         }
 
@@ -166,6 +178,13 @@ export const ControlButton = styled.button`
         height: 30px;
         transition: 0.2s transform;
     }
+
+    @media (max-width: 768px) {
+        svg {
+            min-width: 35px;
+            height: 35px;
+        }
+    }
 `;
 
 export const DurationText = styled.div`
@@ -179,7 +198,7 @@ export const SmallControlButton = styled(ControlButton)<{ $color1?: string }>`
     &.selected {
         background: ${({ theme }) => theme.colors.darkHover};
         svg {
-            color: ${({ $color1, theme }) => $color1 ?? theme.colors.textColor};
+            color: ${({ $color1 }) => $color1 ?? '#fff'};
             opacity: 1;
         }
     }

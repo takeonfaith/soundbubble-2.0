@@ -4,16 +4,17 @@ export const SkeletonPageAnimationStyled = styled.div`
     width: 100%;
     height: 100%;
     position: relative;
-    overflow-y: auto;
 `;
 
 export const SkeletonSection = styled.div<{ $background?: string }>`
     position: absolute;
     width: 100%;
+    max-height: 100vh;
     height: 100%;
     left: 0;
     top: 0;
     z-index: 10;
+    overflow: hidden;
     background: linear-gradient(
         360deg,
         ${({ theme, $background }) =>
@@ -25,11 +26,10 @@ export const SkeletonSection = styled.div<{ $background?: string }>`
     background-size: 100% 500%;
     background-position: 0 0;
 
-    transition: 0.4s background-position, 0.3s opacity;
+    transition: 0.4s background-position, 0.4s opacity;
     pointer-events: none;
     opacity: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
 
     &.loading {
         opacity: 1;

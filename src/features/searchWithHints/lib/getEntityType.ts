@@ -1,13 +1,15 @@
-import { ENTITIES_ICONS } from "../../../shared/constants/icons";
+import { TEntity } from '../../../entities/search/model/types';
+import { ENTITIES_ICONS } from '../../../shared/constants/icons';
 
-export const getEntityType = (entity: any): keyof typeof ENTITIES_ICONS => {
-	if (entity?.isAuthor) return 'author';
+export const getEntityType = (entity: TEntity): keyof typeof ENTITIES_ICONS => {
+    if ('isAuthor' in entity && entity?.isAuthor) return 'author';
 
-	if (entity?.displayName) return 'user'
+    if ('displayName' in entity && entity?.displayName) return 'user';
 
-	if(entity?.isAlbum) return 'album'
+    if ('isAlbum' in entity && entity?.isAlbum) return 'album';
 
-	if (entity?.subscribers !== undefined) return 'playlist'
+    if ('subscribers' in entity && entity?.subscribers !== undefined)
+        return 'playlist';
 
-	return 'song'
-}
+    return 'song';
+};

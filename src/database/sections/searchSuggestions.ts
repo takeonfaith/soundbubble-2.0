@@ -1,18 +1,12 @@
-import { TUser } from '@user/model/types';
-import { THint } from 'features/searchWithHints/types';
-import {
-    QueryFilterConstraint,
-    and,
-    getDocs,
-    limit,
-    or,
-    orderBy,
-    query,
-    where,
-} from 'firebase/firestore';
-import { Playlists, Songs, Users } from '.';
+import { getDocs, limit, orderBy, query, where } from 'firebase/firestore';
 import { FB } from '../../firebase';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
+import { normalizeString } from '../../shared/funcs/normalizeString';
+import { Database } from '..';
+import { TEntity } from '../../entities/search/model/types';
+import { filterOneArrayWithAnother } from '../../shared/funcs/filterOneArrayWithAnother';
+import { getEntityId } from '../../features/searchWithHints/lib/getDividedEntity';
+import { TUser } from '../../entities/user/model/types';
 
 export type Place = 'songs' | 'users' | 'playlists';
 
@@ -23,267 +17,103 @@ type Suggestion = {
     variantsOfName: string[];
 };
 
-class PrivateSearchSuggestions {
+export class SearchSuggestions {
     static ref = FB.get('search');
-    static savedSuggestion: {
-        place: Place;
-        id: string;
-        lastSearch: string;
-    } | null = null;
-    static lastSuggestions: Suggestion[] = [];
-    static lastResult: THint[] = [];
 
-    protected static async getAuthorsSong(songName: string, author?: TUser) {
-        const orFilter: QueryFilterConstraint[] = [];
-
-        const user = author;
-
-        if (!user) return [];
-
-        if (user.ownSongs?.length !== 0) {
-            orFilter.push(where('uid', 'in', user.ownSongs));
-        }
-
-        if (user.ownPlaylists?.length !== 0) {
-            orFilter.push(where('uid', 'in', user.ownPlaylists));
-        }
-
-        const result = getDataFromDoc<Suggestion>(
-            await getDocs(
-                query(
-                    this.ref,
-                    and(
-                        where('variantsOfName', 'array-contains', songName),
-                        or(...orFilter)
-                    ),
-                    orderBy('rank', 'desc'),
-                    limit(3)
-                )
-            )
-        );
-
-        return result;
-    }
-
-    /**
-     *
-     * @param suggestions Подсказки которые были изначально
-     * @param searchString Поисковый запрос
-     * @returns Если пользователь ввел уточнение по типу <имя автора> <название песни>,
-     * тогда эта функция вернеет тот трек, который имелся в виду
-     */
-    protected static async getFinalSuggestions(
-        suggestions: Suggestion[],
-        searchString: string
-    ) {
+    static async getTopAuthorSongs(songIds: string[] | undefined) {
         try {
-            const firstSuggestion = suggestions[0];
+            if (!songIds?.length) return [];
 
-            if (suggestions.length !== 0) {
-                this.savedSuggestion = {
-                    place: firstSuggestion.place,
-                    id: firstSuggestion.uid,
-                    lastSearch: searchString,
-                };
-                return suggestions;
-            }
-
-            const remainingSearchString = searchString.replace(
-                this.savedSuggestion?.lastSearch ?? '',
-                ''
-            );
-            console.log(remainingSearchString);
-
-            if (this.savedSuggestion?.place === 'users') {
-                return await this.getAuthorsSong(remainingSearchString);
-            }
-
-            const userSuggestions = getDataFromDoc<Suggestion>(
-                await getDocs(
-                    query(
-                        this.ref,
-                        where(
-                            'variantsOfName',
-                            'array-contains',
-                            remainingSearchString
-                        ),
-                        where('place', '==', 'users')
-                    )
-                )
-            );
-
-            const ids = userSuggestions.map((s) => s.uid);
-
-            const users = getDataFromDoc<TUser>(
-                await getDocs(query(Users.ref, where('uid', 'in', ids)))
-            );
-
-            if (!users) return [];
-
-            return (
-                await Promise.all(
-                    users.map(
-                        async (user) =>
-                            await this.getAuthorsSong(
-                                this.savedSuggestion!.lastSearch,
-                                user
-                            )
-                    )
-                )
-            ).flatMap((s) => s);
+            const songs = await Database.Songs.getSongsByUids(songIds, true);
+            return songs;
         } catch (error) {
-            console.error(error);
-            return [];
+            throw new Error(error);
         }
     }
 
-    /**
-     * Ищем все документы внутри сущности suggestions
-     */
-    protected static async getSearch(searchString: string) {
-        try {
-            const snapshot = await getDocs(
-                query(
-                    this.ref,
-                    where('variantsOfName', 'array-contains', searchString),
-                    orderBy('rank', 'desc'),
-                    limit(10)
-                )
-            );
-
-            const suggestions = getDataFromDoc<Suggestion>(snapshot);
-
-            return suggestions;
-        } catch (error) {
-            console.error(error);
-            return [];
-        }
-    }
-
-    protected static removeDuplicateSongs(hints: (THint | null)[]) {
-        const uniqueHints: Record<string, boolean> = {};
-        const result: THint[] = [];
-
-        hints.forEach((hint) => {
-            if (hint) {
-                const hintId =
-                    'id' in hint ? hint.id : 'uid' in hint ? hint.uid : null;
-
-                if (hintId && !uniqueHints[hintId]) {
-                    result.push(hint);
-                    uniqueHints[hintId] = true;
-                }
-            }
-        });
-
-        return result;
-    }
-
-    protected static async getResult(
-        suggestions: Suggestion[],
-        authorTopSongsCount = 0
-    ) {
-        const requests = {
-            playlists: Playlists.getPlaylistByUid,
-            songs: Songs.getSongByUid,
-            users: Users.getUserByUid,
+    static getEntitiesReqs(suggestions: Suggestion[]) {
+        const requests: Record<Place, (uid: string) => Promise<TEntity>> = {
+            users: Database.Users.getUserByUid,
+            playlists: Database.Playlists.getPlaylistByUid,
+            songs: Database.Songs.getSongByUid,
         };
 
-        const shouldRequest =
-            this.lastSuggestions.length !== suggestions.length ||
-            this.lastSuggestions.findIndex(
-                (el, index) => el.uid !== suggestions[index].uid
-            ) !== -1;
-
-        this.lastSuggestions = suggestions;
-
-        if (!shouldRequest && this.lastResult.length !== 0)
-            return this.lastResult;
-
-        // console.log(shouldRequest, this.lastSuggestions);
-
-        const searchSuggestions = suggestions.map(async (suggestion) => {
-            return await requests[suggestion.place](suggestion.uid);
+        return suggestions.map((suggestion) => {
+            return requests[suggestion.place](suggestion.uid);
         });
-
-        let result = (await Promise.all(searchSuggestions)).flatMap((s) => s);
-        const first = result[0];
-
-        if (!first || result.length === 0) return result;
-
-        const isAuthor =
-            'isAuthor' in first && first?.isAuthor && 'ownSongs' in first;
-
-        if (isAuthor && authorTopSongsCount !== 0) {
-            const authorTopTracks = await Users.getAuthorTopSongs(
-                first.ownSongs as string[],
-                authorTopSongsCount
-            );
-
-            const authorTopAlbums = await Users.getAuthorTopAlbums(
-                first.ownPlaylists,
-                3
-            );
-
-            console.log(authorTopAlbums);
-
-            const preresult: (THint | null)[] = [
-                first,
-                ...authorTopTracks,
-                ...authorTopAlbums,
-                ...result,
-            ];
-
-            result = this.removeDuplicateSongs(preresult);
-        }
-
-        this.lastResult = result;
-
-        return result;
-    }
-}
-
-export class SearchSuggestions extends PrivateSearchSuggestions {
-    static async getSearchSuggestions(searchString: string) {
-        try {
-            if (searchString.length === 0) return [];
-
-            const initialSuggestions = await this.getSearch(searchString);
-
-            console.log(searchString, initialSuggestions);
-
-            const suggestions = await this.getFinalSuggestions(
-                initialSuggestions,
-                searchString
-            );
-
-            return await this.getResult(suggestions, 3);
-        } catch (error) {
-            throw new Error('Failed to get suggestions');
-        }
     }
 
-    static async getTopSearches(topQuantity = 10) {
+    static async getSearchSuggestions(queryStr: string, history: TEntity[]) {
         try {
-            const snapshot = await getDocs(
-                query(this.ref, orderBy('rank', 'desc'), limit(topQuantity))
+            const q = query(
+                this.ref,
+                where(
+                    'variantsOfName',
+                    'array-contains',
+                    normalizeString(queryStr)
+                ),
+                orderBy('rank', 'desc'),
+                limit(10)
             );
-            return await this.getResult(
+            const snapshot = await getDocs(q);
+            const dirtySuggestions = filterOneArrayWithAnother(
                 getDataFromDoc<Suggestion>(snapshot),
-                3
+                history,
+                (item) => item.uid,
+                (arr) => arr.map((item) => getEntityId(item))
             );
+
+            const reqs = this.getEntitiesReqs(dirtySuggestions);
+
+            if (dirtySuggestions.length === 0) return [];
+
+            const cleanSuggestions: TEntity[] = await Promise.all(reqs);
+
+            return cleanSuggestions;
         } catch (error) {
-            console.error(error);
-            return [];
+            throw new Error(error);
         }
     }
 
-    static async getSearchResult(searchString: string) {
+    static async getSearchResult(queryStr: string) {
         try {
-            const searchSuggestions = await this.getSearch(searchString);
-            return this.getResult(searchSuggestions, 6);
+            const q = query(
+                this.ref,
+                where(
+                    'variantsOfName',
+                    'array-contains',
+                    normalizeString(queryStr)
+                ),
+                orderBy('rank', 'desc')
+            );
+
+            const snapshot = await getDocs(q);
+            const dirtySuggestions = filterOneArrayWithAnother(
+                getDataFromDoc<Suggestion>(snapshot),
+                [],
+                (item) => item.uid,
+                (arr) => arr.map((item) => getEntityId(item))
+            );
+
+            const reqs = this.getEntitiesReqs(dirtySuggestions);
+
+            let cleanSuggestions: TEntity[] = await Promise.all(reqs);
+
+            if (dirtySuggestions[0].place === 'users') {
+                const topAuthorSongs = await this.getTopAuthorSongs(
+                    (cleanSuggestions[0] as TUser).ownSongs?.slice(0, 6)
+                );
+
+                cleanSuggestions = [
+                    ...cleanSuggestions.slice(0, 1),
+                    ...topAuthorSongs,
+                    ...cleanSuggestions.slice(1, cleanSuggestions.length),
+                ];
+            }
+
+            return cleanSuggestions;
         } catch (error) {
-            throw new Error('Failed to get search result');
+            throw new Error(error);
         }
     }
 }

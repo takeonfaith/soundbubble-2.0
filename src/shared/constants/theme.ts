@@ -22,13 +22,15 @@ export const DARK_THEME = {
         lightHover: '#ffffff1f',
         darkHover: '#0000002b',
         modal: '#242629',
-        shadow: '0 30px 30px #00000066',
+        shadow: '0 0 40px #00000021',
         greyText: '#a2a2a2',
+        header: '#1010109e',
         blue: {
             main: '#75a8fa',
             action: '#5193ff',
             mild: '#1b2c4e',
             transparent: '#5394ff4f',
+            transparent2: '#5394ff2b',
         },
         purple: {
             main: '#9332d1',
@@ -67,13 +69,15 @@ export const LIGHT_THEME: TTheme = {
         lightHover: '#ffffff80',
         darkHover: '#0000002b',
         modal: '#fff',
-        shadow: '0 35px 30px #00000040',
+        shadow: '0 0 40px #00000021',
+        header: '#ffffff9e',
         greyText: '#a2a2a2',
         blue: {
             main: '#5275b5',
             action: '#3481fe',
             mild: '#dfeaff',
             transparent: '#5394ff4f',
+            transparent2: '#5394ff2b',
         },
         purple: {
             main: '#9332d1',

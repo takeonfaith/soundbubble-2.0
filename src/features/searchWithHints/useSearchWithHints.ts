@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { normalizeString } from '../../shared/funcs/normalizeString';
-import { getHintName } from './lib/getDividedHint';
+import { getEntityName } from './lib/getDividedEntity';
 import { SearchSuggestionProps } from './types';
 
 export const useSearchWithHints = ({
@@ -17,32 +17,55 @@ export const useSearchWithHints = ({
         useState(historySuggestions);
     const [value, setValue] = useState(initialValue ?? '');
     const [suggestedIndex, setSuggestedIndex] = useState<number | null>(null);
-    const listOfSuggestions = [...suggestions, ...localHistorySuggestions];
+    const listOfSuggestions = [...localHistorySuggestions, ...suggestions];
     const ref = useRef<HTMLDivElement>(null);
+    const [focused, setFocused] = useState(false);
 
     const inputValue =
         suggestedIndex !== null
-            ? getHintName(listOfSuggestions[suggestedIndex])
+            ? getEntityName(listOfSuggestions[suggestedIndex])
             : value;
 
     const handleFocus = () => {
-        setShowHints(
-            suggestions.length > 0 || (localHistorySuggestions?.length ?? 0) > 0
-        );
+        setFocused(true);
+        setShowHints(listOfSuggestions.length > 0);
     };
 
+    useEffect(() => {
+        setShowHints(focused && listOfSuggestions.length > 0);
+    }, [listOfSuggestions.length, focused]);
+
     const handleBlur = () => {
+        setFocused(false);
         setShowHints(false);
     };
 
     useEffect(() => {
-        setLocalHistorySuggestions(historySuggestions);
-    }, [historySuggestions]);
+        const newHistory =
+            value?.length !== 0
+                ? historySuggestions.filter((el) => {
+                      return normalizeString(getEntityName(el)).includes(
+                          normalizeString(value ?? '')
+                      );
+                  })
+                : historySuggestions;
+
+        setLocalHistorySuggestions(newHistory);
+    }, [historySuggestions, value]);
 
     const handleSubmitSuggestion = (index: number | null) => {
         if (index !== null) {
+            const newValue = `${getEntityName(listOfSuggestions[index])} ${
+                'authors' in listOfSuggestions[index]
+                    ? listOfSuggestions[index].authors[0].displayName
+                    : ''
+            }`;
+
+            setValue(newValue);
+
             if (!onSuggestionSubmit) {
-                setValue(getHintName(suggestions[index]));
+                console.log(getEntityName(listOfSuggestions[index]));
+
                 onChangeSuggestions([]);
                 setShowHints(false);
                 setSuggestedIndex(null);
@@ -51,11 +74,12 @@ export const useSearchWithHints = ({
 
             setShowHints(false);
 
-            onSuggestionSubmit(listOfSuggestions[index], index);
-            return 
+            onSuggestionSubmit(listOfSuggestions[index]);
+            return;
         }
-        setShowHints(false);
 
+        setFocused(false);
+        setShowHints(false);
         onSumbit(inputValue);
     };
 
@@ -66,19 +90,6 @@ export const useSearchWithHints = ({
         onChange(val);
         setValue(val);
         setShowHints(listOfSuggestions.length > 0);
-        if (val.length !== 0) {
-            console.log(localHistorySuggestions);
-            const filteredHistorySuggestions = historySuggestions.filter(
-                (el) => {
-                    return normalizeString(getHintName(el)).includes(
-                        normalizeString(val ?? '')
-                    );
-                }
-            );
-            setLocalHistorySuggestions(filteredHistorySuggestions);
-        } else {
-            setLocalHistorySuggestions(historySuggestions);
-        }
 
         if (e.currentTarget.value.length === 0) {
             setShowHints(false);
@@ -87,8 +98,6 @@ export const useSearchWithHints = ({
     };
 
     const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
-        if (listOfSuggestions.length === 0) return;
-
         if (e.key === 'ArrowDown') {
             e.preventDefault();
             setSuggestedIndex((prev) =>
@@ -116,6 +125,8 @@ export const useSearchWithHints = ({
 
         if (e.key === 'Enter') {
             e.preventDefault();
+            console.log('here --- ');
+
             handleSubmitSuggestion(suggestedIndex);
 
             return;
@@ -131,6 +142,10 @@ export const useSearchWithHints = ({
         onChange('');
     };
 
+    const handleReset = () => {
+        setValue('');
+    };
+
     return {
         inputValue,
         showHints,
@@ -139,6 +154,7 @@ export const useSearchWithHints = ({
         localHistorySuggestions,
         handleFocus,
         handleBlur,
+        handleReset,
         handleKeyDown,
         handleChange,
         onRightIconClick,

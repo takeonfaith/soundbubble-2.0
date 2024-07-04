@@ -73,8 +73,8 @@ export const InputStyled = styled.input<{
     border-radius: ${({ theme }) => theme.borderRadius.mild};
     color: ${({ theme }) => theme.colors.textColor};
     height: 40px;
-    font-size: 0.95rem;
-    font-weight: 300;
+    font-size: 0.90rem;
+    font-weight: 200;
     width: 100%;
     border: 1px solid
         ${({ theme, $hasError }) =>

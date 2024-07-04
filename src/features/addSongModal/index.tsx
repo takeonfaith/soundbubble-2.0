@@ -1,4 +1,4 @@
-import { ScrollingPart } from "../../layout/modal/style"
+import { ScrollingPart } from "../../layout/modal/styles"
 import { DefaultButton } from "../../shared/components/button/DefaultButton"
 import { Input } from "../../shared/components/input"
 import { Textarea } from "../../shared/components/textarea"

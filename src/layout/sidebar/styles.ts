@@ -9,6 +9,10 @@ export const SidebarStyled = styled.aside`
     background: ${({ theme }) => theme.colors.sidebar};
     position: relative;
     border-right: 1px solid ${({ theme }) => theme.colors.border};
+
+    @media (max-width: 1000px) {
+        display: none;
+    }
 `;
 
 export const LogoWrapper = styled.div`

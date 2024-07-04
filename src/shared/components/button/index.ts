@@ -32,9 +32,20 @@ export const Button = styled.button<{
         opacity: 0.5;
     }
 
-    &:hover {
-        filter: brightness(0.9);
-        background: ${({ $background, theme }) =>
-            !$background ? theme.colors.lightHover : ''};
+    @media (hover: hover) {
+        &:hover {
+            filter: brightness(0.9);
+            background: ${({ $background, theme }) =>
+                !$background ? theme.colors.lightHover : ''};
+        }
+    }
+
+    @media (hover: none) {
+        transition: 0.2s transform;
+
+        &:active {
+            background: ${({ theme }) => theme.colors.hover};
+            transform: scale(0.95);
+        }
     }
 `;

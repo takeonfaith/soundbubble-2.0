@@ -19,11 +19,11 @@ export class SearchHistory {
 
             const data = await FB.getById('searchHistory', userId);
 
-            const searchHistory = data.history.slice(0, 10).map(async (el) => {
-                return await requests[el.type](el.id);
+            const searchHistory = data.history.slice(0, 10).map((el) => {
+                return requests[el.type](el.id);
             });
 
-            return Promise.all(searchHistory);
+            return await Promise.all(searchHistory);
         } catch (error) {
             console.error(error);
             return [];

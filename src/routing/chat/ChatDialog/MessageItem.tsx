@@ -8,13 +8,14 @@ import { SongItem } from "../../../entities/song/ui"
 import { TUser } from "../../../entities/user/model/types"
 import { UserItem } from "../../../entities/user/ui"
 import { getEntityType } from "../../../features/searchWithHints/lib/getEntityType"
-import { THint } from "../../../features/searchWithHints/types"
 import { popupModel } from "../../../layout/popup/model"
 import { Flex } from "../../../shared/components/flex"
 import { MessageContextMenu } from "./MessageContextMenu"
 import { MessageSentStatus } from "./MessageSentStatus"
 import { AttachmentStyled, DateAndSeenIcon, MessageBubble, MessageSender, MessageStyled, MessageWrapper } from "./styles"
 import { IconExclamationCircle } from "@tabler/icons-react"
+import { MessageText } from "./MessageText"
+import { TEntity } from "../../../entities/search/model/types"
 
 type Props = {
 	message: TMessage
@@ -28,7 +29,7 @@ type Props = {
 
 const renderAttachments = (attachments: string[], chatData: TChatData) => {
 	return attachments.map(s => {
-		const entity = chatData[s] as THint
+		const entity = chatData[s] as TEntity
 
 		if (!entity) return null
 
@@ -82,7 +83,7 @@ export const MessageItem = ({ message, isNotSeen, isMine, chatData, isPrevByTheS
 		if (isVisible && isNotSeen) {
 			onSeen(message.id)
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isVisible, isNotSeen])
 
 
@@ -98,25 +99,27 @@ export const MessageItem = ({ message, isNotSeen, isMine, chatData, isPrevByTheS
 
 
 	return <MessageStyled ref={targetRef}>
-		<MessageBubble $background={isMine ? (chatData[message.sender] as TUser)?.imageColors[1] : ''} onContextMenu={handleContextMenu} className={(isMine ? 'mine' : '') + (isPrevByTheSameSender ? ' isPrevByTheSameSender' : "")}>
-			<Flex d="column" ai="flex-start">
-				{!isMine && <MessageSender>{isFirst && (chatData[message.sender] as TUser)?.displayName}</MessageSender>}
-				<MessageWrapper>
-					{message.message}
-					{!!showAttachments && <AttachmentStyled>
-						{renderAttachments(message.attachedSongs, chatData)}
-						{renderAttachments(message.attachedAlbums, chatData)}
-						{renderAttachments(message.attachedAuthors, chatData)}
-					</AttachmentStyled>}
-				</MessageWrapper>
-			</Flex>
-			<DateAndSeenIcon>
-				<span>
-					{new Date(message.sentTime).toLocaleTimeString('ru-RU', { 'hour': '2-digit', minute: '2-digit' })}
-				</span>
-				<MessageSentStatus isMine={isMine} sendStatus={sendStatus} />
-			</DateAndSeenIcon>
-		</MessageBubble>
-		{sendStatus === 'Error' && <IconExclamationCircle color="red" />}
+		{!isMine && isFirst && <MessageSender>{(chatData[message.sender] as TUser)?.displayName}</MessageSender>}
+		<Flex width="100%" gap={10}>
+			<MessageBubble $isFirst={isFirst} $background={isMine ? (chatData[message.sender] as TUser)?.imageColors[1] : ''} onContextMenu={handleContextMenu} className={(isMine ? 'mine' : '') + (isPrevByTheSameSender ? ' isPrevByTheSameSender' : "")}>
+				<Flex d="column" ai="flex-start">
+					<MessageWrapper>
+						<MessageText message={message.message} />
+						{!!showAttachments && <AttachmentStyled>
+							{renderAttachments(message.attachedSongs, chatData)}
+							{renderAttachments(message.attachedAlbums, chatData)}
+							{renderAttachments(message.attachedAuthors, chatData)}
+						</AttachmentStyled>}
+					</MessageWrapper>
+				</Flex>
+				<DateAndSeenIcon>
+					<span>
+						{new Date(message.sentTime).toLocaleTimeString('ru-RU', { 'hour': '2-digit', minute: '2-digit' })}
+					</span>
+					<MessageSentStatus isMine={isMine} sendStatus={sendStatus} />
+				</DateAndSeenIcon>
+			</MessageBubble>
+			{sendStatus === 'Error' && <IconExclamationCircle color="red" size={20} />}
+		</Flex>
 	</MessageStyled>
 }

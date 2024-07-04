@@ -1,7 +1,7 @@
 import { TIME_IN_MS } from '../../../shared/constants/time';
 import { TMessage } from '../model/types';
 
-export const getLastMessageDate = (lastMessage: TMessage) => {
+export const getLastMessageDate = (lastMessage: TMessage | undefined) => {
     const timeDiff =
         new Date().getTime() - new Date(lastMessage?.sentTime ?? '').getTime();
     const isBiggerThanDay = timeDiff > TIME_IN_MS.hour * 24;

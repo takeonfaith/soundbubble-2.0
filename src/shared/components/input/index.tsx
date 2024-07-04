@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import {
   InputError,
   InputFieldWrapper,
@@ -18,7 +18,7 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   onRightIconClick?: () => void;
 };
 
-export const Input = ({
+export const Input = forwardRef(({
   icon,
   rightIcon,
   label,
@@ -27,7 +27,7 @@ export const Input = ({
   type,
   onRightIconClick,
   ...props
-}: Props) => {
+}: Props, ref) => {
   return (
     <InputWrapper $disabled={props.disabled}>
       {label && (
@@ -43,6 +43,7 @@ export const Input = ({
           $hasRightIcon={!!rightIcon}
           type={type}
           required={required}
+          ref={ref as React.ForwardedRef<HTMLInputElement>}
           {...props}
         />
         {rightIcon && <RightIcon onClick={onRightIconClick}>{rightIcon}</RightIcon>}
@@ -50,4 +51,6 @@ export const Input = ({
       {error && <InputError>{error}</InputError>}
     </InputWrapper>
   );
-};
+});
+
+Input.displayName = 'Input';

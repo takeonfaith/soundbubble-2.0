@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { TOrientation } from '../types';
 
 export const UserItemStyled = styled(Link)<{ $orientation: TOrientation }>`
-    --size: calc(100vw / 11);
+    --size: calc(100vw / 10 - 17px);
 
     display: flex;
     flex-direction: ${({ $orientation }) =>
@@ -34,18 +34,28 @@ export const UserItemStyled = styled(Link)<{ $orientation: TOrientation }>`
     }
 
     @media (max-width: 1200px) {
-        --size: calc(100vw / 9);
+        --size: calc(100vw / 7 - 32px);
     }
 
     @media (max-width: 1000px) {
-        --size: calc(100vw / 7);
+        --size: calc(100vw / 5 - 32px);
 
         h4 {
-            font-size: 0.86rem;
+            font-size: 0.8rem;
         }
 
         span {
-            font-size: 0.7rem;
+            font-size: 0.68rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        --size: calc(100vw / 3 - 27px);
+        padding: 4px 0;
+
+        .general-cover {
+            min-width: 40px;
+            height: 40px;
         }
     }
 `;

@@ -9,7 +9,7 @@ type Props = {
 export const Logo = ({ short = false }: Props) => {
   return (
     <Flex gap={14}>
-      <LogoStyled src={LogoImage} alt="Logo" /> {!short && <LogoText>Soundbubble</LogoText>}
+      <LogoStyled src={LogoImage} className="logo" alt="Logo" /> {!short && <LogoText>Soundbubble</LogoText>}
     </Flex>
   );
 };

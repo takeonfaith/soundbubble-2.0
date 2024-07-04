@@ -1,4 +1,4 @@
-import { THint } from '../../search/model/types';
+import { TEntity } from '../../search/model/types';
 
 export type TMessage = {
     attachedAlbums: string[];
@@ -22,7 +22,7 @@ export type TChat = {
     chatImage: string;
 };
 
-export type TChatData = Record<string, THint>;
+export type TChatData = Record<string, TEntity>;
 
 export type TGeneralChatData = {
     [chatId: string]: {

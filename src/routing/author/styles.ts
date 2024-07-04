@@ -38,6 +38,11 @@ export const ContentWrapperStyled = styled.div`
     display: flex;
     flex-direction: column;
     gap: 30px;
+    width: 100%;
+
+    @media (max-width: 1000px) {
+        padding: 40px 20px;
+    }
 `;
 
 export const SongsStyled = styled.div`
@@ -62,6 +67,11 @@ export const ButtonsStyled = styled.div`
             filter: brightness(${({ theme }) => theme.colors.brightness});
         }
     }
+
+    @media (max-width: 500px) {
+        width: 100%;
+        padding: 0 20px;
+    }
 `;
 
 export const SimilarAuthorsStyled = styled.div`
@@ -71,4 +81,8 @@ export const SimilarAuthorsStyled = styled.div`
     display: flex;
     flex-direction: column;
     gap: 20px;
+
+    @media (max-width: 1000px) {
+        padding: 20px;
+    }
 `;

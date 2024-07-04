@@ -6,6 +6,15 @@ export const GlobalStyles = createGlobalStyle`
 		margin: 0;
 		padding: 0;
 		font-family: 'Geologica', sans-serif;
+		-webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
+	}
+
+	:root {
+		--page-padding: 40px;
+
+		@media (max-width: 768px) {
+			--page-padding: 20px;
+		}
 	}
 
 	body {

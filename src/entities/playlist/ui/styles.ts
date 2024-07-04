@@ -101,7 +101,13 @@ export const PlaylistStyled = styled(Link)<{
 
     @media (max-width: 800px) {
         --size: ${({ $orientation }) =>
-            $orientation === 'vertical' ? 'calc(100vw / 4)' : '34px'};
+            $orientation === 'vertical' ? 'calc(100vw / 2 - 30px)' : '34px'};
+
+        padding: 8px 0;
+
+        &::before {
+            display: none;
+        }
     }
 `;
 

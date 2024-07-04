@@ -108,8 +108,6 @@ export const SongLeft = styled.div<{ $color1: string }>`
 export const SongStyled = styled.div<{ playing: boolean }>`
     width: 100%;
     height: 50px;
-    background: ${({ playing, theme }) =>
-        playing ? theme.colors.lightHover : 'transparent'};
     padding: 4px 8px;
     border-radius: calc(${({ theme }) => theme.borderRadius.mild} + 6px);
     display: flex;
@@ -121,28 +119,30 @@ export const SongStyled = styled.div<{ playing: boolean }>`
     container-type: size;
     --icon-size: 18px;
 
-    &:hover {
-        background: ${({ theme }) => theme.colors.hover};
-        /* box-shadow: 0 0 20px #14141473; */
+    @media (hover: hover) {
+        &:hover {
+            background: ${({ theme }) => theme.colors.hover};
+            /* box-shadow: 0 0 20px #14141473; */
 
-        ${PauseOverlay} {
-            ${PlayButton} {
+            ${PauseOverlay} {
+                ${PlayButton} {
+                    opacity: 1;
+                }
+
+                .playing-animation {
+                    opacity: 0;
+                }
+            }
+
+            .cover-children {
+                ${PlayOverlay} {
+                    opacity: 1;
+                }
+            }
+
+            ${MoreInfoButton} {
                 opacity: 1;
             }
-
-            .playing-animation {
-                opacity: 0;
-            }
-        }
-
-        .cover-children {
-            ${PlayOverlay} {
-                opacity: 1;
-            }
-        }
-
-        ${MoreInfoButton} {
-            opacity: 1;
         }
     }
 
@@ -155,6 +155,16 @@ export const SongStyled = styled.div<{ playing: boolean }>`
 
     ${MoreInfoButton} {
         ${({ playing }) => (playing ? 'opacity: 1' : 'opacity: 0')};
+    }
+
+    @media (max-width: 1000px) {
+        padding: 0;
+
+        .general-cover {
+            min-width: 40px;
+            width: 40px;
+            height: 40px;
+        }
     }
 
     /* @container (max-width: 699px) {

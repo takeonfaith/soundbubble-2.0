@@ -13,10 +13,10 @@ export const PageTopStyled = styled(BeautifulBackground)`
     animation: none;
     color: #fff;
     z-index: 4;
-	 
-	 a {
-		 color: #fff;
-	 }
+
+    a {
+        color: #fff;
+    }
 `;
 
 export const TopRightCorner = styled.div`
@@ -28,7 +28,31 @@ export const TopRightCorner = styled.div`
     gap: 10px;
 
     button {
+        border-radius: 100%;
         color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        top: 16px;
+        right: 16px;
+    }
+`;
+
+export const TopLeftCorner = styled.div`
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+
+    button {
+        border-radius: 100%;
+        color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        top: 16px;
+        left: 16px;
     }
 `;
 

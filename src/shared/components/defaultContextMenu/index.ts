@@ -13,7 +13,7 @@ export const DefaultContextMenuStyled = styled.div`
     }
 
     button {
-        font-weight: 300;
+        font-weight: 200;
         font-size: 0.9rem;
         gap: 16px;
         justify-content: flex-start;

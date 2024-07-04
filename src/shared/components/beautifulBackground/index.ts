@@ -33,11 +33,7 @@ export const BeautifulBackground = styled.div<{ $colors: string[] | undefined }>
       transparent 50%
     );
 
-  &.close {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(200px);
-  }
+
 
   @keyframes bg {
     0% {
@@ -45,7 +41,7 @@ export const BeautifulBackground = styled.div<{ $colors: string[] | undefined }>
       background-size: 150% 150%;
     }
     50% {
-		  background-position: -200px -220px;
+		  background-position: 0 0;
       background-size: 130% 130%;
     }
     100% {
