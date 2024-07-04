@@ -3684,7 +3684,7 @@ ${this.customData.serverResponse}`:this.message=this._baseMessage}}var lr;(funct
 
         .general-cover {
             min-width: 40px;
-            height: 40px;
+            min-height: 40px;
         }
     }
 `,u1=x.div`
