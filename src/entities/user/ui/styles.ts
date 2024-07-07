@@ -29,8 +29,7 @@ export const UserItemStyled = styled(Link)<{ $orientation: TOrientation }>`
         overflow: hidden;
         font-size: ${({ $orientation }) =>
             $orientation === 'vertical' ? '1rem' : '0.9rem'};
-        font-weight: ${({ $orientation }) =>
-            $orientation === 'vertical' ? '400' : '300'};
+        font-weight: 300;
     }
 
     @media (max-width: 1200px) {
@@ -41,21 +40,34 @@ export const UserItemStyled = styled(Link)<{ $orientation: TOrientation }>`
         --size: calc(100vw / 5 - 32px);
 
         h4 {
-            font-size: 0.8rem;
+            font-size: ${({ $orientation }) =>
+                $orientation === 'horizontal' ? '1rem' : '0.85rem'};
+            font-weight: 200;
         }
 
         span {
-            font-size: 0.68rem;
+            font-size: 0.8rem;
         }
     }
 
-    @media (max-width: 768px) {
-        --size: calc(100vw / 3 - 27px);
+    @media (max-width: 800px) {
+        --size: calc(100vw / 5 - 24px);
         padding: 4px 0;
 
         .general-cover {
             min-width: 40px;
-            height: 40px;
+            min-height: 40px;
+        }
+    }
+
+    @media (max-width: 650px) {
+        --size: calc(100vw / 3 - 27px);
+    }
+
+    @media (max-width: 400px) {
+        h4 {
+            font-size: ${({ $orientation }) =>
+                $orientation === 'horizontal' ? '1rem' : '0.75rem'};
         }
     }
 `;

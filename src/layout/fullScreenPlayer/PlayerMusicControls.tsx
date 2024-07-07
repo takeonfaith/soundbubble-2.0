@@ -30,7 +30,7 @@ export const usePlayerMusicControls = () => {
   const handleShuffle = () => { };
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    console.log(event.key);
+    // console.log(event.key);
 
     if (event.key === 'Space') {
       handlePlay()

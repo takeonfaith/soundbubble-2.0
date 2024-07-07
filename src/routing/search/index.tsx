@@ -5,19 +5,18 @@ import { styled } from 'styled-components';
 import {
     $isLoadingSuggestions,
     $searchQuery,
+    $searchResult,
     $searchSuggestions,
     getSearchResult,
     setSearchQuery,
-    setSuggestions,
 } from '../../entities/search/model';
-import { TEntity } from '../../entities/search/model/types';
 import { userModel } from '../../entities/user/model';
 import { SearchWithHints } from '../../features/searchWithHints';
-import { getEntityName } from '../../features/searchWithHints/lib/getDividedEntity';
-import { getEntityType } from '../../features/searchWithHints/lib/getEntityType';
 import { Header } from '../../layout/header';
+import { PageWrapper } from '../../shared/components/pageWrapper';
 import { normalizeString } from '../../shared/funcs/normalizeString';
 import { SearchResult } from './SearchResult';
+import { TSuggestion } from '../../entities/search/model/types';
 
 const SearchBarStyled = styled.div`
     max-width: 650px;
@@ -28,12 +27,6 @@ const SearchBarStyled = styled.div`
         width: 100%;
         max-width: none;
     }
-`;
-
-const SearchStyled = styled.div`
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
 `;
 
 /**
@@ -48,52 +41,51 @@ export const SearchPage = () => {
     const queryValue = params.get('query') ?? '';
     const navigate = useNavigate();
     const debounceTimer = useRef<NodeJS.Timeout>();
-    const [searchQuery, setQuery, isLoadingSuggestions] = useUnit([
-        $searchQuery,
-        setSearchQuery,
-        $isLoadingSuggestions,
-    ]);
+    const [searchQuery, result, isLoadingSuggestions, setQuery, getResult] =
+        useUnit([
+            $searchQuery,
+            $searchResult,
+            $isLoadingSuggestions,
+            setSearchQuery,
+            getSearchResult,
+        ]);
 
     const searchHistory = userModel.useSearchHistory();
     const suggestions = useUnit($searchSuggestions);
-    const [getResult] = useUnit([getSearchResult]);
 
     const handleChange = (val: string) => {
         clearTimeout(debounceTimer.current);
 
         debounceTimer.current = setTimeout(() => {
-            // setQuery(val);
-        }, 300);
+            setQuery(val);
+        }, 100);
     };
 
-    const handleSuggestionSubmit = (hint: TEntity) => {
-        const query = getEntityName(hint);
-        const type = getEntityType(hint);
-        console.log({ type });
-
-        navigate(`/search?query=${query}&type=${type}`);
-    };
-
-    const onChangeSuggestions = (suggestions: TEntity[]) => {
-        setSuggestions(suggestions);
-    };
-
-    const onSumbit = (value: string) => {
-        console.log('onSumbit');
-
-        navigate(`/search?query=${value}&type=query`);
+    const onSumbit = (value: string, suggestion: TSuggestion | null) => {
+        navigate(
+            `/search?query=${value.trim()}&type=${
+                suggestion !== null && suggestion.place === 'users'
+                    ? 'author'
+                    : 'query'
+            }`
+        );
+        getResult({
+            query: normalizeString(value),
+            suggestion,
+        });
     };
 
     useEffect(() => {
-        if (queryValue) {
-            console.log({ queryValue });
-
-            getResult(normalizeString(queryValue));
+        if (queryValue.length > 0 && result.length === 0) {
+            // если в поисковой строке есть что-то, но результатов нет,
+            // то запросить результаты по введенному значению
+            setQuery(queryValue);
+            getResult({ query: normalizeString(queryValue) });
         }
-    }, [getResult, queryValue]);
+    }, [getResult, queryValue, result.length, setQuery]);
 
     return (
-        <SearchStyled>
+        <PageWrapper>
             <Header>
                 <SearchBarStyled>
                     <SearchWithHints
@@ -102,13 +94,11 @@ export const SearchPage = () => {
                         historySuggestions={searchHistory}
                         areSuggestionsLoading={isLoadingSuggestions}
                         onChange={handleChange}
-                        onChangeSuggestions={onChangeSuggestions}
                         onSumbit={onSumbit}
-                        onSuggestionSubmit={handleSuggestionSubmit}
                     />
                 </SearchBarStyled>
             </Header>
             <SearchResult />
-        </SearchStyled>
+        </PageWrapper>
     );
 };

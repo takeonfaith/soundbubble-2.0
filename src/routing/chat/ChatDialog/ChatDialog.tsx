@@ -2,39 +2,29 @@ import {
     IconArrowDown,
     IconArrowUp,
     IconCirclePlus,
-    IconDots,
 } from '@tabler/icons-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { SYSTEM_MESSAGE_SENDER } from '../../../entities/chat/lib/getLastMessageSender';
 import { chatModel } from '../../../entities/chat/model';
 import { TMessage } from '../../../entities/chat/model/types';
-import { ChatTitle } from '../../../entities/chat/ui/styles';
-import { getLastSeen } from '../../../entities/user/lib/getLastSeen';
 import { userModel } from '../../../entities/user/model';
 import { TUser } from '../../../entities/user/model/types';
 import { UserCover } from '../../../entities/user/ui/UserCover';
 import { UserCoverBackground } from '../../../entities/user/ui/UserCoverBackground';
-import { UserStatus } from '../../../entities/user/ui/UserStatus';
-import { OnlineIndicator } from '../../../entities/user/ui/styles';
-import { popupModel } from '../../../layout/popup/model';
 import { NotificationBadge } from '../../../layout/sidebar/styles';
 import { Button } from '../../../shared/components/button';
 import { Flex } from '../../../shared/components/flex';
 import { Loading } from '../../../shared/components/loading';
-import { SkeletonShape } from '../../../shared/components/skeleton';
-import { Subtext } from '../../../shared/components/subtext';
 import { areDatesEqual } from '../../../shared/funcs/areDatesEqual';
 import getUID from '../../../shared/funcs/getUID';
 import { useUrlParamId } from '../../../shared/hooks/useUrlParamId';
 import { prepareMessages } from '../lib/prepareMessages';
-import { ChatDialogContextMenu } from './ChatDialogContextMenu';
-import { ChatTypingIndicator } from './ChatTypingIndicator';
+import { ChatHeader } from './ChatHeader';
 import { MessageItem } from './MessageItem';
 import { SystemMessageItem } from './SystemMessageItem';
 import {
     AvatarSection,
     ChatDialogStyled,
-    ChatHeaderStyled,
     ChatInput,
     ChatInputArea,
     ChatMessagesStyled,
@@ -113,15 +103,9 @@ export const ChatDialog = () => {
     const chatTitle = isGroupChat
         ? currentChat?.chatName
         : chatPartner?.displayName;
-    const statuses =
-        notYou.map((u) => getLastSeen((chatData[u] as TUser)?.online).status) ??
-        [];
+
     const anchorRef = useRef<HTMLDivElement>(null);
-    const typing =
-        currentChat?.typing
-            .filter((u) => u !== data?.uid)
-            .map((id) => chatData[id] as TUser) ?? [];
-    const membersOnline = statuses.filter((el) => el === 'online').length;
+
     const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
     const unreadMessages =
         currentChatMessages.filter(
@@ -140,15 +124,6 @@ export const ChatDialog = () => {
 
     const handleChangeValue = (e: Evt<'input'>) => {
         setValue(e.currentTarget.value);
-    };
-
-    const handleContextMenu = (e: Evt<'btn'>) => {
-        e.stopPropagation();
-        popupModel.events.open({
-            content: <ChatDialogContextMenu />,
-            e,
-            height: 136,
-        });
     };
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -187,71 +162,7 @@ export const ChatDialog = () => {
 
     return (
         <ChatDialogStyled>
-            <ChatHeaderStyled>
-                <Flex gap={16}>
-                    {!!Object.keys(chatData).length && (
-                        <>
-                            <UserCover
-                                fallbackIcon={
-                                    <UserCoverBackground
-                                        name={chatTitle ?? 'Undefined'}
-                                        width="35px"
-                                    />
-                                }
-                                size="35px"
-                                src={chatImage}
-                                colors={['grey']}
-                                isAuthor={false}
-                            >
-                                {statuses[0] === 'online' && !isGroupChat && (
-                                    <OnlineIndicator />
-                                )}
-                            </UserCover>
-                            <Flex d="column" ai="flex-start">
-                                <ChatTitle>{chatTitle ?? 'Untitled'}</ChatTitle>
-                                <ChatTypingIndicator
-                                    typing={typing}
-                                    isGroupChat={isGroupChat}
-                                >
-                                    {isGroupChat ? (
-                                        <Subtext>
-                                            {currentChat?.participants.length
-                                                ? `${currentChat?.participants.length} members`
-                                                : null}
-                                            {membersOnline !== 0 &&
-                                                `, ${membersOnline} online`}
-                                        </Subtext>
-                                    ) : (
-                                        <UserStatus
-                                            isAuthor={false}
-                                            showLastSeen
-                                            status={statuses[0]}
-                                        />
-                                    )}
-                                </ChatTypingIndicator>
-                            </Flex>
-                        </>
-                    )}
-                    {!Object.keys(chatData).length && (
-                        <Flex gap={16}>
-                            <SkeletonShape
-                                width="35px"
-                                height="35px"
-                                radius="100%"
-                            />
-                            <Flex gap={2} d="column" ai="flex-start">
-                                <SkeletonShape width="100px" height="12px" />
-                                <SkeletonShape width="40px" height="9px" />
-                            </Flex>
-                        </Flex>
-                    )}
-                </Flex>
-                <Flex width="fit-content">
-                    <Button $width="40px" onClick={handleContextMenu}>
-                        <IconDots size={20} />
-                    </Button>
-                </Flex>
-            </ChatHeaderStyled>
+            <ChatHeader />
             <ChatMessagesStyled onScroll={handleScroll}>
                 {currentChatMessagesLoading && (
                     <Flex jc="center" height="100%" width="100%">

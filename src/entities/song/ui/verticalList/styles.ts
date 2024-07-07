@@ -1,7 +1,8 @@
 import { Skeleton } from '@components/skeleton';
 import styled from 'styled-components';
 
-export const SongsVerticalListStyled = styled.div``;
+export const SongsVerticalListStyled = styled.div`
+`;
 
 export const Titles = styled.div`
     width: 100%;
@@ -13,10 +14,6 @@ export const Titles = styled.div`
     top: 0;
     background: ${({ theme }) => theme.colors.pageBackground};
     z-index: 2;
-
-    @media (max-width: 1080px) {
-        display: none;
-    }
 `;
 
 export const Title = styled.div`

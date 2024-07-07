@@ -79,11 +79,13 @@ export const UserItem = memo(
                             />
                         )}
                     </Flex>
-                    <UserStatus
-                        status={status}
-                        isAuthor={isAuthor}
-                        showLastSeen={showLastSeen}
-                    />
+                    {orientation === 'horizontal' && (
+                        <UserStatus
+                            status={status}
+                            isAuthor={isAuthor}
+                            showLastSeen={showLastSeen}
+                        />
+                    )}
                 </Flex>
                 {children}
             </UserItemStyled>

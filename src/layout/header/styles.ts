@@ -1,9 +1,10 @@
 import styled from 'styled-components';
+import { DESKTOP_HEADER_HEIGHT, MOBILE_HEADER_HEIGHT } from './constants';
 
 export const HeaderStyled = styled.header`
     width: 100%;
     max-width: 100%;
-    min-height: 70px;
+    min-height: ${DESKTOP_HEADER_HEIGHT}px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -23,8 +24,9 @@ export const HeaderStyled = styled.header`
 
     @media (max-width: 1000px) {
         padding: 10px 20px;
-        min-height: 80px;
-        height: fit-content;
+        min-height: ${MOBILE_HEADER_HEIGHT}px;
+        display: flex;
+        justify-content: flex-start;
     }
 `;
 

@@ -1,27 +1,39 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
-import { TEntity } from './types';
 import { Database } from '../../../database';
-import { $searchHistory } from '../../user/model';
+import { $searchHistory, $user, setSearchHistory } from '../../user/model';
+import { TEntity, TSuggestion } from './types';
+
+type GetResultProps = {
+    query: string;
+    suggestion?: TSuggestion | null;
+};
 
 export const $searchQuery = createStore<string>('');
-export const $searchSuggestions = createStore<TEntity[]>([]);
+export const $searchSuggestions = createStore<TSuggestion[]>([]);
 export const $searchResult = createStore<TEntity[]>([]);
 
 // TODO: Mb встроить сюда и searchHistory???
 export const setSearchQuery = createEvent<string>();
 export const getSuggestions = createEvent<string>();
-export const setSuggestions = createEvent<TEntity[]>();
-export const getSearchResult = createEvent<string>();
+export const setSuggestions = createEvent<TSuggestion[]>();
+export const getSearchResult = createEvent<GetResultProps>();
 
 export const getSuggestionsFx = createEffect<
-    { value: string; history: TEntity[] },
-    TEntity[]
+    { value: string; history: TSuggestion[] },
+    TSuggestion[]
 >();
-export const getResultFx = createEffect<string, TEntity[]>(
-    async (value: string) => {
+
+export const getResultFx = createEffect(
+    async ({ query, suggestion }: GetResultProps) => {
         try {
             const suggestions =
-                await Database.SearchSuggestions.getSearchResult(value);
+                await Database.SearchSuggestions.getSearchResult(query);
+
+            if (suggestion) {
+                await Database.SearchSuggestions.addRankToSuggestion(
+                    suggestion.uid
+                );
+            }
 
             return suggestions;
         } catch (error) {
@@ -29,7 +41,6 @@ export const getResultFx = createEffect<string, TEntity[]>(
         }
     }
 );
-getResultFx.watch(console.log);
 export const $isLoadingSuggestions = getSuggestionsFx.pending;
 export const $isLoadingResult = getResultFx.pending;
 
@@ -53,6 +64,7 @@ sample({
 });
 
 const $history = $searchHistory.map((s) => s);
+const $userId = $user.map((u) => u.data?.uid);
 
 sample({
     clock: getSuggestions,
@@ -62,8 +74,9 @@ sample({
 });
 
 getSuggestionsFx.use(
-    async ({ value, history }: { value: string; history: TEntity[] }) => {
+    async ({ value, history }: { value: string; history: TSuggestion[] }) => {
         try {
+            if (value.length === 0) return [];
             const suggestions =
                 await Database.SearchSuggestions.getSearchSuggestions(
                     value,
@@ -89,13 +102,22 @@ sample({
 
 sample({
     clock: getSearchResult,
-    target: $searchQuery,
-})
+    target: getResultFx,
+});
 
 sample({
-    clock: $searchQuery,
-    target: getResultFx,  
-})
+    clock: getSearchResult,
+    source: {
+        userId: $userId,
+    },
+    filter: (_, { suggestion }) => !!suggestion,
+    fn: ({ userId }, { suggestion }) => ({
+        userId,
+        suggestion,
+    }),
+    target: setSearchHistory,
+});
+
 // sample({
 //     clock: getSearchResult,
 //     source: $searchQuery,

@@ -37,6 +37,7 @@ export const MoreInfoButton = styled.button`
     margin-right: 10px;
     border-radius: ${({ theme }) => theme.borderRadius.mild};
     cursor: pointer;
+    opacity: 0;
 
     &:hover {
         background: ${({ theme }) => theme.colors.hover};
@@ -105,7 +106,7 @@ export const SongLeft = styled.div<{ $color1: string }>`
     }
 `;
 
-export const SongStyled = styled.div<{ playing: boolean }>`
+export const SongStyled = styled.div`
     width: 100%;
     height: 50px;
     padding: 4px 8px;
@@ -117,7 +118,12 @@ export const SongStyled = styled.div<{ playing: boolean }>`
     cursor: pointer;
     border: none;
     container-type: size;
+    transition: 0.1s background;
     --icon-size: 18px;
+
+    &.playing {
+        background: ${({ theme }) => theme.colors.hover};
+    }
 
     @media (hover: hover) {
         &:hover {
@@ -146,6 +152,15 @@ export const SongStyled = styled.div<{ playing: boolean }>`
         }
     }
 
+    &:focus {
+        background: ${({ theme }) => theme.colors.hover};
+        outline: none;
+    }
+
+    &:active {
+        background: ${({ theme }) => theme.colors.darkHover};
+    }
+
     .cover-children {
         svg {
             width: var(--icon-size);
@@ -153,12 +168,18 @@ export const SongStyled = styled.div<{ playing: boolean }>`
         }
     }
 
-    ${MoreInfoButton} {
-        ${({ playing }) => (playing ? 'opacity: 1' : 'opacity: 0')};
+    &.playing {
+        ${MoreInfoButton} {
+            opacity: 1;
+        }
     }
 
     @media (max-width: 1000px) {
         padding: 0;
+
+        &:active {
+            background: transparent;
+        }
 
         .general-cover {
             min-width: 40px;
@@ -277,6 +298,10 @@ export const HorizontalSongStyled = styled.div`
 
 export const VerticalSongStyled = styled.div`
     height: 60px;
+
+    &.no-background > div {
+        background: transparent;
+    }
 
     @container (min-width: 700px) {
         display: none;

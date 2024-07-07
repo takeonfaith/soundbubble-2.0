@@ -15,3 +15,5 @@ export const DEFAULT_PAGE_STORE: TPageStore = {
     similarAuthors: [],
     similarAuthorsLoading: true,
 };
+
+export const MAX_SEARCH_HISTORY_QUANTITY = 10;

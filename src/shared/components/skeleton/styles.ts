@@ -4,17 +4,16 @@ export const SkeletonPageAnimationStyled = styled.div`
     width: 100%;
     height: 100%;
     position: relative;
+    overflow: hidden;
 `;
 
 export const SkeletonSection = styled.div<{ $background?: string }>`
     position: absolute;
     width: 100%;
-    max-height: 100vh;
-    height: 100%;
+    min-height: fit-content;
     left: 0;
     top: 0;
     z-index: 10;
-    overflow: hidden;
     background: linear-gradient(
         360deg,
         ${({ theme, $background }) =>
@@ -33,10 +32,16 @@ export const SkeletonSection = styled.div<{ $background?: string }>`
 
     &.loading {
         opacity: 1;
-        height: fit-content;
         pointer-events: all;
         background-position: 0 100%;
     }
 `;
 
-export const ContentSection = styled.div``;
+export const ContentSection = styled.div`
+    display: block;
+    width: 100%;
+
+    &.loading {
+        display: none;
+    }
+`;

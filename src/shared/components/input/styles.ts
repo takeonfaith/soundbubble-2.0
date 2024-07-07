@@ -23,6 +23,10 @@ const Icon = styled.div`
         color: ${({ theme }) => theme.colors.textColor};
         opacity: 0.3;
     }
+
+    @media (max-width: 768px) {
+        /* top: 11px; */
+    }
 `;
 
 export const InputFieldWrapper = styled.div`
@@ -39,7 +43,7 @@ export const RightIcon = styled(Icon)`
     border-radius: 4px;
 
     &:hover {
-        background: ${({ theme }) => theme.colors.lightHover};
+        background: ${({ theme }) => theme.colors.hover};
     }
 `;
 
@@ -84,5 +88,10 @@ export const InputStyled = styled.input<{
 
     &:disabled {
         background: ${({ theme }) => theme.colors.border};
+    }
+
+    @media (max-width: 768px) {
+        /* height: 45px;
+        border-radius: 10px; */
     }
 `;

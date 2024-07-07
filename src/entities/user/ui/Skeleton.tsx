@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Flex } from '../../../shared/components/flex';
 import { SkeletonShape } from '../../../shared/components/skeleton';
+import { TOrientation } from '../types';
 
 const UserCoverSkeleton = styled(SkeletonShape)`
     --size: calc(100vw / 10 - 17px);
@@ -21,7 +22,23 @@ const UserCoverSkeleton = styled(SkeletonShape)`
     height: var(--size);
 `;
 
-export const UserSkeleton = () => {
+type Props = {
+    orientation?: TOrientation;
+};
+
+export const UserSkeleton = ({ orientation = 'vertical' }: Props) => {
+    if (orientation === 'horizontal') {
+        return (
+            <Flex gap={10} width='100%'>
+                <SkeletonShape radius="100%" width="40px" height="40px" />
+                <Flex d="column" gap={4} ai="flex-start">
+                    <SkeletonShape radius="4px" width="200px" height="14px" />
+                    <SkeletonShape radius="4px" width="80px" height="10px" />
+                </Flex>
+            </Flex>
+        );
+    }
+
     return (
         <Flex d="column" gap={10}>
             <UserCoverSkeleton

@@ -1,14 +1,15 @@
 import { PlaylistItem } from '../../entities/playlist/ui';
 import { userModel } from '../../entities/user/model';
 import { Loading } from '../../shared/components/loading';
-import { PageGridStyled, PageWrapperStyled } from './styles';
+import { ContentWrapper } from '../../shared/components/pageWrapper';
+import { PageGridStyled } from './styles';
 
 export const LikedPlaylists = () => {
     const [added, loadingAdded] = userModel.useAddedPlaylists();
     const [own, loadingOwn] = userModel.useOwnPlaylists();
 
     return (
-        <PageWrapperStyled>
+        <ContentWrapper>
             {(loadingAdded || loadingOwn) && <Loading />}
             <PageGridStyled>
                 {[...own, ...added].map((playlist) => {
@@ -17,6 +18,6 @@ export const LikedPlaylists = () => {
                     );
                 })}
             </PageGridStyled>
-        </PageWrapperStyled>
+        </ContentWrapper>
     );
 };

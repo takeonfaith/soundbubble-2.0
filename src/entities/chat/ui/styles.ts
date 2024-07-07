@@ -16,6 +16,15 @@ export const ChatItemStyled = styled(Link)`
     &:hover {
         filter: brightness(0.95);
     }
+
+    @media (max-width: 768px) {
+        padding: 10px 20px;
+
+        & .general-cover {
+            min-width: 55px;
+            height: 55px;
+        }
+    }
 `;
 
 export const ChatTitle = styled.div`

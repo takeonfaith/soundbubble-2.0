@@ -7,7 +7,6 @@ import { SkeletonShape } from '../../shared/components/skeleton';
 import { ContentWrapperStyled } from './styles';
 
 export const SkeletonLoading = () => {
-
     return (
         <Flex width="100%" d="column" ai="flex-start" height="100%">
             <SkeletonShape width="100%" height="400px" radius="0">

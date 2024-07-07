@@ -24,9 +24,12 @@ function App() {
     useEffect(() => {
         userModel.events.setIsLoadingUsers(true);
         Database.Users.onAuthStateChanged(async (userCred) => {
-            const user = await Database.Users.getUserByUid(userCred?.uid);
-            userModel.events.setUser(user);
             userModel.events.setIsLoadingUsers(false);
+
+            if (userCred?.uid) {
+                const user = await Database.Users.getUserByUid(userCred.uid);
+                userModel.events.setUser(user);
+            }
         });
     }, []);
 

@@ -18,5 +18,10 @@ export const GridSongListStyled = styled.div`
         grid-template-rows: 50px 50px 50px 50px;
         grid-gap: 2px;
         overflow-x: scroll;
+        scroll-snap-type: x mandatory;
+
+        & > * {
+            scroll-snap-align: center;
+        }
     }
 `;

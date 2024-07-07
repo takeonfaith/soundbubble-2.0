@@ -26,5 +26,6 @@ export const SkeletonShape = styled(Skeleton)<{
     width: ${({ width }) => width ?? '100px'};
     min-width: ${({ minWidth, width }) => minWidth ?? width ?? '100px'};
     height: ${({ height }) => height ?? '100px'};
+    min-height: ${({ height }) => height ?? '100px'};
     border-radius: ${({ radius }) => radius ?? '10px'};
 `;

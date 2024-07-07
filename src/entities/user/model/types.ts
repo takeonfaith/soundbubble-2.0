@@ -1,5 +1,5 @@
-import { Place } from '../../../database/sections/searchSuggestions';
 import { TPlaylist } from '../../playlist/model/types';
+import { TPlace } from '../../search/model/types';
 import { TSong } from '../../song/model/types';
 
 type TFriendStatus = 'added' | 'awaiting' | 'requested';
@@ -55,4 +55,4 @@ export type TPageStore = {
     similarAuthorsLoading: boolean;
 };
 
-export type TSearchHistory = { id: string; type: Place };
+export type TSearchHistory = { id: string; type: TPlace };

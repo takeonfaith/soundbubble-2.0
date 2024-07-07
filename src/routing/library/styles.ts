@@ -1,18 +1,19 @@
 import styled from 'styled-components';
 import { Button } from '../../shared/components/button';
 
-export const PageWrapperStyled = styled.div`
-    height: 100%;
-    width: 100%;
-    display: flex;
-    padding: var(--page-padding);
-`;
-
 export const PageGridStyled = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
     height: fit-content;
+
+    @media (max-width: 768px) {
+        gap: 20px;
+    }
+`;
+
+export const AuthorPageGridStyled = styled(PageGridStyled)`
+    gap: 32px;
 
     @media (max-width: 768px) {
         gap: 20px;

@@ -60,7 +60,7 @@ export const SongItem = memo(
                 tabIndex={0}
                 role="button"
                 aria-pressed="false"
-                playing={playing}
+                className={playing || loading ? 'playing' : ''}
             >
                 <SongLeft $color1={imageColors[0]}>
                     <SongCover size="35px" src={cover} colors={imageColors}>

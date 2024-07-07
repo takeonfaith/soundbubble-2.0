@@ -63,7 +63,7 @@ export const SidebarLink = styled(NavLink)`
     }
 
     &.active {
-        & > div {
+        & > div > div {
             opacity: 1;
             color: ${({ theme }) => theme.colors.blue.main};
         }

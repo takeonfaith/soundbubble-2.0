@@ -1,21 +1,26 @@
-import { getDocs, limit, orderBy, query, where } from 'firebase/firestore';
-import { FB } from '../../firebase';
-import { getDataFromDoc } from '../lib/getDataFromDoc';
-import { normalizeString } from '../../shared/funcs/normalizeString';
+import {
+    getDocs,
+    increment,
+    limit,
+    orderBy,
+    query,
+    where,
+} from 'firebase/firestore';
 import { Database } from '..';
-import { TEntity } from '../../entities/search/model/types';
-import { filterOneArrayWithAnother } from '../../shared/funcs/filterOneArrayWithAnother';
-import { getEntityId } from '../../features/searchWithHints/lib/getDividedEntity';
+import {
+    TEntity,
+    TPlace,
+    TSuggestion,
+} from '../../entities/search/model/types';
+import { MAX_SEARCH_HISTORY_QUANTITY } from '../../entities/user/model/constants';
 import { TUser } from '../../entities/user/model/types';
-
-export type Place = 'songs' | 'users' | 'playlists';
-
-type Suggestion = {
-    place: Place;
-    rank: number;
-    uid: string;
-    variantsOfName: string[];
-};
+import { getEntityId } from '../../features/searchWithHints/lib/getDividedEntity';
+import { getEntityType } from '../../features/searchWithHints/lib/getEntityType';
+import { FB } from '../../firebase';
+import { filterOneArrayWithAnother } from '../../shared/funcs/filterOneArrayWithAnother';
+import { normalizeString } from '../../shared/funcs/normalizeString';
+import { getDataFromDoc } from '../lib/getDataFromDoc';
+import { uniqueArrayObjectsByField } from '../../shared/funcs/uniqueArrayObjectsByFields';
 
 export class SearchSuggestions {
     static ref = FB.get('search');
@@ -27,12 +32,12 @@ export class SearchSuggestions {
             const songs = await Database.Songs.getSongsByUids(songIds, true);
             return songs;
         } catch (error) {
-            throw new Error(error);
+            throw new Error((error as Error).message);
         }
     }
 
-    static getEntitiesReqs(suggestions: Suggestion[]) {
-        const requests: Record<Place, (uid: string) => Promise<TEntity>> = {
+    static getEntitiesReqs(suggestions: TSuggestion[]) {
+        const requests: Record<TPlace, (uid: string) => Promise<TEntity>> = {
             users: Database.Users.getUserByUid,
             playlists: Database.Playlists.getPlaylistByUid,
             songs: Database.Songs.getSongByUid,
@@ -43,7 +48,10 @@ export class SearchSuggestions {
         });
     }
 
-    static async getSearchSuggestions(queryStr: string, history: TEntity[]) {
+    static async getSearchSuggestions(
+        queryStr: string,
+        history: TSuggestion[]
+    ) {
         try {
             const q = query(
                 this.ref,
@@ -53,30 +61,25 @@ export class SearchSuggestions {
                     normalizeString(queryStr)
                 ),
                 orderBy('rank', 'desc'),
-                limit(10)
+                limit(MAX_SEARCH_HISTORY_QUANTITY)
             );
             const snapshot = await getDocs(q);
             const dirtySuggestions = filterOneArrayWithAnother(
-                getDataFromDoc<Suggestion>(snapshot),
+                getDataFromDoc<TSuggestion>(snapshot),
                 history,
-                (item) => item.uid,
-                (arr) => arr.map((item) => getEntityId(item))
+                (item) => item.fullName,
+                (arr) => arr.map((item) => item.fullName)
             );
 
-            const reqs = this.getEntitiesReqs(dirtySuggestions);
-
-            if (dirtySuggestions.length === 0) return [];
-
-            const cleanSuggestions: TEntity[] = await Promise.all(reqs);
-
-            return cleanSuggestions;
+            return uniqueArrayObjectsByField(dirtySuggestions, 'fullName');
         } catch (error) {
-            throw new Error(error);
+            throw new Error((error as Error).message);
         }
     }
 
     static async getSearchResult(queryStr: string) {
         try {
+            // TODO: оптимизировать так, чтобы не делать запрос к suggestions повторно
             const q = query(
                 this.ref,
                 where(
@@ -89,7 +92,7 @@ export class SearchSuggestions {
 
             const snapshot = await getDocs(q);
             const dirtySuggestions = filterOneArrayWithAnother(
-                getDataFromDoc<Suggestion>(snapshot),
+                getDataFromDoc<TSuggestion>(snapshot),
                 [],
                 (item) => item.uid,
                 (arr) => arr.map((item) => getEntityId(item))
@@ -99,7 +102,7 @@ export class SearchSuggestions {
 
             let cleanSuggestions: TEntity[] = await Promise.all(reqs);
 
-            if (dirtySuggestions[0].place === 'users') {
+            if (getEntityType(cleanSuggestions[0]) === 'author') {
                 const topAuthorSongs = await this.getTopAuthorSongs(
                     (cleanSuggestions[0] as TUser).ownSongs?.slice(0, 6)
                 );
@@ -113,7 +116,15 @@ export class SearchSuggestions {
 
             return cleanSuggestions;
         } catch (error) {
-            throw new Error(error);
+            throw new Error((error as Error).message);
+        }
+    }
+
+    static async addRankToSuggestion(id: string) {
+        try {
+            return await FB.updateById('search', id, { rank: increment(1) });
+        } catch (error) {
+            throw new Error((error as Error).message);
         }
     }
 }

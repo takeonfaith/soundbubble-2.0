@@ -79,7 +79,7 @@ const sendMessageFx = createEffect(
 );
 
 const getTotalUnreadCount = createEvent<TChat[]>();
-const setCurrentChatId = createEvent<string>();
+const setCurrentChatId = createEvent<string | undefined>();
 const setChatData = createEvent<TChatData>();
 const loadPreviousMessages = createEvent();
 const sendMessage = createEvent<{ chatId: string; message: TMessage }>();

@@ -9,12 +9,13 @@ import { ShareModal } from '../../features/shareModal';
 import { modalModel } from '../../layout/modal/model';
 import { HorizontalList } from '../../shared/components/horizontalList';
 import { PageTop } from '../../shared/components/pageTop';
+import { PageWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
 import { BottomButtons } from './BottomButtons';
 import { SimilarAuthors } from './SimilarAuthors';
 import { SkeletonLoading } from './Skeleton';
-import { AuthorPageStyled, ContentWrapperStyled, SongsStyled } from './styles';
+import { ContentWrapperStyled, SongsStyled } from './styles';
 
 type Props = {
     userData?: TUser | null;
@@ -41,7 +42,9 @@ export const AuthorPage = ({ userData }: Props) => {
     useUrlParamId({
         page: 'author',
         onChangeId: (id) => {
-            userModel.events.loadUserPageFx(id);
+            if (id) {
+                userModel.events.loadUserPageFx(id);
+            }
         },
     });
 
@@ -60,7 +63,7 @@ export const AuthorPage = ({ userData }: Props) => {
     };
 
     return (
-        <AuthorPageStyled>
+        <PageWrapper>
             <SkeletonPageAnimation
                 color={userPageData?.imageColors[0] ?? 'grey'}
                 loading={loading}
@@ -127,6 +130,6 @@ export const AuthorPage = ({ userData }: Props) => {
                     />
                 )}
             </SkeletonPageAnimation>
-        </AuthorPageStyled>
+        </PageWrapper>
     );
 };

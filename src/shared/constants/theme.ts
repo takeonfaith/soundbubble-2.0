@@ -67,7 +67,7 @@ export const LIGHT_THEME: TTheme = {
         border: '#b6b6b657',
         sidebar: '#f1f1f1',
         lightHover: '#ffffff80',
-        darkHover: '#0000002b',
+        darkHover: '#0000001c',
         modal: '#fff',
         shadow: '0 0 40px #00000021',
         header: '#ffffff9e',

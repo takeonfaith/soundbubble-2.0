@@ -1,83 +1,62 @@
 import { Input } from '@components/input';
-import { Loading } from '@components/loading';
-import { IconSearch, IconX } from '@tabler/icons-react';
-import { HintItem } from './HintItem';
-import { getEntityId } from './lib/getDividedEntity';
+import { IconSearch } from '@tabler/icons-react';
+import { SuggestionList } from './SuggestionList';
 import { HintsStyled, SearchWithHintsStyled } from './styles';
 import { SearchSuggestionProps } from './types';
 import { useSearchWithHints } from './useSearchWithHints';
 
 export const SearchWithHints = (props: SearchSuggestionProps) => {
     const {
-        inputValue,
+        selectedSuggestion,
+        rightIcon,
+        showSuggestions,
+        visibleSearchHistory,
+        allSuggestions,
+        visibleInputValue,
         ref,
-        localHistorySuggestions,
-        showHints,
-        suggestedIndex,
-        handleFocus,
-        handleKeyDown,
+        handleSubmit,
         handleChange,
         handleReset,
-        handleBlur,
-        onRightIconClick,
-        handleSubmitSuggestion,
+        handleFocus,
+        handleCopyName,
+        handleKeyDown,
     } = useSearchWithHints(props);
-    const { suggestions, areSuggestionsLoading } = props;
+    const { suggestions } = props;
 
     return (
         <SearchWithHintsStyled onKeyDown={handleKeyDown}>
             <Input
                 id="inputsearch"
                 icon={<IconSearch />}
-                value={inputValue}
+                value={visibleInputValue}
+                autoComplete="off"
+                placeholder="Search..."
+                aria-autocomplete="list"
+                aria-controls="autocomplete-list"
                 onChange={handleChange}
                 onFocus={handleFocus}
-                autoComplete="off"
-                onClick={handleFocus}
-                placeholder="Search..."
-                rightIcon={
-                    areSuggestionsLoading ? (
-                        <Loading />
-                    ) : inputValue ? (
-                        <IconX onClick={handleReset} />
-                    ) : null
-                }
-                onRightIconClick={onRightIconClick}
+                rightIcon={rightIcon}
+                ref={ref}
+                onRightIconClick={handleReset}
+                enterKeyHint="done"
                 type="text"
             />
-            {showHints && (
-                <HintsStyled
-                    id="hints"
-                    ref={ref}
-                    // onClick={(e) => e.preventDefault()}
-                >
-                    {localHistorySuggestions?.map((el, index) => {
-                        return (
-                            <HintItem
-                                value={inputValue}
-                                searchHistory
-                                suggestedIndex={suggestedIndex}
-                                item={el}
-                                index={index}
-                                key={getEntityId(el)}
-                                handleSubmitSuggestion={handleSubmitSuggestion}
-                            />
-                        );
-                    })}
-                    {suggestions.map((el, index) => {
-                        if (!el) return null;
-
-                        return (
-                            <HintItem
-                                value={inputValue}
-                                suggestedIndex={suggestedIndex}
-                                item={el}
-                                index={localHistorySuggestions.length + index}
-                                key={getEntityId(el) + index}
-                                handleSubmitSuggestion={handleSubmitSuggestion}
-                            />
-                        );
-                    })}
+            {showSuggestions && allSuggestions.length > 0 && (
+                <HintsStyled>
+                    <SuggestionList
+                        suggestions={visibleSearchHistory}
+                        selected={selectedSuggestion}
+                        handleCopyName={handleCopyName}
+                        handleSubmit={handleSubmit}
+                        isSearchHistory
+                    />
+                    <SuggestionList
+                        startIndex={visibleSearchHistory.length}
+                        suggestions={suggestions}
+                        selected={selectedSuggestion}
+                        handleCopyName={handleCopyName}
+                        handleSubmit={handleSubmit}
+                    />
                 </HintsStyled>
             )}
         </SearchWithHintsStyled>

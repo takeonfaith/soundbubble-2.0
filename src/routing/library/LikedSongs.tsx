@@ -1,61 +1,21 @@
 import { IconMusic } from '@tabler/icons-react';
-import { styled } from 'styled-components';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { userModel } from '../../entities/user/model';
 import { Flex } from '../../shared/components/flex';
-import { Subtext } from '../../shared/components/subtext';
+import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { SongSkeleton } from '../../entities/song/ui/Skeleton';
-
-const SkeletonLoading = () => {
-    return (
-        <Flex d="column" gap={4} width="100%">
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-        </Flex>
-    );
-};
-
-const ContentStyled = styled.div`
-    padding: 20px 40px;
-    height: 10%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-
-    @media (max-width: 1000px) {
-        padding: 0 20px;
-        padding-bottom: 40px;
-        gap: 4px;
-    }
-`;
+import { Subtext } from '../../shared/components/subtext';
+import { SongListSkeleton } from '../../entities/song/ui/SongListSkeleton';
 
 export const LikedSongs = () => {
     const [library, loading] = userModel.useSongLibrary();
     const [{ data }] = userModel.useUser();
 
     return (
-        <ContentStyled>
+        <ContentWrapper>
             <SkeletonPageAnimation
                 loading={loading}
-                skeleton={<SkeletonLoading />}
+                skeleton={<SongListSkeleton quantity={20}/>}
             >
                 <VerticalSongsList
                     listName="Library"
@@ -86,6 +46,6 @@ export const LikedSongs = () => {
                     </Flex>
                 )}
             </SkeletonPageAnimation>
-        </ContentStyled>
+        </ContentWrapper>
     );
 };

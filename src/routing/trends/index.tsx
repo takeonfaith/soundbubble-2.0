@@ -1,5 +1,10 @@
-import { TrendsPageStyled } from './styles';
+import { Header } from '../../layout/header';
+import { PageWrapper } from '../../shared/components/pageWrapper';
 
 export const TrendsPage = () => {
-    return <TrendsPageStyled></TrendsPageStyled>;
+    return (
+        <PageWrapper>
+            <Header />
+        </PageWrapper>
+    );
 };

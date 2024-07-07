@@ -13,7 +13,7 @@ export const InitialLoadingStyled = styled.div`
     background: ${({ theme }) => theme.colors.pageBackground};
     width: 100%;
     height: 100dvh;
-    transition: 1s;
+    transition: 1s opacity, 1s visibility;
 
     span {
         text-align: center;
@@ -58,17 +58,17 @@ export const InitialLoadingStyled = styled.div`
 
         & .logo {
             animation: shiftLogo 1s forwards ease-in-out;
-            animation-delay: 0.8s;
+            animation-delay: 0.4s;
 
             @keyframes shiftLogo {
                 0% {
                     transform: translateY(0);
                 }
                 50% {
-                    transform: translateY(5px);
+                    transform: translateY(-10px);
                 }
                 100% {
-                    transform: translateY(-10px);
+                    transform: translateY(5px);
                 }
             }
         }

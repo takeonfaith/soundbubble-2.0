@@ -4,10 +4,17 @@ import { Database } from '../../../database';
 import { Playlists, Users } from '../../../database/sections';
 import { ERRORS } from '../../../shared/constants';
 import { errorEffect } from '../../../shared/effector/errorEffect';
+import { getDataFromEffect } from '../../../shared/effector/getDataFromEffect';
 import { loadingEffect } from '../../../shared/effector/loadingEffect';
 import { tryWrapper } from '../../../shared/funcs/trywrapper';
+import { TPlaylist } from '../../playlist/model/types';
+import { TSuggestion } from '../../search/model/types';
 import { TSong } from '../../song/model/types';
-import { DEFAULT_PAGE_STORE, DEFAULT_STORE } from './constants';
+import {
+    DEFAULT_PAGE_STORE,
+    DEFAULT_STORE,
+    MAX_SEARCH_HISTORY_QUANTITY,
+} from './constants';
 import {
     CreateUserCreditsType,
     LoginCreditsType,
@@ -15,9 +22,6 @@ import {
     TStore,
     TUser,
 } from './types';
-import { TPlaylist } from '../../playlist/model/types';
-import { getDataFromEffect } from '../../../shared/effector/getDataFromEffect';
-import { TEntity } from '../../search/model/types';
 
 const loginFx = createEffect(
     async (credits: LoginCreditsType): Promise<TUser | null> => {
@@ -43,7 +47,6 @@ const loadLibraryFx = createEffect(async (store: TStore) => {
     return tryWrapper<TSong[]>(async () => {
         const addedSongs = store.data?.addedSongs?.reverse() ?? [];
         const result = await Database.Songs.getSongsByUids(addedSongs);
-        console.log({ result });
 
         return result;
     }, 'operationFailed');
@@ -102,18 +105,6 @@ const loadSimilarAuthorsFx = createEffect(async (songs: TSong[]) => {
     }
 });
 
-const loadUserSearchHistoryFx = createEffect(
-    async (store: TStore): Promise<TEntity[]> => {
-        try {
-            const userId = store.data?.uid;
-
-            return await Database.SearchHistory.getSearchHistory(userId);
-        } catch (error) {
-            throw new Error('Failed to load search history');
-        }
-    }
-);
-
 // TODO: отписка на logout
 const loadFriendsFx = createEffect(async (store: TStore) => {
     try {
@@ -152,6 +143,38 @@ const loadAddedAuthorsFx = createEffect(async (store: TStore) => {
     }
 });
 
+const loadUserSearchHistoryFx = createEffect(
+    async (store: TStore): Promise<TSuggestion[]> => {
+        try {
+            const userId = store.data?.uid;
+
+            return await Database.SearchHistory.getSearchHistory(userId);
+        } catch (error) {
+            throw new Error('Failed to load search history');
+        }
+    }
+);
+
+type SetSearchHistoryProps = {
+    userId: string | undefined;
+    suggestion?: TSuggestion | null;
+};
+
+const setSearchHistoryFx = createEffect(
+    async ({
+        history,
+        userId,
+        suggestion,
+    }: SetSearchHistoryProps & { history: TSuggestion[] }) => {
+        await Database.SearchHistory.addEntityToSearchHistory(
+            history.slice(0, MAX_SEARCH_HISTORY_QUANTITY - 1),
+            userId,
+            suggestion?.uid,
+            suggestion?.place
+        );
+    }
+);
+
 const login = createEvent<LoginCreditsType>();
 export const logout = createEvent();
 const createUser = createEvent<CreateUserCreditsType>();
@@ -162,6 +185,7 @@ const loadSimilarAuthors = createEvent<TSong[]>();
 const resetUserPage = createEvent();
 const updateFriends = createEvent<TUser[]>();
 const setIsLoadingUsers = createEvent<boolean>();
+export const setSearchHistory = createEvent<SetSearchHistoryProps>();
 
 const userGate = createGate();
 
@@ -188,7 +212,7 @@ $addedPlaylists.reset(logout);
 const $friends = createStore<TUser[]>([]);
 $friends.reset(logout);
 
-export const $searchHistory = createStore<TEntity[]>([]);
+export const $searchHistory = createStore<TSuggestion[]>([]);
 $searchHistory.reset(logout);
 
 const $userPage =
@@ -296,6 +320,24 @@ sample({
     source: $userPage,
     fn: (store, similarAuthors) => ({ ...store, similarAuthors }),
     target: $userPage,
+});
+
+sample({
+    clock: setSearchHistoryFx.done,
+    source: $searchHistory,
+    filter: (store, { params }) =>
+        !!params.suggestion &&
+        !store.find((s) => s.uid === params.suggestion?.uid),
+    fn: (store, { params }): TSuggestion[] =>
+        [params.suggestion!, ...store].slice(0, MAX_SEARCH_HISTORY_QUANTITY),
+    target: $searchHistory,
+});
+
+sample({
+    clock: setSearchHistory,
+    source: $searchHistory,
+    fn: (store, searchHistory) => ({ history: store, ...searchHistory }),
+    target: setSearchHistoryFx,
 });
 
 export const userModel = {

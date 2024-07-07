@@ -1,28 +1,12 @@
-import { SongSkeleton } from '../../entities/song/ui/Skeleton';
+import { SongListSkeleton } from '../../entities/song/ui/SongListSkeleton';
 import { Flex } from '../../shared/components/flex';
+import { SkeletonShape } from '../../shared/components/skeleton';
 
 export const SearchSkeleton = () => {
     return (
-        <Flex
-            gap={6}
-            width="100%"
-            height="100%"
-            d="column"
-            style={{ maxWidth: '650px', marginBottom: '20px' }}
-        >
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
-            <SongSkeleton />
+        <Flex gap={8} d="column" ai="flex-start" width="100%" height="fit-content">
+            <SkeletonShape width="70px" height="20px" radius="4px" />
+            <SongListSkeleton />
         </Flex>
     );
 };

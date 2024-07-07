@@ -1,52 +1,69 @@
-import { IconMessage2, IconSearch } from '@tabler/icons-react'
-import styled from 'styled-components'
-import { userModel } from '../../entities/user/model'
-import { UserItem } from '../../entities/user/ui'
-import { Header } from '../../layout/header'
-import { Button } from '../../shared/components/button'
-import { DefaultButton } from '../../shared/components/button/DefaultButton'
-import { Divider } from '../../shared/components/divider'
-import { Flex } from '../../shared/components/flex'
-import { Input } from '../../shared/components/input'
-import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation'
-import { SkeletonLoading } from '../author/Skeleton'
+import { IconMessage2, IconSearch } from '@tabler/icons-react';
+import { userModel } from '../../entities/user/model';
+import { UserItem } from '../../entities/user/ui';
+import { UserListSkeleton } from '../../entities/user/ui/UserListSkeleton';
+import { Header } from '../../layout/header';
+import { Button } from '../../shared/components/button';
+import { DefaultButton } from '../../shared/components/button/DefaultButton';
+import { Flex } from '../../shared/components/flex';
+import { Input } from '../../shared/components/input';
+import {
+    ContentWrapper,
+    PageWrapper,
+} from '../../shared/components/pageWrapper';
+import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
+import { styled } from 'styled-components';
 
-const FriendsStyled = styled.div`
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+const FriendsWrapper = styled.div`
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+	 align-items: center;
 `;
 
-const ContentStyled = styled.div`
-  padding: 20px 50px;
-  height: 100%;
-  width: 100%;
-`
-
 export const FriendsPage = () => {
-	const [friends, loading] = userModel.useFriends()
+    const [friends, loading] = userModel.useFriends();
 
-	return (
-		<FriendsStyled>
-			<Header />
-			<SkeletonPageAnimation loading={loading} skeleton={<SkeletonLoading />}>
-				<ContentStyled>
-					<Flex gap={10} width='100%'>
-						<Input placeholder='Search for friends...' icon={<IconSearch />} />
-						<DefaultButton width='200px' appearance='primary'>Create group chat</DefaultButton>
-					</Flex>
-					<Divider />
-					{friends.map((friend) => {
-						return <UserItem showLastSeen user={friend} key={friend.uid} orientation='horizontal' >
-							<Button $width='40px'>
-								<IconMessage2 />
-							</Button>
-						</UserItem>
-					})}
-				</ContentStyled>
-			</SkeletonPageAnimation>
-		</FriendsStyled>
-	)
-}
+    return (
+        <PageWrapper>
+            <Header>
+                <FriendsWrapper>
+                    <Input
+                        placeholder="Search for friends..."
+                        icon={<IconSearch />}
+                    />
+                    <DefaultButton width="200px" appearance="primary">
+                        Create group chat
+                    </DefaultButton>
+                </FriendsWrapper>
+            </Header>
+            <ContentWrapper>
+                <FriendsWrapper>
+                    <SkeletonPageAnimation
+                        loading={loading}
+                        skeleton={<UserListSkeleton orientation="horizontal" />}
+                    >
+                        <Flex d="column" gap={4} width="100%">
+                            {friends.map((friend) => {
+                                return (
+                                    <UserItem
+                                        showLastSeen
+                                        user={friend}
+                                        key={friend.uid}
+                                        orientation="horizontal"
+                                    >
+                                        <Button $width="40px">
+                                            <IconMessage2 />
+                                        </Button>
+                                    </UserItem>
+                                );
+                            })}
+                        </Flex>
+                    </SkeletonPageAnimation>
+                </FriendsWrapper>
+            </ContentWrapper>
+        </PageWrapper>
+    );
+};

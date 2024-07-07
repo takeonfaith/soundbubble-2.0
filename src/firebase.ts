@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+import { FirebaseOptions, initializeApp } from 'firebase/app';
 import {
     NextOrObserver,
     User,
@@ -15,6 +15,7 @@ import {
     collection,
     doc,
     getDoc,
+    getDocs,
     initializeFirestore,
     onSnapshot,
     query,
@@ -26,8 +27,12 @@ import { getDataFromDoc } from './database/lib/getDataFromDoc';
 import { TPlaylist } from './entities/playlist/model/types';
 import { TSong } from './entities/song/model/types';
 import { TSearchHistory, TUser } from './entities/user/model/types';
+import { Playlists, Songs, Users } from './database/sections';
+import { Suggestion } from './database/sections/searchSuggestions';
+import { TEntity } from './entities/search/model/types';
+import { getEntityName } from './features/searchWithHints/lib/getDividedEntity';
 
-const config = {
+const config: FirebaseOptions = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
     authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
     projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
@@ -145,34 +150,24 @@ export class FB {
     }
 }
 
-console.log({ app: FB });
+// const addFullNameFieldToSearch = async () => {
+//     const search = await getDocs(FB.get('search'));
+//     const requests = {
+//         playlists: Playlists.getPlaylistByUid,
+//         songs: Songs.getSongByUid,
+//         users: Users.getUserByUid,
+//     };
 
-// const createSeparateMessagesCollection = async () => {
-//     const chats = query(FB.get('chats'));
-//     const querySnapshot = await getDocs(chats);
-//     const data = getDataFromDoc<F>(querySnapshot);
-//     const allMessages = data.reduce((acc, chat) => {
-//         chat.messages.forEach((message) => acc.push({ id: chat.id, message }));
-//         return acc;
-//     }, [] as Array<{ id: string; message: TMessage }>);
-
-//     const requests = allMessages.map(async (m) => {
-//         const messageId = getUID();
-//         const sentTime = new Date(
-//             m.message.sentTime instanceof Object
-//                 ? m.message.sentTime.toMillis()
-//                 : m.message.sentTime
-//         ).getTime();
-
-//         return await setDoc(
-//             doc(FB.firestore, `newChats/${m.id}/messages/${messageId}`),
-//             { ...m.message, id: messageId, sentTime }
-//         );
-//     });
-
-//     Promise.all(requests).then((res) => {
-//         console.log('data changed successfully');
+//     await Promise.all(
+//         getDataFromDoc<Suggestion>(search).map(async (s) => {
+//             const entity = (await requests[s.place](s.uid)) as TEntity;
+//             const updated = { ...s, fullName: getEntityName(entity) };
+//             FB.updateById('search', s.uid, updated);
+//             return updated;
+//         })
+//     ).then((data) => {
+//         console.log('updated successfully', data);
 //     });
 // };
 
-// createSeparateMessagesCollection();
+// addFullNameFieldToSearch();

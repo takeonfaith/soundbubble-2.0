@@ -1,9 +1,13 @@
 export const filterOneArrayWithAnother = <
-    T extends any[],
-    K extends any[]
+    T extends unknown[],
+    K extends unknown[]
 >(
     arr1: T,
     arr2: K,
-    filterFn?: (item: T[number]) => string,
-    tranformFn?: (arr2: K) => string[]
-): T => arr1.filter((item) => !tranformFn(arr2).includes(filterFn(item)));
+    filterFn: (item: T[number]) => string,
+    tranformFn: (arr2: K) => string[]
+): T => {
+    return arr1.filter((item) => {
+        return !tranformFn(arr2).includes(filterFn(item));
+    }) as T;
+};
