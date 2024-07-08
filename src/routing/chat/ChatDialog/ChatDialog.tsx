@@ -138,10 +138,11 @@ export const ChatDialog = () => {
 
     const handleSendMessage = () => {
         if (value.trim().length === 0 || !data?.uid) return;
+        if (currentChatId) {
+            const message = createNewMessage(data?.uid, value);
 
-        const message = createNewMessage(data?.uid, value);
-
-        chatModel.events.sendMessage({ chatId: currentChatId, message });
+            chatModel.events.sendMessage({ chatId: currentChatId, message });
+        }
         setValue('');
         inputRef.current?.focus();
     };

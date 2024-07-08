@@ -24,13 +24,14 @@ const Overlay = styled.div`
     border-radius: ${SONG_RADIUS};
 `;
 
-export const MoreInfoButton = styled.button`
+export const MoreInfoButton = styled(Button)`
     display: flex;
     align-items: center;
     justify-content: center;
     background: transparent;
     width: 35px;
     height: 35px;
+    min-height: 35px;
     color: ${({ theme }) => theme.colors.textColor};
     border: none;
     padding: 4px;
@@ -185,6 +186,10 @@ export const SongStyled = styled.div`
             min-width: 40px;
             width: 40px;
             height: 40px;
+        }
+
+        &.playing {
+            background: transparent;
         }
     }
 

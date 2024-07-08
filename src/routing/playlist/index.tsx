@@ -22,7 +22,11 @@ export const PlaylistPage = () => {
         playlistModel.usePlaylist();
     useUrlParamId({
         page: 'playlist',
-        onChangeId: (id) => playlistModel.events.loadPlaylist(id),
+        onChangeId: (id) => {
+            if (id) {
+                playlistModel.events.loadPlaylist(id);
+            }
+        },
     });
 
     const handleClickShare = () => {

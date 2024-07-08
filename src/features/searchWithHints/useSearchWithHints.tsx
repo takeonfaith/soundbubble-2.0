@@ -51,6 +51,7 @@ export const useSearchWithHints = ({
         onChange('');
         setInputValue('');
         ref.current?.focus();
+        setShowSuggestions(true)
     };
 
     const rightIcon = areSuggestionsLoading ? (

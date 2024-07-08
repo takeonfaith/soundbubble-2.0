@@ -15,7 +15,6 @@ import {
     collection,
     doc,
     getDoc,
-    getDocs,
     initializeFirestore,
     onSnapshot,
     query,
@@ -27,10 +26,6 @@ import { getDataFromDoc } from './database/lib/getDataFromDoc';
 import { TPlaylist } from './entities/playlist/model/types';
 import { TSong } from './entities/song/model/types';
 import { TSearchHistory, TUser } from './entities/user/model/types';
-import { Playlists, Songs, Users } from './database/sections';
-import { Suggestion } from './database/sections/searchSuggestions';
-import { TEntity } from './entities/search/model/types';
-import { getEntityName } from './features/searchWithHints/lib/getDividedEntity';
 
 const config: FirebaseOptions = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

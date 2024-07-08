@@ -1,3 +1,4 @@
+import { PlaylistItem } from '../../entities/playlist/ui';
 import { songModel } from '../../entities/song/model';
 import { TQueueStore } from '../../entities/song/model/types';
 import { PlaneSongList } from '../../entities/song/ui/planeList';
@@ -42,16 +43,47 @@ const createUser = ({
 
 type Props = { queue: TQueueStore };
 
+const QueueOrigin = ({ queue }: Props) => {
+    if (queue.url?.includes('author')) {
+        return (
+            <UserItem
+                onClick={() => songModel.fullscreen.close()}
+                orientation="horizontal"
+                user={createUser({
+                    displayName: queue.name,
+                    photoURL: queue.image,
+                    isAuthor: true,
+                })}
+            />
+        );
+    }
+
+    if (queue.url?.includes('playlist')) {
+        return (
+            <PlaylistItem
+                orientation="horizontal"
+                playlist={{
+                    name: queue.name ?? '',
+                    songs: [],
+                    subscribers: 0,
+                    listens: 0,
+                    isPrivate: false,
+                    isAlbum: false,
+                    imageColors: [],
+                    image: queue.image,
+                    id: queue.url.split('/playlist/').at(-1) ?? '',
+                    creationDate: '',
+                    authors: [],
+                }}
+            />
+        );
+    }
+};
+
 export const Queue = ({ queue }: Props) => {
     return (
         <QueueStyled>
-            {queue.url?.includes('author') ? (
-                <UserItem
-                    onClick={() => songModel.fullscreen.close()}
-                    orientation="horizontal"
-                    user={createUser({ displayName: queue.name })}
-                />
-            ) : null}
+            <QueueOrigin queue={queue} />
             <Divider />
             <PlaneSongList
                 songs={queue.songs}

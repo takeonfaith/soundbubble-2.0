@@ -8,21 +8,6 @@ type GetResultProps = {
     suggestion?: TSuggestion | null;
 };
 
-export const $searchQuery = createStore<string>('');
-export const $searchSuggestions = createStore<TSuggestion[]>([]);
-export const $searchResult = createStore<TEntity[]>([]);
-
-// TODO: Mb встроить сюда и searchHistory???
-export const setSearchQuery = createEvent<string>();
-export const getSuggestions = createEvent<string>();
-export const setSuggestions = createEvent<TSuggestion[]>();
-export const getSearchResult = createEvent<GetResultProps>();
-
-export const getSuggestionsFx = createEffect<
-    { value: string; history: TSuggestion[] },
-    TSuggestion[]
->();
-
 export const getResultFx = createEffect(
     async ({ query, suggestion }: GetResultProps) => {
         try {
@@ -41,6 +26,22 @@ export const getResultFx = createEffect(
         }
     }
 );
+
+export const $searchQuery = createStore<string>('');
+export const $searchSuggestions = createStore<TSuggestion[]>([]);
+export const $searchResult = createStore<TEntity[]>([]).reset(getResultFx.fail);
+
+// TODO: Mb встроить сюда и searchHistory???
+export const setSearchQuery = createEvent<string>();
+export const getSuggestions = createEvent<string>();
+export const setSuggestions = createEvent<TSuggestion[]>();
+export const getSearchResult = createEvent<GetResultProps>();
+
+export const getSuggestionsFx = createEffect<
+    { value: string; history: TSuggestion[] },
+    TSuggestion[]
+>();
+
 export const $isLoadingSuggestions = getSuggestionsFx.pending;
 export const $isLoadingResult = getResultFx.pending;
 

@@ -41,7 +41,7 @@ export const PlaylistItem = ({
         const queue: TQueueStore | undefined = {
             currentSongIndex: index,
             name,
-            icon: image,
+            image,
             url,
             songs: songs,
             shuffle: false,

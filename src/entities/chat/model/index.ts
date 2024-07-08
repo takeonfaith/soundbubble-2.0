@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { createGate, useGate, useUnit } from 'effector-react';
 import { Database } from '../../../database';
@@ -85,13 +86,13 @@ const loadPreviousMessages = createEvent();
 const sendMessage = createEvent<{ chatId: string; message: TMessage }>();
 const updateLastMessage = createEvent<{
     message: TMessage | undefined;
-    chatId: string;
+    chatId: string | undefined;
 }>();
 const sortChats = createEvent();
 const seenMessage = createEvent<string>();
 
 const $chats = createStore<TChat[]>([]);
-const $currentChatId = createStore<string>('');
+const $currentChatId = createStore<string | undefined>('');
 const $currentChatMessages = createStore<TMessage[]>([]);
 const $unreadCounts = createStore<Record<string, number>>({});
 const $totalUnreadCount = createStore(0);
@@ -247,10 +248,10 @@ sample({
 sample({
     clock: updateLastMessage,
     source: $lastMessage,
-    filter: (_, { message }) => !!message,
+    filter: (_, { chatId, message }) => !!message && !!chatId,
     fn: (lastMessage, { chatId, message }) => ({
         ...lastMessage,
-        [chatId]: message!,
+        [chatId!]: message!,
     }),
     target: [$lastMessage, sortChats],
 });
@@ -280,10 +281,10 @@ sample({
 
 sample({
     clock: $currentChatId,
-    filter: (chatId) => chatId.length !== 0,
+    filter: (chatId) => chatId?.length !== 0,
     fn: (chatId) => ({
-        chatId,
-        messages: [],
+        chatId: chatId!,
+        messages: [] as TMessage[],
     }),
     target: getCurrentChatMessagesFx,
 });

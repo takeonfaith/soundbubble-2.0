@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IconSearch } from '@tabler/icons-react';
+import { IconDiscOff, IconSearch } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
 import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -14,10 +14,10 @@ import { getEntityType } from '../../features/searchWithHints/lib/getEntityType'
 import { Flex } from '../../shared/components/flex';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
+import { Subtext } from '../../shared/components/subtext';
 import { ENTITIES_ICONS } from '../../shared/constants/icons';
 import { SearchSkeleton } from './SearchSkeleton';
 import { TopAuthorCard } from './TopAuthorCard';
-import { Subtext } from '../../shared/components/subtext';
 
 const SearchPageWrapper = styled.div`
     max-width: 650px;
@@ -61,7 +61,7 @@ export const SearchResult = () => {
         params.get('type') === 'author';
 
     const noResult =
-        params.get('query')?.length !== 0 && result.length === 0 && !isLoading;
+        params.get('query') !== null && result.length === 0 && !isLoading;
 
     return (
         <ContentWrapper>
@@ -71,22 +71,49 @@ export const SearchResult = () => {
                     loading={isLoading}
                     skeleton={<SearchSkeleton />}
                 >
-                    {!isAuthor && (
-                        <h3 style={{ fontWeight: 300, marginBottom: '10px' }}>
-                            {noResult ? 'No' : ''} Result
-                        </h3>
+                    {noResult && (
+                        <Flex
+                            d="column"
+                            gap={30}
+                            width="100%"
+                            height="400px"
+                            jc="center"
+                            padding="20px 0"
+                        >
+                            <IconDiscOff size={90} opacity={0.3} />
+                            <Flex d="column" gap={8}>
+                                <h3>Not found</h3>
+                                <Subtext style={{ fontSize: '1rem' }}>
+                                    Try to change the search query
+                                </Subtext>
+                            </Flex>
+                        </Flex>
                     )}
-                    <Flex d="column" gap={4} width="100%">
-                        {isAuthor && <TopAuthorCard author={first} />}
-                        {result.map((item, index) => {
-                            const type = getEntityType(item);
-                            if (isAuthor && index === 0) return null;
+                    {result.length > 0 && (
+                        <>
+                            {!isAuthor && (
+                                <h3
+                                    style={{
+                                        fontWeight: 300,
+                                        marginBottom: '10px',
+                                    }}
+                                >
+                                    Result
+                                </h3>
+                            )}
+                            <Flex d="column" gap={4} width="100%">
+                                {isAuthor && <TopAuthorCard author={first} />}
+                                {result.map((item, index) => {
+                                    const type = getEntityType(item);
+                                    if (isAuthor && index === 0) return null;
 
-                            if (type) {
-                                return dic[type](item);
-                            }
-                        })}
-                    </Flex>
+                                    if (type) {
+                                        return dic[type](item);
+                                    }
+                                })}
+                            </Flex>
+                        </>
+                    )}
                 </SkeletonPageAnimation>
             </SearchPageWrapper>
         </ContentWrapper>

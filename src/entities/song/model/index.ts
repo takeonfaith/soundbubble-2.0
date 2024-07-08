@@ -66,8 +66,6 @@ createWatch({
     unit: $songStore,
     fn: ({ currentSong, state }) => {
         if (currentSong && currentSong.lyrics && state === 'loading') {
-            console.log('reset');
-
             setLyrics(currentSong.lyrics);
             setCurrentLyricIndex(0);
         }

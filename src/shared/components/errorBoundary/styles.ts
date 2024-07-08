@@ -34,7 +34,7 @@ export const ErrorTitle = styled.h3`
 `;
 
 export const ErrorMessage = styled.span`
-  max-width: 40%;
+  max-width: 350px;
   line-height: 1.4rem;
   text-align: center;
   font-size: 1rem;

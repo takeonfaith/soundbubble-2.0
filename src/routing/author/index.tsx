@@ -50,7 +50,7 @@ export const AuthorPage = ({ userData }: Props) => {
 
     const queueInfo = {
         listName: userPageData?.displayName ?? 'Author',
-        listIcon: userPageData?.photoURL,
+        listImage: userPageData?.photoURL,
         listUrl: `/author/${userPageData?.uid}`,
         songs: songs.slice(0, 9),
     };
@@ -100,7 +100,6 @@ export const AuthorPage = ({ userData }: Props) => {
                             buttonColor={userPageData?.imageColors[1]}
                             isAdmin={isAdmin}
                             isPageOwner={isPageOwner}
-                            queueInfo={queueInfo}
                         />
                     }
                 />

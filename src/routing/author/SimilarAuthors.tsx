@@ -23,6 +23,8 @@ export const SimilarAuthors = ({ songs, currentPageUser }: Props) => {
         }
     });
 
+    if (!similarAuthorsLoading && similarAuthors.length === 1) return null;
+
     return (
         <SimilarAuthorsStyled ref={ref}>
             <h3>Similar Authors</h3>

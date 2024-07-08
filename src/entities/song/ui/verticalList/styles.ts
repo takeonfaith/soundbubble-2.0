@@ -10,10 +10,13 @@ export const Titles = styled.div`
     padding: 8px;
     grid-template-columns: 55px 1fr 1fr 200px 86px;
     color: ${({ theme }) => theme.colors.textColor};
-    position: sticky;
-    top: 0;
+    position: relative;
     background: ${({ theme }) => theme.colors.pageBackground};
     z-index: 2;
+
+    @media (max-width: 768px) {
+        display: none;
+    }
 `;
 
 export const Title = styled.div`

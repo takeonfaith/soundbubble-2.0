@@ -21,6 +21,7 @@ export const Popup = () => {
       $posY={y}
       $height={height}
       $width={width}
+      tabIndex={0}
     >
       {content}
     </PopupStyled>
