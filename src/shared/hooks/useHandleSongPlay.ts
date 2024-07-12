@@ -15,7 +15,7 @@ export const useHandleSongPlay = (props: Props) => {
 		const queue: TQueueStore | undefined = {
 			currentSongIndex: index,
 			name: props.listName,
-			icon: props.listIcon,
+			image: props.listIcon,
 			url: props.listUrl,
 			songs: props.songs,
 			shuffle: false,

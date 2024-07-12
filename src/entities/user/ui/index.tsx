@@ -1,13 +1,14 @@
-import { IconDiscountCheckFilled } from '@tabler/icons-react';
+import { IconChevronRight, IconDiscountCheckFilled } from '@tabler/icons-react';
+import { memo } from 'react';
 import { Flex } from '../../../shared/components/flex';
 import { DARK_THEME } from '../../../shared/constants/theme';
+import { getLastSeen } from '../lib/getLastSeen';
 import { TUser } from '../model/types';
 import { TOrientation } from '../types';
 import { UserCover } from './UserCover';
-import { OnlineIndicator, UserItemStyled } from './styles';
 import { UserStatus } from './UserStatus';
-import { memo } from 'react';
-import { getLastSeen } from '../lib/getLastSeen';
+import { OnlineIndicator, UserItemStyled } from './styles';
+import { Button } from '../../../shared/components/button';
 
 type Props = {
     user: TUser | null | undefined;
@@ -87,7 +88,12 @@ export const UserItem = memo(
                         />
                     )}
                 </Flex>
-                {children}
+                {children ??
+                    (orientation === 'horizontal' && (
+                        <Button $width="45px">
+                            <IconChevronRight opacity={0.5} size={24} />
+                        </Button>
+                    ))}
             </UserItemStyled>
         );
     }

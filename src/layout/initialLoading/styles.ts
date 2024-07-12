@@ -58,7 +58,7 @@ export const InitialLoadingStyled = styled.div`
 
         & .logo {
             animation: shiftLogo 1s forwards ease-in-out;
-            animation-delay: 0.4s;
+            animation-delay: 0.2s;
 
             @keyframes shiftLogo {
                 0% {
@@ -68,7 +68,7 @@ export const InitialLoadingStyled = styled.div`
                     transform: translateY(-10px);
                 }
                 100% {
-                    transform: translateY(5px);
+                    transform: translateY(20px);
                 }
             }
         }

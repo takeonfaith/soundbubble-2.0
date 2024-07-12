@@ -1,19 +1,21 @@
 import { IconHeart, IconHeartFilled } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
-import { LikeButtonStyled } from './styles';
+import { TSong } from '../../entities/song/model/types';
 import { DARK_THEME } from '../../shared/constants/theme';
+import { LikeButtonStyled } from './styles';
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    songId: string | undefined;
+    song: TSong | null;
     likeColor: string | undefined;
-    onClick?: (songId: string) => void;
+    onClick?: (song: TSong) => void;
     width?: string;
     height?: string;
+    isLiked: boolean;
     background?: string;
 };
 
 export const LikeButton = ({
-    songId,
+    song,
+    isLiked,
     likeColor = DARK_THEME.colors.greyText,
     onClick,
     background,
@@ -21,15 +23,11 @@ export const LikeButton = ({
     width = '30px',
     ...props
 }: Props) => {
-    const [isLiked, setIsLiked] = useState(false);
-
-    useEffect(() => {}, []);
-
     const onLikeClick = (e: Evt<'btn'>) => {
         e.stopPropagation();
-        if (songId) onClick?.(songId);
-
-        setIsLiked((prev) => !prev);
+        if (song) {
+            onClick?.(song);
+        }
     };
 
     return (
@@ -40,7 +38,7 @@ export const LikeButton = ({
             $background={background}
             className={'like-button ' + (isLiked ? 'liked' : '')}
             onClick={onLikeClick}
-            likeColor={likeColor}
+            $likeColor={likeColor}
         >
             {isLiked ? <IconHeartFilled /> : <IconHeart />}
         </LikeButtonStyled>

@@ -36,11 +36,12 @@ type Props = {
     index: number;
     onClick: (song: TSong, index: number) => void;
     noImage?: boolean;
+    isLiked: boolean;
 };
 
 export const SongItem = memo(
-    ({ song, playing, loading, index, onClick }: Props) => {
-        const { id, name, authors, imageColors, cover, listens } = song;
+    ({ song, playing, loading, index, onClick, isLiked }: Props) => {
+        const { name, authors, imageColors, cover, listens } = song;
 
         const handleMore: React.MouseEventHandler<HTMLButtonElement> = (e) => {
             e.stopPropagation();
@@ -107,7 +108,8 @@ export const SongItem = memo(
                     <LikeButton
                         width="35px"
                         height="35px"
-                        songId={id}
+                        song={song}
+                        isLiked={isLiked}
                         likeColor={imageColors[1]}
                         onClick={() => null}
                     />

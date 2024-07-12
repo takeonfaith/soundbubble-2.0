@@ -185,6 +185,7 @@ const loadSimilarAuthors = createEvent<TSong[]>();
 const resetUserPage = createEvent();
 const updateFriends = createEvent<TUser[]>();
 const setIsLoadingUsers = createEvent<boolean>();
+const addSongToLibrary = createEvent<TSong>();
 export const setSearchHistory = createEvent<SetSearchHistoryProps>();
 
 const userGate = createGate();
@@ -340,6 +341,21 @@ sample({
     target: setSearchHistoryFx,
 });
 
+sample({
+    clock: addSongToLibrary,
+    source: $library,
+    fn: (library, song) => {
+        console.log(library.find((s) => s.id === song.id));
+        
+        if (library.find((s) => s.id === song.id)) {
+            return library.filter((s) => s.id !== song.id);
+        }
+
+        return [song, ...library];
+    },
+    target: $library,
+});
+
 export const userModel = {
     useUser: () => useUnit([$user, $isLoadingUser]),
     useSongLibrary: () => useUnit([$library, loadLibraryFx.pending]),
@@ -361,6 +377,7 @@ export const userModel = {
         resetUserPage,
         updateFriends,
         setIsLoadingUsers,
+        addSongToLibrary,
     },
     gates: {
         useLoadUser: () => useGate(userGate),

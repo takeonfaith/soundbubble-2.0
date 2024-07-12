@@ -29,6 +29,7 @@ import { modalModel } from './modal/model';
 import { Popup } from './popup';
 import { popupModel } from './popup/model';
 import { Sidebar } from './sidebar';
+import { userModel } from '../entities/user/model';
 
 export const LayoutStyled = styled.div`
     height: calc(100dvh - 80px);
@@ -199,7 +200,9 @@ const CompactLyrics = () => {
 
 const Player = () => {
     const { currentSong } = songModel.useSong();
+    const [library] = userModel.useSongLibrary();
     const controls = usePlayerMusicControls();
+    const isLiked = !!library.find((s) => s.id === currentSong?.id);
 
     const handleOpenFullScreenPlayer = () => {
         songModel.fullscreen.open();
@@ -277,7 +280,8 @@ const Player = () => {
                     <LikeButton
                         disabled={!currentSong}
                         width="42px"
-                        songId={currentSong?.id}
+                        isLiked={isLiked}
+                        song={currentSong}
                         likeColor={currentSong?.imageColors[0]}
                     />
                     <Button

@@ -14,7 +14,10 @@ export const LikedPlaylists = () => {
             <PageGridStyled>
                 {[...own, ...added].map((playlist) => {
                     return (
-                        <PlaylistItem playlist={playlist} key={playlist.id} />
+                        <PlaylistItem
+                            playlist={playlist}
+                            key={playlist.id}
+                        />
                     );
                 })}
             </PageGridStyled>

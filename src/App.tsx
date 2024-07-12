@@ -1,6 +1,6 @@
 import { ErrorBoundary } from '@components/errorBoundary';
 import { AppAudio } from 'AppAudio';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
 import { AppRouter } from 'routing/AppRouter';
 import styled, { ThemeProvider } from 'styled-components';
 import { useTheme } from './app/theme';
@@ -36,14 +36,14 @@ function App() {
     return (
         <ThemeProvider theme={themeParams}>
             <GlobalStyles />
-            <BrowserRouter basename="/soundbubble-2.0/">
+            <HashRouter>
                 <AppStyled>
                     <ErrorBoundary>
                         <AppAudio />
                         <AppRouter />
                     </ErrorBoundary>
                 </AppStyled>
-            </BrowserRouter>
+            </HashRouter>
         </ThemeProvider>
     );
 }

@@ -17,7 +17,7 @@ export const Authors = ({
     disableOnMobile = true,
 }: Props) => {
     const handleAuthorClick = (author: TAuthor) => {
-        return (e: any) => {
+        return (e: Evt<'a'>) => {
             e.stopPropagation();
             onAuthorClick?.(author);
         };
