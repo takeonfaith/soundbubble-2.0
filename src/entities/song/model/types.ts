@@ -44,7 +44,7 @@ export type TQueueStore = {
     currentSongIndex: number | null;
     name: string | null;
     url: string | null;
-    image: string | null;
+    image: string | null | undefined;
     willGoToPrevTrack?: boolean;
     shuffle: boolean;
 };

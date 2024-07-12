@@ -27,6 +27,7 @@ import {
     SongNameAndListens,
     SongStyled,
 } from './styles';
+import { useIsSongLiked } from '../../../shared/hooks/useIsSongLiked';
 
 type Props = {
     song: TSong;
@@ -36,12 +37,12 @@ type Props = {
     index: number;
     onClick: (song: TSong, index: number) => void;
     noImage?: boolean;
-    isLiked: boolean;
 };
 
 export const SongItem = memo(
-    ({ song, playing, loading, index, onClick, isLiked }: Props) => {
+    ({ song, playing, loading, index, onClick }: Props) => {
         const { name, authors, imageColors, cover, listens } = song;
+        const isLiked = useIsSongLiked(song);
 
         const handleMore: React.MouseEventHandler<HTMLButtonElement> = (e) => {
             e.stopPropagation();

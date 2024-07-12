@@ -15,7 +15,7 @@ const createUser = ({
     isAuthor,
 }: {
     displayName?: string | null;
-    photoURL?: string;
+    photoURL?: string | null;
     imageColors?: string[];
     isAuthor?: boolean;
 }): TUser => ({
@@ -70,7 +70,7 @@ const QueueOrigin = ({ queue }: Props) => {
                     isPrivate: false,
                     isAlbum: false,
                     imageColors: [],
-                    image: queue.image,
+                    image: queue.image ?? '',
                     id: queue.url.split('/playlist/').at(-1) ?? '',
                     creationDate: '',
                     authors: [],

@@ -4,6 +4,7 @@ import { DARK_THEME } from '../../shared/constants/theme';
 import { LikeButtonStyled } from './styles';
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    //TODO: Remove connection to song so that it can be reused to other entities
     song: TSong | null;
     likeColor: string | undefined;
     onClick?: (song: TSong) => void;

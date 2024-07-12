@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IconDiscOff, IconSearch } from '@tabler/icons-react';
+import { IconDiscOff } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
 import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -34,7 +34,7 @@ const dic: Record<
         <PlaneSongList
             songs={[song]}
             listName="Search"
-            listIcon={<IconSearch />}
+            listIcon={''}
             listUrl={`/search?query=${song.name}&type=query`}
         />
     ),

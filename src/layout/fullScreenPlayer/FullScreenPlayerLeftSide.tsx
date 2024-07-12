@@ -15,6 +15,7 @@ import {
     PlayerWrapper,
 } from './styles';
 import { TRightSideType } from './types';
+import { useIsSongLiked } from '../../shared/hooks/useIsSongLiked';
 
 type Props = {
     type: TRightSideType;
@@ -30,6 +31,7 @@ export const FullScreenPlayerLeftSide = ({
     handleClickControlButton,
 }: Props) => {
     const { currentSong } = songModel.useSong();
+    const isLiked = useIsSongLiked(currentSong);
 
     const onAuthorClick = () => songModel.fullscreen.close();
 
@@ -50,8 +52,9 @@ export const FullScreenPlayerLeftSide = ({
                             {currentSong?.name ?? 'Untitled'}
                         </PlayerTitle>
                         <LikeButton
+                            isLiked={isLiked}
                             height="30px"
-                            songId={currentSong?.id}
+                            song={currentSong}
                             onClick={() => null}
                             likeColor={currentSong?.imageColors[1]}
                         />

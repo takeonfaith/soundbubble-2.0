@@ -1,13 +1,13 @@
 import { ErrorBoundary } from '@components/errorBoundary';
 import { AppAudio } from 'AppAudio';
-import { BrowserRouter, HashRouter } from 'react-router-dom';
+import { useEffect } from 'react';
+import { HashRouter } from 'react-router-dom';
 import { AppRouter } from 'routing/AppRouter';
 import styled, { ThemeProvider } from 'styled-components';
 import { useTheme } from './app/theme';
+import { Database } from './database';
 import { userModel } from './entities/user/model';
 import { GlobalStyles } from './globalStyles';
-import { useEffect } from 'react';
-import { Database } from './database';
 
 const AppStyled = styled.div`
     height: 100dvh;

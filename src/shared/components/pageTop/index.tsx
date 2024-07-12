@@ -102,7 +102,8 @@ export const PageTop = ({
             </TopLeftCorner>
             <TopRightCorner>
                 <LikeButton
-                    songId={undefined}
+                    song={null}
+                    isLiked={false}
                     likeColor={undefined}
                     height="40px"
                     width="40px"

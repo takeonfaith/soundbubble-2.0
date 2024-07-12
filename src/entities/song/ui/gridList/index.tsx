@@ -1,4 +1,3 @@
-import React from 'react';
 import { SongItem } from '..';
 import { useHandleSongPlay } from '../../../../shared/hooks/useHandleSongPlay';
 import { songModel } from '../../model';
@@ -8,7 +7,7 @@ import { GridSongListStyled } from './styles';
 type Props = {
     songs: TSong[];
     listName: string | null;
-    listIcon: React.ReactNode;
+    listIcon: string | undefined;
     listUrl: string | null;
 };
 
