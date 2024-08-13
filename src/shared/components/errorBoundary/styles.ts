@@ -33,7 +33,7 @@ export const ErrorTitle = styled.h3`
   font-size: 1.5rem;
 `;
 
-export const ErrorMessage = styled.span`
+export const PageMessage = styled.span`
   max-width: 350px;
   line-height: 1.4rem;
   text-align: center;

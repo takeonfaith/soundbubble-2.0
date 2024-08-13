@@ -2,13 +2,13 @@ import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const SidebarStyled = styled.aside`
-    min-width: 270px;
-    width: 270px;
+    min-width: var(--sidebar-width);
+    width: var(--sidebar-width);
     height: 100dvh;
-    padding: 10px;
-    background: ${({ theme }) => theme.colors.sidebar};
+    padding: 18px 14px;
+    /* background: ${({ theme }) => theme.colors.sidebar}; */
+    /* border-right: 1px solid ${({ theme }) => theme.colors.border}; */
     position: relative;
-    border-right: 1px solid ${({ theme }) => theme.colors.border};
 
     @media (max-width: 1000px) {
         display: none;
@@ -26,7 +26,7 @@ export const LogoWrapper = styled.div`
 export const SidebarSection = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 0px;
+    gap: 2px;
     margin: 30px 0;
 
     & .add-playlist {
@@ -35,6 +35,7 @@ export const SidebarSection = styled.div`
         border: none;
         width: 30px;
         height: 30px;
+        min-height: 30px;
         border-radius: 4px;
         display: flex;
         align-items: center;
@@ -57,15 +58,28 @@ export const SidebarLink = styled(NavLink)`
     text-decoration: none;
     padding: 10px 10px;
     border-radius: ${({ theme }) => theme.borderRadius.mild};
+    font-size: 1rem;
 
     &:hover {
         background: ${({ theme }) => theme.colors.hover};
+    }
+
+    &:active {
+        transform: scale(0.99);
+    }
+
+    svg {
+        opacity: 0.6;
     }
 
     &.active {
         & > div > div {
             opacity: 1;
             color: ${({ theme }) => theme.colors.blue.main};
+        }
+
+        svg {
+            opacity: 1;
         }
     }
 `;

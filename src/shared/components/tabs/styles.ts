@@ -31,10 +31,12 @@ export const TabItemStyled = styled(Link)`
     font-size: 0.95rem;
     opacity: 0.7;
     transition: 0.2s color;
+    font-weight: 300;
 
     &.selected {
         color: #fff;
         opacity: 1;
+        font-weight: 400;
     }
 
     @media (hover: hover) {

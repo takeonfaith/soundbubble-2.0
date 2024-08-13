@@ -11,11 +11,15 @@ import { GlobalStyles } from './globalStyles';
 
 const AppStyled = styled.div`
     height: 100dvh;
-    background: ${({ theme }) => theme.colors.pageBackground};
+    background: ${({ theme }) => theme.colors.pageBackground2};
     overflow: hidden;
     display: flex;
     flex-direction: column;
     width: 100%;
+
+    @media (max-width: 1000px) {
+        background: ${({ theme }) => theme.colors.pageBackground};
+    }
 `;
 
 function App() {

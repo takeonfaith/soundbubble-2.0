@@ -9,7 +9,7 @@ export const Button = styled.button<{
     border: none;
     background: ${({ $background }) => $background ?? 'transparent'};
     border-radius: ${({ theme }) => theme.borderRadius.mild};
-    font-size: 0.9rem;
+    font-size: 0.94rem;
     width: ${({ $width }) => $width ?? '100%'};
     min-height: ${({ $height }) => $height ?? '40px'};
     cursor: pointer;
@@ -21,13 +21,16 @@ export const Button = styled.button<{
             : $align === 'right'
             ? 'flex-end'
             : $align};
-    transition: 0s;
+    transition: 0.2s filter, 0.1s color, 0.1s opacity;
     position: relative;
     color: ${({ color }) => color};
     gap: 8px;
+    user-select: none;
 
     &:disabled {
-        filter: grayscale(1) brightness(1.4);
+        filter: grayscale(1);
+        opacity: 0.3;
+        color: ${({ theme }) => theme.colors.textColor};
         pointer-events: none;
 
         & > * {
@@ -40,6 +43,11 @@ export const Button = styled.button<{
             filter: brightness(0.9);
             background: ${({ $background, theme }) =>
                 !$background ? theme.colors.lightHover : ''};
+        }
+
+        &:active {
+            filter: brightness(0.85);
+            transform: scale(0.99);
         }
     }
 

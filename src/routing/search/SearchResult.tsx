@@ -5,16 +5,20 @@ import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { TPlaylist } from '../../entities/playlist/model/types';
 import { PlaylistItem } from '../../entities/playlist/ui';
-import { $isLoadingResult, $searchResult } from '../../entities/search/model';
+import {
+    $isLoadingResult,
+    $searchQuery,
+    $searchResult,
+} from '../../entities/search/model';
 import { TSong } from '../../entities/song/model/types';
 import { PlaneSongList } from '../../entities/song/ui/planeList';
 import { TUser } from '../../entities/user/model/types';
 import { UserItem } from '../../entities/user/ui';
 import { getEntityType } from '../../features/searchWithHints/lib/getEntityType';
+import { PageMessage } from '../../shared/components/pageMessage';
 import { Flex } from '../../shared/components/flex';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { Subtext } from '../../shared/components/subtext';
 import { ENTITIES_ICONS } from '../../shared/constants/icons';
 import { SearchSkeleton } from './SearchSkeleton';
 import { TopAuthorCard } from './TopAuthorCard';
@@ -51,6 +55,7 @@ const dic: Record<
 export const SearchResult = () => {
     const [params] = useSearchParams();
     const [result, isLoading] = useUnit([$searchResult, $isLoadingResult]);
+    const [searchQuery] = useUnit([$searchQuery]);
 
     const first = result[0];
 
@@ -71,23 +76,12 @@ export const SearchResult = () => {
                     loading={isLoading}
                     skeleton={<SearchSkeleton />}
                 >
-                    {noResult && (
-                        <Flex
-                            d="column"
-                            gap={30}
-                            width="100%"
-                            height="400px"
-                            jc="center"
-                            padding="20px 0"
-                        >
-                            <IconDiscOff size={90} opacity={0.3} />
-                            <Flex d="column" gap={8}>
-                                <h3>Not found</h3>
-                                <Subtext style={{ fontSize: '1rem' }}>
-                                    Try to change the search query
-                                </Subtext>
-                            </Flex>
-                        </Flex>
+                    {noResult && searchQuery.length !== 0 && (
+                        <PageMessage
+                            icon={IconDiscOff}
+                            title={'Not Found'}
+                            description={'Try to change search query'}
+                        />
                     )}
                     {result.length > 0 && (
                         <>

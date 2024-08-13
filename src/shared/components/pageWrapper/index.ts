@@ -8,9 +8,9 @@ export const PageWrapper = styled.div`
 `;
 
 export const ContentWrapper = styled.div`
-    padding: 20px 40px;
+    padding: 20px var(--page-padding);
     width: 100%;
-    height: 100%;
+    height: fit-content;
     display: flex;
     flex-direction: column;
     gap: 2px;

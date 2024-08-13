@@ -5,17 +5,18 @@ import {
     IconShare3,
     IconSun,
 } from '@tabler/icons-react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router';
+import { toggleTheme } from '../../app/theme';
 import { userModel } from '../../entities/user/model';
 import { UserCover } from '../../entities/user/ui/UserCover';
+import { LoginButton } from '../../features/loginButton';
 import { ShareModal } from '../../features/shareModal';
 import { allRoutes } from '../../routing/routes';
 import { Button } from '../../shared/components/button';
-import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
 import { Divider } from '../../shared/components/divider';
 import { Flex } from '../../shared/components/flex';
-import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
 import { modalModel } from '../modal/model';
 import { popupModel } from '../popup/model';
 import {
@@ -24,8 +25,6 @@ import {
     HeaderStyled,
     MobileChildren,
 } from './styles';
-import React from 'react';
-import { toggleTheme } from '../../app/theme';
 
 const UserContextMenu = () => {
     const [{ data }] = userModel.useUser();
@@ -91,9 +90,8 @@ type Props = {
 };
 
 export const Header = ({ children, hide }: Props) => {
-    const [{ data }, loading] = userModel.useUser();
+    const [{ data }] = userModel.useUser();
     const location = useLocation();
-    const { openLoginModal } = usePrivateAction();
     const currentRoute = allRoutes.find((route) => {
         return route.url.includes(location.pathname.split('/')[1]);
     });
@@ -123,16 +121,7 @@ export const Header = ({ children, hide }: Props) => {
                             />
                         </Button>
                     )}
-                    {!data && (
-                        <DefaultButton
-                            loading={loading}
-                            width="100px"
-                            onClick={openLoginModal()}
-                            appearance="secondary"
-                        >
-                            Login
-                        </DefaultButton>
-                    )}
+                    <LoginButton />
                 </Flex>
             </Flex>
             <MobileChildren>{children}</MobileChildren>

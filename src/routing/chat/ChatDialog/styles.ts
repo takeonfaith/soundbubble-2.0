@@ -80,6 +80,21 @@ export const MessageBubble = styled.div<{
             display: none;
         }
     }
+
+    @media (max-width: 768px) {
+        max-width: 300px;
+
+        &::after {
+            width: 12px;
+            left: -12px;
+        }
+
+        &::before {
+            width: 14px;
+            height: 14px;
+            left: -9px;
+        }
+    }
 `;
 
 export const DateAndSeenIcon = styled(LastMessageSentTimeStyled)`
@@ -100,6 +115,10 @@ export const ChatDialogStyled = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
+
+    @media (max-width: 768px) {
+        height: 100dvh;
+    }
 `;
 
 export const ChatMessagesStyled = styled.div`
@@ -110,6 +129,7 @@ export const ChatMessagesStyled = styled.div`
     gap: 4px;
     padding-top: 20px;
     overflow-y: auto;
+    overflow-x: hidden;
 `;
 
 export const ChatInput = styled(Input)`
@@ -152,6 +172,10 @@ export const MessageSecton = styled.div`
     gap: 10px;
     padding: 6px 15px;
     width: 100%;
+
+    @media (max-width: 768px) {
+        padding: 6px 10px;
+    }
 `;
 
 export const AvatarSection = styled.div`
@@ -184,6 +208,10 @@ export const ChatHeaderStyled = styled.div`
     align-items: center;
     padding: 0 20px;
     background: ${({ theme }) => theme.colors.pageBackground2};
+
+    @media (max-width: 768px) {
+        padding: 0 16px;
+    }
 `;
 
 export const SystemMessageItemStyled = styled.div`

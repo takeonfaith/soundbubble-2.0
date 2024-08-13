@@ -6,16 +6,14 @@ export const SearchWithHintsStyled = styled.div`
 `;
 
 export const HintsStyled = styled.ul`
-    width: 100%;
+    width: 445px;
     background: ${({ theme }) => theme.colors.pageTopButton};
     height: fit-content;
-    min-height: 45px;
+    min-height: 60px;
     max-height: 568px;
     overflow-y: auto;
     padding: 4px;
     border-radius: ${({ theme }) => theme.borderRadius.mild};
-    position: absolute;
-    top: calc(100% + 4px);
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -23,10 +21,9 @@ export const HintsStyled = styled.ul`
     border-top: none;
     z-index: 1;
     box-shadow: ${({ theme }) => theme.colors.shadow};
-
-    & > * {
-        animation: appear 0.3s;
-    }
+    animation: appear 0.3s;
+    position: fixed;
+    transform: translateY(4px);
 
     @keyframes appear {
         0% {
@@ -43,14 +40,15 @@ export const HintsStyled = styled.ul`
         max-height: none;
         border-radius: 0;
         left: -20px;
-        padding: 0 20px;
+        padding: 0 4px;
         width: calc(100% + 40px);
         background: ${({ theme }) => theme.colors.pageBackground};
     }
 `;
 
 export const HintItemStyled = styled.li`
-    padding: 6px;
+    padding: 6px 12px;
+    min-height: 52px;
     border-radius: ${({ theme }) => `calc(${theme.borderRadius.mild} - 2px)`};
     display: flex;
     align-items: center;
@@ -81,13 +79,19 @@ export const HintItemStyled = styled.li`
         }
     }
 
+    @media (hover: none) {
+        &:active {
+            background: ${({ theme }) => theme.colors.hover};
+        }
+    }
+
     &.selected {
         background: ${({ theme }) => theme.colors.blue.transparent};
         font-weight: 400;
     }
 
     @media (max-width: 768px) {
-        padding: 8px 0;
+        padding: 8px 20px;
     }
 `;
 

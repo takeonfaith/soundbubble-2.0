@@ -2,10 +2,12 @@ import {
     IconArrowLeft,
     IconDiscountCheckFilled,
     IconDotsVertical,
+    IconEdit,
     IconHeadphones,
     IconInfoCircle,
     IconLock,
     IconShare3,
+    IconTrash,
     IconUserPlus,
 } from '@tabler/icons-react';
 import { LikeButton } from '../../../features/likeButton';
@@ -16,6 +18,8 @@ import { DefaultContextMenuStyled } from '../defaultContextMenu';
 import { Flex } from '../flex';
 import { PageTopStyled, TopLeftCorner, TopRightCorner } from './styles';
 import { useNavigate } from 'react-router';
+import { Divider } from '../divider';
+import { useTheme } from 'styled-components';
 
 type Props = {
     id: string | undefined;
@@ -44,15 +48,21 @@ export const PageTop = ({
     handleClickShare,
 }: Props) => {
     const navigate = useNavigate();
+    const theme = useTheme();
 
     const handleOpenMore = (e: Evt<'btn'>) => {
         e.stopPropagation();
 
         popupModel.events.open({
             e,
-            height: 96,
+            height: 208,
             content: (
                 <DefaultContextMenuStyled>
+                    <Button>
+                        <IconEdit />
+                        Edit
+                    </Button>
+                    <Divider />
                     <Button onClick={handleClickShare}>
                         <IconShare3 />
                         Share
@@ -60,6 +70,11 @@ export const PageTop = ({
                     <Button>
                         <IconInfoCircle />
                         Info
+                    </Button>
+                    <Divider />
+                    <Button color={theme.colors.red.text}>
+                        <IconTrash />
+                        Delete
                     </Button>
                 </DefaultContextMenuStyled>
             ),
@@ -78,9 +93,13 @@ export const PageTop = ({
                         )}
                         {isPrivate && <IconLock size={20} />}
                     </Flex>
-                    {subtitle}
+                    <div className="subtitle">{subtitle}</div>
                 </Flex>
-                <Flex gap={20} style={{ opacity: '0.8', fontWeight: '300' }}>
+                <Flex
+                    gap={20}
+                    style={{ opacity: '0.8', fontWeight: '300' }}
+                    className="stats"
+                >
                     <Flex gap={4}>
                         {formatBigNumber(numberOfListenersPerMonth)}
                         <IconHeadphones size={16} />

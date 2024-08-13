@@ -111,7 +111,7 @@ export const SongItem = memo(
                         height="35px"
                         song={song}
                         isLiked={isLiked}
-                        likeColor={imageColors[1]}
+                        likeColor={"darkgrey"}
                         onClick={() => null}
                     />
                     <MoreInfoButton onClick={handleMore}>

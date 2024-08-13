@@ -72,16 +72,16 @@ export const PlaylistItem = ({
             $orientation={orientation}
             className={isCurrentPlaying ? 'playing' : ''}
             to={`/playlist/${id}`}
-            $color1={imageColors[0]}
+            $color1={imageColors?.[0]}
         >
             {!children && (
                 <ControlButton
                     $orientation={orientation}
-                    $color={imageColors[0]}
+                    $color={imageColors?.[0]}
                     onClick={handleLoadPlaylistSongs}
                 >
                     {isCurrentPlaying ? (
-                        <PlayingAnimation playing color={imageColors[1]} />
+                        <PlayingAnimation playing color={imageColors?.[1]} />
                     ) : (
                         <PlayPauseIcon
                             loading={loading}

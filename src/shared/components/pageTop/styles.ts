@@ -13,6 +13,7 @@ export const PageTopStyled = styled(BeautifulBackground)`
     animation: none;
     color: #fff;
     z-index: 4;
+    transition: 0.2s;
 
     a {
         color: #fff;
@@ -26,6 +27,10 @@ export const TopRightCorner = styled.div`
     top: 30px;
     right: 30px;
     gap: 10px;
+
+    &.compact {
+        top: 15px;
+    }
 
     button {
         border-radius: 100%;
@@ -45,6 +50,10 @@ export const TopLeftCorner = styled.div`
     top: 30px;
     left: 30px;
 
+    &.compact {
+        top: 15px;
+    }
+
     button {
         border-radius: 100%;
         color: #fff;
@@ -61,7 +70,7 @@ export const TopBackground = styled.div`
     position: absolute;
     height: 100%;
     left: 0;
-    padding-top: 100px;
+    padding-top: 270px;
     overflow: hidden;
     z-index: 0;
     pointer-events: none;
@@ -69,6 +78,8 @@ export const TopBackground = styled.div`
     img {
         width: 300%;
         animation: bgWave 3s linear infinite;
+        opacity: 0.05;
+        z-index: 0;
 
         @keyframes bgWave {
             0% {

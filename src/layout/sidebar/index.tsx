@@ -20,6 +20,8 @@ import {
     SidebarSectionTitle,
     SidebarStyled,
 } from './styles';
+import { Subtext } from '../../shared/components/subtext';
+import { Button } from '../../shared/components/button';
 
 export const Sidebar = () => {
     const preparedRoutes = groupByField(menuRoutes, 'section');
@@ -72,14 +74,19 @@ export const Sidebar = () => {
             <SidebarSection>
                 <Flex jc="space-between" width="100%">
                     <SidebarSectionTitle>Your Playlists</SidebarSectionTitle>
-                    <button
+                    <Button
                         className="add-playlist"
                         onClick={handleAddPlaylist}
                     >
                         <IconPlus />
-                    </button>
+                    </Button>
                 </Flex>
                 <PlaylistsStyled>
+                    {ownPlaylists.length === 0 && (
+                        <Subtext style={{ padding: '8px', fontSize: '0.9rem' }}>
+                            No Playlists
+                        </Subtext>
+                    )}
                     {ownPlaylists?.slice(0, 4)?.map((playlist) => (
                         <PlaylistItem
                             orientation="horizontal"

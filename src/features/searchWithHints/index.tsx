@@ -21,7 +21,7 @@ export const SearchWithHints = (props: SearchSuggestionProps) => {
         handleCopyName,
         handleKeyDown,
     } = useSearchWithHints(props);
-    const { suggestions } = props;
+    const { suggestions, hintIcon, disableCopyButton } = props;
 
     return (
         <SearchWithHintsStyled onKeyDown={handleKeyDown}>
@@ -33,13 +33,14 @@ export const SearchWithHints = (props: SearchSuggestionProps) => {
                 placeholder="Search..."
                 aria-autocomplete="list"
                 aria-controls="autocomplete-list"
-                onChange={handleChange}
                 onFocus={handleFocus}
                 rightIcon={rightIcon}
                 ref={ref}
                 onRightIconClick={handleReset}
                 enterKeyHint="done"
                 type="text"
+                {...props}
+                onChange={handleChange}
             />
             {showSuggestions && allSuggestions.length > 0 && (
                 <HintsStyled>
@@ -49,6 +50,8 @@ export const SearchWithHints = (props: SearchSuggestionProps) => {
                         handleCopyName={handleCopyName}
                         handleSubmit={handleSubmit}
                         isSearchHistory
+                        disableCopyButton={disableCopyButton}
+                        hintIcon={hintIcon}
                     />
                     <SuggestionList
                         startIndex={visibleSearchHistory.length}
@@ -56,6 +59,8 @@ export const SearchWithHints = (props: SearchSuggestionProps) => {
                         selected={selectedSuggestion}
                         handleCopyName={handleCopyName}
                         handleSubmit={handleSubmit}
+                        disableCopyButton={disableCopyButton}
+                        hintIcon={hintIcon}
                     />
                 </HintsStyled>
             )}

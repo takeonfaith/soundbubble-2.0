@@ -10,7 +10,12 @@ export const GlobalStyles = createGlobalStyle`
 	}
 
 	:root {
-		--page-padding: 40px;
+		--page-padding: 30px;
+		--page-gap: 8px;
+		--desktop-page-radius: 14px;
+		--player-size: 80px;
+		--sidebar-width: 280px;
+		--header-height: 70px;
 
 		@media (max-width: 768px) {
 			--page-padding: 20px;
@@ -34,7 +39,19 @@ export const GlobalStyles = createGlobalStyle`
 		cursor: pointer;
 	}
 
-	input[type=text]:focus, select:focus, textarea:focus {
+	input:focus, [type=text]:focus, select:focus, textarea:focus {
 		outline: 1px solid ${({ theme }) => theme.colors.blue.main};
+	}
+
+	@keyframes generalAppear {
+		0%{
+			opacity: 0;
+			/* transform: scale(0.95); */
+		}
+
+		100%{ 
+			opacity: 1;
+			/* transform: scale(1); */
+		}
 	}
 `;

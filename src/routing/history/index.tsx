@@ -1,7 +1,9 @@
+import { IconHistoryOff, TablerIconsProps } from '@tabler/icons-react';
 import { historyModel } from '../../entities/history/model';
 import { SongListSkeleton } from '../../entities/song/ui/SongListSkeleton';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { Header } from '../../layout/header';
+import { PageMessage } from '../../shared/components/pageMessage';
 import {
     ContentWrapper,
     PageWrapper,
@@ -28,6 +30,13 @@ export const HistoryPage = () => {
                         listIcon={''}
                         listUrl={'/history'}
                     />
+                    {history.length === 0 && (
+                        <PageMessage
+                            icon={IconHistoryOff}
+                            title={'No History Found'}
+                            description={'But at some point it will appear...'}
+                        />
+                    )}
                 </SkeletonPageAnimation>
             </ContentWrapper>
         </PageWrapper>

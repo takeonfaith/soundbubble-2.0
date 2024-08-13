@@ -3,7 +3,7 @@ import {
   ErrorBoundaryStyled,
   ErrorIcon,
   ErrorTitle,
-  ErrorMessage,
+  PageMessage,
 } from "./styles";
 import { IconBug } from "@tabler/icons-react";
 
@@ -36,7 +36,7 @@ export class ErrorBoundary extends React.Component<Props> {
             <IconBug />
           </ErrorIcon>
           <ErrorTitle>Something went wrong.</ErrorTitle>
-          <ErrorMessage>{this.state.error.message}</ErrorMessage>
+          <PageMessage>{this.state.error.message}</PageMessage>
         </ErrorBoundaryStyled>
       );
     }

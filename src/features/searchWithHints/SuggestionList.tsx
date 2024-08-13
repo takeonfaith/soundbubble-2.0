@@ -1,3 +1,4 @@
+import React from 'react';
 import { TSuggestion } from '../../entities/search/model/types';
 import { HintItem } from './HintItem';
 
@@ -6,6 +7,8 @@ type Props = {
     selected: number | null;
     startIndex?: number;
     isSearchHistory?: boolean;
+    hintIcon?: React.ReactNode;
+    disableCopyButton?: boolean;
     handleCopyName: (name: string) => void;
     handleSubmit: (index: number | null) => void;
 };
@@ -14,6 +17,8 @@ export const SuggestionList = ({
     suggestions,
     selected,
     isSearchHistory,
+    hintIcon,
+    disableCopyButton,
     startIndex = 0,
     handleCopyName,
     handleSubmit,
@@ -26,8 +31,10 @@ export const SuggestionList = ({
             <HintItem
                 isSelected={isSelected}
                 item={suggestion}
+                icon={hintIcon}
                 searchHistory={isSearchHistory}
                 key={suggestion.uid}
+                disableCopyButton={disableCopyButton}
                 handleCopyName={handleCopyName}
                 handleSubmitSuggestion={() => handleSubmit(itemIndex)}
             />

@@ -17,9 +17,10 @@ import { PageWrapper } from '../../shared/components/pageWrapper';
 import { normalizeString } from '../../shared/funcs/normalizeString';
 import { SearchResult } from './SearchResult';
 import { TSuggestion } from '../../entities/search/model/types';
+import Wave from '@shared/images/wave.svg';
 
 const SearchBarStyled = styled.div`
-    max-width: 650px;
+    max-width: 550px;
     width: 100%;
     min-width: 300px;
 
@@ -89,6 +90,7 @@ export const SearchPage = () => {
             <Header>
                 <SearchBarStyled>
                     <SearchWithHints
+                        focusOnLoad
                         initialValue={queryValue ?? searchQuery}
                         suggestions={suggestions}
                         historySuggestions={searchHistory}

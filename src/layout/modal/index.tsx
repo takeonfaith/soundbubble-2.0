@@ -1,28 +1,28 @@
-import { CloseButton } from "@components/closeButton";
-import { modalModel } from "./model";
+import { CloseButton } from '@components/closeButton';
+import { modalModel } from './model';
 import {
-  ModalBackground,
-  ModalContent,
-  ModalStyled,
-  ModalTitle
-} from "./styles";
+    ModalBackground,
+    ModalContent,
+    ModalStyled,
+    ModalTitle,
+} from './styles';
 
 export const Modal = () => {
-  const { opened, title, content } = modalModel.useModal();
+    const { opened, title, content } = modalModel.useModal();
 
-  if (!opened) return null;
+    if (!opened) return null;
 
-  const handleClose = () => {
-    modalModel.events.close();
-  };
+    const handleClose = () => {
+        modalModel.events.close();
+    };
 
-  return (
-    <ModalBackground>
-      <ModalStyled>
-        <CloseButton onClick={handleClose} />
-        <ModalTitle>{title}</ModalTitle>
-        <ModalContent>{content}</ModalContent>
-      </ModalStyled>
-    </ModalBackground>
-  );
+    return (
+        <ModalBackground>
+            <ModalStyled role="dialog">
+                <CloseButton onClick={handleClose} />
+                <ModalTitle>{title}</ModalTitle>
+                <ModalContent>{content}</ModalContent>
+            </ModalStyled>
+        </ModalBackground>
+    );
 };

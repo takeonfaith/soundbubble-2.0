@@ -1,4 +1,4 @@
-import { IconDots } from '@tabler/icons-react';
+import { IconArrowLeft, IconDots } from '@tabler/icons-react';
 import { chatModel } from '../../../entities/chat/model';
 import { ChatTitle } from '../../../entities/chat/ui/styles';
 import { getLastSeen } from '../../../entities/user/lib/getLastSeen';
@@ -16,6 +16,7 @@ import { Subtext } from '../../../shared/components/subtext';
 import { ChatDialogContextMenu } from './ChatDialogContextMenu';
 import { ChatTypingIndicator } from './ChatTypingIndicator';
 import { ChatHeaderStyled } from './styles';
+import { useNavigate } from 'react-router';
 
 export const ChatHeader = () => {
     const { chats, currentChatId, chatData } = chatModel.useChats();
@@ -41,6 +42,8 @@ export const ChatHeader = () => {
         ? currentChat?.chatName
         : chatPartner?.displayName;
 
+    const navigate = useNavigate();
+
     const handleContextMenu = (e: Evt<'btn'>) => {
         e.stopPropagation();
         popupModel.events.open({
@@ -52,63 +55,68 @@ export const ChatHeader = () => {
 
     return (
         <ChatHeaderStyled>
-            <Flex gap={16}>
-                {!!Object.keys(chatData).length && (
-                    <>
-                        <UserCover
-                            fallbackIcon={
-                                <UserCoverBackground
-                                    name={chatTitle ?? 'Undefined'}
-                                    width="35px"
-                                />
-                            }
-                            size="35px"
-                            src={chatImage}
-                            colors={['grey']}
-                            isAuthor={false}
-                        >
-                            {statuses[0] === 'online' && !isGroupChat && (
-                                <OnlineIndicator />
-                            )}
-                        </UserCover>
-                        <Flex d="column" ai="flex-start">
-                            <ChatTitle>{chatTitle ?? 'Untitled'}</ChatTitle>
-                            <ChatTypingIndicator
-                                typing={typing}
-                                isGroupChat={isGroupChat}
-                            >
-                                {isGroupChat ? (
-                                    <Subtext>
-                                        {currentChat?.participants.length
-                                            ? `${currentChat?.participants.length} members`
-                                            : null}
-                                        {membersOnline !== 0 &&
-                                            `, ${membersOnline} online`}
-                                    </Subtext>
-                                ) : (
-                                    <UserStatus
-                                        isAuthor={false}
-                                        showLastSeen
-                                        status={statuses[0]}
+            <Flex gap={8}>
+                <Button $width="35px" $height='35px' style={{ borderRadius: '100%' }}>
+                    <IconArrowLeft size={20} onClick={() => navigate(-1)} />
+                </Button>
+                <Flex gap={16}>
+                    {!!Object.keys(chatData).length && (
+                        <>
+                            <UserCover
+                                fallbackIcon={
+                                    <UserCoverBackground
+                                        name={chatTitle ?? 'Undefined'}
+                                        width="35px"
                                     />
+                                }
+                                size="35px"
+                                src={chatImage}
+                                colors={['grey']}
+                                isAuthor={false}
+                            >
+                                {statuses[0] === 'online' && !isGroupChat && (
+                                    <OnlineIndicator />
                                 )}
-                            </ChatTypingIndicator>
+                            </UserCover>
+                            <Flex d="column" ai="flex-start">
+                                <ChatTitle>{chatTitle ?? 'Untitled'}</ChatTitle>
+                                <ChatTypingIndicator
+                                    typing={typing}
+                                    isGroupChat={isGroupChat}
+                                >
+                                    {isGroupChat ? (
+                                        <Subtext>
+                                            {currentChat?.participants.length
+                                                ? `${currentChat?.participants.length} members`
+                                                : null}
+                                            {membersOnline !== 0 &&
+                                                `, ${membersOnline} online`}
+                                        </Subtext>
+                                    ) : (
+                                        <UserStatus
+                                            isAuthor={false}
+                                            showLastSeen
+                                            status={statuses[0]}
+                                        />
+                                    )}
+                                </ChatTypingIndicator>
+                            </Flex>
+                        </>
+                    )}
+                    {!Object.keys(chatData).length && (
+                        <Flex gap={16}>
+                            <SkeletonShape
+                                width="35px"
+                                height="35px"
+                                radius="100%"
+                            />
+                            <Flex gap={2} d="column" ai="flex-start">
+                                <SkeletonShape width="100px" height="12px" />
+                                <SkeletonShape width="40px" height="9px" />
+                            </Flex>
                         </Flex>
-                    </>
-                )}
-                {!Object.keys(chatData).length && (
-                    <Flex gap={16}>
-                        <SkeletonShape
-                            width="35px"
-                            height="35px"
-                            radius="100%"
-                        />
-                        <Flex gap={2} d="column" ai="flex-start">
-                            <SkeletonShape width="100px" height="12px" />
-                            <SkeletonShape width="40px" height="9px" />
-                        </Flex>
-                    </Flex>
-                )}
+                    )}
+                </Flex>
             </Flex>
             <Flex width="fit-content">
                 <Button $width="40px" onClick={handleContextMenu}>

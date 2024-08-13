@@ -11,6 +11,7 @@ type Props = {
     icon?: React.ReactNode;
     searchHistory?: boolean;
     isSelected: boolean;
+    disableCopyButton?: boolean;
     handleCopyName: (name: string) => void;
     handleSubmitSuggestion: () => void;
 };
@@ -20,10 +21,11 @@ export const HintItem = ({
     icon,
     isSelected,
     searchHistory,
+    disableCopyButton,
     handleSubmitSuggestion,
     handleCopyName,
 }: Props) => {
-    const hintIcon = item.place && (icon ?? <IconSearch />);
+    const hintIcon = item.place && (icon === undefined ? <IconSearch /> : null);
     const hintName = item.fullName;
     const showCover = false;
 
@@ -90,16 +92,18 @@ export const HintItem = ({
                         <IconHistory />
                     </HintIcon>
                 )}
-                {!searchHistory && !showCover && (
+                {!searchHistory && !showCover && !!hintIcon && (
                     <HintIcon>{hintIcon}</HintIcon>
                 )}
                 <Flex d="column" ai="flex-start">
                     <HintName>{hintName}</HintName>
                 </Flex>
             </Flex>
-            <Button $width="40px" onClick={handleCopy}>
-                <IconArrowUpLeft size={20} />
-            </Button>
+            {!disableCopyButton && (
+                <Button $width="40px" onClick={handleCopy}>
+                    <IconArrowUpLeft size={20} />
+                </Button>
+            )}
         </HintItemStyled>
     );
 };

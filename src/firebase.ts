@@ -21,11 +21,13 @@ import {
     setDoc,
     updateDoc,
 } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { getDataFromDoc } from './database/lib/getDataFromDoc';
 import { TPlaylist } from './entities/playlist/model/types';
 import { TSong } from './entities/song/model/types';
 import { TSearchHistory, TUser } from './entities/user/model/types';
+import { TSuggestion } from './entities/search/model/types';
+import getUID from './shared/funcs/getUID';
 
 const config: FirebaseOptions = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -59,7 +61,16 @@ type TCollectionType<T extends TCollections> = T extends 'songs'
     ? { history: string[] }
     : T extends 'searchHistory'
     ? { history: TSearchHistory[] }
+    : T extends 'search'
+    ? TSuggestion
     : never;
+
+type TStorageFolder =
+    | 'chatCovers'
+    | 'chatWallpapers'
+    | 'songs'
+    | 'songsImages'
+    | 'usersImages';
 
 export class FB {
     static app = initializeApp(config);
@@ -142,6 +153,17 @@ export class FB {
         });
 
         return unsubscribe;
+    }
+
+    static async uploadFile(
+        folder: TStorageFolder,
+        file: File
+    ): Promise<string> {
+        const imageRef = ref(this.storage, `${folder}/${file.name + getUID()}`);
+        await uploadBytes(imageRef, file);
+        const downloadURL = await getDownloadURL(imageRef);
+
+        return downloadURL;
     }
 }
 

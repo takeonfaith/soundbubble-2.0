@@ -4,13 +4,12 @@ export const SkeletonPageAnimationStyled = styled.div`
     width: 100%;
     height: 100%;
     position: relative;
-    overflow: hidden;
 `;
 
 export const SkeletonSection = styled.div<{ $background?: string }>`
     position: absolute;
     width: 100%;
-    min-height: fit-content;
+    height: 100%;
     left: 0;
     top: 0;
     z-index: 10;
@@ -43,5 +42,6 @@ export const ContentSection = styled.div`
 
     &.loading {
         display: none;
+        height: 100%;
     }
 `;

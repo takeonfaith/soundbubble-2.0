@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 import { Flex } from '../../shared/components/flex';
 
-const PADDING = '50px';
-
 export const PlaylistPageStyled = styled.div`
     width: 100%;
 `;
@@ -18,7 +16,8 @@ export const PlaylistPageTop = styled.div<{ background: string }>`
 
 export const PlaylistPageSongs = styled.div`
     width: 100%;
-    padding: 40px ${PADDING};
+    padding: var(--page-padding);
+    padding-top: 40px;
 
     @media (max-width: 1000px) {
         padding: 40px 20px;

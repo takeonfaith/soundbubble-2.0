@@ -9,9 +9,10 @@ export const useSearchWithHints = ({
     initialValue,
     suggestions,
     historySuggestions,
+    areSuggestionsLoading,
+    focusOnLoad,
     onChange,
     onSumbit,
-    areSuggestionsLoading,
 }: SearchSuggestionProps) => {
     const [selectedSuggestion, setSelectedSuggestion] = useState<number | null>(
         null
@@ -51,7 +52,7 @@ export const useSearchWithHints = ({
         onChange('');
         setInputValue('');
         ref.current?.focus();
-        setShowSuggestions(true)
+        setShowSuggestions(true);
     };
 
     const rightIcon = areSuggestionsLoading ? (
@@ -125,6 +126,12 @@ export const useSearchWithHints = ({
             handleSubmit(selectedSuggestion);
         }
     };
+
+    useEffect(() => {
+        if (focusOnLoad && ref?.current) {
+            ref.current.focus();
+        }
+    }, [focusOnLoad]);
 
     return {
         inputValue,

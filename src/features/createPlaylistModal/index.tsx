@@ -1,67 +1,71 @@
-import { IconCamera } from '@tabler/icons-react'
-import styled from 'styled-components'
-import { DefaultButton } from '../../shared/components/button/DefaultButton'
-import { Flex } from '../../shared/components/flex'
-import { Input } from '../../shared/components/input'
+import { useNavigate } from 'react-router';
+import styled from 'styled-components';
+import { createDefaultPlaylist } from '../../entities/playlist/lib/createDefaultPlaylist';
+import { playlistModel } from '../../entities/playlist/model';
+import { userModel } from '../../entities/user/model';
+import { modalModel } from '../../layout/modal/model';
+import { Form } from '../../shared/components/form';
+import { PhotoInput } from '../../shared/components/photoInput';
+import { useState } from 'react';
 
-const DownloadPhotoStyled = styled.label`
-	width: 255px;
-	height: 255px;
-	border-radius: ${({ theme }) => theme.borderRadius.middle};
-	background: ${({ theme }) => theme.colors.input};
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	transition: 0.2s background;
+const CreatePlaylistModalStyled = styled.div`
+    padding: 0 20px;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+`;
 
-	input[type=file] {
-		display: none;
-	}
-
-	&:hover {
-		background: ${({ theme }) => theme.colors.hover};
-	}
-`
-
-const CenterButton = styled.div`
-	width: 60px;
-	height: 60px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 100%;
-	background: ${({ theme }) => theme.colors.blue.action};
-	color: #fff;
-	box-shadow: 0 4px 50px ${({ theme }) => theme.colors.blue.action} ;
-
-	svg {
-		width: 30px;
-		height: 30px;
-	}
-`
-
-const DownloadPhoto = () => {
-	// const [photo, setPhoto] = useState<File | null>(null)
-
-	// const handleFile = (e) => {
-	// 	setPhoto()
-	// }
-
-	return <DownloadPhotoStyled>
-		<input type="file" />
-		<CenterButton>
-			<IconCamera />
-		</CenterButton>
-	</DownloadPhotoStyled>
-}
+const fields = [
+    {
+        id: 'name',
+        label: 'Playlist Name',
+        type: 'text',
+        placeholder: 'Enter a Playlist Name',
+        required: true,
+    },
+] as const;
 
 export const CreatePlaylistModal = () => {
-	return (
-		<Flex d='column' gap={20} width='100%'>
-			<DownloadPhoto />
-			<Input required placeholder='Enter name' label='Playlist name' />
-			<DefaultButton appearance='primary' disabled >Create</DefaultButton>
-		</Flex >
-	)
-}
+    const [{ data }] = userModel.useUser();
+    const [loading] = playlistModel.useCreatePlaylist();
+    const [colors, setColors] = useState<string[]>([]);
+    const [photo, setPhoto] = useState<File | null>(null);
+    const navigate = useNavigate();
+
+    if (!data) return null;
+
+    return (
+        <CreatePlaylistModalStyled>
+            <PhotoInput
+                colors={colors}
+                onUpload={(photo) => setPhoto(photo)}
+                onColors={(colors) => setColors(colors)}
+            />
+            <Form
+                fields={fields}
+                submitErrorMessage={undefined}
+                submitText="Create"
+                loading={loading}
+                focusOnField="name"
+                onSumbit={(obj) => {
+                    const playlist = createDefaultPlaylist({
+                        name: obj.name,
+                        image: photo,
+                        imageColors: colors,
+                        authors: [data],
+                    });
+
+                    playlistModel.events.createPlaylist({
+                        playlist,
+                        onSuccess: (playlist) => {
+                            navigate(`/playlist/${playlist.id}`);
+                            modalModel.events.close();
+                        },
+                    });
+                }}
+            />
+        </CreatePlaylistModalStyled>
+    );
+};

@@ -25,7 +25,7 @@ const Icon = styled.div`
     }
 
     @media (max-width: 768px) {
-        /* top: 11px; */
+        top: 10px;
     }
 `;
 
@@ -74,24 +74,26 @@ export const InputStyled = styled.input<{
     border: none;
     background: ${({ theme }) => theme.colors.input};
     padding: 10px 10px;
-    border-radius: ${({ theme }) => theme.borderRadius.mild};
+    border-radius: ${({ theme }) => theme.borderRadius.big};
     color: ${({ theme }) => theme.colors.textColor};
     height: 40px;
-    font-size: 0.90rem;
+    font-size: 0.9rem;
     font-weight: 200;
     width: 100%;
     border: 1px solid
         ${({ theme, $hasError }) =>
             $hasError ? theme.colors.red.text : 'none'};
-    padding-left: ${({ $hasIcon }) => ($hasIcon ? '40px' : '10px')};
-    padding-right: ${({ $hasRightIcon }) => ($hasRightIcon ? '40px' : '10px')};
+    padding-left: ${({ $hasIcon }) => ($hasIcon ? '40px' : '14px')};
+    padding-right: ${({ $hasRightIcon }) => ($hasRightIcon ? '40px' : '14px')};
 
     &:disabled {
         background: ${({ theme }) => theme.colors.border};
     }
 
     @media (max-width: 768px) {
-        /* height: 45px;
-        border-radius: 10px; */
+        height: 43px;
+        /* border-radius: 10px; */
+        font-size: 0.97rem;
+        
     }
 `;

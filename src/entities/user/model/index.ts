@@ -186,6 +186,7 @@ const resetUserPage = createEvent();
 const updateFriends = createEvent<TUser[]>();
 const setIsLoadingUsers = createEvent<boolean>();
 const addSongToLibrary = createEvent<TSong>();
+export const addOwnPlaylistToLibrary = createEvent<TPlaylist>();
 export const setSearchHistory = createEvent<SetSearchHistoryProps>();
 
 const userGate = createGate();
@@ -240,21 +241,21 @@ sample({
 sample({
     clock: login,
     source: $user,
-    fn: (store) => ({ ...store, loggining: true }),
+    fn: (store) => ({ ...store }),
     target: $user,
 });
 
 sample({
     clock: loginFx.doneData,
     source: $user,
-    fn: (store) => ({ ...store, loggining: false }),
+    fn: (store) => ({ ...store }),
     target: $user,
 });
 
 sample({
     clock: loginFx.failData,
     source: $user,
-    fn: (store, error) => ({ ...store, error, loggining: false }),
+    fn: (store, error) => ({ ...store, error }),
     target: $user,
 });
 
@@ -267,7 +268,7 @@ sample({
 sample({
     clock: setUser,
     source: $user,
-    fn: (store, data) => ({ ...store, data, loggining: false }),
+    fn: (store, data) => ({ ...store, data }),
     target: [
         $user,
         loadLibraryFx,
@@ -292,6 +293,17 @@ sample({
     source: $user,
     fn: (store, logginining) => ({ ...store, logginining }),
     target: $user,
+});
+
+sample({
+    clock: addOwnPlaylistToLibrary,
+    source: $ownPlaylists,
+    fn: (store, playlist) => {
+        console.log(playlist);
+        
+        return [playlist, ...store];
+    },
+    target: $ownPlaylists,
 });
 
 sample({
@@ -346,7 +358,7 @@ sample({
     source: $library,
     fn: (library, song) => {
         console.log(library.find((s) => s.id === song.id));
-        
+
         if (library.find((s) => s.id === song.id)) {
             return library.filter((s) => s.id !== song.id);
         }
@@ -357,7 +369,7 @@ sample({
 });
 
 export const userModel = {
-    useUser: () => useUnit([$user, $isLoadingUser]),
+    useUser: () => useUnit([$user, $isLoadingUser, loginFx.pending]),
     useSongLibrary: () => useUnit([$library, loadLibraryFx.pending]),
     useOwnPlaylists: () => useUnit([$ownPlaylists, loadOwnPlaylistsFx.pending]),
     useAddedPlaylists: () =>
@@ -378,6 +390,7 @@ export const userModel = {
         updateFriends,
         setIsLoadingUsers,
         addSongToLibrary,
+        addOwnPlaylistToLibrary,
     },
     gates: {
         useLoadUser: () => useGate(userGate),

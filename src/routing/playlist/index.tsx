@@ -1,15 +1,15 @@
+import { IconError404Off, IconMusicOff, IconPlus } from '@tabler/icons-react';
 import { playlistModel } from '../../entities/playlist/model';
-import { PlaylistCover } from '../../entities/playlist/ui/PlaylistCover';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
+import { userModel } from '../../entities/user/model';
 import { ShareModal } from '../../features/shareModal';
 import { modalModel } from '../../layout/modal/model';
-import { Authors } from '../../shared/components/authors';
-import { Flex } from '../../shared/components/flex';
-import { PageTop } from '../../shared/components/pageTop';
+import { DefaultButton } from '../../shared/components/button/DefaultButton';
+import { PageMessage } from '../../shared/components/pageMessage';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
-import { BottomButtons } from '../author/BottomButtons';
+import { PageTop } from './pageTop';
 import { SkeletonLoading } from './Skeleton';
 import {
     PlaylistPageSongs,
@@ -18,8 +18,12 @@ import {
 } from './styles';
 
 export const PlaylistPage = () => {
-    const { currentPlaylist, currentPlaylistSongs, loading } =
+    const { currentPlaylist, currentPlaylistSongs, loading, error } =
         playlistModel.usePlaylist();
+    const [{ data }] = userModel.useUser();
+    const isAuthor = !!currentPlaylist?.authors.find(
+        (author) => author.uid === data?.uid
+    );
     useUrlParamId({
         page: 'playlist',
         onChangeId: (id) => {
@@ -36,79 +40,71 @@ export const PlaylistPage = () => {
         });
     };
 
+    const handleAddSongsModal = () => {
+        modalModel.events.open({
+            title: 'Add songs to playlist',
+            content: <></>,
+        });
+    };
+
     return (
         <PageWrapper>
-            <SkeletonPageAnimation
-                color=""
-                loading={loading}
-                skeleton={<SkeletonLoading />}
-            >
-                <PlaylistPageStyled>
-                    <PageTop
-                        handleClickShare={handleClickShare}
-                        id={''}
-                        name={currentPlaylist?.name}
-                        subtitle={
-                            <Flex gap={3}>
-                                {
-                                    <span
-                                        style={{
-                                            fontSize: '0.8rem',
-                                            fontWeight: '300',
-                                            opacity: '0.6',
-                                        }}
-                                    >
-                                        {currentPlaylist?.isAlbum
-                                            ? 'Album'
-                                            : 'Playlist'}{' '}
-                                        /{' '}
-                                    </span>
-                                }
-                                <Authors
-                                    width="fit-content"
-                                    authors={currentPlaylist?.authors}
-                                />
-                            </Flex>
-                        }
-                        numberOfListenersPerMonth={currentPlaylist?.listens}
-                        subscribers={currentPlaylist?.subscribers}
-                        imageComponent={
-                            <PlaylistCover
-                                size="200px"
-                                isAlbum={currentPlaylist?.isAlbum ?? false}
-                                src={currentPlaylist?.image}
-                                colors={currentPlaylist?.imageColors}
-                            />
-                        }
-                        isPrivate={currentPlaylist?.isPrivate}
-                        colors={currentPlaylist?.imageColors}
-                        bottomButtons={
-                            <BottomButtons
-                                buttonColor={currentPlaylist?.imageColors[0]}
-                                isAdmin={false}
-                                isPageOwner={false}
-                                queueInfo={{
-                                    listName: currentPlaylist?.name ?? '',
-                                    listIcon: undefined,
-                                    listUrl: `/playlist/${
-                                        currentPlaylist?.id ?? ''
-                                    }`,
-                                    songs: currentPlaylistSongs ?? [],
-                                }}
-                            />
-                        }
-                    />
-                    <PlaylistPageSongs>
-                        <VerticalSongsList
-                            songs={currentPlaylistSongs ?? []}
-                            listName={currentPlaylist?.name ?? ''}
-                            listIcon={currentPlaylist?.image ?? ''}
-                            listUrl={`/playlist/${currentPlaylist?.id ?? ''}`}
+            {!error && (
+                <SkeletonPageAnimation
+                    color=""
+                    loading={!error && loading}
+                    skeleton={<SkeletonLoading />}
+                >
+                    <PlaylistPageStyled>
+                        <PageTop
+                            isAuthor={isAuthor}
+                            handleClickShare={handleClickShare}
+                            id={''}
+                            name={currentPlaylist?.name}
+                            numberOfListenersPerMonth={currentPlaylist?.listens}
+                            subscribers={currentPlaylist?.subscribers}
+                            isPrivate={currentPlaylist?.isPrivate}
+                            colors={currentPlaylist?.imageColors}
                         />
-                    </PlaylistPageSongs>
-                    <PlaylistSimilar></PlaylistSimilar>
-                </PlaylistPageStyled>
-            </SkeletonPageAnimation>
+                        <PlaylistPageSongs>
+                            {currentPlaylist?.songs.length === 0 && (
+                                <PageMessage
+                                    icon={IconMusicOff}
+                                    title="Oops!"
+                                    description="Playlist is empty"
+                                >
+                                    {isAuthor && (
+                                        <DefaultButton
+                                            width="130px"
+                                            appearance="secondary"
+                                            onClick={handleAddSongsModal}
+                                        >
+                                            <IconPlus size={18} />
+                                            Add songs
+                                        </DefaultButton>
+                                    )}
+                                </PageMessage>
+                            )}
+                            <VerticalSongsList
+                                songs={currentPlaylistSongs ?? []}
+                                listName={currentPlaylist?.name ?? ''}
+                                listIcon={currentPlaylist?.image ?? ''}
+                                listUrl={`/playlist/${
+                                    currentPlaylist?.id ?? ''
+                                }`}
+                            />
+                        </PlaylistPageSongs>
+                        <PlaylistSimilar></PlaylistSimilar>
+                    </PlaylistPageStyled>
+                </SkeletonPageAnimation>
+            )}
+            {error && (
+                <PageMessage
+                    icon={IconError404Off}
+                    title="No playlist was found"
+                    description={'Perhaps it was deleted'}
+                />
+            )}
         </PageWrapper>
     );
 };

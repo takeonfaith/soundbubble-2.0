@@ -15,7 +15,7 @@ import { ChatsSkeleton } from './ChatsSkeleton';
 
 const ChatPageStyled = styled.div`
     width: 100%;
-    height: 100%;
+    height: calc(100% - var(--header-height));
     display: flex;
 
     @media (max-width: 768px) {
@@ -50,6 +50,7 @@ const ListOfChats = styled.div`
     flex-direction: column;
     background: ${({ theme }) => theme.colors.pageBackground};
     border-right: 1px solid ${({ theme }) => theme.colors.border};
+    overflow-y: auto;
 
     @media (max-width: 768px) {
         width: 100%;
@@ -75,6 +76,13 @@ const ChatContent = styled.div`
     }
 `;
 
+const ChatSearchStyled = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px 20px;
+`;
+
 export const ChatPage = () => {
     const {
         chats,
@@ -97,23 +105,10 @@ export const ChatPage = () => {
 
     return (
         <PageWrapper>
-            <Header>
-                <MobileChatSearchStyled>
-                    <Flex gap={10} width="100%">
-                        <Input
-                            icon={<IconSearch />}
-                            placeholder="Search for chats..."
-                        />
-                        <Button onClick={handleCreateChat} $width="48px">
-                            <IconMessagePlus size={20} />
-                        </Button>
-                    </Flex>
-                </MobileChatSearchStyled>
-            </Header>
-            <ChatPageStyled>
-                <ListOfChats className={!currentChatId ? 'no-chat' : ''}>
-                    <DesktopWrapperStyled>
-                        <Flex width="100%" gap={10}>
+            {!currentChatId && (
+                <Header>
+                    <MobileChatSearchStyled>
+                        <Flex gap={10} width="100%">
                             <Input
                                 icon={<IconSearch />}
                                 placeholder="Search for chats..."
@@ -122,37 +117,44 @@ export const ChatPage = () => {
                                 <IconMessagePlus size={20} />
                             </Button>
                         </Flex>
+                    </MobileChatSearchStyled>
+                </Header>
+            )}
+            <ChatPageStyled>
+                <ListOfChats className={!currentChatId ? 'no-chat' : ''}>
+                    <DesktopWrapperStyled>
+                        <ChatSearchStyled>
+                            <Input
+                                icon={<IconSearch />}
+                                placeholder="Search for chats..."
+                            />
+                            <Button onClick={handleCreateChat} $width="48px">
+                                <IconMessagePlus size={20} />
+                            </Button>
+                        </ChatSearchStyled>
                     </DesktopWrapperStyled>
-                    <SkeletonPageAnimation
-                        background={theme.colors.pageBackground}
-                        loading={loadingChats || loadingChatData}
-                        skeleton={<ChatsSkeleton />}
+                    <Flex
+                        d="column"
+                        gap={0}
+                        width="100%"
+                        height="100%"
+                        padding="10px 0"
                     >
-                        <Flex
-                            d="column"
-                            gap={0}
-                            width="100%"
-                            height="100%"
-                            padding="10px 0"
-                        >
-                            {chats.map((chat) => {
-                                return (
-                                    <>
-                                        <ChatItem
-                                            isSelected={
-                                                currentChatId === chat.id
-                                            }
-                                            unreadCount={unreadCounts[chat.id]}
-                                            lastMessage={lastMessage[chat.id]}
-                                            chatData={chatData}
-                                            chat={chat}
-                                            key={chat.id}
-                                        />
-                                    </>
-                                );
-                            })}
-                        </Flex>
-                    </SkeletonPageAnimation>
+                        {chats.map((chat) => {
+                            return (
+                                <>
+                                    <ChatItem
+                                        isSelected={currentChatId === chat.id}
+                                        unreadCount={unreadCounts[chat.id]}
+                                        lastMessage={lastMessage[chat.id]}
+                                        chatData={chatData}
+                                        chat={chat}
+                                        key={chat.id}
+                                    />
+                                </>
+                            );
+                        })}
+                    </Flex>
                 </ListOfChats>
                 <ChatContent className={!currentChatId ? 'no-chat' : ''}>
                     <Outlet />

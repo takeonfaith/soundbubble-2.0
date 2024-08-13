@@ -1,4 +1,9 @@
-import { IconMessage2, IconSearch } from '@tabler/icons-react';
+import {
+    IconMessage2,
+    IconSearch,
+    IconUserOff,
+    TablerIconsProps,
+} from '@tabler/icons-react';
 import { userModel } from '../../entities/user/model';
 import { UserItem } from '../../entities/user/ui';
 import { UserListSkeleton } from '../../entities/user/ui/UserListSkeleton';
@@ -13,6 +18,7 @@ import {
 } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { styled } from 'styled-components';
+import { PageMessage } from '../../shared/components/pageMessage';
 
 const FriendsWrapper = styled.div`
     width: 100%;
@@ -20,24 +26,27 @@ const FriendsWrapper = styled.div`
     margin: 0 auto;
     display: flex;
     gap: 10px;
-	 align-items: center;
+    align-items: center;
 `;
 
 export const FriendsPage = () => {
+    const [{ data }] = userModel.useUser();
     const [friends, loading] = userModel.useFriends();
 
     return (
         <PageWrapper>
             <Header>
-                <FriendsWrapper>
-                    <Input
-                        placeholder="Search for friends..."
-                        icon={<IconSearch />}
-                    />
-                    <DefaultButton width="200px" appearance="primary">
-                        Create group chat
-                    </DefaultButton>
-                </FriendsWrapper>
+                {!!data && (
+                    <FriendsWrapper>
+                        <Input
+                            placeholder="Search for friends..."
+                            icon={<IconSearch />}
+                        />
+                        <DefaultButton width="200px" appearance="primary">
+                            Create group chat
+                        </DefaultButton>
+                    </FriendsWrapper>
+                )}
             </Header>
             <ContentWrapper>
                 <FriendsWrapper>
@@ -45,6 +54,13 @@ export const FriendsPage = () => {
                         loading={loading}
                         skeleton={<UserListSkeleton orientation="horizontal" />}
                     >
+                        {!data && (
+                            <PageMessage
+                                icon={IconUserOff}
+                                title={'No friends'}
+                                description={'We are sorry'}
+                            />
+                        )}
                         <Flex d="column" gap={4} width="100%">
                             {friends.map((friend) => {
                                 return (

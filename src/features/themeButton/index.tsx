@@ -5,8 +5,9 @@ import { Button } from '../../shared/components/button'
 
 
 const ThemeButtonStyled = styled(Button)`
-	min-height: 20px;
-	height: 20px;
+	min-height: 30px;
+	height: 30px;
+	min-width: 30px;
 `
 
 const ThemeButtonIconStyled = styled.div`

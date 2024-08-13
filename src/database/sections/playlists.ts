@@ -1,7 +1,8 @@
 import { FB } from '../../firebase';
 
-import { TPlaylist } from '@playlist/model/types';
+import { TPlaylist, TUploadPlaylist } from '@playlist/model/types';
 import { arrayUnion, getDocs, query, where } from 'firebase/firestore';
+import { createDefaultSuggestion } from '../../entities/search/lib/createDefaultSuggestion';
 import { ERRORS } from '../../shared/constants';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
 
@@ -46,6 +47,37 @@ export class Playlists {
             throw new Error(
                 `Failed to add song to playlists ${songId}, ${playlistIds}, ${error}`
             );
+        }
+    }
+
+    static async createPlaylist(playlist: TUploadPlaylist) {
+        try {
+            const image = playlist.image
+                ? await FB.uploadFile('songsImages', playlist.image)
+                : '';
+
+            console.log(image);
+
+            const uploadedPlaylist: TPlaylist = { ...playlist, image };
+
+            console.log(uploadedPlaylist);
+
+            await FB.setById('playlists', playlist.id, uploadedPlaylist);
+            const requests = uploadedPlaylist.authors.map((author) => {
+                return FB.updateById('users', author.uid, {
+                    ownPlaylists: arrayUnion(uploadedPlaylist.id),
+                });
+            });
+            await Promise.all(requests);
+            await FB.setById(
+                'search',
+                uploadedPlaylist.id,
+                createDefaultSuggestion(uploadedPlaylist)
+            );
+
+            return uploadedPlaylist;
+        } catch (error) {
+            throw new Error('Failed to create playlist');
         }
     }
 }

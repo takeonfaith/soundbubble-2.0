@@ -21,7 +21,6 @@ export const Tabs = ({ tabs, currentTab = 0 }: Props) => {
                     key={title + index}
                     to={url}
                     className={index === current ? 'selected' : ''}
-                    onClick={() => setCurrent(index)}
                 >
                     {title}
                 </TabItemStyled>

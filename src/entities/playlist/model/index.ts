@@ -1,8 +1,8 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { useUnit } from 'effector-react';
 import { Database } from '../../../database';
-import { TPlaylist } from './types';
 import { TSong } from '../../song/model/types';
+import { TPlaylist, TUploadPlaylist } from './types';
 
 type TStore = {
     loadingPlaylistId: string | null;
@@ -11,6 +11,7 @@ type TStore = {
     currentPlaylist: TPlaylist | null;
     currentPlaylistSongs: TSong[] | null;
     addedPlaylists: TPlaylist[];
+    error: string | null;
 };
 
 const DEFAULT_STORE = {
@@ -20,6 +21,7 @@ const DEFAULT_STORE = {
     currentPlaylist: null,
     currentPlaylistSongs: null,
     addedPlaylists: [],
+    error: null,
 };
 
 const loadPlaylistFx = createEffect(async (store: TStore) => {
@@ -68,10 +70,31 @@ const addSongToPlaylistsFx = createEffect(
     }
 );
 
+const createPlaylistsFx = createEffect(
+    async ({
+        playlist,
+        onSuccess,
+    }: {
+        playlist: TUploadPlaylist;
+        onSuccess: (playlist: TPlaylist) => void;
+    }) => {
+        // await emulateRequest(2000, true, playlist);
+        const uploadedPlaylist = await Database.Playlists.createPlaylist(
+            playlist
+        );
+
+        onSuccess(uploadedPlaylist);
+    }
+);
+
 const loadPlaylist = createEvent<string>();
 const addSongToPlaylists = createEvent<{
     songId: string;
     playlistIds: string[];
+}>();
+const createPlaylist = createEvent<{
+    playlist: TUploadPlaylist;
+    onSuccess: (playlist: TPlaylist) => void;
 }>();
 
 const $store = createStore<TStore>(DEFAULT_STORE);
@@ -79,8 +102,18 @@ const $store = createStore<TStore>(DEFAULT_STORE);
 sample({
     clock: loadPlaylist,
     source: $store,
-    fn: (store, id) => ({ ...store, loadingPlaylistId: id, loading: true }),
+    fn: (store, id) => ({
+        ...store,
+        loadingPlaylistId: id,
+        loading: true,
+        error: null,
+    }),
     target: [$store, loadPlaylistFx],
+});
+
+sample({
+    clock: createPlaylist,
+    target: createPlaylistsFx,
 });
 
 sample({
@@ -92,6 +125,13 @@ sample({
         currentPlaylist: playlist,
         currentPlaylistSongs: songs,
     }),
+    target: $store,
+});
+
+sample({
+    clock: loadPlaylistFx.failData,
+    source: $store,
+    fn: (store, error) => ({ ...store, error: error.message }),
     target: $store,
 });
 
@@ -109,10 +149,11 @@ sample({
 
 export const playlistModel = {
     usePlaylist: () => useUnit($store),
-    useAddingSongToPlaylists: () =>
-        useUnit([addSongToPlaylistsFx.pending]),
+    useAddingSongToPlaylists: () => useUnit([addSongToPlaylistsFx.pending]),
+    useCreatePlaylist: () => useUnit([createPlaylistsFx.pending]),
     events: {
         loadPlaylist,
         addSongToPlaylists,
+        createPlaylist,
     },
 };

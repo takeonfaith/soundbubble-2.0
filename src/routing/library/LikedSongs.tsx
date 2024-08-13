@@ -1,11 +1,11 @@
-import { IconMusic } from '@tabler/icons-react';
+import { IconMusicOff } from '@tabler/icons-react';
+import { SongListSkeleton } from '../../entities/song/ui/SongListSkeleton';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { userModel } from '../../entities/user/model';
-import { Flex } from '../../shared/components/flex';
+import { LoginButton } from '../../features/loginButton';
+import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { Subtext } from '../../shared/components/subtext';
-import { SongListSkeleton } from '../../entities/song/ui/SongListSkeleton';
 
 export const LikedSongs = () => {
     const [library, loading] = userModel.useSongLibrary();
@@ -24,26 +24,20 @@ export const LikedSongs = () => {
                     songs={library}
                 />
                 {!data && (
-                    <Flex
-                        d="column"
-                        gap={10}
-                        width="100%"
-                        height="100%"
-                        jc="center"
+                    <PageMessage
+                        icon={IconMusicOff}
+                        title={'Need to log in'}
+                        description={'To listen to your favorite songs'}
                     >
-                        <IconMusic opacity={0.5} size={100} />
-                        <Subtext style={{ fontSize: '1.1rem' }}>
-                            Need to log in into account to see your library
-                        </Subtext>
-                    </Flex>
+                        <LoginButton />
+                    </PageMessage>
                 )}
                 {data && !library.length && (
-                    <Flex d="column" gap={10} width="100%">
-                        <IconMusic opacity={0.5} size={100} />
-                        <Subtext style={{ fontSize: '1.1rem' }}>
-                            No songs added to library
-                        </Subtext>
-                    </Flex>
+                    <PageMessage
+                        icon={IconMusicOff}
+                        title="No songs added to library"
+                        description="You can add them from search!"
+                    />
                 )}
             </SkeletonPageAnimation>
         </ContentWrapper>
