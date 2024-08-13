@@ -1,10 +1,18 @@
 import styled from 'styled-components';
 import { BeautifulBackground } from '../../shared/components/beautifulBackground';
+import { PageWrapper } from '../../shared/components/pageWrapper';
 
-export const AuthorPageStyled = styled.div`
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
+export const AuthorPageWrapper = styled(PageWrapper)`
+    .title {
+        margin-bottom: 10px;
+        margin-left: 40px;
+    }
+
+    @media (max-width: 1000px) {
+        .title {
+            margin-left: 20px;
+        }
+    }
 `;
 
 export const AuthorTopStyled = styled(BeautifulBackground)`
@@ -33,23 +41,40 @@ export const UserImageStyled = styled.div`
     }
 `;
 
-export const ContentWrapperStyled = styled.div`
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+export const SongsStyled = styled.div`
     width: 100%;
+    padding: 40px 0;
+
+    & .grid-list {
+        padding: 0 34px;
+    }
 
     @media (max-width: 1000px) {
-        padding: 40px 20px;
+        padding: 0;
+        padding-bottom: 30px;
+        padding-top: 40px;
+
+        & .grid-list {
+            padding: 0;
+        }
     }
 `;
 
-export const SongsStyled = styled.div`
+export const PlaylistsStyled = styled.div`
     width: 100%;
 
-    h3 {
-        margin-bottom: 10px;
+    & .horizontal-list {
+        padding: 0 40px;
+        padding-bottom: 40px;
+    }
+
+    @media (max-width: 1000px) {
+        padding-bottom: 20px;
+
+        & .horizontal-list {
+            padding: 0;
+            gap: 10px;
+        }
     }
 `;
 
@@ -77,12 +102,19 @@ export const ButtonsStyled = styled.div`
 export const SimilarAuthorsStyled = styled.div`
     width: 100%;
     background: ${({ theme }) => theme.colors.pageBackground2};
-    padding: 30px 40px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    padding: 30px 0;
+
+    & .horizontal-list {
+        padding: 0 40px;
+    }
 
     @media (max-width: 1000px) {
-        padding: 20px;
+        padding: 20px 0px;
+
+        & .horizontal-list {
+            padding: 0;
+        }
     }
 `;

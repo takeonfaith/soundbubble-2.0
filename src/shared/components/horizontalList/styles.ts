@@ -5,24 +5,34 @@ export const ArrowButton = styled(Button)`
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    min-width: 40px;
-    width: 40px;
-    height: 40px;
+    min-width: 36px;
+    width: 36px;
+    height: 36px;
+    min-height: 36px;
     border-radius: 100%;
     background: ${({ theme }) => theme.colors.pageBackground};
     z-index: 10;
     display: none;
 
+    &:hover {
+        background: ${({ theme }) => theme.colors.sidebar};
+    }
+
+    svg {
+        width: 20px;
+        height: 20px;
+    }
+
     &.left {
-        left: 0px;
+        left: 4px;
     }
 
     &.right {
-        right: 0px;
+        right: 4px;
     }
 `;
 
-export const ListWrapper = styled.div`
+export const ListWrapper = styled.div<{ $overflowColor?: string }>`
     width: 100%;
     height: fit-content;
     position: relative;
@@ -34,13 +44,14 @@ export const ListWrapper = styled.div`
             content: '';
             position: absolute;
             top: 0;
-            left: -20px;
-            width: 20px;
+            left: 0px;
+            width: 10px;
             height: 100%;
-            background: ${({ theme }) => theme.colors.pageBackground2};
-            box-shadow: 10px 0 10px 10px
-                ${({ theme }) => theme.colors.pageBackground2};
-            pointer-events: none;
+            background: ${({ theme, $overflowColor }) =>
+                $overflowColor ?? theme.colors.pageBackground};
+            box-shadow: 10px 0 10px 20px
+                ${({ theme, $overflowColor }) =>
+                    $overflowColor ?? theme.colors.pageBackground};
             z-index: 1;
             display: none;
         }
@@ -49,13 +60,14 @@ export const ListWrapper = styled.div`
             content: '';
             position: absolute;
             top: 0;
-            right: -20px;
-            width: 20px;
+            right: 0px;
+            width: 30px;
             height: 100%;
-            background: ${({ theme }) => theme.colors.pageBackground2};
-            box-shadow: -10px 0 10px 10px
-                ${({ theme }) => theme.colors.pageBackground2};
-            pointer-events: none;
+            background: ${({ theme, $overflowColor }) =>
+                $overflowColor ?? theme.colors.pageBackground};
+            box-shadow: -10px 0 10px 20px
+                ${({ theme, $overflowColor }) =>
+                    $overflowColor ?? theme.colors.pageBackground};
             z-index: 1;
             display: none;
         }
@@ -85,14 +97,24 @@ export const ListWrapper = styled.div`
 export const HorizontalListStyled = styled.div`
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
     max-width: 100%;
     width: 100%;
     overflow-y: hidden;
     overflow-x: scroll;
     scroll-behavior: smooth;
 
-    /* &::-webkit-scrollbar {
+    &::-webkit-scrollbar {
         display: none;
-    } */
+    }
+
+    @media (max-width: 1000px) {
+        & > *:first-child {
+            margin-left: 20px;
+        }
+
+        & > *:last-child {
+            margin-right: 20px;
+        }
+    }
 `;

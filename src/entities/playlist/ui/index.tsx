@@ -75,12 +75,12 @@ export const PlaylistItem = ({
         >
             {!children && (
                 <ControlButton
-                    className={`${orientation}`}
-                    $color={imageColors?.[0]}
+                    $color={imageColors[0]}
                     onClick={handleLoadPlaylistSongs}
+                    className={orientation}
                 >
                     {isCurrentPlaying ? (
-                        <PlayingAnimation playing color={imageColors?.[1]} />
+                        <PlayingAnimation playing color={imageColors[0]} />
                     ) : (
                         <PlayPauseIcon
                             loading={loading}
@@ -99,7 +99,7 @@ export const PlaylistItem = ({
             />
             <Flex width="100%" jc="space-between">
                 <Flex d="column" width="100%" gap={0} ai="flex-start">
-                    <Flex>
+                    <Flex width="100%">
                         <PalylistTitle>{name}</PalylistTitle>
                         {isPrivate && <IconLock size={18} />}
                     </Flex>

@@ -2,31 +2,27 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const UserItemStyled = styled(Link)`
-    --size: calc((100vw - var(--sidebar-width)) / 7 - 38px);
+    --size: calc(100vw / 10 - 17px);
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     text-decoration: none;
-    width: 100%;
-    padding: 6px;
+    width: var(--size);
+    padding: 0;
     border-radius: ${({ theme }) => theme.borderRadius.big};
 
-    &.vertical {
-        padding: 0;
-        width: var(--size);
-        gap: 10px;
-        flex-direction: column;
+    &.horizontal {
+        padding: 6px;
+        width: 100%;
+        gap: 12px;
+        flex-direction: row;
     }
 
     &:hover {
         &.horizontal {
             background: ${({ theme }) => theme.colors.hover};
-        }
-
-        &.vertical {
-            background: none;
         }
     }
 
@@ -34,8 +30,16 @@ export const UserItemStyled = styled(Link)`
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
-        font-size: 0.9rem;
+        font-size: 1rem;
         font-weight: 300;
+
+        &.horizontal {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 1350px) {
+        --size: calc(100vw / 7 - 32px);
     }
 
     &.vertical {
@@ -60,7 +64,12 @@ export const UserItemStyled = styled(Link)`
         --size: calc(100vw / 5 - 36px);
 
         h4 {
-            font-weight: 200;
+            font-size: 0.85rem;
+            font-weight: 300;
+
+            &.horizontal {
+                font-size: 1rem;
+            }
         }
 
         &.vertical {
@@ -113,10 +122,10 @@ export const UserItemStyled = styled(Link)`
         --size: calc(100vw / 3 - 27px);
     }
 
-    @media (max-width: 500px) {
-        &.vertical {
-            h4 {
-                font-size: 0.85rem;
+    @media (max-width: 400px) {
+        h4 {
+            &.vertical {
+                font-size: 0.75rem;
             }
         }
     }

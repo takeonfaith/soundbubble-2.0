@@ -1,4 +1,3 @@
-import { PlaylistItem } from '../../entities/playlist/ui';
 import { GridSongList } from '../../entities/song/ui/gridList';
 import { getLastSeen } from '../../entities/user/lib/getLastSeen';
 import { userModel } from '../../entities/user/model';
@@ -7,30 +6,26 @@ import { UserCover } from '../../entities/user/ui/UserCover';
 import { UserStatus } from '../../entities/user/ui/UserStatus';
 import { ShareModal } from '../../features/shareModal';
 import { modalModel } from '../../layout/modal/model';
-import { HorizontalList } from '../../shared/components/horizontalList';
+import { NavigationTitle } from '../../shared/components/navigationTitle';
 import { PageTop } from '../../shared/components/pageTop';
-import { PageWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
 import { BottomButtons } from './BottomButtons';
+import { Playlists } from './Playlists';
 import { SimilarAuthors } from './SimilarAuthors';
 import { SkeletonLoading } from './Skeleton';
-import { ContentWrapperStyled, SongsStyled } from './styles';
+import { MAX_SONGS } from './constants';
+import { AuthorPageWrapper, SongsStyled } from './styles';
 
 type Props = {
     userData?: TUser | null;
 };
 
 export const AuthorPage = ({ userData }: Props) => {
-    const {
-        user: currentPageUser,
-        songs,
-        playlists,
-        loading,
-    } = userModel.useUserPage();
+    const { user: currentPageUser, songs, loading } = userModel.useUserPage();
     const [{ data: currentUser }] = userModel.useUser();
-    const [friends] = userModel.useFriends();
     const userPageData = userData ?? currentPageUser;
+    const [friends] = userModel.useFriends();
     const isFriend = !!friends.find((f) => f.uid === currentPageUser?.uid);
     const { status } = getLastSeen(currentPageUser?.online);
     const [isAuthor, isAdmin, isPageOwner] = [
@@ -52,7 +47,7 @@ export const AuthorPage = ({ userData }: Props) => {
         listName: userPageData?.displayName ?? 'Author',
         listIcon: userPageData?.photoURL,
         listUrl: `/author/${userPageData?.uid}`,
-        songs: songs.slice(0, 9),
+        songs: songs.slice(0, MAX_SONGS),
     };
 
     const handleClickShare = () => {
@@ -63,10 +58,11 @@ export const AuthorPage = ({ userData }: Props) => {
     };
 
     return (
-        <PageWrapper>
+        <AuthorPageWrapper>
             <SkeletonPageAnimation
                 color={userPageData?.imageColors[0] ?? 'grey'}
                 loading={loading}
+                color=''
                 skeleton={<SkeletonLoading />}
             >
                 <PageTop
@@ -104,32 +100,28 @@ export const AuthorPage = ({ userData }: Props) => {
                         />
                     }
                 />
-                <ContentWrapperStyled>
-                    <SongsStyled>
-                        <h3>Top songs</h3>
-                        <GridSongList {...queueInfo} />
-                    </SongsStyled>
-                    {playlists.length !== 0 && (
-                        <SongsStyled>
-                            <h3>Top Albums</h3>
-                            <HorizontalList>
-                                {playlists.map((playlist) => (
-                                    <PlaylistItem
-                                        playlist={playlist}
-                                        key={playlist.id}
-                                    />
-                                ))}
-                            </HorizontalList>
-                        </SongsStyled>
-                    )}
-                </ContentWrapperStyled>
+                <SongsStyled>
+                    <div className="title">
+                        <NavigationTitle
+                            showNavigation={songs.length > MAX_SONGS}
+                            to={`/author/${userPageData?.uid}/songs`}
+                        >
+                            <h3>Top Songs</h3>
+                        </NavigationTitle>
+                    </div>
+                    <GridSongList
+                        {...queueInfo}
+                        songs={songs.slice(0, MAX_SONGS)}
+                    />
+                </SongsStyled>
+                <Playlists uid={userPageData?.uid} />
                 {!loading && (
                     <SimilarAuthors
                         songs={songs}
-                        currentPageUser={userPageData}
+                        currentPageUser={currentPageUser}
                     />
                 )}
             </SkeletonPageAnimation>
-        </PageWrapper>
+        </AuthorPageWrapper>
     );
 };

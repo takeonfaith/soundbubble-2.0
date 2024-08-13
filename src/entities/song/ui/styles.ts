@@ -104,6 +104,8 @@ export const SongLeft = styled.div<{ $color1: string }>`
 
     @container (max-width: 699px) {
         gap: 12px;
+        overflow: hidden;
+        width: calc(100% - 40px);
     }
 `;
 

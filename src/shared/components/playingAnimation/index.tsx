@@ -1,16 +1,19 @@
-import { PlayingAnimationStyled, PlayingAnimationItem, } from './styles'
+import { PlayingAnimationStyled, PlayingAnimationItem } from './styles';
 
 type Props = {
-	playing: boolean
-	color: string
-}
+    playing: boolean;
+    color: string;
+};
 
 export const PlayingAnimation = ({ playing, color }: Props) => {
-	return (
-		<PlayingAnimationStyled $color={color} className={playing ? 'playing-animation playing' : 'playing-animation'}>
-			<PlayingAnimationItem />
-			<PlayingAnimationItem />
-			<PlayingAnimationItem />
-		</PlayingAnimationStyled>
-	)
-}
+    return (
+        <PlayingAnimationStyled
+            $color={color}
+            className={`playing-animation ${playing ? 'playing' : ''}`}
+        >
+            <PlayingAnimationItem />
+            <PlayingAnimationItem />
+            <PlayingAnimationItem />
+        </PlayingAnimationStyled>
+    );
+};

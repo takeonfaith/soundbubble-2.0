@@ -17,8 +17,9 @@ export const GlobalStyles = createGlobalStyle`
 		--sidebar-width: 280px;
 		--header-height: 70px;
 
-		@media (max-width: 768px) {
+		@media (max-width: 1000px) {
 			--page-padding: 20px;
+			--sidebar-width: 0px;
 		}
 	}
 

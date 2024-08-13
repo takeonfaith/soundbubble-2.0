@@ -28,6 +28,8 @@ import { PlaylistPage } from './playlist';
 import { SearchPage } from './search';
 import { SongPage } from './song';
 import { TrendsPage } from './trends';
+import { AuthorSongs } from './author/pages/AuthorSongs';
+import { SimilarAuthorsPage } from './author/pages/SimilarAuthorsPage';
 
 type Section = 'features' | 'your activities' | 'your music';
 
@@ -166,6 +168,22 @@ export const allRoutes: TRoute[] = [
         title: 'Author',
         icon: <IconMicrophone />,
         component: <AuthorPage />,
+        section: 'your music',
+        private: true,
+    },
+    {
+        url: 'author/:id/songs',
+        title: 'Author songs',
+        icon: <IconMusic />,
+        component: <AuthorSongs />,
+        section: 'your music',
+        private: true,
+    },
+    {
+        url: 'author/:id/similar-authors',
+        title: 'Similar Authors',
+        icon: <IconMicrophone />,
+        component: <SimilarAuthorsPage />,
         section: 'your music',
         private: true,
     },

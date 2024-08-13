@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 import { BeautifulBackground } from '../beautifulBackground';
 
 export const PageTopStyled = styled(BeautifulBackground)`
-    height: 400px;
+    min-height: 400px;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -3,8 +3,8 @@ import { SongSkeleton } from '../../entities/song/ui/Skeleton';
 import { GridSongListStyled } from '../../entities/song/ui/gridList/styles';
 import { UserSkeleton } from '../../entities/user/ui/Skeleton';
 import { Flex } from '../../shared/components/flex';
+import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonShape } from '../../shared/components/skeleton';
-import { ContentWrapperStyled } from './styles';
 
 export const SkeletonLoading = () => {
     return (
@@ -13,7 +13,7 @@ export const SkeletonLoading = () => {
                 <Flex
                     width="100%"
                     d="column"
-                    padding="56px 50px 50px 50px"
+                    padding="56px 62px 50px 50px"
                     ai="center"
                     jc="center"
                     gap={21}
@@ -34,7 +34,7 @@ export const SkeletonLoading = () => {
                     </Flex>
                 </Flex>
             </SkeletonShape>
-            <ContentWrapperStyled>
+            <ContentWrapper>
                 <Flex d="column" ai="flex-start" gap={8} width="100%">
                     <SkeletonShape width="95px" height="25px" radius="6px" />
                     <GridSongListStyled>
@@ -79,7 +79,7 @@ export const SkeletonLoading = () => {
                         <UserSkeleton />
                     </Flex>
                 </Flex>
-            </ContentWrapperStyled>
+            </ContentWrapper>
         </Flex>
     );
 };

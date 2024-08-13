@@ -17,12 +17,15 @@ import { PageWrapper } from '../../shared/components/pageWrapper';
 import { normalizeString } from '../../shared/funcs/normalizeString';
 import { SearchResult } from './SearchResult';
 import { TSuggestion } from '../../entities/search/model/types';
-import Wave from '@shared/images/wave.svg';
+import { Tabs } from '../../shared/components/tabs';
 
 const SearchBarStyled = styled.div`
     max-width: 550px;
     width: 100%;
     min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 
     @media (max-width: 1000px) {
         width: 100%;
@@ -97,6 +100,15 @@ export const SearchPage = () => {
                         areSuggestionsLoading={isLoadingSuggestions}
                         onChange={handleChange}
                         onSumbit={onSumbit}
+                    />
+                    <Tabs
+                        tabs={[
+                            { title: 'All', url: '' },
+                            { title: 'Songs', url: '' },
+                            { title: 'Playlists', url: '' },
+                            { title: 'Authors', url: '' },
+                        ]}
+                        chips
                     />
                 </SearchBarStyled>
             </Header>

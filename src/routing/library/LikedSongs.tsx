@@ -15,7 +15,11 @@ export const LikedSongs = () => {
         <ContentWrapper>
             <SkeletonPageAnimation
                 loading={loading}
-                skeleton={<SongListSkeleton quantity={20} />}
+                skeleton={
+                    <Flex padding='20px' width='100%'>
+                        <SongListSkeleton quantity={20} />
+                    </Flex>
+                }
             >
                 <VerticalSongsList
                     listName="Library"

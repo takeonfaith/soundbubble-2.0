@@ -5,25 +5,34 @@ import { PLAYLIST_RADIUS } from '../constants';
 
 export const ControlButton = styled(Button)<{ $color: string }>`
     position: absolute;
-    bottom: 6px;
-    left: auto;
-    right: 6px;
-    width: 35px;
-    height: 35px;
+
+    bottom: 60px;
+    left: 16px;
+    right: auto;
+    width: 40px;
+    height: 40px;
     min-height: auto;
     border-radius: 100px;
     color: ${({ $color }) => $color};
     background: ${({ theme }) => theme.colors.pageTopButton};
-    transition: 0.2s opacity;
+    transition: 0.1s opacity;
     opacity: 0;
     z-index: 10;
 
-    &.vertical {
-        height: 40px;
-        width: 40px;
-        right: auto;
-        left: 16px;
-        bottom: 60px;
+    svg {
+        filter: brightness(${({ theme }) => theme.colors.brightness});
+    }
+
+    & .playing-animation {
+        filter: brightness(${({ theme }) => theme.colors.brightness});
+    }
+
+    &.horizontal {
+        bottom: 6px;
+        left: auto;
+        right: 6px;
+        width: 35px;
+        height: 35px;
     }
 
     &:hover {
@@ -32,29 +41,28 @@ export const ControlButton = styled(Button)<{ $color: string }>`
 `;
 
 export const PlaylistStyled = styled(Link)<{ $color1: string }>`
-    --size: 34px;
+    --size: calc((100vw - var(--sidebar-width)) / 6 - 30px);
 
     gap: 12px;
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     height: fit-content;
     color: ${({ theme }) => theme.colors.textColor};
     position: relative;
     text-decoration: none;
-    width: 100%;
-    padding: 6px 8px;
+    width: var(--size);
+    padding: 0;
     border-radius: 6px;
-    overflow: hidden;
+    overflow: visible;
 
-    &.vertical {
-        --size: calc((100vw - var(--sidebar-width) - 148px) / 6);
-
-        overflow: visible;
-        padding: 0;
-        width: var(--size);
-        align-items: flex-start;
-        flex-direction: column;
+    &.horizontal {
+        --size: 34px;
+        overflow: hidden;
+        padding: 6px 8px;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
     }
 
     &.playing {
@@ -75,53 +83,53 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
         width: var(--size);
         height: var(--size);
         transition: 0.2s opacity;
-        box-shadow: 0 50px 100px ${({ $color1 }) => $color1};
+        box-shadow: 0 50px 70px ${({ $color1 }) => $color1};
         top: 0%;
         opacity: 0.2;
         border-radius: ${PLAYLIST_RADIUS};
     }
 
-    &:hover:before {
-        opacity: 0.5;
-    }
-
-    &:hover {
-        &.horizontal {
-            background: ${({ theme }) => theme.colors.hover};
+    @media (hover: hover) {
+        &:hover:before {
+            opacity: 0.4;
         }
 
-        &.vertical {
-            background: none;
-        }
+        &:hover {
+            &.vertical {
+                background: none;
+            }
 
-        ${ControlButton} {
-            opacity: 1;
-        }
-    }
+            &.horizontal {
+                background: ${({ theme }) => theme.colors.hover};
+            }
 
-    @media (max-width: 1400px) {
-        &.vertical {
-            --size: calc((100vw - var(--sidebar-width) - 132px) / 5);
+            ${ControlButton} {
+                opacity: 1;
+            }
         }
     }
 
-    @media (max-width: 1180px) {
+    @media (max-width: 1350px) {
         &.vertical {
-            --size: calc((100vw - var(--sidebar-width) - 116px) / 4);
+            --size: calc((100vw - var(--sidebar-width)) / 5 - 30px);
+        }
+    }
+
+    @media (max-width: 1200px) {
+        &.vertical {
+            --size: calc((100vw - var(--sidebar-width)) / 4 - 36px);
+        }
+    }
+
+    @media (max-width: 1100px) {
+        &.vertical {
+            --size: calc((100vw - var(--sidebar-width)) / 3 - 43px);
         }
     }
 
     @media (max-width: 1000px) {
-        padding: 8px 0;
-
         &.vertical {
-            overflow: hidden;
-            --size: calc(100vw / 4 - 22px);
-        }
-
-        .general-cover {
-            min-width: 40px;
-            min-height: 40px;
+            --size: calc(100vw / 4 - 31px);
         }
 
         &::before {
@@ -129,9 +137,9 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
         }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 700px) {
         &.vertical {
-            --size: calc(100vw / 3 - 27px);
+            --size: calc(100vw / 3 - 32px);
         }
     }
 

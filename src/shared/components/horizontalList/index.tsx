@@ -1,52 +1,32 @@
 import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import { ArrowButton, HorizontalListStyled, ListWrapper } from './styles';
+import { useScrollList } from './useScrollList';
 
 type Props = {
     children: React.ReactNode;
+    overflowColor?: string;
 };
 
-export const HorizontalList = ({ children }: Props) => {
-    const [showLeftArrow, setShowLeftArrow] = useState(false);
-    const [showRightArrow, setShowRightArrow] = useState(false);
-    const [scrollPos, setScrollPos] = useState(0);
-    const elementRef = useRef<HTMLDivElement>(null);
-
-    const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-        setShowLeftArrow(e.currentTarget.scrollLeft !== 0);
-
-        setShowRightArrow(
-            e.currentTarget.scrollLeft + e.currentTarget.clientWidth <
-                e.currentTarget.scrollWidth
-        );
-
-        setScrollPos(e.currentTarget.scrollLeft);
-    };
-
-    const handleScrollLeft = () => {
-        if (elementRef.current?.scrollLeft !== undefined) {
-            elementRef.current.scrollLeft =
-                scrollPos - elementRef.current.scrollWidth / 3;
-        }
-    };
-
-    const handleScrollRight = () => {
-        if (elementRef.current?.scrollLeft !== undefined) {
-            elementRef.current.scrollLeft =
-                scrollPos + elementRef.current.scrollWidth / 3;
-        }
-    };
+export const HorizontalList = ({ children, overflowColor }: Props) => {
+    const {
+        className,
+        scrollElementRef,
+        handleScroll,
+        handleScrollLeft,
+        handleScrollRight,
+    } = useScrollList({ children });
 
     return (
-        <ListWrapper
-            className={`${showLeftArrow ? 'showLeft' : ''} ${
-                showRightArrow ? 'showRight' : ''
-            }`}
-        >
+        <ListWrapper className={className} $overflowColor={overflowColor}>
             <ArrowButton className="left" onClick={handleScrollLeft}>
                 <IconArrowLeft />
             </ArrowButton>
-            <HorizontalListStyled ref={elementRef} onScroll={handleScroll}>
+            <HorizontalListStyled
+                className="horizontal-list"
+                ref={scrollElementRef}
+                onScroll={handleScroll}
+            >
                 {children}
             </HorizontalListStyled>
             <ArrowButton className="right" onClick={handleScrollRight}>

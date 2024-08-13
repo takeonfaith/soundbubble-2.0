@@ -12,14 +12,20 @@ export const TabsStyled = styled.div`
     position: relative;
     /* box-shadow: ${({ theme }) => theme.colors.shadow}; */
 
+    &.chips {
+        background: transparent;
+        gap: 4px;
+        padding: 0;
+    }
+
     @media (max-width: 768px) {
         width: 100%;
     }
 `;
 
-export const TabItemStyled = styled(Link)`
-    min-width: calc(100% / 3);
-    height: 38px;
+export const TabItemStyled = styled(Link)<{ $width?: string; $height: string }>`
+    min-width: ${({ $width }) => $width};
+    height: ${({ $height }) => $height};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -27,16 +33,24 @@ export const TabItemStyled = styled(Link)`
     border-radius: 16px;
     cursor: pointer;
     user-select: none;
-    z-index: 1;
-    font-size: 0.95rem;
-    opacity: 0.7;
-    transition: 0.2s color;
+    z-index: 0;
+    font-size: 0.9rem;
     font-weight: 300;
+    opacity: 0.7;
+    font-weight: 300;
+    transition: 0.2s color, 0.5s background;
+
+    &.chips {
+        min-width: calc(${({ $width }) => $width} - 3px);
+        border-radius: 8px;
+        background: ${({ theme }) => theme.colors.input};
+    }
 
     &.selected {
         color: #fff;
         opacity: 1;
         font-weight: 400;
+        background: transparent;
     }
 
     @media (hover: hover) {
@@ -46,26 +60,39 @@ export const TabItemStyled = styled(Link)`
     }
 
     @media (max-width: 1000px) {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         height: 32px;
         padding: 4px 12px;
     }
 `;
 
-export const CurrentTabItem = styled.div<{ $width: string; $shift: number }>`
-    width: ${({ $width }) => $width};
+export const CurrentTabItem = styled.div<{
+    $width: string;
+    $height: string;
+    $shift: number;
+}>`
+    width: calc(${({ $width }) => $width} - 3px);
     padding: 10px 16px;
-    height: 38px;
+    height: ${({ $height }) => $height};
     border-radius: 16px;
     background: ${({ theme }) => theme.colors.blue.action};
     position: absolute;
     transition: 0.2s;
     transform: translateX(
-        calc(${({ $shift }) => $shift * 100}% - ${({ $shift }) => $shift * 4}px)
+        calc(${({ $shift }) => `${$shift} * 100%`})
     );
     left: 4px;
     top: 4px;
     z-index: 0;
+
+    &.chips {
+        transform: translateX(
+            calc(${({ $shift }) => `${$shift} * 100% + 4px * ${$shift}`})
+        );
+        border-radius: 8px;
+        left: 0;
+        top: 0;
+    }
 
     @media (max-width: 1000px) {
         height: 32px;

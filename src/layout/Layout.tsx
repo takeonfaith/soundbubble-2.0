@@ -28,7 +28,7 @@ export const LayoutStyled = styled.div`
 `;
 
 const RightSide = styled.div`
-    width: 100%;
+    width: calc(100% - var(--sidebar-width));
     height: 100%;
     position: relative;
     box-shadow: ${({ theme }) => theme.colors.shadow};

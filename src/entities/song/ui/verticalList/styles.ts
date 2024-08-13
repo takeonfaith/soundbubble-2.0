@@ -14,7 +14,7 @@ export const Titles = styled.div`
     background: ${({ theme }) => theme.colors.pageBackground};
     z-index: 2;
 
-    @media (max-width: 768px) {
+    @media (max-width: 1080px) {
         display: none;
     }
 `;

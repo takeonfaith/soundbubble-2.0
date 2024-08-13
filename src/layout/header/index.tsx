@@ -124,7 +124,13 @@ export const Header = ({ children, hide }: Props) => {
 
     return (
         <HeaderStyled className={hide ? 'hidden' : ''}>
-            <Flex width="100%" height="50px" jc="space-between" gap={30}>
+            <Flex
+                width="100%"
+                height="50px"
+                jc="space-between"
+                ai="flex-start"
+                gap={30}
+            >
                 <HeaderPageTitle>{currentRoute?.title}</HeaderPageTitle>
                 <DesktopChildren>{children}</DesktopChildren>
                 <Flex width="300px" gap={20} jc="flex-end">

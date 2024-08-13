@@ -1,11 +1,5 @@
 import styled from 'styled-components';
 
-export const SkeletonPageAnimationStyled = styled.div`
-    width: 100%;
-    height: 100%;
-    position: relative;
-`;
-
 export const SkeletonSection = styled.div<{ $background?: string }>`
     position: absolute;
     width: 100%;

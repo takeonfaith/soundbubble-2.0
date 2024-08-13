@@ -89,7 +89,19 @@ export const SidebarSectionTitle = styled.div`
     opacity: 0.3;
     color: ${({ theme }) => theme.colors.textColor};
     padding: 4px 10px;
+    padding-right: 0px;
     text-transform: uppercase;
+    transition: 0.2s opacity;
+
+    &.clickable {
+        cursor: pointer;
+
+        @media (hover: hover) {     
+            &:hover {
+                opacity: 0.5;
+            }
+        }
+    }
 `;
 
 export const PlaylistsStyled = styled.div`

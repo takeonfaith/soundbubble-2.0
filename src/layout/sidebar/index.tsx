@@ -5,12 +5,14 @@ import { groupByField } from '@shared/funcs/groupByField';
 import { usePrivateAction } from '@shared/hooks/usePrivateAction';
 import { IconPlus } from '@tabler/icons-react';
 import { modalModel } from 'layout/modal/model';
+import { useNavigate } from 'react-router';
 import { menuRoutes } from 'routing/routes';
 import { chatModel } from '../../entities/chat/model';
 import { PlaylistItem } from '../../entities/playlist/ui';
 import { userModel } from '../../entities/user/model';
 import { CreatePlaylistModal } from '../../features/createPlaylistModal';
 import { ThemeButton } from '../../features/themeButton';
+import { NavigationTitle } from '../../shared/components/navigationTitle';
 import {
     LogoWrapper,
     NotificationBadge,
@@ -28,6 +30,7 @@ export const Sidebar = () => {
     const { loggedIn } = usePrivateAction();
     const [ownPlaylists] = userModel.useOwnPlaylists();
     const chatUnreadCount = chatModel.useChatUnreadCount();
+    const navigate = useNavigate();
 
     const notificationsDic: Record<string, number> = {
         chat: chatUnreadCount,
@@ -73,7 +76,15 @@ export const Sidebar = () => {
 
             <SidebarSection>
                 <Flex jc="space-between" width="100%">
-                    <SidebarSectionTitle>Your Playlists</SidebarSectionTitle>
+                    <NavigationTitle showNavigation to="/liked/playlists">
+                        <SidebarSectionTitle
+                            onClick={() => navigate('/liked/playlists')}
+                            className="clickable"
+                        >
+                            Your Playlists
+                        </SidebarSectionTitle>
+                    </NavigationTitle>
+
                     <Button
                         className="add-playlist"
                         onClick={handleAddPlaylist}

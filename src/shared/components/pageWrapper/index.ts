@@ -10,10 +10,10 @@ export const PageWrapper = styled.div`
 export const ContentWrapper = styled.div`
     padding: 20px var(--page-padding);
     width: 100%;
-    height: fit-content;
     display: flex;
     flex-direction: column;
     gap: 2px;
+    position: relative;
 
     @media (max-width: 1000px) {
         padding: 0 20px;
