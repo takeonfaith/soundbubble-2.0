@@ -69,14 +69,13 @@ export const PlaylistItem = ({
         <PlaylistStyled
             as={as}
             onClick={handleClick}
-            $orientation={orientation}
-            className={isCurrentPlaying ? 'playing' : ''}
+            className={`${orientation} ${isCurrentPlaying ? 'playing' : ''}`}
             to={`/playlist/${id}`}
             $color1={imageColors?.[0]}
         >
             {!children && (
                 <ControlButton
-                    $orientation={orientation}
+                    className={`${orientation}`}
                     $color={imageColors?.[0]}
                     onClick={handleLoadPlaylistSongs}
                 >

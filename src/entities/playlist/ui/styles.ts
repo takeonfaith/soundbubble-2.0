@@ -1,24 +1,15 @@
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { Button } from '../../../shared/components/button';
-import { TOrientation } from '../../user/types';
 import { PLAYLIST_RADIUS } from '../constants';
 
-export const ControlButton = styled(Button)<{
-    $color: string;
-    $orientation: TOrientation;
-}>`
+export const ControlButton = styled(Button)<{ $color: string }>`
     position: absolute;
-    bottom: ${({ $orientation }) =>
-        $orientation === 'vertical' ? '60px' : '6px'};
-    left: ${({ $orientation }) =>
-        $orientation === 'vertical' ? '16px' : 'auto'};
-    right: ${({ $orientation }) =>
-        $orientation === 'vertical' ? 'auto' : '6px'};
-    width: ${({ $orientation }) =>
-        $orientation === 'vertical' ? '40px' : '35px'};
-    height: ${({ $orientation }) =>
-        $orientation === 'vertical' ? '40px' : '35px'};
+    bottom: 6px;
+    left: auto;
+    right: 6px;
+    width: 35px;
+    height: 35px;
     min-height: auto;
     border-radius: 100px;
     color: ${({ $color }) => $color};
@@ -27,35 +18,44 @@ export const ControlButton = styled(Button)<{
     opacity: 0;
     z-index: 10;
 
+    &.vertical {
+        height: 40px;
+        width: 40px;
+        right: auto;
+        left: 16px;
+        bottom: 60px;
+    }
+
     &:hover {
         background: ${({ theme }) => theme.colors.pageBackground2};
     }
 `;
 
-export const PlaylistStyled = styled(Link)<{
-    $color1: string;
-    $orientation: TOrientation;
-}>`
+export const PlaylistStyled = styled(Link)<{ $color1: string }>`
+    --size: 34px;
+
     gap: 12px;
     display: flex;
-    flex-direction: ${({ $orientation }) =>
-        $orientation === 'vertical' ? 'column' : 'row'};
-    align-items: ${({ $orientation }) =>
-        $orientation === 'vertical' ? 'flex-start' : 'center'};
+    flex-direction: row;
+    align-items: center;
     height: fit-content;
     color: ${({ theme }) => theme.colors.textColor};
     position: relative;
     text-decoration: none;
-    --size: ${({ $orientation }) =>
-        $orientation === 'vertical' ? 'calc(100vw / 8 + 3px)' : '34px'};
-
-    width: ${({ $orientation }) =>
-        $orientation === 'vertical' ? 'var(--size)' : '100%'};
-    padding: ${({ $orientation }) =>
-        $orientation === 'vertical' ? '0' : '6px 8px'};
+    width: 100%;
+    padding: 6px 8px;
     border-radius: 6px;
-    overflow: ${({ $orientation }) =>
-        $orientation === 'vertical' ? 'none' : 'hidden'};
+    overflow: hidden;
+
+    &.vertical {
+        --size: calc((100vw - var(--sidebar-width) - 148px) / 6);
+
+        overflow: visible;
+        padding: 0;
+        width: var(--size);
+        align-items: flex-start;
+        flex-direction: column;
+    }
 
     &.playing {
         ${ControlButton} {
@@ -86,24 +86,38 @@ export const PlaylistStyled = styled(Link)<{
     }
 
     &:hover {
-        background: ${({ $orientation, theme }) =>
-            $orientation === 'horizontal' ? theme.colors.hover : ''};
+        &.horizontal {
+            background: ${({ theme }) => theme.colors.hover};
+        }
+
+        &.vertical {
+            background: none;
+        }
 
         ${ControlButton} {
             opacity: 1;
         }
     }
 
-    @media (max-width: 1200px) {
-        --size: ${({ $orientation }) =>
-            $orientation === 'vertical' ? 'calc(100vw / 6)' : '34px'};
+    @media (max-width: 1400px) {
+        &.vertical {
+            --size: calc((100vw - var(--sidebar-width) - 132px) / 5);
+        }
     }
 
-    @media (max-width: 800px) {
-        --size: ${({ $orientation }) =>
-            $orientation === 'vertical' ? 'calc(100vw / 3 - 28px)' : '34px'};
+    @media (max-width: 1180px) {
+        &.vertical {
+            --size: calc((100vw - var(--sidebar-width) - 116px) / 4);
+        }
+    }
 
+    @media (max-width: 1000px) {
         padding: 8px 0;
+
+        &.vertical {
+            overflow: hidden;
+            --size: calc(100vw / 4 - 22px);
+        }
 
         .general-cover {
             min-width: 40px;
@@ -115,9 +129,16 @@ export const PlaylistStyled = styled(Link)<{
         }
     }
 
+    @media (max-width: 768px) {
+        &.vertical {
+            --size: calc(100vw / 3 - 27px);
+        }
+    }
+
     @media (max-width: 500px) {
-        --size: ${({ $orientation }) =>
-            $orientation === 'vertical' ? 'calc(100vw / 2 - 30px)' : '34px'};
+        &.vertical {
+            --size: calc(100vw / 2 - 32px);
+        }
     }
 `;
 

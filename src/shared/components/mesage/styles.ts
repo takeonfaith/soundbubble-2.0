@@ -10,4 +10,10 @@ export const MessageStyled = styled.div<{ background: string }>`
     gap: 10px;
     background: ${({ background }) => background};
     color: ${({ color }) => color};
+    font-weight: 300;
+
+    svg {
+        width: 22px;
+        height: 22px;
+    }
 `;

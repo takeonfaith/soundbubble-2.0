@@ -1,6 +1,8 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const AddSongModalStyled = styled.div`
-	font-size: 0.5rem;
-
-`
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+`;

@@ -1,6 +1,6 @@
 import {
     IconAlertTriangle,
-    IconCheck,
+    IconCircleCheck,
     IconExclamationCircle,
     IconInfoCircle,
 } from '@tabler/icons-react';
@@ -17,7 +17,7 @@ type Props = {
 
 type MessageData = {
     [key in MessageType]: {
-        color: 'blue' | 'green' | 'red' | 'yellow';
+        color: 'blue' | 'green' | 'red' | 'orange';
         icon: JSX.Element;
     };
 };
@@ -25,14 +25,14 @@ type MessageData = {
 const MESSAGE_DATA: MessageData = {
     success: {
         color: 'green',
-        icon: <IconCheck />,
+        icon: <IconCircleCheck />,
     },
     error: {
         color: 'red',
         icon: <IconExclamationCircle />,
     },
     warning: {
-        color: 'yellow',
+        color: 'orange',
         icon: <IconAlertTriangle />,
     },
     info: {

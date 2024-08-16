@@ -19,12 +19,14 @@
     "effector": "^23.1.0",
     "effector-react": "^23.1.0",
     "firebase": "^10.7.1",
+    "patronum": "^2.2.0",
     "react": "^18.2.0",
     "react-color-extractor": "^1.1.2",
     "react-dom": "^18.2.0",
     "react-router": "^6.21.0",
     "react-router-dom": "^6.21.0",
     "styled-components": "^6.1.1",
+    "use-mouse-delta": "^1.1.2",
     "vite-tsconfig-paths": "^4.2.2"
   },
   "devDependencies": {

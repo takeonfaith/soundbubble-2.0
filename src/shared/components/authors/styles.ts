@@ -12,10 +12,17 @@ export const AuthorsStyled = styled.div<{
     display: flex;
     align-items: center;
     gap: 4px;
-    width: ${({ $width }) => $width ?? '100%'};
+    width: ${({ $width }) => $width ?? 'fit-content'};
     opacity: 0.5;
     pointer-events: ${({ $disableOnDesktop }) =>
         $disableOnDesktop ? 'none' : 'all'};
+
+    @media (hover: hover) {
+        &:hover {
+            background: ${({ theme }) => theme.colors.darkHover};
+            border-radius: 4px;
+        }
+    }
 
     @media (max-width: 1000px) {
         pointer-events: ${({ $disableOnMobile }) =>

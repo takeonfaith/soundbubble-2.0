@@ -1,6 +1,6 @@
 export const DARK_THEME = {
     borderRadius: {
-        mild: '9px',
+        mild: '6px',
         middle: '10px',
         big: '14px',
         huge: '5%',
@@ -21,7 +21,7 @@ export const DARK_THEME = {
         sidebar: '#161616',
         lightHover: '#ffffff1f',
         darkHover: '#0000002b',
-        modal: '#313131',
+        modal: '#101010',
         shadow: '0 0 40px #00000066',
         greyText: '#a2a2a2',
         header: '#1010109e',
@@ -35,22 +35,22 @@ export const DARK_THEME = {
             transparent2: '#5394ff2b',
         },
         purple: {
-            main: '#9332d1',
+            main: '#d38eff',
         },
         red: {
             text: '#ffb3b3',
             transparent: '#ff636314',
-            main: '#d64040',
+            main: '#ff5b5b',
         },
-        yellow: {
+        orange: {
             text: '#ffb3b3',
             transparent: '#ff636314',
-            main: '#d64040',
+            main: '#ffa574',
         },
         green: {
             text: '#ffb3b3',
             transparent: '#ff636314',
-            main: '#d64040',
+            main: '#4de0aa',
         },
     },
 };
@@ -101,15 +101,15 @@ export const LIGHT_THEME: TTheme = {
             transparent: '#ff636314',
             main: '#ff6f6f',
         },
-        yellow: {
-            text: '#ffb3b3',
+        orange: {
+            text: '#9e4e29',
             transparent: '#ff636314',
-            main: '#d64040',
+            main: '#d69c40',
         },
         green: {
-            text: '#ffb3b3',
-            transparent: '#ff636314',
-            main: '#d64040',
+            text: '#358e34',
+            transparent: '#41d9831f',
+            main: '#40d69f',
         },
     },
 };

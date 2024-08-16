@@ -10,6 +10,7 @@ import {
 } from 'firebase/auth';
 import {
     DocumentData,
+    FieldValue,
     QueryFieldFilterConstraint,
     QueryOrderByConstraint,
     collection,
@@ -24,9 +25,9 @@ import {
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { getDataFromDoc } from './database/lib/getDataFromDoc';
 import { TPlaylist } from './entities/playlist/model/types';
+import { TSuggestion } from './entities/search/model/types';
 import { TSong } from './entities/song/model/types';
 import { TSearchHistory, TUser } from './entities/user/model/types';
-import { TSuggestion } from './entities/search/model/types';
 import getUID from './shared/funcs/getUID';
 
 const config: FirebaseOptions = {
@@ -72,6 +73,12 @@ type TStorageFolder =
     | 'songsImages'
     | 'usersImages';
 
+type DataType<T extends TCollections> =
+    | Partial<TCollectionType<T>>
+    | Partial<{
+          [key in keyof TCollectionType<T>]: FieldValue;
+      }>;
+
 export class FB {
     static app = initializeApp(config);
     static auth = getAuth(this.app);
@@ -105,7 +112,7 @@ export class FB {
     static async updateById<T extends TCollections>(
         collectionType: T,
         id: string,
-        data: Partial<Record<keyof TCollectionType<T>, any>>
+        data: DataType<T>
     ) {
         const ref = await this.get(collectionType);
         const docRef = doc(ref, id);

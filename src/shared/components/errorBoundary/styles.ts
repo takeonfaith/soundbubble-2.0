@@ -29,7 +29,7 @@ export const ErrorIcon = styled.div`
 
 export const ErrorTitle = styled.h3`
   font-weight: 300;
-  color: #fff;
+  color: ${({theme})=>theme.colors.textColor};
   font-size: 1.5rem;
 `;
 

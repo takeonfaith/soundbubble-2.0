@@ -80,9 +80,8 @@ export const InputStyled = styled.input<{
     font-size: 0.9rem;
     font-weight: 200;
     width: 100%;
-    border: 1px solid
-        ${({ theme, $hasError }) =>
-            $hasError ? theme.colors.red.text : 'none'};
+    border: ${({ theme, $hasError }) =>
+        $hasError ? `1px solid ${theme.colors.red.text}` : 'none'};
     padding-left: ${({ $hasIcon }) => ($hasIcon ? '40px' : '14px')};
     padding-right: ${({ $hasRightIcon }) => ($hasRightIcon ? '40px' : '14px')};
 
@@ -94,6 +93,5 @@ export const InputStyled = styled.input<{
         height: 43px;
         /* border-radius: 10px; */
         font-size: 0.97rem;
-        
     }
 `;

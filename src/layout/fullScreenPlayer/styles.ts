@@ -25,7 +25,7 @@ export const FullScreenPlayerStyled = styled(BeautifulBackground)`
         &::before {
             content: '';
             display: block;
-            width: 25px;
+            width: 40px;
             height: 5px;
             border-radius: 4px;
             position: absolute;

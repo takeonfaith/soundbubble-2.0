@@ -17,13 +17,13 @@ export const PasswordInput = (props: Props) => {
 
     return (
         <Input
-            {...props}
             label="Password"
             placeholder="Enter password"
             rightIcon={rightIcon}
             onRightIconClick={handleShowPassword}
             type={localType}
             icon={<IconPassword />}
+            {...props}
         />
     );
 };

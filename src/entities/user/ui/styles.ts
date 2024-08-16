@@ -1,62 +1,111 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { TOrientation } from '../types';
 
-export const UserItemStyled = styled(Link)<{ $orientation: TOrientation }>`
-    --size: calc(100vw / 10 - 17px);
+export const UserItemStyled = styled(Link)`
+    --size: calc((100vw - var(--sidebar-width)) / 7 - 38px);
 
     display: flex;
-    flex-direction: ${({ $orientation }) =>
-        $orientation === 'vertical' ? 'column' : 'row'};
+    flex-direction: row;
     align-items: center;
-    gap: ${({ $orientation }) =>
-        $orientation === 'vertical' ? '10px' : '12px'};
+    gap: 12px;
     text-decoration: none;
-    width: ${({ $orientation }) =>
-        $orientation === 'vertical' ? 'var(--size)' : '100%'};
-    padding: ${({ $orientation }) =>
-        $orientation === 'vertical' ? '0' : '6px'};
+    width: 100%;
+    padding: 6px;
     border-radius: ${({ theme }) => theme.borderRadius.big};
 
+    &.vertical {
+        padding: 0;
+        width: var(--size);
+        gap: 10px;
+        flex-direction: column;
+    }
+
     &:hover {
-        background: ${({ theme, $orientation }) =>
-            $orientation === 'horizontal' ? theme.colors.hover : 'none'};
+        &.horizontal {
+            background: ${({ theme }) => theme.colors.hover};
+        }
+
+        &.vertical {
+            background: none;
+        }
     }
 
     h4 {
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
-        font-size: ${({ $orientation }) =>
-            $orientation === 'vertical' ? '1rem' : '0.9rem'};
+        font-size: 0.9rem;
         font-weight: 300;
     }
 
-    @media (max-width: 1200px) {
-        --size: calc(100vw / 7 - 32px);
+    &.vertical {
+        h4 {
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 1450px) {
+        --size: calc((100vw - var(--sidebar-width)) / 6 - 38px);
+    }
+
+    @media (max-width: 1300px) {
+        --size: calc((100vw - var(--sidebar-width)) / 5 - 43px);
+    }
+
+    @media (max-width: 1150px) {
+        --size: calc((100vw - var(--sidebar-width)) / 4 - 43px);
     }
 
     @media (max-width: 1000px) {
-        --size: calc(100vw / 5 - 32px);
+        --size: calc(100vw / 5 - 36px);
 
         h4 {
-            font-size: ${({ $orientation }) =>
-                $orientation === 'horizontal' ? '1rem' : '0.85rem'};
             font-weight: 200;
         }
 
-        span {
+        &.vertical {
+            h4 {
+                font-size: 1rem;
+            }
+        }
+
+        & span {
             font-size: 0.8rem;
         }
     }
 
-    @media (max-width: 800px) {
-        --size: calc(100vw / 5 - 24px);
+    @media (max-width: 850px) {
+        --size: calc(100vw / 4 - 36px);
+
+        h4 {
+            font-weight: 200;
+        }
+
+        &.vertical {
+            h4 {
+                font-size: 1rem;
+            }
+        }
+
+        & span {
+            font-size: 0.8rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        --size: calc(100vw / 4 - 25px);
+
         padding: 4px 0;
 
         .general-cover {
             min-width: 40px;
             min-height: 40px;
+        }
+
+        &.vertical {
+            h4 {
+                font-size: 0.9rem;
+            }
         }
     }
 
@@ -64,10 +113,11 @@ export const UserItemStyled = styled(Link)<{ $orientation: TOrientation }>`
         --size: calc(100vw / 3 - 27px);
     }
 
-    @media (max-width: 400px) {
-        h4 {
-            font-size: ${({ $orientation }) =>
-                $orientation === 'horizontal' ? '1rem' : '0.75rem'};
+    @media (max-width: 500px) {
+        &.vertical {
+            h4 {
+                font-size: 0.85rem;
+            }
         }
     }
 `;

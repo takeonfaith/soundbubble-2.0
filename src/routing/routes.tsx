@@ -67,7 +67,7 @@ export const allRoutes: TRoute[] = [
         private: false,
     },
     {
-        url: 'liked',
+        url: '',
         title: 'Liked',
         icon: <IconHeart />,
         component: <Library />,
@@ -76,7 +76,7 @@ export const allRoutes: TRoute[] = [
         children: [
             {
                 url: '',
-                title: 'Songs',
+                title: 'Liked Songs',
                 icon: <IconMusic />,
                 component: <LikedSongs />,
                 section: 'your music',
@@ -84,7 +84,7 @@ export const allRoutes: TRoute[] = [
             },
             {
                 url: 'playlists',
-                title: 'Playlists',
+                title: 'Liked Playlists',
                 icon: <IconVinyl />,
                 component: <LikedPlaylists />,
                 section: 'your music',
@@ -92,7 +92,7 @@ export const allRoutes: TRoute[] = [
             },
             {
                 url: 'authors',
-                title: 'Authors',
+                title: 'Liked Authors',
                 icon: <IconMicrophone2 />,
                 component: <LikedAuthors />,
                 section: 'your music',

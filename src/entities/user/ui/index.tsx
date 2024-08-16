@@ -50,7 +50,7 @@ export const UserItem = memo(
             <UserItemStyled
                 as={as}
                 to={`/author/${uid}`}
-                $orientation={orientation}
+                className={orientation}
                 onClick={handleClick}
             >
                 <UserCover

@@ -6,13 +6,13 @@ import {
     IconSun,
 } from '@tabler/icons-react';
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { Location, useLocation, useNavigate } from 'react-router';
 import { toggleTheme } from '../../app/theme';
 import { userModel } from '../../entities/user/model';
 import { UserCover } from '../../entities/user/ui/UserCover';
 import { LoginButton } from '../../features/loginButton';
 import { ShareModal } from '../../features/shareModal';
-import { allRoutes } from '../../routing/routes';
+import { allRoutes, TRoute } from '../../routing/routes';
 import { Button } from '../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
 import { Divider } from '../../shared/components/divider';
@@ -84,6 +84,25 @@ const UserContextMenu = () => {
     );
 };
 
+const getCurrentRoute = (
+    allRoutes: TRoute[],
+    location: Location<unknown>
+): TRoute | null => {
+    const { pathname } = location;
+    const splitted = pathname.split('/');
+    for (let i = 0; i < allRoutes.length; i++) {
+        const route = allRoutes[i];
+
+        if (route.children) {
+            const res = getCurrentRoute(route.children, location);
+            if (res) return res;
+        }
+        else if (splitted[1] === route.url) return route;
+    }
+
+    return null;
+};
+
 type Props = {
     children?: React.ReactNode;
     hide?: boolean;
@@ -92,9 +111,7 @@ type Props = {
 export const Header = ({ children, hide }: Props) => {
     const [{ data }] = userModel.useUser();
     const location = useLocation();
-    const currentRoute = allRoutes.find((route) => {
-        return route.url.includes(location.pathname.split('/')[1]);
-    });
+    const currentRoute = getCurrentRoute(allRoutes, location);
 
     const handleOpenUserPopup = (e: Evt<'btn'>) => {
         e.stopPropagation();
@@ -110,7 +127,7 @@ export const Header = ({ children, hide }: Props) => {
             <Flex width="100%" height="50px" jc="space-between" gap={30}>
                 <HeaderPageTitle>{currentRoute?.title}</HeaderPageTitle>
                 <DesktopChildren>{children}</DesktopChildren>
-                <Flex width="150px" gap={20} jc="flex-end">
+                <Flex width="300px" gap={20} jc="flex-end">
                     {data && (
                         <Button $width="40px" onClick={handleOpenUserPopup}>
                             <UserCover

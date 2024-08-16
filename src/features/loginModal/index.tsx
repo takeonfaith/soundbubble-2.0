@@ -1,31 +1,71 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button } from '@components/button';
 import { Flex } from '@components/flex';
 
-import { userModel } from '../../entities/user/model';
-import { Form } from '../../shared/components/form';
+import {
+    IconBrandSafari,
+    IconMessageCircle,
+    IconMicrophone2,
+    IconMusic,
+    IconVinyl,
+} from '@tabler/icons-react';
 import { useEffect } from 'react';
+import { userModel } from '../../entities/user/model';
 import { modalModel } from '../../layout/modal/model';
+import { Button } from '../../shared/components/button';
+import { DefaultButton } from '../../shared/components/button/DefaultButton';
+import { Form } from '../../shared/components/form';
+import { Logo } from '../../shared/components/logo';
+import { Subtext } from '../../shared/components/subtext';
+import { SignUpModal } from '../signUpModal';
+import { ForgotPasswordModal } from './ForgotPasswordModal';
+import {
+    Blocks,
+    BlockStyled,
+    LoginButtons,
+    LoginModalStyled,
+    PARTICLES_QUANTITY,
+    PromoStyled,
+    RightSideStyled,
+} from './styles';
 
 type Props = {
     actionAfterLogin?: (params?: unknown[]) => unknown;
+    title?: string;
 };
 
 const fields = [
     {
-        id: 'Email',
+        id: 'email',
         type: 'email',
         required: true,
     },
     {
-        id: 'Password',
+        id: 'password',
         type: 'password',
+        label: 'Password',
+        placeholder: 'Enter your password',
         required: true,
     },
 ] as const;
 
-export const LoginModal = ({ actionAfterLogin }: Props) => {
+const Block = ({ icon }: { icon: React.ReactNode }) => {
+    return <BlockStyled className="block">{icon}</BlockStyled>;
+};
+
+export const LoginModal = ({
+    actionAfterLogin,
+    title = 'Welcome back to Soundbubble',
+}: Props) => {
     const [{ data, error }, _, loading] = userModel.useUser();
+
+    const handleOpenSignUp = () => {
+        modalModel.events.open({
+            title: 'Sign Up',
+            content: <SignUpModal />,
+            sizeX: 's',
+            sizeY: 's',
+        });
+    };
 
     useEffect(() => {
         if (data) {
@@ -38,31 +78,79 @@ export const LoginModal = ({ actionAfterLogin }: Props) => {
     }, [actionAfterLogin, data]);
 
     return (
-        <Flex
-            d="column"
-            width="100%"
-            jc="space-between"
-            height="100%"
-            gap={20}
-            padding="0 25px"
-        >
-            <Flex d="column" jc="center" width="100%" height="350px" gap={20}>
-                <Form
-                    loading={loading}
-                    submitErrorMessage={error?.message}
-                    fields={fields}
-                    submitText='Login'
-                    onSumbit={(obj) => {
-                        console.log(obj);
+        <LoginModalStyled>
+            <PromoStyled>
+                <Logo short />
+                <Blocks>
+                    <Block icon={<IconMusic />} />
+                    <Block icon={<IconVinyl />} />
+                    <Block icon={<IconMicrophone2 />} />
+                    <Block icon={<IconBrandSafari />} />
+                    <Block icon={<IconMessageCircle />} />
 
-                        userModel.events.login({
-                            email: obj.Email,
-                            password: obj.Password,
-                        });
-                    }}
-                />
-            </Flex>
-            <Button>Don't have an account</Button>
-        </Flex>
+                    <div className="particles">
+                        {Array.from(Array(PARTICLES_QUANTITY)).map(
+                            (_, index) => {
+                                return <div className="particle" key={index} />;
+                            }
+                        )}
+                    </div>
+                </Blocks>
+            </PromoStyled>
+            <RightSideStyled>
+                {!error?.message && (
+                    <Flex d="column" gap={10}>
+                        <div className="emoji">👋</div>
+                        <h2>{title}</h2>
+                        <Subtext style={{ fontSize: '1rem' }}>
+                            Please enter your details
+                        </Subtext>
+                    </Flex>
+                )}
+                <Flex
+                    height={error?.message ? '288px' : '188px'}
+                    jc="center"
+                    d="column"
+                    width="100%"
+                    gap={20}
+                    style={{ marginBottom: '90px', position: 'relative' }}
+                >
+                    <Form
+                        loading={loading}
+                        submitErrorMessage={error?.message}
+                        fields={fields}
+                        focusOnField="email"
+                        submitText="Login"
+                        onSumbit={(obj) => {
+                            userModel.events.login(obj);
+                        }}
+                    />
+                    <Button
+                        $height="10px"
+                        className="forgot-password"
+                        $width="fit-content"
+                        onClick={() =>
+                            modalModel.events.open({
+                                title: 'Forgot password',
+                                content: <ForgotPasswordModal />,
+                                sizeX: 's',
+                                sizeY: 's',
+                            })
+                        }
+                    >
+                        Forgot password?
+                    </Button>
+                </Flex>
+                <LoginButtons>
+                    <DefaultButton
+                        appearance="outline"
+                        onClick={handleOpenSignUp}
+                    >
+                        Don't have an account
+                    </DefaultButton>
+                    <DefaultButton appearance="primary" className='primary'>Login</DefaultButton>
+                </LoginButtons>
+            </RightSideStyled>
+        </LoginModalStyled>
     );
 };

@@ -40,7 +40,7 @@ export const useForm = <T extends Field>({
     const validateFields = () => {
         const errors: Record<string, string> = {};
         Object.keys(fieldObjects).forEach((fieldName) => {
-            const { value, required, validation, type } =
+            const { value, required, validation, type, label } =
                 fieldObjects[fieldName as T['id']];
 
             if (value.length === 0 && required) {
@@ -48,9 +48,7 @@ export const useForm = <T extends Field>({
                     fieldObjects[fieldName as T['id']].label
                 } is required`;
             } else if (type === 'email' && !value.includes('@')) {
-                errors[
-                    fieldName
-                ] = `${fieldName} should be a valid email address`;
+                errors[fieldName] = `${label} should be a valid email address`;
             } else if (validation && validation(value)) {
                 errors[fieldName] = validation(value);
             }

@@ -1,8 +1,11 @@
+import { AuthorsInput } from '../../../features/authorsInput';
 import { EmailInput } from '../../../features/emailInput';
 import { PasswordInput } from '../../../features/passwordInput/PasswordInput';
 import { DefaultButton } from '../button/DefaultButton';
+import { DateInput } from '../dateInput';
 import { Input } from '../input';
 import { Message } from '../mesage';
+import { Textarea } from '../textarea';
 import { Field, FormProps } from './types';
 import { useForm } from './useForm';
 
@@ -10,6 +13,9 @@ const COMPONENTS = {
     email: EmailInput,
     password: PasswordInput,
     text: Input,
+    textarea: Textarea,
+    date: DateInput,
+    authors: AuthorsInput,
 };
 
 export const Form = <T extends Field>(props: FormProps<T>) => {
@@ -33,6 +39,7 @@ export const Form = <T extends Field>(props: FormProps<T>) => {
             )}
             {fields.map((field) => {
                 const Field = COMPONENTS[field.type];
+                
                 return (
                     <Field
                         ref={field.id === focusOnField ? fieldRef : undefined}
@@ -43,17 +50,18 @@ export const Form = <T extends Field>(props: FormProps<T>) => {
                         label={field.label ?? undefined}
                         placeholder={field.placeholder}
                         key={field.id}
+                        focusOnLoad={focusOnField === field.id}
                     />
                 );
             })}
-            <DefaultButton
+            {/* <DefaultButton
                 onClick={handleSumbit}
                 appearance="primary"
                 loading={loading}
                 disabled={!allRequiredFieldsAreFilled}
             >
                 {submitText}
-            </DefaultButton>
+            </DefaultButton> */}
         </>
     );
 };

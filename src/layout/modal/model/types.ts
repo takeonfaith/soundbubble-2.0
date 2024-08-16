@@ -1,7 +1,6 @@
-import React from "react";
-
-export type TStore = {
-  opened: boolean;
-  title: string;
-  content: React.ReactNode;
+export type TModal = {
+    title: string;
+    content: React.ReactNode;
+    sizeX?: TSize;
+    sizeY?: TSize;
 };

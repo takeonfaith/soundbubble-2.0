@@ -1,6 +1,7 @@
 import { Layout } from 'layout/Layout';
 import { Route, Routes } from 'react-router';
 import { TRoute, allRoutes } from './routes';
+import { Page404 } from './404';
 
 const RenderRoute = (route: TRoute) => {
     return (
@@ -17,7 +18,7 @@ export const AppRouter = () => {
                 {allRoutes.map((route) => {
                     return RenderRoute(route);
                 })}
-                <Route path="*" element={<>404</>} />
+                <Route path="*" element={<Page404 />} />
             </Route>
         </Routes>
     );

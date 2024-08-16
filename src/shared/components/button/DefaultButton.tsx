@@ -1,8 +1,8 @@
 import { Loading } from '@components/loading';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 import { Button } from '.';
 
-type ButtonAppearance = 'primary' | 'secondary' | 'ghost';
+type ButtonAppearance = 'primary' | 'secondary' | 'outline';
 
 const AnimationWrapper = styled.div`
     transition: 0.2s transform, 0.2s opacity;
@@ -39,24 +39,17 @@ type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 export const DefaultButton = ({
     loading,
     children,
-    appearance = 'ghost',
+    appearance = 'outline',
     disabled,
     width,
     ...restProps
 }: Props) => {
-    const theme = useTheme();
-    const backgrounds: Record<ButtonAppearance, string> = {
-        primary: theme.colors.blue.action,
-        secondary: theme.colors.hover,
-        ghost: 'transparent',
-    };
-
     return (
         <Button
             disabled={disabled || loading}
-            $background={backgrounds[appearance]}
             $width={width}
             color={appearance === 'primary' ? '#fff' : ''}
+            className={`${restProps.className} ${appearance}`}
             {...restProps}
         >
             <AnimationWrapper className={loading ? 'show' : 'hide'}>

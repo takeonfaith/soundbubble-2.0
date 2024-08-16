@@ -11,12 +11,40 @@ import { Button } from '../../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../../shared/components/defaultContextMenu';
 import { Divider } from '../../../shared/components/divider';
 import { ENTITIES_ICONS } from '../../../shared/constants/icons';
-import { TSong } from '../model/types';
+import { TAuthor, TSong } from '../model/types';
 import { userModel } from '../../user/model';
 import { modalModel } from '../../../layout/modal/model';
 import { ShareModal } from '../../../features/shareModal';
 import { popupModel } from '../../../layout/popup/model';
 import { AddSongToPlaylistModal } from '../../../features/addSongToPlaylistModal';
+import { useNavigate } from 'react-router';
+import { Flex } from '../../../shared/components/flex';
+import { UserItem } from '../../user/ui';
+
+const AuthorsModal = ({ authors }: { authors: TAuthor[] | undefined }) => {
+    if (!authors) return null;
+
+    return (
+        <Flex
+            d="column"
+            gap={10}
+            width="100%"
+            height="calc(100% - 68px)"
+            padding="20px"
+        >
+            {authors.map((author) => {
+                return (
+                    <UserItem
+                        key={author.uid}
+                        user={author}
+                        onClick={() => modalModel.events.close()}
+                        orientation="horizontal"
+                    />
+                );
+            })}
+        </Flex>
+    );
+};
 
 type Props = {
     song: TSong | null;
@@ -26,6 +54,7 @@ export const SongMoreContextMenu = ({ song }: Props) => {
     const [{ data }] = userModel.useUser();
     const [library] = userModel.useSongLibrary();
     const isLiked = library?.find((s) => s.id === song?.id);
+    const navigate = useNavigate();
 
     const handleShare = () => {
         modalModel.events.open({
@@ -40,6 +69,18 @@ export const SongMoreContextMenu = ({ song }: Props) => {
             title: `Add "${song?.name}" to playlist`,
             content: <AddSongToPlaylistModal song={song} />,
         });
+        popupModel.events.close();
+    };
+
+    const handleOpenAuthors = () => {
+        if ((song?.authors.length ?? 0) > 1) {
+            modalModel.events.open({
+                title: `${song?.name ?? '-'} authors`,
+                content: <AuthorsModal authors={song?.authors} />,
+            });
+        } else {
+            navigate(`/author/${song?.authors[0].uid}`);
+        }
         popupModel.events.close();
     };
 
@@ -80,7 +121,7 @@ export const SongMoreContextMenu = ({ song }: Props) => {
                 <IconInfoCircle />
                 Info
             </Button>
-            <Button>
+            <Button onClick={handleOpenAuthors}>
                 {ENTITIES_ICONS.author}
                 Authors
             </Button>

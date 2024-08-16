@@ -1,6 +1,7 @@
 import styled from "styled-components";
+import { Button } from "../button";
 
-export const CloseButtonStyled = styled.button`
+export const CloseButtonStyled = styled(Button)`
   position: absolute;
   top: 3%;
   right: 3%;

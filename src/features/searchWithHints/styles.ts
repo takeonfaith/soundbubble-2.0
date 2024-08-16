@@ -6,14 +6,16 @@ export const SearchWithHintsStyled = styled.div`
 `;
 
 export const HintsStyled = styled.ul`
-    width: 445px;
+    width: 100%;
     background: ${({ theme }) => theme.colors.pageTopButton};
     height: fit-content;
-    min-height: 60px;
+    min-height: 45px;
     max-height: 568px;
     overflow-y: auto;
     padding: 4px;
     border-radius: ${({ theme }) => theme.borderRadius.mild};
+    position: fixed;
+    transform: translateY(4px);
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -22,8 +24,6 @@ export const HintsStyled = styled.ul`
     z-index: 1;
     box-shadow: ${({ theme }) => theme.colors.shadow};
     animation: appear 0.3s;
-    position: fixed;
-    transform: translateY(4px);
 
     @keyframes appear {
         0% {
@@ -48,7 +48,7 @@ export const HintsStyled = styled.ul`
 
 export const HintItemStyled = styled.li`
     padding: 6px 12px;
-    min-height: 52px;
+    min-height: 42px;
     border-radius: ${({ theme }) => `calc(${theme.borderRadius.mild} - 2px)`};
     display: flex;
     align-items: center;

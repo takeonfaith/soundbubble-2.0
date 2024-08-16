@@ -20,7 +20,6 @@ export const CenterButton = styled.div`
 
     &.with-preview {
         opacity: 0;
-        background: ;
     }
 
     svg {
@@ -38,6 +37,7 @@ export const InputWrapper = styled.div`
     justify-content: center;
     border-radius: 10px;
     overflow: hidden;
+    border: 3px dashed ${({ theme }) => theme.colors.border};
 
     &:hover {
         ${CenterButton} {
@@ -49,8 +49,8 @@ export const InputWrapper = styled.div`
 `;
 
 export const PhotoInputStyled = styled.label`
-    width: 240px;
-    height: 240px;
+    width: 220px;
+    height: 220px;
     border-radius: ${({ theme }) => theme.borderRadius.middle};
     background: ${({ theme }) => theme.colors.input};
     display: flex;

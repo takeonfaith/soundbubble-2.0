@@ -7,26 +7,29 @@ type Props = {
     value: string;
     required: boolean;
     error: string | undefined;
+    focusOnLoad?: boolean;
 };
 
 export const EmailInput = (props: Props) => {
-    const { value, onChange } = props;
+    const { value, onChange, focusOnLoad } = props;
     const suggestions = getSuggestions(value);
 
     return (
         <SearchWithHints
             {...props}
             suggestions={suggestions}
+            focusOnLoad={focusOnLoad}
             historySuggestions={[]}
             areSuggestionsLoading={false}
             onSumbit={(val) => onChange(val)}
             icon={<IconAt />}
-            placeholder='Enter your email'
+            placeholder="Enter your email"
             label="Email"
             hintIcon={null}
             initialValue={value}
             disableCopyButton
             type="email"
+            autoCapitalize="false"
         />
     );
 };

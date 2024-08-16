@@ -1,4 +1,10 @@
-export type FieldType = 'email' | 'password' | 'text';
+export type FieldType =
+    | 'email'
+    | 'password'
+    | 'text'
+    | 'textarea'
+    | 'date'
+    | 'authors'
 
 export type Field = {
     type: FieldType;

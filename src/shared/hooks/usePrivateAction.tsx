@@ -9,8 +9,15 @@ export const usePrivateAction = () => {
         <T extends (params: unknown[]) => unknown>(fn?: T) =>
         () => {
             modalModel.events.open({
-                title: 'Log in',
-                content: <LoginModal actionAfterLogin={fn} />,
+                title: '',
+                content: (
+                    <LoginModal
+                        actionAfterLogin={fn}
+                        title={fn ? 'Log in to your account first' : undefined}
+                    />
+                ),
+                sizeY: 's',
+                sizeX: 'l',
             });
         };
 

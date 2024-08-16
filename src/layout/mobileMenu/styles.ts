@@ -2,6 +2,10 @@ import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const MobileMenuStyled = styled.nav`
+    @media (min-width: 1001px) {
+        display: none;
+    }
+
     min-height: 80px;
     height: 80px;
     width: 100%;

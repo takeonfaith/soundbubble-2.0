@@ -1,4 +1,5 @@
 import {
+    and,
     getDocs,
     increment,
     limit,
@@ -23,9 +24,9 @@ import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { uniqueArrayObjectsByField } from '../../shared/funcs/uniqueArrayObjectsByFields';
 
 export class SearchSuggestions {
-    static ref = FB.get('search');
+    private static ref = FB.get('search');
 
-    static async getTopAuthorSongs(songIds: string[] | undefined) {
+    private static async getTopAuthorSongs(songIds: string[] | undefined) {
         try {
             if (!songIds?.length) return [];
 
@@ -36,7 +37,7 @@ export class SearchSuggestions {
         }
     }
 
-    static getEntitiesReqs(suggestions: TSuggestion[]) {
+    private static getEntitiesReqs(suggestions: TSuggestion[]) {
         const requests: Record<TPlace, (uid: string) => Promise<TEntity>> = {
             users: Database.Users.getUserByUid,
             playlists: Database.Playlists.getPlaylistByUid,
@@ -50,15 +51,24 @@ export class SearchSuggestions {
 
     static async getSearchSuggestions(
         queryStr: string,
-        history: TSuggestion[]
+        history: TSuggestion[],
+        places?: TPlace[]
     ) {
         try {
+            const placeRestrictions = [];
+            if (places?.length) {
+                placeRestrictions.push(where('place', 'in', places));
+            }
+
             const q = query(
                 this.ref,
-                where(
-                    'variantsOfName',
-                    'array-contains',
-                    normalizeString(queryStr)
+                and(
+                    where(
+                        'variantsOfName',
+                        'array-contains',
+                        normalizeString(queryStr)
+                    ),
+                    ...placeRestrictions
                 ),
                 orderBy('rank', 'desc'),
                 limit(MAX_SEARCH_HISTORY_QUANTITY)

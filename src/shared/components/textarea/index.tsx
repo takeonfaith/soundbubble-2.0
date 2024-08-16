@@ -1,18 +1,60 @@
-import { Label, Required } from "../input/styles"
-import { TextareaStyled, TextareaWrapper } from "./styles"
+import { forwardRef, RefObject, useState } from 'react';
+import { InputError, Label, Required } from '../input/styles';
+import { TextareaStyled, TextareaWrapper } from './styles';
 
-type Props = React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement> & {
-	label?: string
-}
+type Props = Omit<
+    React.DetailedHTMLProps<
+        React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+        HTMLTextAreaElement
+    >,
+    'onChange'
+> & {
+    label?: string;
+    error?: string | null;
+    onChange?: (value: string) => void;
+};
 
-export const Textarea = ({ label, ...props }: Props) => {
-	return <TextareaWrapper>
-		{label && (
-			<Label>
-				{label} <Required>{props.required ? "*" : ""}</Required>
-			</Label>
-		)}
+export const Textarea = forwardRef(
+    ({ label, onChange, error, required, ...props }: Props, ref) => {
+        const [height, setHeight] = useState('auto');
 
-		<TextareaStyled {...props} />
-	</TextareaWrapper>
-}
+        const handleResize = (
+            event: React.KeyboardEvent<HTMLTextAreaElement>
+        ) => {
+            if (event.currentTarget.value.length === 0) {
+                setHeight('auto');
+            } else {
+                setHeight(`${event.currentTarget.scrollHeight}px`);
+            }
+        };
+
+        const handleChange = (e: Evt<'textarea'>) => {
+            onChange?.(e.target.value);
+        };
+
+        return (
+            <TextareaWrapper>
+                {label && (
+                    <Label>
+                        {error && <InputError>{error}</InputError>}
+                        {!error && (
+                            <>
+                                {label}{' '}
+                                <Required>{required ? '*' : ''}</Required>
+                            </>
+                        )}
+                    </Label>
+                )}
+
+                <TextareaStyled
+                    {...props}
+                    ref={ref as RefObject<HTMLTextAreaElement>}
+                    style={{ height }}
+                    onKeyDown={handleResize}
+                    onKeyUp={handleResize}
+                    onChange={handleChange}
+                />
+            </TextareaWrapper>
+        );
+    }
+);
