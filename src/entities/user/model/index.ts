@@ -241,7 +241,7 @@ sample({
 sample({
     clock: login,
     source: $user,
-    fn: (store) => ({ ...store }),
+    fn: (store) => ({ ...store, error: null }),
     target: $user,
 });
 
@@ -300,7 +300,7 @@ sample({
     source: $ownPlaylists,
     fn: (store, playlist) => {
         console.log(playlist);
-        
+
         return [playlist, ...store];
     },
     target: $ownPlaylists,

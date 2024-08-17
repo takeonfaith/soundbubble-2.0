@@ -4,33 +4,37 @@ export type FieldType =
     | 'text'
     | 'textarea'
     | 'date'
-    | 'authors'
+    | 'authors';
 
-export type Field = {
+export type TField = {
     type: FieldType;
     id: string;
     required: boolean;
     label?: string;
     placeholder?: string;
-    validation?: (value: string) => string;
+    validation?: (
+        value: string,
+        label: string | undefined,
+        fieldObj: FieldObj<TField>
+    ) => string;
 };
 
-export type FieldObj<T extends Field> = {
+export type FieldObj<T extends TField> = {
     [key in T['id']]: T & {
         value: string;
         error: string | undefined;
     };
 };
 
-export type SubmitObj<T extends Field> = {
+export type SubmitObj<T extends TField> = {
     [key in T['id']]: string;
 };
 
-export type FormProps<T extends Field> = {
+export type FormProps<T extends TField> = {
     fields: readonly T[];
-    submitErrorMessage: string | undefined;
-    loading?: boolean;
-    submitText: string;
-    focusOnField?: T['id'];
-    onSumbit: (value: SubmitObj<T>) => void;
+    sumbitError?: string | undefined;
+    valueObj: FieldObj<T>;
+    handleChange: (
+        key: string
+    ) => (val: string | React.ChangeEvent<HTMLInputElement>) => void;
 };

@@ -1,9 +1,9 @@
 import React from 'react';
-import { TSuggestion } from '../../entities/search/model/types';
 import { HintItem } from './HintItem';
+import { TExtendedSuggestion } from './types';
 
 type Props = {
-    suggestions: TSuggestion[];
+    suggestions: TExtendedSuggestion[];
     selected: number | null;
     startIndex?: number;
     isSearchHistory?: boolean;

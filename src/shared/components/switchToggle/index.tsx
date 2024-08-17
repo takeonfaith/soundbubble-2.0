@@ -9,7 +9,7 @@ const SwitchToggleStyled = styled.label`
     width: 56px;
     height: 32px;
     border-radius: 20px;
-    background-color: ${({ theme }) => theme.colors.input};
+    background-color: ${({ theme }) => theme.colors.border};
     position: relative;
     cursor: pointer;
     transition: 0.2s;
@@ -18,13 +18,13 @@ const SwitchToggleStyled = styled.label`
   .circle {
     width: 24px;
     height: 24px;
-    background: grey;
+    background: ${({ theme }) => theme.colors.greyText};
     border-radius: 100%;
     position: absolute;
     top: 4px;
     left: 4px;
     transition: 0.2s;
-    box-shadow: 0 0px 10px 0 #bcbcbc;
+    /* box-shadow: 0 0px 10px 0 #bcbcbc; */
   }
 
   input:checked + .switchToggle .circle {

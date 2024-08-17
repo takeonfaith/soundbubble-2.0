@@ -5,6 +5,7 @@ import { Flex } from '../../shared/components/flex';
 import { Form } from '../../shared/components/form';
 import { PasswordStrength } from './PasswordStrength';
 import { SignUpModalStyled } from './styles';
+import { SwitchToggle } from '../../shared/components/switchToggle';
 
 const fields = [
     {

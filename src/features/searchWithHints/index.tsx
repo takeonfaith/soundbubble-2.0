@@ -43,7 +43,7 @@ export const SearchWithHints = (props: SearchSuggestionProps) => {
                 onChange={handleChange}
             />
             {showSuggestions && allSuggestions.length > 0 && (
-                <HintsStyled style={{ width: ref.current?.clientWidth }}>
+                <HintsStyled>
                     <SuggestionList
                         suggestions={visibleSearchHistory}
                         selected={selectedSuggestion}

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IconArrowUpLeft, IconHistory, IconSearch } from '@tabler/icons-react';
-import { TSuggestion } from '../../entities/search/model/types';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
 import { HintIcon, HintItemStyled, HintName } from './styles';
+import { TExtendedSuggestion } from './types';
 
 type Props = {
-    item: TSuggestion;
+    item: TExtendedSuggestion;
     suggestedIndex?: number | null;
     icon?: React.ReactNode;
     searchHistory?: boolean;
@@ -25,7 +25,7 @@ export const HintItem = ({
     handleSubmitSuggestion,
     handleCopyName,
 }: Props) => {
-    const hintIcon = item.place && (icon === undefined ? <IconSearch /> : null);
+    const hintIcon = item.icon ? item.icon : icon ? icon : <IconSearch />;
     const hintName = item.fullName;
     const showCover = false;
 

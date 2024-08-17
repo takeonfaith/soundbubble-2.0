@@ -3,6 +3,7 @@ import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { Form } from '../../shared/components/form';
 import { PhotoInput } from '../../shared/components/photoInput';
+import { useForm } from '../../shared/hooks/useForm';
 import { Email } from './Email';
 
 const fields = [
@@ -16,6 +17,7 @@ const fields = [
 ] as const;
 
 export const SignUpModal = () => {
+    const { formProps } = useForm({ fields, handleSubmit: () => null });
     const handleNext = () => {
         modalModel.events.open({
             title: 'Email',
@@ -37,13 +39,8 @@ export const SignUpModal = () => {
                 }}
             />
             <Flex d="column" gap={50} width="100%">
-                <Form
-                    fields={fields}
-                    submitErrorMessage={undefined}
+                <Form {...formProps} />
 
-                    submitText={'Create new account'}
-                    onSumbit={() => null}
-                />
                 <Flex width="100%" gap={10}>
                     <DefaultButton appearance="outline" disabled>
                         Previous

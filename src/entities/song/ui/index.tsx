@@ -98,7 +98,7 @@ export const SongItem = memo(
                                 <IconHeadphones />
                             </Listens>
                         </SongNameAndListens>
-                        <Authors authors={authors} disableOnMobile />
+                        <Authors width='100%' authors={authors} disableOnMobile />
                     </SongInfo>
                 </SongLeft>
                 <Listens className="outside">
