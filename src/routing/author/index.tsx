@@ -62,7 +62,6 @@ export const AuthorPage = ({ userData }: Props) => {
             <SkeletonPageAnimation
                 color={userPageData?.imageColors[0] ?? 'grey'}
                 loading={loading}
-                color=''
                 skeleton={<SkeletonLoading />}
             >
                 <PageTop

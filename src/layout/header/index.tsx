@@ -128,7 +128,6 @@ export const Header = ({ children, hide }: Props) => {
                 width="100%"
                 height="50px"
                 jc="space-between"
-                ai="flex-start"
                 gap={30}
             >
                 <HeaderPageTitle>{currentRoute?.title}</HeaderPageTitle>
