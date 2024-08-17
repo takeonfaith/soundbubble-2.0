@@ -16,6 +16,7 @@ import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Form } from '../../shared/components/form';
 import { Logo } from '../../shared/components/logo';
 import { Subtext } from '../../shared/components/subtext';
+import { useForm } from '../../shared/hooks/useForm';
 import { SignUpModal } from '../signUpModal';
 import { ForgotPasswordModal } from './ForgotPasswordModal';
 import {
@@ -33,30 +34,39 @@ type Props = {
     title?: string;
 };
 
+const Block = ({ icon }: { icon: React.ReactNode }) => {
+    return <BlockStyled className="block">{icon}</BlockStyled>;
+};
+
 const fields = [
     {
         id: 'email',
         type: 'email',
+        label: 'Email',
         required: true,
+        placeholder: 'Enter your email',
     },
     {
         id: 'password',
         type: 'password',
         label: 'Password',
-        placeholder: 'Enter your password',
         required: true,
+        placeholder: 'Enter your password',
     },
 ] as const;
-
-const Block = ({ icon }: { icon: React.ReactNode }) => {
-    return <BlockStyled className="block">{icon}</BlockStyled>;
-};
 
 export const LoginModal = ({
     actionAfterLogin,
     title = 'Welcome back to Soundbubble',
 }: Props) => {
     const [{ data, error }, _, loading] = userModel.useUser();
+    const { formProps, onSumbit } = useForm({
+        fields,
+        handleSubmit: (obj) => {
+            userModel.events.login(obj);
+        },
+        submitErrorMessage: error?.message,
+    });
 
     const handleOpenSignUp = () => {
         modalModel.events.open({
@@ -98,33 +108,31 @@ export const LoginModal = ({
                 </Blocks>
             </PromoStyled>
             <RightSideStyled>
-                {!error?.message && (
-                    <Flex d="column" gap={10}>
-                        <div className="emoji">👋</div>
-                        <h2>{title}</h2>
+                <Flex d="column" gap={10}>
+                    <div className="emoji">
+                        {!formProps.sumbitError ? '👋' : '😬'}
+                    </div>
+                    <h2>
+                        {!formProps.sumbitError
+                            ? title
+                            : 'Ooops! Failed to log in'}
+                    </h2>
+                    {!formProps.sumbitError && (
                         <Subtext style={{ fontSize: '1rem' }}>
                             Please enter your details
                         </Subtext>
-                    </Flex>
-                )}
+                    )}
+                </Flex>
+
                 <Flex
-                    height={error?.message ? '288px' : '188px'}
+                    height={formProps.sumbitError ? '220px' : '188px'}
                     jc="center"
                     d="column"
                     width="100%"
                     gap={20}
                     style={{ marginBottom: '90px', position: 'relative' }}
                 >
-                    <Form
-                        loading={loading}
-                        submitErrorMessage={error?.message}
-                        fields={fields}
-                        focusOnField="email"
-                        submitText="Login"
-                        onSumbit={(obj) => {
-                            userModel.events.login(obj);
-                        }}
-                    />
+                    <Form {...formProps} />
                     <Button
                         $height="10px"
                         className="forgot-password"
@@ -148,7 +156,14 @@ export const LoginModal = ({
                     >
                         Don't have an account
                     </DefaultButton>
-                    <DefaultButton appearance="primary" className='primary'>Login</DefaultButton>
+                    <DefaultButton
+                        loading={loading}
+                        appearance="primary"
+                        className="primary"
+                        onClick={onSumbit}
+                    >
+                        Login
+                    </DefaultButton>
                 </LoginButtons>
             </RightSideStyled>
         </LoginModalStyled>

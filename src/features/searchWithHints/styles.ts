@@ -14,7 +14,7 @@ export const HintsStyled = styled.ul`
     overflow-y: auto;
     padding: 4px;
     border-radius: ${({ theme }) => theme.borderRadius.mild};
-    position: fixed;
+    position: absolute;
     transform: translateY(4px);
     display: flex;
     flex-direction: column;

@@ -7,6 +7,8 @@ import { modalModel } from '../../layout/modal/model';
 import { Form } from '../../shared/components/form';
 import { PhotoInput } from '../../shared/components/photoInput';
 import { useState } from 'react';
+import { useForm } from '../../shared/hooks/useForm';
+import { DefaultButton } from '../../shared/components/button/DefaultButton';
 
 const CreatePlaylistModalStyled = styled.div`
     padding: 0 20px;
@@ -33,6 +35,25 @@ export const CreatePlaylistModal = () => {
     const [colors, setColors] = useState<string[]>([]);
     const [photo, setPhoto] = useState<File | null>(null);
     const navigate = useNavigate();
+    const { formProps, onSumbit } = useForm({
+        fields,
+        handleSubmit: (obj) => {
+            const playlist = createDefaultPlaylist({
+                name: obj.name,
+                image: photo,
+                imageColors: colors,
+                authors: data ? [data] : [],
+            });
+
+            playlistModel.events.createPlaylist({
+                playlist,
+                onSuccess: (playlist) => {
+                    navigate(`/playlist/${playlist.id}`);
+                    modalModel.events.close();
+                },
+            });
+        },
+    });
 
     if (!data) return null;
 
@@ -43,29 +64,14 @@ export const CreatePlaylistModal = () => {
                 onUpload={(photo) => setPhoto(photo)}
                 onColors={(colors) => setColors(colors)}
             />
-            <Form
-                fields={fields}
-                submitErrorMessage={undefined}
-                submitText="Create"
+            <Form {...formProps} />
+            <DefaultButton
+                onClick={onSumbit}
+                appearance="primary"
                 loading={loading}
-                focusOnField="name"
-                onSumbit={(obj) => {
-                    const playlist = createDefaultPlaylist({
-                        name: obj.name,
-                        image: photo,
-                        imageColors: colors,
-                        authors: [data],
-                    });
-
-                    playlistModel.events.createPlaylist({
-                        playlist,
-                        onSuccess: (playlist) => {
-                            navigate(`/playlist/${playlist.id}`);
-                            modalModel.events.close();
-                        },
-                    });
-                }}
-            />
+            >
+                Create
+            </DefaultButton>
         </CreatePlaylistModalStyled>
     );
 };

@@ -17,13 +17,6 @@ export const AuthorsStyled = styled.div<{
     pointer-events: ${({ $disableOnDesktop }) =>
         $disableOnDesktop ? 'none' : 'all'};
 
-    @media (hover: hover) {
-        &:hover {
-            background: ${({ theme }) => theme.colors.darkHover};
-            border-radius: 4px;
-        }
-    }
-
     @media (max-width: 1000px) {
         pointer-events: ${({ $disableOnMobile }) =>
             $disableOnMobile ? 'none' : 'all'};

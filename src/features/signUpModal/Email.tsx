@@ -27,7 +27,14 @@ export const Email = () => {
 
     return (
         <SignUpModalStyled>
-            <Flex width="100%" height="100%" ai="center">
+            <Flex
+                width="100%"
+                height="100%"
+                jc="center"
+                d="column"
+                gap={20}
+                ai="flex-start"
+            >
                 <Form
                     fields={fields}
                     submitErrorMessage={undefined}

@@ -11,7 +11,7 @@ import { GlobalStyles } from './globalStyles';
 
 const AppStyled = styled.div`
     height: 100dvh;
-    background: ${({ theme }) => theme.colors.pageBackground2};
+    background: ${({ theme }) => theme.colors.pageBackground3};
     overflow: hidden;
     display: flex;
     flex-direction: column;

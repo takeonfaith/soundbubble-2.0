@@ -3,9 +3,22 @@ import { Flex } from '../../shared/components/flex';
 import { Form } from '../../shared/components/form';
 import { SubmitObj } from '../../shared/components/form/types';
 import { Message } from '../../shared/components/mesage';
+import { useForm } from '../../shared/hooks/useForm';
 import { SignUpModalStyled } from '../signUpModal/styles';
 
+const fields = [
+    {
+        id: 'email',
+        label: 'Email Address',
+        type: 'email',
+        placeholder: 'Enter your email address',
+        required: true,
+    },
+] as const;
+
 export const ForgotPasswordModal = () => {
+    const { formProps, onSumbit } = useForm({ fields });
+
     return (
         <SignUpModalStyled>
             <Flex
@@ -15,36 +28,19 @@ export const ForgotPasswordModal = () => {
                 gap={20}
                 jc="center"
             >
-                <Message type='info'>
+                <Message type="info">
                     We will send you a new password to the email bellow
                 </Message>
-                <Form
-                    fields={[
-                        {
-                            id: 'email',
-                            label: 'Email Address',
-                            type: 'email',
-                            placeholder: 'Enter your email address',
-                            required: true,
-                        },
-                    ]}
-                    submitErrorMessage={undefined}
-                    submitText={''}
-                    onSumbit={function (
-                        value: SubmitObj<{
-                            id: string;
-                            label: string;
-                            type: 'email';
-                            placeholder: string;
-                            required: true;
-                        }>
-                    ): void {
-                        throw new Error('Function not implemented.');
-                    }}
-                />
+                <Form {...formProps} />
             </Flex>
             <Flex width="100%">
-                <DefaultButton appearance="primary">Send a code</DefaultButton>
+                <DefaultButton
+                    disabled={!formProps.valueObj.email.value.length}
+                    appearance="primary"
+                    onClick={onSumbit}
+                >
+                    Send a code
+                </DefaultButton>
             </Flex>
         </SignUpModalStyled>
     );

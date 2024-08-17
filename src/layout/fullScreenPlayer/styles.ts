@@ -16,6 +16,7 @@ export const FullScreenPlayerStyled = styled(BeautifulBackground)`
     opacity: 0;
     visibility: hidden;
     transform: translateY(100px);
+    pointer-events: none;
 
     & > button {
         color: #fff;
@@ -44,6 +45,7 @@ export const FullScreenPlayerStyled = styled(BeautifulBackground)`
 
     &.open {
         opacity: 1;
+        pointer-events: all;
         visibility: visible;
         transform: translateY(0px);
     }

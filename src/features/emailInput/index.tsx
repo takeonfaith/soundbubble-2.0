@@ -16,7 +16,6 @@ export const EmailInput = (props: Props) => {
 
     return (
         <SearchWithHints
-            {...props}
             suggestions={suggestions}
             focusOnLoad={focusOnLoad}
             historySuggestions={[]}
@@ -30,6 +29,7 @@ export const EmailInput = (props: Props) => {
             disableCopyButton
             type="email"
             autoCapitalize="false"
+            {...props}
         />
     );
 };
