@@ -1,9 +1,5 @@
-import {
-    IconMessage2,
-    IconSearch,
-    IconUserOff,
-    TablerIconsProps,
-} from '@tabler/icons-react';
+import { IconMessage2, IconSearch, IconUserOff } from '@tabler/icons-react';
+import { styled } from 'styled-components';
 import { userModel } from '../../entities/user/model';
 import { UserItem } from '../../entities/user/ui';
 import { UserListSkeleton } from '../../entities/user/ui/UserListSkeleton';
@@ -12,13 +8,12 @@ import { Button } from '../../shared/components/button';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
+import { PageMessage } from '../../shared/components/pageMessage';
 import {
     ContentWrapper,
     PageWrapper,
 } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { styled } from 'styled-components';
-import { PageMessage } from '../../shared/components/pageMessage';
 
 const FriendsWrapper = styled.div`
     width: 100%;
@@ -61,22 +56,24 @@ export const FriendsPage = () => {
                                 description={'We are sorry'}
                             />
                         )}
-                        <Flex d="column" gap={4} width="100%">
-                            {friends.map((friend) => {
-                                return (
-                                    <UserItem
-                                        showLastSeen
-                                        user={friend}
-                                        key={friend.uid}
-                                        orientation="horizontal"
-                                    >
-                                        <Button $width="40px">
-                                            <IconMessage2 />
-                                        </Button>
-                                    </UserItem>
-                                );
-                            })}
-                        </Flex>
+                        {friends.length > 0 && (
+                            <Flex d="column" gap={4} width="100%">
+                                {friends.map((friend) => {
+                                    return (
+                                        <UserItem
+                                            showLastSeen
+                                            user={friend}
+                                            key={friend.uid}
+                                            orientation="horizontal"
+                                        >
+                                            <Button $width="40px">
+                                                <IconMessage2 />
+                                            </Button>
+                                        </UserItem>
+                                    );
+                                })}
+                            </Flex>
+                        )}
                     </SkeletonPageAnimation>
                 </FriendsWrapper>
             </ContentWrapper>

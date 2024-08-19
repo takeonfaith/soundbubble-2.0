@@ -1,18 +1,20 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { Database } from '../../../database';
 import { $searchHistory, $user, setSearchHistory } from '../../user/model';
-import { TEntity, TSuggestion } from './types';
+import { TEntity, TPlace, TSuggestion } from './types';
+import { TExtendedSuggestion } from '../../../features/searchWithHints/types';
 
 type GetResultProps = {
     query: string;
-    suggestion?: TSuggestion | null;
+    place?: TPlace;
+    suggestion?: TExtendedSuggestion | null;
 };
 
 export const getResultFx = createEffect(
-    async ({ query, suggestion }: GetResultProps) => {
+    async ({ query, suggestion, place }: GetResultProps) => {
         try {
             const suggestions =
-                await Database.SearchSuggestions.getSearchResult(query);
+                await Database.SearchSuggestions.getSearchResult(query, place);
 
             if (suggestion) {
                 await Database.SearchSuggestions.addRankToSuggestion(
@@ -38,7 +40,7 @@ export const setSuggestions = createEvent<TSuggestion[]>();
 export const getSearchResult = createEvent<GetResultProps>();
 
 export const getSuggestionsFx = createEffect<
-    { value: string; history: TSuggestion[] },
+    { value: string; history: TExtendedSuggestion[] },
     TSuggestion[]
 >();
 
@@ -75,7 +77,13 @@ sample({
 });
 
 getSuggestionsFx.use(
-    async ({ value, history }: { value: string; history: TSuggestion[] }) => {
+    async ({
+        value,
+        history,
+    }: {
+        value: string;
+        history: TExtendedSuggestion[];
+    }) => {
         try {
             if (value.length === 0) return [];
             const suggestions =

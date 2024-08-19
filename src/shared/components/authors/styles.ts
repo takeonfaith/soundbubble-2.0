@@ -12,7 +12,7 @@ export const AuthorsStyled = styled.div<{
     display: flex;
     align-items: center;
     gap: 4px;
-    width: ${({ $width }) => $width ?? 'fit-content'};
+    width: ${({ $width }) => $width ?? '100%'};
     opacity: 0.5;
     pointer-events: ${({ $disableOnDesktop }) =>
         $disableOnDesktop ? 'none' : 'all'};

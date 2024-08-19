@@ -91,7 +91,11 @@ export const UserItem = memo(
                 {children ??
                     (orientation === 'horizontal' && (
                         <Button $width="45px">
-                            <IconChevronRight opacity={0.5} size={24} />
+                            <IconChevronRight
+                                opacity={0.5}
+                                strokeWidth={1.7}
+                                size={24}
+                            />
                         </Button>
                     ))}
             </UserItemStyled>

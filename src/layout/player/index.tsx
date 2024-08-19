@@ -51,7 +51,7 @@ export const Player = () => {
                     <Authors authors={currentSong?.authors} />
                 </Flex>
             </SongStyled>
-            <Flex gap={30} width="100%" jc="flex-end">
+            <Flex width="100%" jc="flex-end">
                 <MusicControls {...controls} />
                 <MobilePlayButton>
                     <MusicControlsStyled>

@@ -110,7 +110,7 @@ export const LoginModal = ({
             <RightSideStyled>
                 <Flex d="column" gap={10}>
                     <div className="emoji">
-                        {!formProps.sumbitError ? '👋' : '😬'}
+                        {!formProps.sumbitError ? '🥳' : '😬'}
                     </div>
                     <h2>
                         {!formProps.sumbitError

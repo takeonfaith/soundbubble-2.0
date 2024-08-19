@@ -94,7 +94,7 @@ export const MusicControls = ({
             <IconPlayerTrackPrevFilled className="prev-icon-2" />
             <IconPlayerTrackPrevFilled className="prev-icon-1" />
           </ControlButton>
-          <ControlButton className="control-button" disabled={state === 'loading'} onClick={onPlay}>
+          <ControlButton className="control-button play-pause" disabled={state === 'loading'} onClick={onPlay}>
             <PlayPauseIcon loading={state === 'loading'} playling={state === 'playing'} />
           </ControlButton>
           <ControlButton className="control-button" disabled={disableNextSongButton} onClick={onNext}>

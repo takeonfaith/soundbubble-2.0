@@ -5,7 +5,7 @@ import { PAGE_TRANSITION_DURATION } from '../../shared/components/pageStack/cons
 
 export const ModalBackground = styled(DarkBackground)`
     position: absolute;
-    z-index: 12;
+    z-index: 1200;
 `;
 
 export const ModalStyled = styled.div<{
@@ -124,7 +124,8 @@ export const ModalTitle = styled.h3`
 export const ModalContent = styled.div`
     width: 100%;
     height: calc(100% - 68px);
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
 `;
 
 export const ModalButtons = styled.div`

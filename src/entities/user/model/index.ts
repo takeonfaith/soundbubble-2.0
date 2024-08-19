@@ -2,13 +2,13 @@ import { createEffect, createEvent, createStore, sample } from 'effector';
 import { createGate, useGate, useUnit } from 'effector-react';
 import { Database } from '../../../database';
 import { Playlists, Users } from '../../../database/sections';
+import { TExtendedSuggestion } from '../../../features/searchWithHints/types';
 import { ERRORS } from '../../../shared/constants';
 import { errorEffect } from '../../../shared/effector/errorEffect';
 import { getDataFromEffect } from '../../../shared/effector/getDataFromEffect';
 import { loadingEffect } from '../../../shared/effector/loadingEffect';
 import { tryWrapper } from '../../../shared/funcs/trywrapper';
 import { TPlaylist } from '../../playlist/model/types';
-import { TSuggestion } from '../../search/model/types';
 import { TSong } from '../../song/model/types';
 import {
     DEFAULT_PAGE_STORE,
@@ -144,7 +144,7 @@ const loadAddedAuthorsFx = createEffect(async (store: TStore) => {
 });
 
 const loadUserSearchHistoryFx = createEffect(
-    async (store: TStore): Promise<TSuggestion[]> => {
+    async (store: TStore): Promise<TExtendedSuggestion[]> => {
         try {
             const userId = store.data?.uid;
 
@@ -157,7 +157,7 @@ const loadUserSearchHistoryFx = createEffect(
 
 type SetSearchHistoryProps = {
     userId: string | undefined;
-    suggestion?: TSuggestion | null;
+    suggestion?: TExtendedSuggestion | null;
 };
 
 const setSearchHistoryFx = createEffect(
@@ -165,7 +165,7 @@ const setSearchHistoryFx = createEffect(
         history,
         userId,
         suggestion,
-    }: SetSearchHistoryProps & { history: TSuggestion[] }) => {
+    }: SetSearchHistoryProps & { history: TExtendedSuggestion[] }) => {
         await Database.SearchHistory.addEntityToSearchHistory(
             history.slice(0, MAX_SEARCH_HISTORY_QUANTITY - 1),
             userId,
@@ -214,7 +214,7 @@ $addedPlaylists.reset(logout);
 const $friends = createStore<TUser[]>([]);
 $friends.reset(logout);
 
-export const $searchHistory = createStore<TSuggestion[]>([]);
+export const $searchHistory = createStore<TExtendedSuggestion[]>([]);
 $searchHistory.reset(logout);
 
 const $userPage =
@@ -341,7 +341,7 @@ sample({
     filter: (store, { params }) =>
         !!params.suggestion &&
         !store.find((s) => s.uid === params.suggestion?.uid),
-    fn: (store, { params }): TSuggestion[] =>
+    fn: (store, { params }): TExtendedSuggestion[] =>
         [params.suggestion!, ...store].slice(0, MAX_SEARCH_HISTORY_QUANTITY),
     target: $searchHistory,
 });

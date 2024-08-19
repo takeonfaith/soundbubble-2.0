@@ -25,7 +25,7 @@ export const HeaderStyled = styled.header`
 
     @media (max-width: 1000px) {
         padding: 10px 20px;
-        min-height: ${MOBILE_HEADER_HEIGHT}px;
+        min-height: fit-content;
         display: flex;
         justify-content: flex-start;
     }

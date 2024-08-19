@@ -1,16 +1,22 @@
 import LogoImage from 'shared/assets/Logo3.svg';
-import { LogoStyled, LogoText } from './styles';
-import { Flex } from '@components/flex';
+import { LogoStyled, LogoText, LogoWrapper } from './styles';
 
 type Props = {
     short?: boolean;
+    size?: string;
+    appLike?: boolean;
 };
 
-export const Logo = ({ short = false }: Props) => {
+export const Logo = ({ size, appLike, short = false }: Props) => {
     return (
-        <Flex gap={14}>
-            <LogoStyled src={LogoImage} className="logo" alt="Logo" />{' '}
+        <LogoWrapper size={size} className={`logo ${appLike ? 'appLike' : ''}`}>
+            <LogoStyled
+                size={size}
+                src={LogoImage}
+                className={`logo`}
+                alt="Logo"
+            />{' '}
             {!short && <LogoText to={'/discover'}>Soundbubble</LogoText>}
-        </Flex>
+        </LogoWrapper>
     );
 };

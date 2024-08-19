@@ -54,12 +54,12 @@ export const PromoStyled = styled.div`
     align-items: center;
     overflow: hidden;
     justify-content: center;
+    user-select: none;
 
     .logo {
         width: 90px;
         z-index: 1;
-        animation: jumping 10s infinite ease-in-out;
-        animation-delay: 0.25s;
+        animation: jumping2 10s infinite ease-in-out;
     }
 
     @media (max-width: 768px) {
@@ -115,6 +115,17 @@ export const Blocks = styled.div`
         background-color: ${({ theme }) => theme.colors.blue.action};
     }
 
+    @media (max-width: 768px) {
+        width: 100px;
+        height: 100px;
+        inset: 40% 37%;
+
+        &::before {
+            width: 80px;
+            height: 80px;
+        }
+    }
+
     .block {
         transform-origin: top left;
         animation: jumping 4s infinite ease-in-out;
@@ -151,12 +162,41 @@ export const Blocks = styled.div`
         color: ${({ theme }) => theme.colors.orange.main};
     }
 
+    @media (max-width: 768px) {
+        .block:nth-child(1) {
+        }
+        .block:nth-child(2) {
+        }
+        .block:nth-child(3) {
+            bottom: 110px;
+            left: 130px;
+        }
+        .block:nth-child(4) {
+        }
+        .block:nth-child(5) {
+            bottom: 60px;
+            right: 150px;
+        }
+    }
+
     @keyframes jumping {
         0% {
             transform: translate(0px, 0px);
         }
         50% {
             transform: translate(0px, -20px);
+        }
+        100% {
+            transform: translate(0px, 0px);
+        }
+    }
+
+    @keyframes jumping2 {
+        0% {
+            transform: translate(0px, 0px);
+        }
+        50% {
+            transform: translate(0px, -10px);
         }
         100% {
             transform: translate(0px, 0px);

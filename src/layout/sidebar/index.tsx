@@ -5,14 +5,15 @@ import { groupByField } from '@shared/funcs/groupByField';
 import { usePrivateAction } from '@shared/hooks/usePrivateAction';
 import { IconPlus } from '@tabler/icons-react';
 import { modalModel } from 'layout/modal/model';
-import { useNavigate } from 'react-router';
 import { menuRoutes } from 'routing/routes';
 import { chatModel } from '../../entities/chat/model';
 import { PlaylistItem } from '../../entities/playlist/ui';
 import { userModel } from '../../entities/user/model';
 import { CreatePlaylistModal } from '../../features/createPlaylistModal';
 import { ThemeButton } from '../../features/themeButton';
+import { Button } from '../../shared/components/button';
 import { NavigationTitle } from '../../shared/components/navigationTitle';
+import { Subtext } from '../../shared/components/subtext';
 import {
     LogoWrapper,
     NotificationBadge,
@@ -22,15 +23,13 @@ import {
     SidebarSectionTitle,
     SidebarStyled,
 } from './styles';
-import { Subtext } from '../../shared/components/subtext';
-import { Button } from '../../shared/components/button';
 
 export const Sidebar = () => {
     const preparedRoutes = groupByField(menuRoutes, 'section');
     const { loggedIn } = usePrivateAction();
     const [ownPlaylists] = userModel.useOwnPlaylists();
     const chatUnreadCount = chatModel.useChatUnreadCount();
-    const navigate = useNavigate();
+    const [{ data }] = userModel.useUser();
 
     const notificationsDic: Record<string, number> = {
         chat: chatUnreadCount,
@@ -76,10 +75,9 @@ export const Sidebar = () => {
 
             <SidebarSection>
                 <Flex jc="space-between" width="100%">
-                    <NavigationTitle showNavigation to="/liked/playlists">
+                    <NavigationTitle showNavigation={!!data} to="/playlists">
                         <SidebarSectionTitle
-                            onClick={() => navigate('/liked/playlists')}
-                            className="clickable"
+                            className={data ? 'clickable' : ''}
                         >
                             Your Playlists
                         </SidebarSectionTitle>

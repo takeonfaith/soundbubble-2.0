@@ -27,6 +27,7 @@ export const SkeletonSection = styled.div<{ $background?: string }>`
         opacity: 1;
         pointer-events: all;
         background-position: 0 100%;
+        height: 100vh;
     }
 `;
 

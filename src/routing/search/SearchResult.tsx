@@ -28,7 +28,12 @@ const SearchPageWrapper = styled.div`
     height: 100%;
     width: 100%;
     margin: 0 auto;
+    margin-top: 40px;
     position: relative;
+
+    @media (max-width: 1000px) {
+        margin-top: 0px;
+    }
 `;
 
 const dic: Record<
@@ -60,11 +65,12 @@ export const SearchResult = () => {
 
     const first = result[0];
 
-    const isAuthor =
+    const isAuthorCard =
         !!first &&
         'isAuthor' in first &&
         first?.isAuthor &&
-        params.get('type') === 'author';
+        params.get('type') === 'author' &&
+        params.get('where') === null;
 
     const noResult =
         params.get('query') !== null && result.length === 0 && !isLoading;
@@ -86,7 +92,7 @@ export const SearchResult = () => {
                     )}
                     {result.length > 0 && (
                         <>
-                            {!isAuthor && (
+                            {!isAuthorCard && (
                                 <h3
                                     style={{
                                         fontWeight: 300,
@@ -97,10 +103,13 @@ export const SearchResult = () => {
                                 </h3>
                             )}
                             <Flex d="column" gap={4} width="100%">
-                                {isAuthor && <TopAuthorCard author={first} />}
+                                {isAuthorCard && (
+                                    <TopAuthorCard author={first} />
+                                )}
                                 {result.map((item, index) => {
                                     const type = getEntityType(item);
-                                    if (isAuthor && index === 0) return null;
+                                    if (isAuthorCard && index === 0)
+                                        return null;
 
                                     if (type) {
                                         return dic[type](item);

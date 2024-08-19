@@ -100,7 +100,7 @@ export const HintItem = ({
                 </Flex>
             </Flex>
             {!disableCopyButton && (
-                <Button $width="40px" onClick={handleCopy}>
+                <Button $width="42px" onClick={handleCopy}>
                     <IconArrowUpLeft size={20} />
                 </Button>
             )}

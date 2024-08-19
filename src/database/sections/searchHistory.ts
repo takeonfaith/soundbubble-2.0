@@ -3,6 +3,7 @@ import { TPlace, TSuggestion } from '../../entities/search/model/types';
 import { TSearchHistory } from '../../entities/user/model/types';
 import { FB } from '../../firebase';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
+import { TExtendedSuggestion } from '../../features/searchWithHints/types';
 
 export class SearchHistory {
     static ref = FB.get('history');
@@ -36,7 +37,7 @@ export class SearchHistory {
     }
 
     static async addEntityToSearchHistory(
-        history: TSuggestion[],
+        history: TExtendedSuggestion[],
         userId: string | undefined,
         id: string | null | undefined,
         type: TPlace | undefined

@@ -88,10 +88,12 @@ const getCurrentRoute = (
     allRoutes: TRoute[],
     location: Location<unknown>
 ): TRoute | null => {
+    console.log(location);
     const { pathname } = location;
     const splitted = pathname.split('/');
     for (let i = 0; i < allRoutes.length; i++) {
         const route = allRoutes[i];
+        
 
         if (route.children) {
             const res = getCurrentRoute(route.children, location);

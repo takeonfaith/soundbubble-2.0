@@ -10,10 +10,17 @@ export const InitialLoadingStyled = styled.div`
     justify-content: center;
     flex-direction: column;
     gap: 40px;
-    background: ${({ theme }) => theme.colors.pageBackground};
+    background: linear-gradient(
+        ${({ theme }) => theme.colors.pageBackground},
+        ${({ theme }) => theme.colors.pageBackground},
+        transparent 100%,
+        ${({ theme }) => theme.colors.pageBackground},
+        ${({ theme }) => theme.colors.pageBackground}
+    );
     width: 100%;
     height: 100dvh;
     transition: 1s opacity, 1s visibility;
+    background-size: 100% 10000%;
 
     span {
         text-align: center;
@@ -54,21 +61,21 @@ export const InitialLoadingStyled = styled.div`
 
     &.loaded {
         animation: showApp 0.5s forwards;
-        animation-delay: 1s;
+        animation-delay: 1.1s;
 
         & .logo {
-            animation: shiftLogo 1s forwards ease-in-out;
-            animation-delay: 0.2s;
+            animation: shiftLogo 1.2s forwards ease-in-out;
+            animation-delay: 0.4s;
 
             @keyframes shiftLogo {
                 0% {
-                    transform: translateY(0);
+                    transform: translateY(0px);
                 }
                 50% {
-                    transform: translateY(-10px);
+                    transform: translateY(5px);
                 }
                 100% {
-                    transform: translateY(20px);
+                    transform: translateY(-20px);
                 }
             }
         }
@@ -76,9 +83,15 @@ export const InitialLoadingStyled = styled.div`
         @keyframes showApp {
             0% {
                 opacity: 1;
+                background-size: 100% 1000%;
                 visibility: visible;
             }
+            50% {
+                opacity: 1;
+                background-size: 100% 100%;
+            }
             100% {
+                background-size: 100% 100%;
                 opacity: 0;
                 visibility: hidden;
             }

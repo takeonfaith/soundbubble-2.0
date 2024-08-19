@@ -132,6 +132,11 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
             --size: calc(100vw / 4 - 31px);
         }
 
+        &.horizontal {
+            padding: 6px 0px;
+            --size: 40px;
+        }
+
         &::before {
             display: none;
         }

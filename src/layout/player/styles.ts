@@ -3,11 +3,11 @@ import { BeautifulBackground } from '../../shared/components/beautifulBackground
 
 export const PlayerStyled = styled.div<{ $background: string }>`
     width: calc(100% - var(--sidebar-width) - var(--page-gap));
-	 border-radius: var(--desktop-page-radius);
+    border-radius: var(--desktop-page-radius);
     margin: var(--page-gap);
     min-height: 80px;
     display: flex;
-	 align-self: flex-end;
+    align-self: flex-end;
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
@@ -43,6 +43,10 @@ export const PlayerStyled = styled.div<{ $background: string }>`
 
             &.selected {
                 background: ${({ theme }) => theme.colors.hover};
+
+                & svg {
+                    color: ${({ theme }) => theme.colors.textColor};
+                }
             }
         }
     }

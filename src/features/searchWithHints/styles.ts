@@ -48,7 +48,7 @@ export const HintsStyled = styled.ul`
 
 export const HintItemStyled = styled.li`
     padding: 6px 12px;
-    min-height: 42px;
+    min-height: 52px;
     border-radius: ${({ theme }) => `calc(${theme.borderRadius.mild} - 2px)`};
     display: flex;
     align-items: center;

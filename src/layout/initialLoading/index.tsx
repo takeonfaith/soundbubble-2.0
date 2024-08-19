@@ -6,8 +6,8 @@ import { InitialLoadingStyled } from './styles';
 import { Subtext } from '../../shared/components/subtext';
 
 const TIMEOUTS = {
-    slowInternetMessage: 10000,
-    fullStop: 20000,
+    slowInternetMessage: 15000,
+    fullStop: 25000,
 };
 
 export const InitialLoading = () => {

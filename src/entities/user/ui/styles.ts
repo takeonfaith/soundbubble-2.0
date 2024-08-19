@@ -14,15 +14,17 @@ export const UserItemStyled = styled(Link)`
     border-radius: ${({ theme }) => theme.borderRadius.big};
 
     &.horizontal {
-        padding: 6px;
+        padding: 5px 6px;
         width: 100%;
         gap: 12px;
         flex-direction: row;
     }
 
-    &:hover {
-        &.horizontal {
-            background: ${({ theme }) => theme.colors.hover};
+    @media (hover: hover) {
+        &:hover {
+            &.horizontal {
+                background: ${({ theme }) => theme.colors.hover};
+            }
         }
     }
 
@@ -31,7 +33,7 @@ export const UserItemStyled = styled(Link)`
         text-overflow: ellipsis;
         overflow: hidden;
         font-size: 1rem;
-        font-weight: 300;
+        font-weight: 200;
 
         &.horizontal {
             font-size: 0.9rem;
@@ -64,12 +66,16 @@ export const UserItemStyled = styled(Link)`
         --size: calc(100vw / 5 - 36px);
 
         h4 {
-            font-size: 0.85rem;
+            font-size: 1rem;
             font-weight: 300;
 
             &.horizontal {
                 font-size: 1rem;
             }
+        }
+
+        &.horizontal {
+            padding: 5px 0;
         }
 
         &.vertical {

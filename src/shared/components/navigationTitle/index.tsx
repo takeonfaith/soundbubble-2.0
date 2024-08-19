@@ -11,7 +11,7 @@ const NavigationTitleLink = styled(Link)`
     @media (hover: hover) {
         &:hover {
             cursor: pointer;
-            
+
             svg {
                 opacity: 1;
             }
@@ -30,7 +30,7 @@ export const NavigationTitle = ({ showNavigation, to, children }: Props) => {
         return (
             <NavigationTitleLink to={to}>
                 {children}
-                <IconChevronRight size={20} opacity={0.5} />
+                <IconChevronRight strokeWidth={1.5} size={20} opacity={0.5} />
             </NavigationTitleLink>
         );
     }

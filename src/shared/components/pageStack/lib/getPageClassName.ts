@@ -7,8 +7,6 @@ export const getPageClassName = (
 ) => {
     if (index < modals.length - 2) return 'vanish';
 
-    // if (index < modals.length - 1) return 'disappear';
-
     if (slidingBack && index === modals.length - 1) return 'back';
 
     if (!slidingBack && index === modals.length - 2 && index !== 0)

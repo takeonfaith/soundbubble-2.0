@@ -22,6 +22,7 @@ import { filterOneArrayWithAnother } from '../../shared/funcs/filterOneArrayWith
 import { normalizeString } from '../../shared/funcs/normalizeString';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { uniqueArrayObjectsByField } from '../../shared/funcs/uniqueArrayObjectsByFields';
+import { TExtendedSuggestion } from '../../features/searchWithHints/types';
 
 export class SearchSuggestions {
     private static ref = FB.get('search');
@@ -51,7 +52,7 @@ export class SearchSuggestions {
 
     static async getSearchSuggestions(
         queryStr: string,
-        history: TSuggestion[],
+        history: TExtendedSuggestion[],
         places?: TPlace[]
     ) {
         try {
@@ -87,15 +88,25 @@ export class SearchSuggestions {
         }
     }
 
-    static async getSearchResult(queryStr: string) {
+    static async getSearchResult(queryStr: string, place: TPlace | undefined) {
         try {
             // TODO: оптимизировать так, чтобы не делать запрос к suggestions повторно
+            const placeRestrictions = [];
+            if (place) {
+                placeRestrictions.push(where('place', '==', place));
+            }
+
+            console.log();
+
             const q = query(
                 this.ref,
-                where(
-                    'variantsOfName',
-                    'array-contains',
-                    normalizeString(queryStr)
+                and(
+                    where(
+                        'variantsOfName',
+                        'array-contains',
+                        normalizeString(queryStr)
+                    ),
+                    ...placeRestrictions
                 ),
                 orderBy('rank', 'desc')
             );
@@ -112,7 +123,10 @@ export class SearchSuggestions {
 
             let cleanSuggestions: TEntity[] = await Promise.all(reqs);
 
-            if (getEntityType(cleanSuggestions[0]) === 'author') {
+            if (
+                getEntityType(cleanSuggestions[0]) === 'author' &&
+                place !== 'users'
+            ) {
                 const topAuthorSongs = await this.getTopAuthorSongs(
                     (cleanSuggestions[0] as TUser).ownSongs?.slice(0, 6)
                 );

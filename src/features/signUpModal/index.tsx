@@ -2,9 +2,12 @@ import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { Form } from '../../shared/components/form';
-import { PhotoInput } from '../../shared/components/photoInput';
+import { Logo } from '../../shared/components/logo';
+import { Subtext } from '../../shared/components/subtext';
 import { useForm } from '../../shared/hooks/useForm';
 import { Email } from './Email';
+import { SignUpWrapper } from './styles';
+import backgroundImg from './img/background.png';
 
 const fields = [
     {
@@ -28,8 +31,29 @@ export const SignUpModal = () => {
     };
 
     return (
-        <Flex d="column" gap={10} padding="0 25px" width="100%">
-            <PhotoInput
+        <SignUpWrapper>
+            <Flex
+                d="column"
+                padding="20px 0"
+                ai="flex-start"
+                width="100%"
+                gap={20}
+            >
+                <img src={backgroundImg} className="background" alt="" />
+                <Logo short size="60px" />
+                <h2>Hey there! 👋</h2>
+                <Subtext
+                    style={{
+                        fontSize: '1.1rem',
+                        width: '100%',
+                        maxWidth: '300px',
+                    }}
+                >
+                    Please enter your name in the field below and hit next
+                </Subtext>
+                <Form {...formProps} />
+            </Flex>
+            {/* <PhotoInput
                 colors={[]}
                 onUpload={function (photo: File | null): void {
                     throw new Error('Function not implemented.');
@@ -37,19 +61,13 @@ export const SignUpModal = () => {
                 onColors={function (colors: string[]): void {
                     throw new Error('Function not implemented.');
                 }}
-            />
-            <Flex d="column" gap={50} width="100%">
-                <Form {...formProps} />
+            /> */}
 
-                <Flex width="100%" gap={10}>
-                    <DefaultButton appearance="outline" disabled>
-                        Previous
-                    </DefaultButton>
-                    <DefaultButton appearance="primary" onClick={handleNext}>
-                        Next
-                    </DefaultButton>
-                </Flex>
+            <Flex width="100%" gap={10}>
+                <DefaultButton appearance="primary" onClick={handleNext}>
+                    Next
+                </DefaultButton>
             </Flex>
-        </Flex>
+        </SignUpWrapper>
     );
 };

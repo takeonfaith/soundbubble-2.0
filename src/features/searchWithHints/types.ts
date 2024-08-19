@@ -1,7 +1,10 @@
 import { TSuggestion } from '../../entities/search/model/types';
 import { InputProps } from '../../shared/components/input/types';
 
-export type TExtendedSuggestion = Pick<TSuggestion, 'fullName' | 'uid'> & {
+export type TExtendedSuggestion = Pick<
+    TSuggestion,
+    'fullName' | 'uid' | 'place'
+> & {
     icon?: React.ReactNode;
 };
 

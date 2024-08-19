@@ -37,13 +37,13 @@ export const TabItemStyled = styled(Link)<{ $width?: string; $height: string }>`
     font-size: 0.9rem;
     font-weight: 300;
     opacity: 0.7;
-    font-weight: 300;
     transition: 0.2s color, 0.5s background;
 
     &.chips {
         min-width: calc(${({ $width }) => $width} - 3px);
-        border-radius: 8px;
-        background: ${({ theme }) => theme.colors.input};
+        border-radius: 20px;
+        font-size: 0.9rem;
+        opacity: 1;
     }
 
     &.selected {
@@ -51,6 +51,7 @@ export const TabItemStyled = styled(Link)<{ $width?: string; $height: string }>`
         opacity: 1;
         font-weight: 400;
         background: transparent;
+        font-size: 0.85rem;
     }
 
     @media (hover: hover) {
@@ -78,9 +79,7 @@ export const CurrentTabItem = styled.div<{
     background: ${({ theme }) => theme.colors.blue.action};
     position: absolute;
     transition: 0.2s;
-    transform: translateX(
-        calc(${({ $shift }) => `${$shift} * 100%`})
-    );
+    transform: translateX(calc(${({ $shift }) => `${$shift} * 100%`}));
     left: 4px;
     top: 4px;
     z-index: 0;
@@ -89,7 +88,8 @@ export const CurrentTabItem = styled.div<{
         transform: translateX(
             calc(${({ $shift }) => `${$shift} * 100% + 4px * ${$shift}`})
         );
-        border-radius: 8px;
+        border-radius: 20px;
+
         left: 0;
         top: 0;
     }
