@@ -2,28 +2,29 @@ import { PlaylistItem } from '../../entities/playlist/ui';
 import { userModel } from '../../entities/user/model';
 import { HorizontalList } from '../../shared/components/horizontalList';
 import { NavigationTitle } from '../../shared/components/navigationTitle';
+import { SectionStyled } from '../user/styles';
 import { MAX_PLAYLISTS } from './constants';
-import { PlaylistsStyled } from './styles';
 
 type Props = {
     uid: string | undefined;
+    title?: string;
 };
 
-export const Playlists = ({ uid }: Props) => {
-    const { playlists } = userModel.useUserPage();
+export const Playlists = ({ title, uid }: Props) => {
+    const [{ playlists }] = userModel.useUserPage();
 
     if (playlists.length === 0) {
         return null;
     }
 
     return (
-        <PlaylistsStyled>
+        <SectionStyled>
             <div className="title">
                 <NavigationTitle
                     showNavigation={playlists.length > MAX_PLAYLISTS}
                     to={`/authors/${uid}/playlists`}
                 >
-                    <h3>Top Albums</h3>
+                    <h3>{title}</h3>
                 </NavigationTitle>
             </div>
             <HorizontalList>
@@ -40,6 +41,6 @@ export const Playlists = ({ uid }: Props) => {
                     <PlaylistItem playlist={playlist} key={playlist.id} />
                 ))} */}
             </HorizontalList>
-        </PlaylistsStyled>
+        </SectionStyled>
     );
 };

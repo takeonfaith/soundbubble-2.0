@@ -31,6 +31,7 @@ export const LikeButton = ({
         e.stopPropagation();
         if (song) {
             onClick?.(song);
+            
         }
     });
 

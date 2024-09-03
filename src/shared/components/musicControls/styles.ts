@@ -13,7 +13,7 @@ export const MusicControlsStyled = styled.div`
 export const CustomSlider = styled.input<{ color1: string | undefined }>`
     -webkit-appearance: none;
     appearance: none;
-    height: 3px;
+    height: 4px;
     width: 100%;
     border-radius: 10px;
     background: ${({ theme }) => theme.colors.skeleton};
@@ -23,10 +23,26 @@ export const CustomSlider = styled.input<{ color1: string | undefined }>`
         white 50%
     );
     background-repeat: no-repeat;
-    transition: 0.2s filter;
+    transition: 0.2s filter, 0.2s transform;
+    cursor: pointer;
 
     &:hover {
-        filter: brightness(1.2);
+        filter: brightness(1);
+
+        transform: scaleY(2);
+        border-radius: 30px;
+
+        /* &::-webkit-slider-thumb {
+            display: block;
+        } */
+    }
+
+    &:focus {
+        outline: none;
+    }
+
+    &:active {
+        filter: brightness(1.5);
     }
 
     &::-webkit-slider-thumb {
@@ -35,12 +51,13 @@ export const CustomSlider = styled.input<{ color1: string | undefined }>`
         width: 16px;
         border-radius: 50%;
         cursor: pointer;
-        box-shadow: 0 0 2px 0 #555;
+        box-shadow: ${({ theme }) => theme.colors.shadow};
         background: ${({ color1 }) => color1 ?? 'grey'};
         transition: 0.2s;
+        opacity: 0;
 
         &:hover {
-            box-shadow: 0 0 0px 10px ${({ theme }) => theme.colors.lightHover};
+            box-shadow: 0 0 0px 10px ${({ theme }) => theme.colors.hover};
         }
     }
 
@@ -116,7 +133,7 @@ export const ControlButton = styled.button`
     &:not(:disabled) {
         @media (hover: hover) {
             &:hover {
-                background: ${({ theme }) => theme.colors.hover};
+                background: ${({ theme }) => theme.colors.lightHover};
 
                 svg {
                     filter: drop-shadow(0 0 15px black);
@@ -196,9 +213,9 @@ export const SmallControlButton = styled(ControlButton)<{ $color1?: string }>`
     height: 40px;
 
     &.selected {
-        background: ${({ theme }) => theme.colors.darkHover};
+        background: ${({ theme }) => theme.colors.lightHover};
         svg {
-            color: ${({ $color1 }) => $color1 ?? '#fff'};
+            color: ${({ $color1 }) => '#000'};
             opacity: 1;
         }
     }

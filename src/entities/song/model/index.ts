@@ -22,12 +22,12 @@ import {
 } from './lyrics';
 
 export const play = createEvent();
+export const pause = createEvent();
 export const load = createEvent<{
     song: TSong | null;
     queue: TQueueStore | undefined;
 }>();
 const loaded = createEvent();
-export const pause = createEvent();
 
 // const $currentSongStore = createStore(null);
 
@@ -117,5 +117,6 @@ export const songModel = {
     events: {
         loaded,
         play,
+        pause,
     },
 };

@@ -116,7 +116,11 @@ export const PlaylistItem = ({
                             >
                                 {isAlbum ? 'Album' : 'Playlist'} /
                             </Subtext>
-                            <Authors width="fit-content" authors={authors} />
+                            <Authors
+                                isUser={!isAlbum}
+                                width="fit-content"
+                                authors={authors}
+                            />
                         </Flex>
                     )}
                 </Flex>

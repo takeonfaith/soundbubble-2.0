@@ -128,6 +128,13 @@ export const SongStyled = styled.div`
         background: ${({ theme }) => theme.colors.hover};
     }
 
+    & .duration {
+        font-size: 0.7rem;
+        font-weight: 400;
+        width: 35px;
+        text-align: center;
+    }
+
     @media (hover: hover) {
         &:hover {
             background: ${({ theme }) => theme.colors.hover};
@@ -151,6 +158,14 @@ export const SongStyled = styled.div`
 
             ${MoreInfoButton} {
                 opacity: 1;
+            }
+
+            .like-button {
+                display: flex;
+            }
+
+            .duration {
+                display: none;
             }
         }
     }
@@ -219,6 +234,9 @@ export const SongName = styled.div`
     font-weight: 200;
     opacity: 0.85;
     font-size: 1rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 
     @container (min-width: 700px) {
         white-space: nowrap;
@@ -279,6 +297,10 @@ export const SongButtons = styled.div`
     align-items: center;
     gap: 6px;
 
+    & .like-button {
+        display: none;
+    }
+
     @container (max-width: 699px) {
         .like-button {
             display: none;
@@ -298,6 +320,7 @@ export const SongSkeletonStyled = styled.div`
 
 export const HorizontalSongStyled = styled.div`
     width: 100%;
+
     @container (max-width: 699px) {
         display: none;
     }

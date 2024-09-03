@@ -12,6 +12,7 @@ import { TPlaylist } from '../../playlist/model/types';
 import { TSong } from '../../song/model/types';
 import {
     DEFAULT_PAGE_STORE,
+    DEFAULT_SIGN_UP_DATA,
     DEFAULT_STORE,
     MAX_SEARCH_HISTORY_QUANTITY,
 } from './constants';
@@ -83,14 +84,28 @@ const loadAddedPlaylistsFx = createEffect(async (store: TStore) => {
 const loadUserPageFx = createEffect(async (userId: string) => {
     try {
         const user = await Database.Users.getUserByUid(userId);
-        const songs = await Database.Songs.getSongsByUids(
-            user?.ownSongs ?? [],
-            true
-        );
+
+        const userSongs = user?.ownSongs?.length
+            ? user?.ownSongs
+            : user?.addedSongs ?? [];
+        const userPlaylists = user?.ownPlaylists?.length
+            ? user?.ownPlaylists
+            : user?.addedPlaylists ?? [];
+
+        const songs = await Database.Songs.getSongsByUids(userSongs, true);
         const playlists = await Database.Playlists.getPlaylistsByUids(
-            user?.ownPlaylists ?? []
+            userPlaylists
         );
-        return { user, songs, playlists };
+        const lastSongPlayed =
+            !user.isAuthor && user.lastSongPlayed
+                ? await Database.Songs.getSongByUid(user.lastSongPlayed)
+                : null;
+
+        const friends = await Database.Users.getUsersByUids(
+            user.friends?.filter((u) => u.status === 'added').map((u) => u.uid)
+        );
+
+        return { user, songs, playlists, lastSongPlayed, friends };
     } catch (error) {
         throw new Error("Failed to get user's page info");
     }
@@ -188,11 +203,18 @@ const setIsLoadingUsers = createEvent<boolean>();
 const addSongToLibrary = createEvent<TSong>();
 export const addOwnPlaylistToLibrary = createEvent<TPlaylist>();
 export const setSearchHistory = createEvent<SetSearchHistoryProps>();
+const updateSignUpFormData = createEvent<{
+    key: keyof typeof DEFAULT_SIGN_UP_DATA;
+    value: string;
+}>();
 
 const userGate = createGate();
 
 export const $user = createStore<TStore>(DEFAULT_STORE);
 $user.reset(logout);
+
+const $userSignUpFormData = createStore(DEFAULT_SIGN_UP_DATA);
+$userSignUpFormData.reset(logout);
 
 const $isLoadingUser = createStore<boolean>(true);
 
@@ -222,6 +244,13 @@ const $userPage =
 $userPage.reset(logout);
 
 const $addedAuthors = createStore<TUser[]>([]);
+
+sample({
+    clock: updateSignUpFormData,
+    source: $userSignUpFormData,
+    fn: (store, { key, value }) => ({ ...store, [key]: value }),
+    target: $userSignUpFormData,
+});
 
 sample({
     clock: setIsLoadingUsers,
@@ -376,7 +405,7 @@ export const userModel = {
         useUnit([$addedPlaylists, loadAddedPlaylistsFx.pending]),
     useAddedAuthors: () => useUnit([$addedAuthors, loadAddedAuthorsFx.pending]),
     useSearchHistory: () => useUnit($searchHistory),
-    useUserPage: () => useUnit($userPage),
+    useUserPage: () => useUnit([$userPage, loadUserPageFx.pending]),
     useFriends: () => useUnit([$friends, loadFriendsFx.pending]),
     events: {
         login,
@@ -385,7 +414,7 @@ export const userModel = {
         createUser,
         setUser,
         setLoggining,
-        loadUserPageFx,
+        getUserPage,
         resetUserPage,
         updateFriends,
         setIsLoadingUsers,

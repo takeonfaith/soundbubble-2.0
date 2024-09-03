@@ -10,9 +10,13 @@ import {
 import { memo } from 'react';
 import { popupModel } from '../../../layout/popup/model';
 import { PlayingAnimation } from '../../../shared/components/playingAnimation';
+import { Subtext } from '../../../shared/components/subtext';
+import { useIsSongLiked } from '../../../shared/hooks/useIsSongLiked';
+import { userModel } from '../../user/model';
+import { getHumanDuration } from '../lib/getHumanDuration';
 import { TSong } from '../model/types';
-import { SongMoreContextMenu } from './SongMoreContextMenu';
 import { SongCover } from './SongCover';
+import { SongMoreContextMenu } from './SongMoreContextMenu';
 import {
     Listens,
     LoadingOverlay,
@@ -27,7 +31,6 @@ import {
     SongNameAndListens,
     SongStyled,
 } from './styles';
-import { useIsSongLiked } from '../../../shared/hooks/useIsSongLiked';
 
 type Props = {
     song: TSong;
@@ -41,7 +44,7 @@ type Props = {
 
 export const SongItem = memo(
     ({ song, playing, loading, index, onClick }: Props) => {
-        const { name, authors, imageColors, cover, listens } = song;
+        const { name, authors, imageColors, cover, listens, duration } = song;
         const isLiked = useIsSongLiked(song);
 
         const handleMore: React.MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -55,6 +58,12 @@ export const SongItem = memo(
         };
 
         const handleClick = () => onClick(song, index);
+
+        const handleLike = () => {
+            if (song) {
+                userModel.events.addSongToLibrary(song);
+            }
+        };
 
         return (
             <SongStyled
@@ -98,7 +107,11 @@ export const SongItem = memo(
                                 <IconHeadphones />
                             </Listens>
                         </SongNameAndListens>
-                        <Authors width='100%' authors={authors} disableOnMobile />
+                        <Authors
+                            width="100%"
+                            authors={authors}
+                            disableOnMobile
+                        />
                     </SongInfo>
                 </SongLeft>
                 <Listens className="outside">
@@ -111,9 +124,12 @@ export const SongItem = memo(
                         height="35px"
                         song={song}
                         isLiked={isLiked}
-                        likeColor={"darkgrey"}
-                        onClick={() => null}
+                        likeColor={'red'}
+                        onClick={handleLike}
                     />
+                    <Subtext className="duration">
+                        {getHumanDuration(duration)}
+                    </Subtext>
                     <MoreInfoButton onClick={handleMore}>
                         <IconDots />
                     </MoreInfoButton>

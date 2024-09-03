@@ -16,7 +16,7 @@ const CreatePlaylistModalStyled = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 20px;
 `;
 
 const fields = [

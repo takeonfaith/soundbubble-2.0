@@ -6,6 +6,13 @@ export const DEFAULT_STORE: TStore = {
     userPlaylists: [],
 };
 
+export const DEFAULT_SIGN_UP_DATA = {
+    fullName: '',
+    email: '',
+    photoURL: undefined,
+    password: '',
+};
+
 export const DEFAULT_PAGE_STORE: TPageStore = {
     user: null,
     error: null,
@@ -14,6 +21,8 @@ export const DEFAULT_PAGE_STORE: TPageStore = {
     playlists: [],
     similarAuthors: [],
     similarAuthorsLoading: true,
+    lastSongPlayed: null,
+    friends: null,
 };
 
 export const MAX_SEARCH_HISTORY_QUANTITY = 10;

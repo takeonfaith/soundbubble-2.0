@@ -5,7 +5,7 @@ export const SidebarStyled = styled.aside`
     min-width: var(--sidebar-width);
     width: var(--sidebar-width);
     height: 100dvh;
-    padding: 18px 14px;
+    padding: 10px 18px;
     /* background: ${({ theme }) => theme.colors.sidebar}; */
     /* border-right: 1px solid ${({ theme }) => theme.colors.border}; */
     position: relative;

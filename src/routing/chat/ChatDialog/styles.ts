@@ -82,7 +82,7 @@ export const MessageBubble = styled.div<{
     }
 
     @media (max-width: 768px) {
-        max-width: 300px;
+        max-width: 88%;
 
         &::after {
             width: 12px;
@@ -164,6 +164,14 @@ export const MessagesDate = styled.div`
     background: ${({ theme }) => theme.colors.pageBackground2};
     margin: 10px auto;
     width: 160px;
+
+    @media (max-width: 768px) {
+        font-size: 0.7rem;
+        width: 110px;
+        background: ${({ theme }) => theme.colors.pageBackground};
+        padding: 4px;
+        color: ${({ theme }) => theme.colors.greyText};
+    }
 `;
 
 export const MessageSecton = styled.div`
@@ -201,13 +209,20 @@ export const UserAvatarStyled = styled.div`
 `;
 
 export const ChatHeaderStyled = styled.div`
-    height: 60px;
+    height: 65px;
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
-    background: ${({ theme }) => theme.colors.pageBackground2};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+
+    @media (hover: hover) {
+        &:hover {
+            background: ${({ theme }) => theme.colors.hover};
+            cursor: pointer;
+        }
+    }
 
     @media (max-width: 768px) {
         padding: 0 16px;
@@ -234,7 +249,6 @@ export const SendButton = styled(Button)`
     width: 35px;
     height: 35px;
     border-radius: 100%;
-    background: ${({ theme }) => theme.colors.blue.action};
     color: #fff;
 `;
 

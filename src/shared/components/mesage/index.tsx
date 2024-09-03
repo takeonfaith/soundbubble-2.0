@@ -8,7 +8,7 @@ import React from 'react';
 import { useTheme } from 'styled-components';
 import { MessageStyled } from './styles';
 
-type MessageType = 'error' | 'warning' | 'info' | 'success';
+type MessageType = 'error' | 'warning' | 'info' | 'success' | 'tip';
 
 type Props = {
     children: React.ReactNode;
@@ -17,7 +17,7 @@ type Props = {
 
 type MessageData = {
     [key in MessageType]: {
-        color: 'blue' | 'green' | 'red' | 'orange';
+        color: 'blue' | 'green' | 'red' | 'orange' | 'grey';
         icon: JSX.Element;
     };
 };
@@ -37,6 +37,10 @@ const MESSAGE_DATA: MessageData = {
     },
     info: {
         color: 'blue',
+        icon: <IconInfoCircle />,
+    },
+    tip: {
+        color: 'grey',
         icon: <IconInfoCircle />,
     },
 };

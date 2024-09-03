@@ -5,17 +5,12 @@ type Props = {
     src: string | undefined;
 };
 
-const LOADED_IMAGES: Record<string, boolean> = {};
-
 export const Cover = ({ src }: Props) => {
-    const [coverLoaded, setCoverLoaded] = useState(
-        LOADED_IMAGES[src ?? ''] ?? false
-    );
+    const [coverLoaded, setCoverLoaded] = useState(false);
 
     const handleOnCoverLoad = () => {
         if (src) {
             setCoverLoaded(true);
-            LOADED_IMAGES[src] = true;
         }
     };
 

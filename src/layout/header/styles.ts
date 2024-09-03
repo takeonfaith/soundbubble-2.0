@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { DESKTOP_HEADER_HEIGHT, MOBILE_HEADER_HEIGHT } from './constants';
+import { DESKTOP_HEADER_HEIGHT } from './constants';
 
 export const HeaderStyled = styled.header`
     width: 100%;
@@ -19,7 +19,8 @@ export const HeaderStyled = styled.header`
     color: ${({ theme }) => theme.colors.textColor};
     z-index: 11;
 
-    &.hidden {
+    &.hidden,
+    &.hide-on-desktop {
         display: none;
     }
 
@@ -28,6 +29,10 @@ export const HeaderStyled = styled.header`
         min-height: fit-content;
         display: flex;
         justify-content: flex-start;
+
+        &.hide-on-desktop {
+            display: flex;
+        }
     }
 `;
 
@@ -54,6 +59,7 @@ export const HeaderPageTitle = styled.h2`
     display: flex;
     align-items: center;
     gap: 8px;
+    font-weight: 400;
 
     @media (max-width: 1000px) {
         font-weight: 500;

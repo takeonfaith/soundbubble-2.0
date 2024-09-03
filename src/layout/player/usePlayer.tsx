@@ -9,6 +9,7 @@ import { modalModel } from '../modal/model';
 import { popupModel } from '../popup/model';
 import { CompactLyrics } from './CompactLyrics';
 import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
+import { SongsQueue } from './SongsQueue';
 
 export const usePlayer = () => {
     const { currentSong } = songModel.useSong();
@@ -55,6 +56,15 @@ export const usePlayer = () => {
         });
     };
 
+    const handleShowQueue = (e: Evt<'btn'>) => {
+        popupModel.events.open({
+            content: <SongsQueue />,
+            height: 500,
+            width: 350,
+            e,
+        });
+    };
+
     return {
         currentSong,
         controls,
@@ -63,6 +73,7 @@ export const usePlayer = () => {
         handleAddToPlaylist,
         handleShare,
         handleMore,
+        handleShowQueue,
         handleOpenFullScreenPlayer,
     };
 };

@@ -11,11 +11,16 @@ export const GlobalStyles = createGlobalStyle`
 
 	:root {
 		--page-padding: 30px;
-		--page-gap: 8px;
-		--desktop-page-radius: 14px;
-		--player-size: 80px;
+		--page-gap: 10px;
+		--desktop-page-radius: 12px;
+		--player-size: 70px;
 		--sidebar-width: 280px;
 		--header-height: 70px;
+
+
+		@media (max-width: 1270px) {
+        --player-size: 80px;
+    	}
 
 		@media (max-width: 1000px) {
 			--page-padding: 20px;

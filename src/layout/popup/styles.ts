@@ -10,7 +10,7 @@ export const PopupStyled = styled.div<{
 }>`
     position: absolute;
     width: ${({ $width }) => `${$width}px`};
-    background: ${({ theme }) => theme.colors.pageBackground2};
+    background: ${({ theme }) => theme.colors.context};
     height: ${({ $height }) => `${$height}px`};
     top: ${({ $posY }) => `${$posY}px`};
     left: ${({ $posX }) => `${$posX}px`};

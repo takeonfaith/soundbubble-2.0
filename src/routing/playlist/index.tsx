@@ -1,21 +1,26 @@
 import { IconError404Off, IconMusicOff, IconPlus } from '@tabler/icons-react';
 import { playlistModel } from '../../entities/playlist/model';
+import { getHumanDuration } from '../../entities/song/lib/getHumanDuration';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { userModel } from '../../entities/user/model';
 import { ShareModal } from '../../features/shareModal';
 import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
+import { Flex } from '../../shared/components/flex';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
+import { Subtext } from '../../shared/components/subtext';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
 import { PageTop } from './pageTop';
 import { SkeletonLoading } from './Skeleton';
 import {
+    BottomPlaylist,
     PlaylistPageSongs,
     PlaylistPageStyled,
     PlaylistSimilar,
 } from './styles';
+import { Button } from '../../shared/components/button';
 
 export const PlaylistPage = () => {
     const { currentPlaylist, currentPlaylistSongs, loading, error } =
@@ -47,6 +52,11 @@ export const PlaylistPage = () => {
         });
     };
 
+    const totalDuration = currentPlaylistSongs?.reduce((acc, song) => {
+        acc += song.duration;
+        return acc;
+    }, 0);
+
     return (
         <PageWrapper>
             {!error && (
@@ -66,6 +76,7 @@ export const PlaylistPage = () => {
                             isPrivate={currentPlaylist?.isPrivate}
                             colors={currentPlaylist?.imageColors}
                         />
+
                         <PlaylistPageSongs>
                             {currentPlaylist?.songs.length === 0 && (
                                 <PageMessage
@@ -94,6 +105,20 @@ export const PlaylistPage = () => {
                                 }`}
                             />
                         </PlaylistPageSongs>
+                        <BottomPlaylist>
+                            <Button
+                                $height="35px"
+                                $width="130px"
+                                className="outline"
+                            >
+                                <IconPlus />
+                                Add songs
+                            </Button>
+                            <Subtext style={{ fontSize: '0.85rem' }}>
+                                {currentPlaylistSongs?.length ?? 0} songs,
+                                {getHumanDuration(totalDuration, 'text')}
+                            </Subtext>
+                        </BottomPlaylist>
                         <PlaylistSimilar></PlaylistSimilar>
                     </PlaylistPageStyled>
                 </SkeletonPageAnimation>

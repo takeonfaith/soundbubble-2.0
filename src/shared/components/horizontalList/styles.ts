@@ -10,12 +10,17 @@ export const ArrowButton = styled(Button)`
     height: 36px;
     min-height: 36px;
     border-radius: 100%;
-    background: ${({ theme }) => theme.colors.pageBackground};
+    background: ${({ theme }) => theme.colors.pageTopButton};
     z-index: 10;
     display: none;
 
     &:hover {
         background: ${({ theme }) => theme.colors.sidebar};
+    }
+
+    &:active {
+        transform: scale(0.96) translateY(-50%);
+        transform-origin: top center;
     }
 
     svg {
@@ -45,7 +50,7 @@ export const ListWrapper = styled.div<{ $overflowColor?: string }>`
             position: absolute;
             top: 0;
             left: 0px;
-            width: 10px;
+            width: 20px;
             height: 100%;
             background: ${({ theme, $overflowColor }) =>
                 $overflowColor ?? theme.colors.pageBackground};
@@ -61,7 +66,7 @@ export const ListWrapper = styled.div<{ $overflowColor?: string }>`
             position: absolute;
             top: 0;
             right: 0px;
-            width: 30px;
+            width: 20px;
             height: 100%;
             background: ${({ theme, $overflowColor }) =>
                 $overflowColor ?? theme.colors.pageBackground};

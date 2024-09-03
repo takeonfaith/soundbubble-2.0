@@ -18,7 +18,7 @@ export const ChatItemStyled = styled(Link)`
     }
 
     @media (max-width: 768px) {
-        padding: 10px 20px;
+        padding: 6px 20px;
 
         & .general-cover {
             min-width: 55px;

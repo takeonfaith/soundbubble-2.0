@@ -1,8 +1,11 @@
-import { IconMessagePlus, IconSearch } from '@tabler/icons-react';
+import {
+    IconMessageOff,
+    IconMessagePlus,
+    IconSearch,
+} from '@tabler/icons-react';
 import { Outlet } from 'react-router';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 import { chatModel } from '../../entities/chat/model';
-import { ChatItem } from '../../entities/chat/ui/ChatItem';
 import { CreateChatModal } from '../../features/createChatModal';
 import { Header } from '../../layout/header';
 import { modalModel } from '../../layout/modal/model';
@@ -10,12 +13,12 @@ import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
 import { PageWrapper } from '../../shared/components/pageWrapper';
-import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { ChatsSkeleton } from './ChatsSkeleton';
+import { ChatList } from './ChatList';
+import { PageMessage } from '../../shared/components/pageMessage';
 
 const ChatPageStyled = styled.div`
     width: 100%;
-    height: calc(100% - var(--header-height));
+    height: 100%;
     display: flex;
 
     @media (max-width: 768px) {
@@ -32,38 +35,6 @@ const MobileChatSearchStyled = styled.div`
     }
 `;
 
-const DesktopWrapperStyled = styled.div`
-    display: block;
-
-    @media (max-width: 768px) {
-        display: none;
-    }
-`;
-
-const ListOfChats = styled.div`
-    min-width: 380px;
-    max-width: 380px;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    background: ${({ theme }) => theme.colors.pageBackground};
-    border-right: 1px solid ${({ theme }) => theme.colors.border};
-    overflow-y: auto;
-
-    @media (max-width: 768px) {
-        width: 100%;
-        max-width: none;
-        overflow-y: hidden;
-        display: none;
-
-        &.no-chat {
-            display: flex;
-        }
-    }
-`;
-
 const ChatContent = styled.div`
     width: 100%;
 
@@ -76,27 +47,11 @@ const ChatContent = styled.div`
     }
 `;
 
-const ChatSearchStyled = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 2px 20px;
-`;
-
 export const ChatPage = () => {
-    const {
-        chats,
-        loadingChats,
-        chatData,
-        lastMessage,
-        loadingChatData,
-        unreadCounts,
-        currentChatId,
-    } = chatModel.useChats();
-    const theme = useTheme();
+    const { currentChatId } = chatModel.useChats();
     chatModel.useLoadChats();
 
-    const handleCreateChat = () => {
+    const handleCreateChatModal = () => {
         modalModel.events.open({
             title: 'Create chat with friends',
             content: <CreateChatModal />,
@@ -105,59 +60,31 @@ export const ChatPage = () => {
 
     return (
         <PageWrapper>
-            {!currentChatId && (
-                <Header>
-                    <MobileChatSearchStyled>
-                        <Flex gap={10} width="100%">
-                            <Input
-                                icon={<IconSearch />}
-                                placeholder="Search for chats..."
-                            />
-                            <Button onClick={handleCreateChat} $width="48px">
-                                <IconMessagePlus size={20} />
-                            </Button>
-                        </Flex>
-                    </MobileChatSearchStyled>
-                </Header>
-            )}
-            <ChatPageStyled>
-                <ListOfChats className={!currentChatId ? 'no-chat' : ''}>
-                    <DesktopWrapperStyled>
-                        <ChatSearchStyled>
-                            <Input
-                                icon={<IconSearch />}
-                                placeholder="Search for chats..."
-                            />
-                            <Button onClick={handleCreateChat} $width="48px">
-                                <IconMessagePlus size={20} />
-                            </Button>
-                        </ChatSearchStyled>
-                    </DesktopWrapperStyled>
-                    <Flex
-                        d="column"
-                        gap={0}
-                        width="100%"
-                        height="100%"
-                        padding="10px 0"
-                    >
-                        {chats.map((chat) => {
-                            return (
-                                <>
-                                    <ChatItem
-                                        isSelected={currentChatId === chat.id}
-                                        unreadCount={unreadCounts[chat.id]}
-                                        lastMessage={lastMessage[chat.id]}
-                                        chatData={chatData}
-                                        chat={chat}
-                                        key={chat.id}
-                                    />
-                                </>
-                            );
-                        })}
+            <Header className="hide-on-desktop">
+                <MobileChatSearchStyled>
+                    <Flex gap={10} width="100%">
+                        <Input
+                            icon={<IconSearch />}
+                            placeholder="Search for chats..."
+                        />
+                        <Button onClick={handleCreateChatModal} $width="48px">
+                            <IconMessagePlus size={20} />
+                        </Button>
                     </Flex>
-                </ListOfChats>
+                </MobileChatSearchStyled>
+            </Header>
+            <ChatPageStyled>
+                <ChatList />
                 <ChatContent className={!currentChatId ? 'no-chat' : ''}>
-                    <Outlet />
+                    {!currentChatId ? (
+                        <PageMessage
+                            icon={IconMessageOff}
+                            title="No chat choosen"
+                            description="Select any chat"
+                        />
+                    ) : (
+                        <Outlet />
+                    )}
                 </ChatContent>
             </ChatPageStyled>
         </PageWrapper>

@@ -13,6 +13,36 @@ export const UserItemStyled = styled(Link)`
     padding: 0;
     border-radius: ${({ theme }) => theme.borderRadius.big};
 
+    .verified-icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    &.vertical-small {
+        --size: 60px;
+        width: var(--size);
+        position: relative;
+        overflow: visible;
+
+        h4 {
+            font-size: 0.75rem;
+            white-space: normal;
+            text-align: center;
+            font-weight: 300;
+            height: 50px;
+        }
+
+        .verified-icon {
+            position: absolute;
+            right: 2px;
+            top: calc(var(--size) - 10px);
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 100%;
+        }
+    }
+
     &.horizontal {
         padding: 5px 6px;
         width: 100%;
@@ -21,9 +51,30 @@ export const UserItemStyled = styled(Link)`
     }
 
     @media (hover: hover) {
+        &.vertical-small {
+            &::before {
+                content: '';
+                position: absolute;
+                top: -10px;
+                left: -10px;
+                width: calc(100% + 20px);
+                height: calc(100% + 20px);
+                background: ${({ theme }) => theme.colors.hover};
+                border-radius: 10px;
+                transition: opacity 0.2s ease;
+                opacity: 0;
+            }
+        }
+
         &:hover {
             &.horizontal {
                 background: ${({ theme }) => theme.colors.hover};
+            }
+
+            &.vertical-small {
+                &::before {
+                    opacity: 1;
+                }
             }
         }
     }
@@ -87,6 +138,10 @@ export const UserItemStyled = styled(Link)`
         & span {
             font-size: 0.8rem;
         }
+
+        &.vertical-small {
+            --size: 50px;
+        }
     }
 
     @media (max-width: 850px) {
@@ -146,4 +201,10 @@ export const OnlineIndicator = styled.div`
     position: absolute;
     bottom: 0px;
     right: 0px;
+
+    &.vertical-small {
+        bottom: 2px;
+        right: 5px;
+        outline: 3px solid ${({ theme }) => theme.colors.pageBackground};
+    }
 `;

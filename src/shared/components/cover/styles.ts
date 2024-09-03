@@ -25,6 +25,7 @@ export const GeneralCoverStyled = styled(BeautifulBackground)<{
     align-items: center;
     justify-content: center;
     animation: none;
+    background-size: 200% 200%;
     /* overflow: hidden; */
 
     img {
@@ -43,8 +44,8 @@ export const GeneralCoverStyled = styled(BeautifulBackground)<{
         left: 0;
 
         svg {
-            width: 45%;
-            height: 45%;
+            width: 50%;
+            height: 50%;
             opacity: 0.7;
             color: #fff;
         }

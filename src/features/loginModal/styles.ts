@@ -141,7 +141,7 @@ export const Blocks = styled.div`
         top: 100px;
         right: 120px;
         animation-delay: 0.8s;
-        color: ${({ theme }) => theme.colors.red.main};
+        color: ${({ theme }) => theme.colors.red.action};
     }
     .block:nth-child(3) {
         bottom: 120px;

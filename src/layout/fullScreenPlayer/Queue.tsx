@@ -8,18 +8,22 @@ import { Divider } from '../../shared/components/divider';
 import getUID from '../../shared/funcs/getUID';
 import { QueueStyled } from './styles';
 
-const createUser = ({
-    displayName,
-    photoURL,
-    imageColors,
-    isAuthor,
-}: {
+type UserProps = {
+    uid?: string;
     displayName?: string | null;
     photoURL?: string | null;
     imageColors?: string[];
     isAuthor?: boolean;
-}): TUser => ({
-    uid: getUID(),
+};
+
+const createUser = ({
+    uid,
+    displayName,
+    photoURL,
+    imageColors,
+    isAuthor,
+}: UserProps): TUser => ({
+    uid: uid ?? getUID(),
     imageColors: imageColors ?? [],
     photoURL: photoURL ?? 'https://via.placeholder.com/150',
     isAuthor: isAuthor ?? false,
@@ -45,11 +49,14 @@ type Props = { queue: TQueueStore };
 
 const QueueOrigin = ({ queue }: Props) => {
     if (queue.url?.includes('author')) {
+        const uid = queue.url.split('/author/').pop();
+
         return (
             <UserItem
                 onClick={() => songModel.fullscreen.close()}
                 orientation="horizontal"
                 user={createUser({
+                    uid,
                     displayName: queue.name,
                     photoURL: queue.image,
                     isAuthor: true,

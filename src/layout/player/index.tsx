@@ -1,9 +1,10 @@
 import {
     IconDots,
+    IconPlaylist,
     IconQuote,
     IconShare3,
-    IconSquareRoundedPlus,
 } from '@tabler/icons-react';
+import { useTheme } from 'styled-components';
 import { SongCover } from '../../entities/song/ui/SongCover';
 import { LikeButton } from '../../features/likeButton';
 import { Authors } from '../../shared/components/authors';
@@ -15,12 +16,12 @@ import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
 import {
     MobilePlayButton,
     PlayerActionButtons,
+    PlayerMusicControls,
     PlayerStyled,
     SongStyled,
     SongTitle,
 } from './styles';
 import { usePlayer } from './usePlayer';
-import { useTheme } from 'styled-components';
 
 export const Player = () => {
     const {
@@ -28,7 +29,7 @@ export const Player = () => {
         isLiked,
         currentSong,
         handleLyrics,
-        handleAddToPlaylist,
+        handleShowQueue,
         handleShare,
         handleMore,
         handleOpenFullScreenPlayer,
@@ -51,8 +52,10 @@ export const Player = () => {
                     <Authors authors={currentSong?.authors} />
                 </Flex>
             </SongStyled>
-            <Flex width="100%" jc="flex-end">
+            <PlayerMusicControls onClick={(e) => e.stopPropagation()}>
                 <MusicControls {...controls} />
+            </PlayerMusicControls>
+            <Flex jc="flex-end" onClick={(e) => e.stopPropagation()}>
                 <MobilePlayButton>
                     <MusicControlsStyled>
                         <Button
@@ -80,9 +83,9 @@ export const Player = () => {
                     <Button
                         $width="42px"
                         disabled={!currentSong}
-                        onClick={handleAddToPlaylist}
+                        onClick={handleShowQueue}
                     >
-                        <IconSquareRoundedPlus size={20} />
+                        <IconPlaylist size={20} />
                     </Button>
                     <Button
                         $width="42px"

@@ -353,7 +353,7 @@ export const QueueStyled = styled.div`
     flex-direction: column;
     gap: 4px;
 
-    & button {
+    /* & button {
         color: #fff;
     }
 
@@ -363,5 +363,5 @@ export const QueueStyled = styled.div`
 
     & > * {
         color: #fff !important;
-    }
+    } */
 `;

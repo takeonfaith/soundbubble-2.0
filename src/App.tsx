@@ -7,11 +7,12 @@ import styled, { ThemeProvider } from 'styled-components';
 import { useTheme } from './app/theme';
 import { Database } from './database';
 import { userModel } from './entities/user/model';
+import { FB } from './firebase';
 import { GlobalStyles } from './globalStyles';
 
 const AppStyled = styled.div`
     height: 100dvh;
-    background: ${({ theme }) => theme.colors.pageBackground3};
+    background: ${({ theme }) => theme.colors.pageBackground2};
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -27,7 +28,7 @@ function App() {
 
     useEffect(() => {
         userModel.events.setIsLoadingUsers(true);
-        Database.Users.onAuthStateChanged(async (userCred) => {
+        FB.onAuthStateChanged(async (userCred) => {
             userModel.events.setIsLoadingUsers(false);
 
             if (userCred?.uid) {

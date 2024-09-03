@@ -39,8 +39,10 @@ export const UserItem = memo(
             isVerified,
             online,
         } = user;
-        const isVertical = orientation === 'vertical';
+        const isVertical =
+            orientation === 'vertical' || orientation === 'vertical-small';
         const status = getLastSeen(online).status;
+        const link = isAuthor ? `/author/${uid}` : `/user/${uid}`;
 
         const handleClick = (e: Evt<'a'>) => {
             onClick?.(user, e);
@@ -49,7 +51,7 @@ export const UserItem = memo(
         return (
             <UserItemStyled
                 as={as}
-                to={`/author/${uid}`}
+                to={link}
                 className={orientation}
                 onClick={handleClick}
             >
@@ -59,7 +61,9 @@ export const UserItem = memo(
                     size={isVertical ? 'var(--size)' : '38px'}
                     isAuthor={isAuthor}
                 >
-                    {status === 'online' && !isAuthor && <OnlineIndicator />}
+                    {status === 'online' && !isAuthor && (
+                        <OnlineIndicator className={orientation} />
+                    )}
                 </UserCover>
                 <Flex
                     d="column"
@@ -75,8 +79,8 @@ export const UserItem = memo(
                         <h4>{displayName}</h4>
                         {isVerified && (
                             <IconDiscountCheckFilled
-                                size={16}
                                 style={{ color: DARK_THEME.colors.blue.main }}
+                                className="verified-icon"
                             />
                         )}
                     </Flex>
@@ -92,9 +96,9 @@ export const UserItem = memo(
                     (orientation === 'horizontal' && (
                         <Button $width="45px">
                             <IconChevronRight
-                                opacity={0.5}
+                                opacity={0.3}
                                 strokeWidth={1.7}
-                                size={24}
+                                size={22}
                             />
                         </Button>
                     ))}

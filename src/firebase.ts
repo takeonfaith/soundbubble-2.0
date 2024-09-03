@@ -174,24 +174,52 @@ export class FB {
     }
 }
 
-// const addFullNameFieldToSearch = async () => {
-//     const search = await getDocs(FB.get('search'));
-//     const requests = {
-//         playlists: Playlists.getPlaylistByUid,
-//         songs: Songs.getSongByUid,
-//         users: Users.getUserByUid,
-//     };
+function getAudioDuration(audioUrl: string) {
+    return new Promise<number>((resolve, reject) => {
+        const audio = new Audio(audioUrl);
 
-//     await Promise.all(
-//         getDataFromDoc<Suggestion>(search).map(async (s) => {
-//             const entity = (await requests[s.place](s.uid)) as TEntity;
-//             const updated = { ...s, fullName: getEntityName(entity) };
-//             FB.updateById('search', s.uid, updated);
-//             return updated;
-//         })
-//     ).then((data) => {
-//         console.log('updated successfully', data);
+        // Event listener for when metadata has loaded
+        audio.addEventListener('loadedmetadata', () => {
+            const duration = audio.duration;
+            resolve(duration); // Resolve the promise with the duration
+        });
+
+        // Error event listener
+        audio.addEventListener('error', (e) => {
+            reject(`Error occurred while loading audio: ${e.message}`);
+        });
+
+        // Initiate the loading of the audio file by setting its src
+        audio.src = audioUrl;
+    });
+}
+
+// const addDuration = async () => {
+//     console.log('aaddDuration');
+
+//     const allSongs = await getDocs(FB.get('songs'));
+//     console.log(allSongs);
+
+//     const songs = getDataFromDoc<TSong>(allSongs);
+//     console.log(songs);
+//     const data = songs.map((s) => {
+//         return getAudioDuration(s.songSrc);
+//     });
+
+//     console.log(data);
+//     const res = await Promise.all(data);
+
+//     console.log(res);
+
+//     const update = songs.map((s, i) => {
+//         return FB.updateById('songs', s.id, {
+//             duration: res[i],
+//         });
+//     });
+
+//     Promise.all(update).then(() => {
+//         console.log('SUCCESSFUL!!!!!!!');
 //     });
 // };
 
-// addFullNameFieldToSearch();
+// addDuration();

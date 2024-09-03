@@ -43,7 +43,7 @@ const SearchBarStyled = styled.div`
 `;
 
 const TabsWrapper = styled.div`
-    padding: 10px 0;
+    padding: 8px 0;
     background: ${({ theme }) => theme.colors.pageBackground};
 `;
 
@@ -111,6 +111,10 @@ export const SearchPage = () => {
     const suggestions = useUnit($searchSuggestions);
 
     const handleChange = (val: string) => {
+        if (val.length === 0) {
+            navigate(`/search${where !== '' ? `?where=${where}` : ''}`);
+        }
+
         clearTimeout(debounceTimer.current);
 
         debounceTimer.current = setTimeout(() => {

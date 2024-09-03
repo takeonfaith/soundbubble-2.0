@@ -16,6 +16,7 @@ export type TSong = {
     cover: string;
     authors: TAuthor[];
     imageColors: string[];
+    duration: number;
 };
 
 export type SongState = 'playing' | 'pause' | 'loading';

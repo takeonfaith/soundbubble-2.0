@@ -1,1 +1,1 @@
-export type TOrientation = 'vertical' | 'horizontal'
+export type TOrientation = 'vertical' | 'horizontal' | 'vertical-small';

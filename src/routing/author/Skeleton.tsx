@@ -1,10 +1,16 @@
+import styled from 'styled-components';
 import { PlaylistSkeleton } from '../../entities/playlist/ui/Skeleton';
 import { SongSkeleton } from '../../entities/song/ui/Skeleton';
 import { GridSongListStyled } from '../../entities/song/ui/gridList/styles';
 import { UserSkeleton } from '../../entities/user/ui/Skeleton';
 import { Flex } from '../../shared/components/flex';
-import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonShape } from '../../shared/components/skeleton';
+import { SongsStyled } from './styles';
+
+const AuthorPageWrapper = styled.div`
+    padding: 0 calc(var(--page-padding) + 4px);
+    width: 100%;
+`;
 
 export const SkeletonLoading = () => {
     return (
@@ -34,10 +40,15 @@ export const SkeletonLoading = () => {
                     </Flex>
                 </Flex>
             </SkeletonShape>
-            <ContentWrapper>
-                <Flex d="column" ai="flex-start" gap={8} width="100%">
-                    <SkeletonShape width="95px" height="25px" radius="6px" />
-                    <GridSongListStyled>
+            <AuthorPageWrapper>
+                <SongsStyled>
+                    <SkeletonShape
+                        width="100px"
+                        height="25px"
+                        radius="6px"
+                        style={{ marginBottom: '8px' }}
+                    />
+                    <GridSongListStyled rows={3} columns={3}>
                         <SongSkeleton />
                         <SongSkeleton />
                         <SongSkeleton />
@@ -48,7 +59,7 @@ export const SkeletonLoading = () => {
                         <SongSkeleton />
                         <SongSkeleton />
                     </GridSongListStyled>
-                </Flex>
+                </SongsStyled>
                 <Flex d="column" ai="flex-start" gap={8} width="100%">
                     <SkeletonShape width="115px" height="25px" radius="6px" />
                     <Flex gap={14} width="100%">
@@ -79,7 +90,7 @@ export const SkeletonLoading = () => {
                         <UserSkeleton />
                     </Flex>
                 </Flex>
-            </ContentWrapper>
+            </AuthorPageWrapper>
         </Flex>
     );
 };

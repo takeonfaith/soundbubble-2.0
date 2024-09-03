@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { GridSongList } from '../../entities/song/ui/gridList';
 import { getLastSeen } from '../../entities/user/lib/getLastSeen';
 import { userModel } from '../../entities/user/model';
@@ -22,7 +23,7 @@ type Props = {
 };
 
 export const AuthorPage = ({ userData }: Props) => {
-    const { user: currentPageUser, songs, loading } = userModel.useUserPage();
+    const [{ user: currentPageUser, songs }, loading] = userModel.useUserPage();
     const [{ data: currentUser }] = userModel.useUser();
     const userPageData = userData ?? currentPageUser;
     const [friends] = userModel.useFriends();
@@ -38,10 +39,16 @@ export const AuthorPage = ({ userData }: Props) => {
         page: 'author',
         onChangeId: (id) => {
             if (id) {
-                userModel.events.loadUserPageFx(id);
+                userModel.events.getUserPage(id);
             }
         },
     });
+
+    useEffect(() => {
+        return () => {
+            userModel.events.resetUserPage();
+        };
+    }, []);
 
     const queueInfo = {
         listName: userPageData?.displayName ?? 'Author',
@@ -61,7 +68,7 @@ export const AuthorPage = ({ userData }: Props) => {
         <AuthorPageWrapper>
             <SkeletonPageAnimation
                 color={userPageData?.imageColors[0] ?? 'grey'}
-                loading={loading}
+                loading={!currentPageUser || loading}
                 skeleton={<SkeletonLoading />}
             >
                 <PageTop
@@ -113,7 +120,7 @@ export const AuthorPage = ({ userData }: Props) => {
                         songs={songs.slice(0, MAX_SONGS)}
                     />
                 </SongsStyled>
-                <Playlists uid={userPageData?.uid} />
+                <Playlists uid={userPageData?.uid} title="Top Albums" />
                 {!loading && (
                     <SimilarAuthors
                         songs={songs}

@@ -1,32 +1,36 @@
 import { styled } from 'styled-components';
 import { BeautifulBackground } from '../../shared/components/beautifulBackground';
+import { hexToRgbA } from '../../shared/funcs/hexToRgba';
 
 export const PlayerStyled = styled.div<{ $background: string }>`
     width: calc(100% - var(--sidebar-width) - var(--page-gap));
     border-radius: var(--desktop-page-radius);
     margin: var(--page-gap);
-    min-height: 80px;
+    min-height: var(--player-size);
     display: flex;
     align-self: flex-end;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+    padding: 0 15px;
     transition: 0.5s background-color;
     background-color: ${({ $background }) => $background};
     background-image: ${({ theme }) =>
         `linear-gradient(${theme.colors.playerDarkening}, ${theme.colors.playerDarkening})`};
-    gap: 50px;
+    gap: 20px;
     position: relative;
     z-index: 10;
-
-    .music-controls {
-        flex-direction: row-reverse;
-    }
+    position: relative;
 
     .control-buttons {
         order: 3;
         width: fit-content;
-        margin-bottom: 16px;
+
+        .play-pause {
+            background: ${({ theme, $background }) =>
+                `rgba(${hexToRgbA($background)}, 0.1)` ??
+                theme.colors.darkHover};
+            filter: brightness(${({ theme }) => theme.colors.brightness});
+        }
 
         .playback-buttons {
             gap: 0;
@@ -51,44 +55,71 @@ export const PlayerStyled = styled.div<{ $background: string }>`
         }
     }
 
+    .music-controls {
+        flex-direction: row-reverse;
+        gap: 60px;
+        position: relative;
+        max-width: 1000px;
+
+        @media (max-width: 1270px) {
+            flex-direction: column-reverse;
+            gap: 6px;
+        }
+    }
+
     .song-slider {
-        order: 2;
-        position: absolute;
-        left: 50%;
-        bottom: 16px;
-        transform: translateX(-50%);
-        height: 2px;
-        width: 35%;
+        height: 3px;
+        width: 100%;
+        margin-right: 40px;
+        min-width: 150px;
 
         &::-webkit-slider-thumb {
             width: 10px;
             height: 10px;
         }
+
+        @media (max-width: 1270px) {
+            width: 350px;
+            margin-top: -4px;
+            margin-right: 0;
+        }
     }
 
     .duration-numbers {
-        order: 1;
-        position: absolute;
-        left: 50%;
-        bottom: 26px;
-        transform: translateX(-50%);
         opacity: 0.6;
-        font-size: 0.7rem;
+        position: absolute;
+        right: -6px;
+        width: 100%;
+        top: 24px;
         min-width: 70px;
-        width: 35%;
+        width: calc(100% - 274px);
         color: ${({ theme }) => theme.colors.textColor};
+        opacity: 0.4;
+        pointer-events: none;
+
+        @media (max-width: 1270px) {
+            right: none;
+            left: calc(50% + 4px);
+            top: 40px;
+            transform: translateX(-50%);
+            width: 355px;
+        }
 
         & > * {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             min-width: 36px;
             display: block;
         }
     }
 
+    @media (max-width: 1900px) {
+        width: calc(100% - var(--page-gap) * 2);
+    }
+
     @media (max-width: 1000px) {
         padding: 6px;
         min-height: auto;
-        border-radius: 14px;
+        border-radius: 10px;
         margin: 0 12px;
         width: calc(100% - 24px);
         box-shadow: 0px -10px 10px 0px ${({ theme }) => theme.colors.pageBackground};
@@ -100,9 +131,20 @@ export const PlayerStyled = styled.div<{ $background: string }>`
     }
 `;
 
+export const PlayerMusicControls = styled.div`
+    width: 100%;
+
+    @media (max-width: 1270px) {
+        transform: translateY(-7px);
+    }
+`;
+
 export const SongTitle = styled.h1`
     font-size: 1.1rem;
     font-weight: 200;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 
     @media (max-width: 1000px) {
         font-size: 0.95rem;
@@ -112,7 +154,7 @@ export const SongTitle = styled.h1`
 export const SongStyled = styled.div`
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
     min-width: 300px;
     max-width: 300px;
     overflow: hidden;

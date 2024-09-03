@@ -16,7 +16,7 @@ export const ContentWrapper = styled.div`
     position: relative;
 
     @media (max-width: 1000px) {
-        padding: 0 20px;
+        padding: 0 var(--page-padding);
         padding-bottom: 10px;
         gap: 4px;
     }

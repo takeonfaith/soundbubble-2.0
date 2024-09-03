@@ -38,6 +38,7 @@ export const Button = styled.button<{
             opacity: 0.5;
         }
     }
+
     &.primary {
         background: ${({ theme }) => theme.colors.blue.action};
         box-shadow: 0 10px 20px
@@ -55,27 +56,44 @@ export const Button = styled.button<{
         border: 1px solid ${({ theme }) => theme.colors.border};
     }
 
+    &:active {
+        filter: brightness(0.85);
+        transform: scale(0.99);
+
+        &.primary {
+            box-shadow: none;
+        }
+    }
+
     @media (hover: hover) {
-        &:hover {
-            filter: brightness(0.9);
+        &:not(.primary) {
+            &:hover {
+                filter: brightness(0.9);
+                background: ${({ theme }) => theme.colors.hover};
+            }
         }
 
-        &:active {
-            filter: brightness(0.85);
-            transform: scale(0.99);
-
-            &.primary {
-                box-shadow: none;
-            }
+        &.primary:hover,
+        &.outline:hover,
+        &.secondary:hover {
+            filter: brightness(0.9);
         }
     }
 
     @media (hover: none) {
         transition: 0.2s transform;
 
-        &:active {
-            background: ${({ theme }) => theme.colors.hover};
-            transform: scale(0.95);
+        &:not(.primary) {
+            &:active {
+                filter: brightness(0.9);
+                background: ${({ theme }) => theme.colors.hover};
+            }
+        }
+
+        &.primary:active,
+        &.outline:active,
+        &.secondary:active {
+            filter: brightness(0.9);
         }
     }
 `;

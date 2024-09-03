@@ -25,6 +25,7 @@ import {
     HeaderStyled,
     MobileChildren,
 } from './styles';
+import { Settings } from '../../entities/settings/ui';
 
 const UserContextMenu = () => {
     const [{ data }] = userModel.useUser();
@@ -38,6 +39,14 @@ const UserContextMenu = () => {
         modalModel.events.open({
             title: `Share profile with friends`,
             content: <ShareModal entity={data} />,
+        });
+        popupModel.events.close();
+    };
+
+    const handleSettingsModal = () => {
+        modalModel.events.open({
+            title: 'Settings',
+            content: <Settings />,
         });
         popupModel.events.close();
     };
@@ -67,7 +76,7 @@ const UserContextMenu = () => {
                 <IconEditCircle />
                 Edit
             </Button>
-            <Button>
+            <Button onClick={handleSettingsModal}>
                 <IconSettings />
                 Settings
             </Button>
@@ -88,18 +97,15 @@ const getCurrentRoute = (
     allRoutes: TRoute[],
     location: Location<unknown>
 ): TRoute | null => {
-    console.log(location);
     const { pathname } = location;
     const splitted = pathname.split('/');
     for (let i = 0; i < allRoutes.length; i++) {
         const route = allRoutes[i];
-        
 
         if (route.children) {
             const res = getCurrentRoute(route.children, location);
             if (res) return res;
-        }
-        else if (splitted[1] === route.url) return route;
+        } else if (splitted[1] === route.url) return route;
     }
 
     return null;
@@ -108,9 +114,10 @@ const getCurrentRoute = (
 type Props = {
     children?: React.ReactNode;
     hide?: boolean;
+    className?: string;
 };
 
-export const Header = ({ children, hide }: Props) => {
+export const Header = ({ children, hide, className }: Props) => {
     const [{ data }] = userModel.useUser();
     const location = useLocation();
     const currentRoute = getCurrentRoute(allRoutes, location);
@@ -125,12 +132,13 @@ export const Header = ({ children, hide }: Props) => {
     };
 
     return (
-        <HeaderStyled className={hide ? 'hidden' : ''}>
+        <HeaderStyled className={`${className} ${hide ? 'hidden' : ''}`}>
             <Flex
                 width="100%"
                 height="50px"
                 jc="space-between"
                 gap={30}
+                style={{ zIndex: '10' }}
             >
                 <HeaderPageTitle>{currentRoute?.title}</HeaderPageTitle>
                 <DesktopChildren>{children}</DesktopChildren>

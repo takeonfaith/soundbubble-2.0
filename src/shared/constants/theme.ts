@@ -14,8 +14,10 @@ export const DARK_THEME = {
         textColorOppiste: '#000',
         hover: '#ffffff14',
         pageBackground: '#101010',
-        pageBackground2: '#191919',
+        pageBackground2: '#000000',
         pageBackground3: '#0b0b0b',
+        pageBackground4: '#0a0a0a',
+        context: '#252525',
         overlay: '#0e0e0ed4',
         input: '#202020',
         border: '#92929257',
@@ -26,8 +28,9 @@ export const DARK_THEME = {
         shadow: '0 0 40px #00000066',
         shadow2: '0 0 40px #00000066',
         greyText: '#a2a2a2',
+        greyText2: '#6a6a6a',
         header: '#1010109e',
-        player: '#747474',
+        player: '#c4c4c4',
         blue: {
             text: '#92b8ff',
             main: '#75a8fa',
@@ -41,6 +44,7 @@ export const DARK_THEME = {
         },
         red: {
             text: '#ffb3b3',
+            action: '#ff4949',
             transparent: '#ff636314',
             main: '#ff5b5b',
         },
@@ -53,6 +57,10 @@ export const DARK_THEME = {
             text: '#ffb3b3',
             transparent: '#ff636314',
             main: '#4de0aa',
+        },
+        grey: {
+            text: '#8b8b8b',
+            transparent: '#4444444f',
         },
     },
 };
@@ -73,11 +81,13 @@ export const LIGHT_THEME: TTheme = {
         playerDarkening: '#f1f1f1c9',
         textColor: '#000',
         textColorOppiste: '#fff',
-        player: 'darkgrey',
+        player: '#a3a3a3',
         hover: '#73737314',
         pageBackground: '#fff',
         pageBackground2: '#f7f7f7',
         pageBackground3: '#fff',
+        pageBackground4: '#eeeeee',
+        context: '#fff',
         overlay: '#0e0e0ed4',
         input: '#f0f0f0',
         border: '#b6b6b657',
@@ -89,6 +99,7 @@ export const LIGHT_THEME: TTheme = {
         shadow2: '0 0 40px #0000002b',
         header: '#ffffff9e',
         greyText: '#a2a2a2',
+        greyText2: '#6a6a6a',
         blue: {
             text: '#5275b5',
             main: '#5275b5',
@@ -102,8 +113,9 @@ export const LIGHT_THEME: TTheme = {
         },
         red: {
             text: '#bc4242',
+            action: '#f44f4f',
             transparent: '#ff636314',
-            main: '#ff6f6f',
+            main: '#cf3737',
         },
         orange: {
             text: '#9e4e29',
@@ -113,7 +125,11 @@ export const LIGHT_THEME: TTheme = {
         green: {
             text: '#358e34',
             transparent: '#41d9831f',
-            main: '#40d69f',
+            main: '#25a073',
+        },
+        grey: {
+            text: '#595959',
+            transparent: '#dddddd4f',
         },
     },
 };

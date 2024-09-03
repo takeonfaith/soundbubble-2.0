@@ -19,7 +19,7 @@ type Props = {
 export const SimilarAuthors = ({ songs, currentPageUser }: Props) => {
     const ref = useRef<HTMLDivElement>(null);
     const theme = useTheme();
-    const { similarAuthors, similarAuthorsLoading } = userModel.useUserPage();
+    const [{ similarAuthors, similarAuthorsLoading }] = userModel.useUserPage();
     useIsOnScreen(ref, () => {
         if (similarAuthors.length === 0) {
             userModel.events.loadSimilarAuthors(songs);
@@ -38,7 +38,7 @@ export const SimilarAuthors = ({ songs, currentPageUser }: Props) => {
                     <h3>Similar Authors</h3>
                 </NavigationTitle>
             </div>
-            <HorizontalList overflowColor={theme.colors.pageBackground2}>
+            <HorizontalList overflowColor={theme.colors.pageBackground4}>
                 {similarAuthors.slice(0, MAX_SIMILAR_AUTHORS).map((author) => {
                     if (author.uid === currentPageUser?.uid) return null;
 

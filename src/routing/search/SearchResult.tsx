@@ -2,7 +2,7 @@
 import { IconDiscOff } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
 import { useSearchParams } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { TPlaylist } from '../../entities/playlist/model/types';
 import { PlaylistItem } from '../../entities/playlist/ui';
 import {
@@ -22,6 +22,7 @@ import { SkeletonPageAnimation } from '../../shared/components/skeleton/Skeleton
 import { ENTITIES_ICONS } from '../../shared/constants/icons';
 import { SearchSkeleton } from './SearchSkeleton';
 import { TopAuthorCard } from './TopAuthorCard';
+import { PlaylistCollectionItem } from '../../features/playlistCollections';
 
 const SearchPageWrapper = styled.div`
     max-width: 650px;
@@ -62,6 +63,7 @@ export const SearchResult = () => {
     const [params] = useSearchParams();
     const [result, isLoading] = useUnit([$searchResult, $isLoadingResult]);
     const [searchQuery] = useUnit([$searchQuery]);
+    const theme = useTheme();
 
     const first = result[0];
 
@@ -75,8 +77,47 @@ export const SearchResult = () => {
     const noResult =
         params.get('query') !== null && result.length === 0 && !isLoading;
 
+    const notSearchedYet =
+        params.get('query') === null && result.length === 0 && !isLoading;
+
     return (
         <ContentWrapper>
+            {notSearchedYet && (
+                <Flex wrap="wrap" padding="40px 0px" gap={10}>
+                    <PlaylistCollectionItem
+                        background={theme.colors.blue.action}
+                        title="Rap"
+                    />
+                    <PlaylistCollectionItem
+                        background={theme.colors.red.action}
+                        title="Hip Hop"
+                    />
+                    <PlaylistCollectionItem
+                        background={theme.colors.purple.main}
+                        title="Jazz"
+                    />
+                    <PlaylistCollectionItem
+                        background={theme.colors.orange.main}
+                        title="Chill"
+                    />
+                    <PlaylistCollectionItem
+                        background={theme.colors.green.main}
+                        title="Sport"
+                    />
+                    <PlaylistCollectionItem
+                        background={theme.colors.orange.main}
+                        title="Pop"
+                    />
+                    <PlaylistCollectionItem
+                        background={theme.colors.blue.action}
+                        title="Metal"
+                    />
+                    <PlaylistCollectionItem
+                        background={theme.colors.red.action}
+                        title="Chill"
+                    />
+                </Flex>
+            )}
             <SearchPageWrapper>
                 <SkeletonPageAnimation
                     color=""

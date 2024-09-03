@@ -8,6 +8,10 @@ export const AuthorPageWrapper = styled(PageWrapper)`
         margin-left: 40px;
     }
 
+    h3 {
+        font-weight: 400;
+    }
+
     @media (max-width: 1000px) {
         .title {
             margin-left: 20px;
@@ -96,12 +100,16 @@ export const ButtonsStyled = styled.div`
     @media (max-width: 500px) {
         width: 100%;
         padding: 0 20px;
+
+        button {
+            height: 43px;
+        }
     }
 `;
 
 export const SimilarAuthorsStyled = styled.div`
     width: 100%;
-    background: ${({ theme }) => theme.colors.pageBackground2};
+    background: ${({ theme }) => theme.colors.pageBackground4};
     display: flex;
     flex-direction: column;
     padding: 30px 0;

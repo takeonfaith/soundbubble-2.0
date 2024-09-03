@@ -77,7 +77,7 @@ export const TopBackground = styled.div`
 
     img {
         width: 300%;
-        animation: bgWave 3s linear infinite;
+        animation: bgWave 4s linear infinite;
         opacity: 0.05;
         z-index: 0;
 

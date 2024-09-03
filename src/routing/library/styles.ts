@@ -21,16 +21,17 @@ export const AuthorPageGridStyled = styled(PageGridStyled)`
 `;
 
 export const SearchButton = styled(Button)`
-    min-width: 46px;
-    width: 46px;
-    height: 46px;
+    min-width: 38px;
+    min-height: 38px;
+    width: 38px;
+    height: 38px;
     border-radius: 20px;
     background: ${({ theme }) => theme.colors.pageBackground2};
 
     svg {
-        opacity: 0.7;
-        width: 20px;
-        height: 20px;
+        opacity: 1;
+        width: 18px;
+        height: 18px;
     }
 
     @media (max-width: 768px) {

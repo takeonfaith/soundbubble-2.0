@@ -14,6 +14,8 @@ import {
     IconVinyl,
 } from '@tabler/icons-react';
 import { AuthorPage } from './author';
+import { AuthorSongs } from './author/pages/AuthorSongs';
+import { SimilarAuthorsPage } from './author/pages/SimilarAuthorsPage';
 import { ChatPage } from './chat';
 import { ChatDialog } from './chat/ChatDialog/ChatDialog';
 import { DiscoverPage } from './discover';
@@ -28,8 +30,7 @@ import { PlaylistPage } from './playlist';
 import { SearchPage } from './search';
 import { SongPage } from './song';
 import { TrendsPage } from './trends';
-import { AuthorSongs } from './author/pages/AuthorSongs';
-import { SimilarAuthorsPage } from './author/pages/SimilarAuthorsPage';
+import { UserPage } from './user';
 
 type Section = 'features' | 'your activities' | 'your music';
 
@@ -172,6 +173,14 @@ export const allRoutes: TRoute[] = [
         private: true,
     },
     {
+        url: 'user/:id',
+        title: 'User',
+        icon: <IconUser />,
+        component: <UserPage />,
+        section: 'your music',
+        private: true,
+    },
+    {
         url: 'author/:id/songs',
         title: 'Author songs',
         icon: <IconMusic />,
@@ -222,6 +231,7 @@ export const menuRoutes = getRoutes([
     'History',
     'Chat',
     'Friends',
+    'Settings',
 ]);
 
 export const mobileMenuRoutes = getRoutes([

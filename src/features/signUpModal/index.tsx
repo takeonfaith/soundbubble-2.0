@@ -5,9 +5,9 @@ import { Form } from '../../shared/components/form';
 import { Logo } from '../../shared/components/logo';
 import { Subtext } from '../../shared/components/subtext';
 import { useForm } from '../../shared/hooks/useForm';
-import { Email } from './Email';
-import { SignUpWrapper } from './styles';
 import backgroundImg from './img/background.png';
+import { SignUpWrapper } from './styles';
+import { UserPhoto } from './UserPhoto';
 
 const fields = [
     {
@@ -20,15 +20,20 @@ const fields = [
 ] as const;
 
 export const SignUpModal = () => {
-    const { formProps } = useForm({ fields, handleSubmit: () => null });
     const handleNext = () => {
         modalModel.events.open({
-            title: 'Email',
-            content: <Email />,
+            title: 'Photo',
+            content: <UserPhoto />,
             sizeX: 's',
             sizeY: 's',
         });
     };
+    const { formProps, onSumbit } = useForm({
+        fields,
+        handleSubmit: () => {
+            handleNext();
+        },
+    });
 
     return (
         <SignUpWrapper>
@@ -53,18 +58,9 @@ export const SignUpModal = () => {
                 </Subtext>
                 <Form {...formProps} />
             </Flex>
-            {/* <PhotoInput
-                colors={[]}
-                onUpload={function (photo: File | null): void {
-                    throw new Error('Function not implemented.');
-                }}
-                onColors={function (colors: string[]): void {
-                    throw new Error('Function not implemented.');
-                }}
-            /> */}
 
             <Flex width="100%" gap={10}>
-                <DefaultButton appearance="primary" onClick={handleNext}>
+                <DefaultButton appearance="primary" onClick={onSumbit}>
                     Next
                 </DefaultButton>
             </Flex>

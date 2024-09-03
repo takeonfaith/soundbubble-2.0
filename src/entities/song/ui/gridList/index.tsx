@@ -6,19 +6,23 @@ import { useHandleSongPlay } from '../../../../shared/hooks/useHandleSongPlay';
 import { songModel } from '../../model';
 import { TSong } from '../../model/types';
 import { GridSongListStyled, GridWrapper } from './styles';
+import useCurrentDevice from '../../../../shared/hooks/useCurrentDevice';
 
 type Props = {
     songs: TSong[];
     listName: string | null;
     listIcon: string | undefined;
     listUrl: string | null;
+    children?: (songs: TSong[]) => React.ReactNode;
 };
 
 export const GridSongList = (props: Props) => {
-    const { songs } = props;
+    const { songs, children } = props;
     const { currentSong, state, loaded } = songModel.useSong();
     const { handlePlay } = useHandleSongPlay(props);
-    const children = (
+    const { isMobile } = useCurrentDevice();
+    const maxGridRows = isMobile ? 4 : 3;
+    const items = children?.(songs) ?? (
         <>
             {songs.map((song, index) => {
                 const isCurrent = song.id === currentSong?.id;
@@ -44,15 +48,21 @@ export const GridSongList = (props: Props) => {
         handleScroll,
         handleScrollLeft,
         handleScrollRight,
-    } = useScrollList({ children });
+    } = useScrollList({ children: items });
 
     return (
         <GridWrapper className={className}>
             <ArrowButton className="left" onClick={handleScrollLeft}>
                 <IconArrowLeft />
             </ArrowButton>
-            <GridSongListStyled className='grid-list' onScroll={handleScroll} ref={scrollElementRef}>
-                {children}
+            <GridSongListStyled
+                className="grid-list"
+                onScroll={handleScroll}
+                ref={scrollElementRef}
+                columns={isMobile ? Math.ceil(songs.length / maxGridRows) : 3}
+                rows={songs.length > maxGridRows ? maxGridRows : songs.length}
+            >
+                {items}
             </GridSongListStyled>
             <ArrowButton className="right" onClick={handleScrollRight}>
                 <IconArrowRight />

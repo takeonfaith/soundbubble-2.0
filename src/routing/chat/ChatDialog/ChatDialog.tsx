@@ -90,6 +90,8 @@ export const ChatDialog = () => {
         chatData,
         //   firstUnreadMessageId,
     } = chatModel.useChats();
+    console.log(currentChatId);
+    
     const [{ data }] = userModel.useUser();
     const preparedMessages = prepareMessages(currentChatMessages);
     const currentChat = chats.find((chat) => chat.id === currentChatId);
@@ -287,7 +289,7 @@ export const ChatDialog = () => {
                 )}
             </ChatMessagesStyled>
             <ChatInputArea>
-                <Button $width="40px">
+                <Button $width="40px" style={{ minWidth: '40px' }}>
                     <IconCirclePlus />
                 </Button>
                 <ChatInput
@@ -302,7 +304,11 @@ export const ChatDialog = () => {
                     onChange={handleChangeValue}
                 />
                 {value.length !== 0 && (
-                    <SendButton $height="35px" onClick={handleSendMessage}>
+                    <SendButton
+                        $height="35px"
+                        onClick={handleSendMessage}
+                        className="primary"
+                    >
                         <IconArrowUp size={23} />
                     </SendButton>
                 )}

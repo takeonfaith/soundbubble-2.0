@@ -53,6 +53,8 @@ export type TPageStore = {
     playlists: TPlaylist[];
     similarAuthors: TUser[];
     similarAuthorsLoading: boolean;
+    lastSongPlayed?: TSong | null;
+    friends?: TUser[] | null;
 };
 
 export type TSearchHistory = { id: string; type: TPlace };

@@ -22,6 +22,7 @@ const FriendsWrapper = styled.div`
     display: flex;
     gap: 10px;
     align-items: center;
+    justify-content: center;
 `;
 
 export const FriendsPage = () => {
@@ -53,7 +54,7 @@ export const FriendsPage = () => {
                             <PageMessage
                                 icon={IconUserOff}
                                 title={'No friends'}
-                                description={'We are sorry'}
+                                description={'We are sorry to say that...'}
                             />
                         )}
                         {friends.length > 0 && (

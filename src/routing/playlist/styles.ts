@@ -18,9 +18,12 @@ export const PlaylistPageSongs = styled.div`
     width: 100%;
     padding: var(--page-padding);
     padding-top: 40px;
+    padding-bottom: 0;
 
     @media (max-width: 1000px) {
-        padding: 40px 20px;
+        padding: 40px var(--page-padding);
+        padding-bottom: 0;
+
         display: flex;
         flex-direction: column;
         gap: 2px;
@@ -35,6 +38,19 @@ export const PlaylistCover = styled.div`
     justify-content: center;
     align-items: center;
     border-radius: 10px;
+`;
+
+export const BottomPlaylist = styled.div`
+    padding: 0 calc(var(--page-padding) + 6px);
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    @media (max-width: 1000px) {
+        padding: 0 var(--page-padding);
+        margin-top: 10px;
+    }
 `;
 
 export const PlaylistSimilar = styled.div``;

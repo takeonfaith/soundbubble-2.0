@@ -7,31 +7,30 @@ import {
     IconInfoCircle,
     IconLock,
     IconMusicPlus,
-    IconPlus,
     IconShare3,
     IconTrash,
     IconUserPlus,
 } from '@tabler/icons-react';
-import {
-    PageTopStyled,
-    TopLeftCorner,
-    TopRightCorner,
-    TopBackground,
-} from '../../shared/components/pageTop/styles';
 import { useNavigate } from 'react-router';
 import { useTheme } from 'styled-components';
+import { playlistModel } from '../../entities/playlist/model';
+import { PlaylistCover } from '../../entities/playlist/ui/PlaylistCover';
 import { LikeButton } from '../../features/likeButton';
 import { popupModel } from '../../layout/popup/model';
+import { Authors } from '../../shared/components/authors';
 import { Button } from '../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
 import { Divider } from '../../shared/components/divider';
 import { Flex } from '../../shared/components/flex';
+import {
+    PageTopStyled,
+    TopBackground,
+    TopLeftCorner,
+    TopRightCorner,
+} from '../../shared/components/pageTop/styles';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
 import { Wave } from '../../shared/images';
 import { BottomButtons } from '../author/BottomButtons';
-import { PlaylistCover } from '../../entities/playlist/ui/PlaylistCover';
-import { playlistModel } from '../../entities/playlist/model';
-import { Authors } from '../../shared/components/authors';
 
 type Props = {
     id: string | undefined;
@@ -150,6 +149,7 @@ export const PageTop = ({
                             <Authors
                                 width="fit-content"
                                 authors={currentPlaylist?.authors}
+                                isUser={!isAuthor}
                             />
                         </Flex>
                     </div>

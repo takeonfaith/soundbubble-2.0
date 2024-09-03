@@ -1,0 +1,1 @@
+export const SLIDER_VALUE_BUBBLE_WIDTH = 40;

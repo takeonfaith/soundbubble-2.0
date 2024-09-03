@@ -8,12 +8,14 @@ type Props = {
     disableOnDesktop?: boolean;
     disableOnMobile?: boolean;
     authorsQuantity?: number;
+    isUser?: boolean;
 };
 
 export const Authors = ({
     authors,
     onAuthorClick,
     width,
+    isUser = false,
     authorsQuantity = 4,
     disableOnDesktop = false,
     disableOnMobile = true,
@@ -32,18 +34,23 @@ export const Authors = ({
             $disableOnDesktop={disableOnDesktop}
             $disableOnMobile={disableOnMobile}
         >
-            {authors?.slice(0, authorsQuantity)?.map((author, index) => (
-                <>
-                    {index !== 0 ? '&' : ' '}
-                    <AuthorStyled
-                        onClick={handleAuthorClick(author)}
-                        to={`/author/${author.uid}`}
-                        key={author.uid + index}
-                    >
-                        {author.displayName}
-                    </AuthorStyled>
-                </>
-            ))}
+            {authors?.slice(0, authorsQuantity)?.map((author, index) => {
+                const to = isUser
+                    ? `/user/${author.uid}`
+                    : `/author/${author.uid}`;
+                return (
+                    <>
+                        {index !== 0 ? '&' : ' '}
+                        <AuthorStyled
+                            onClick={handleAuthorClick(author)}
+                            to={to}
+                            key={author.uid + index}
+                        >
+                            {author.displayName}
+                        </AuthorStyled>
+                    </>
+                );
+            })}
             {(authors?.length ?? 0) > authorsQuantity && '...'}
             {!authors?.length && '-'}
         </AuthorsStyled>

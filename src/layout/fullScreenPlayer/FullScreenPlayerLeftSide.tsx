@@ -1,11 +1,13 @@
 import { Authors } from '@components/authors';
 import { Flex } from '@components/flex';
 import { songModel } from '@song/model';
-import { IconPlaylist, IconQuote, IconVolume } from '@tabler/icons-react';
+import { IconPlaylist, IconQuote } from '@tabler/icons-react';
 import { SongCover } from '../../entities/song/ui/SongCover';
 
 import { LikeButton } from '@features/likeButton';
+import { VolumeButton } from '../../features/volumeButton';
 import { SmallControlButton } from '../../shared/components/musicControls/styles';
+import { useIsSongLiked } from '../../shared/hooks/useIsSongLiked';
 import { PlayerMusicControls } from './PlayerMusicControls';
 import {
     BottomControlButtons,
@@ -15,7 +17,6 @@ import {
     PlayerWrapper,
 } from './styles';
 import { TRightSideType } from './types';
-import { useIsSongLiked } from '../../shared/hooks/useIsSongLiked';
 
 type Props = {
     type: TRightSideType;
@@ -66,9 +67,7 @@ export const FullScreenPlayerLeftSide = ({
                 </Flex>
                 <PlayerMusicControls />
                 <BottomControlButtons>
-                    <SmallControlButton>
-                        <IconVolume opacity={0.9} />
-                    </SmallControlButton>
+                    <VolumeButton />
                     <Flex gap={20}>
                         <SmallControlButton
                             disabled={!hasQueue}
