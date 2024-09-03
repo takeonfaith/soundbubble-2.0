@@ -17,8 +17,8 @@ export const ErrorIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) => theme.colors.red.transparent};
-  color: ${({ theme }) => theme.colors.red.main};
+  background: ${({ theme }) => theme.scheme.red.transparent};
+  color: ${({ theme }) => theme.scheme.red.main};
   border-radius: 100%;
 
   svg {
@@ -40,8 +40,8 @@ export const PageMessage = styled.span`
   font-size: 1rem;
   text-align: left;
   font-family: monospace;
-  color: ${({ theme }) => theme.colors.red.text};
-  background: ${({theme})=>theme.colors.red.transparent};
+  color: ${({ theme }) => theme.scheme.red.text};
+  background: ${({theme})=>theme.scheme.red.transparent};
   padding: 16px;
   border-radius: 10px;
 `;

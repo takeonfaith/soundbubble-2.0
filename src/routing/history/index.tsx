@@ -1,4 +1,4 @@
-import { IconHistoryOff, TablerIconsProps } from '@tabler/icons-react';
+import { IconHistoryOff } from '@tabler/icons-react';
 import { historyModel } from '../../entities/history/model';
 import { SongListSkeleton } from '../../entities/song/ui/SongListSkeleton';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';

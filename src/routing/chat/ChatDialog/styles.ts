@@ -11,7 +11,7 @@ export const MessageWrapper = styled.div`
 export const MessageSender = styled.div`
     font-size: 0.7rem;
     margin-left: 10px;
-    color: ${({ theme }) => theme.colors.greyText};
+    color: ${({ theme }) => theme.scheme.grey.text};
     font-weight: 300;
 `;
 
@@ -65,10 +65,10 @@ export const MessageBubble = styled.div<{
     }
 
     &.mine {
-        background-color: ${({ theme }) => theme.colors.blue.mild};
+        background-color: ${({ theme }) => theme.scheme.blue.mild};
 
         &::before {
-            background-color: ${({ theme }) => theme.colors.blue.mild};
+            background-color: ${({ theme }) => theme.scheme.blue.mild};
         }
     }
 
@@ -170,7 +170,7 @@ export const MessagesDate = styled.div`
         width: 110px;
         background: ${({ theme }) => theme.colors.pageBackground};
         padding: 4px;
-        color: ${({ theme }) => theme.colors.greyText};
+        color: ${({ theme }) => theme.scheme.grey.text};
     }
 `;
 

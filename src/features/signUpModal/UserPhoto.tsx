@@ -21,12 +21,8 @@ export const UserPhoto = () => {
             <Flex d="column" width="100%" height="100%" gap={20}>
                 <PhotoInput
                     colors={[]}
-                    onUpload={function (photo: File | null): void {
-                        throw new Error('Function not implemented.');
-                    }}
-                    onColors={function (colors: string[]): void {
-                        throw new Error('Function not implemented.');
-                    }}
+                    onUpload={() => null}
+                    onColors={() => null}
                 />
                 <Message type="tip">
                     You may add photo later in your profile

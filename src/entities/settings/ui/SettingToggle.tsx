@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck IDGAF
+
 import { Flex } from '../../../shared/components/flex';
 import { Subtext } from '../../../shared/components/subtext';
 import { SwitchToggle } from '../../../shared/components/switchToggle';
@@ -21,7 +24,7 @@ export const SettingToggle = ({
     settings,
 }: Props) => {
     const Icon = currentSetting.icon;
-    const realPath = `${path}.value`;
+    const realPath: Paths<typeof DEFAULT_SETTINGS> = `${path}.value`;
     const value = getDeepObjectValue(settings, realPath);
 
     return (

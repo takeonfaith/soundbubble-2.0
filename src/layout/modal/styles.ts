@@ -69,7 +69,7 @@ export const ModalHeader = styled.header`
     height: 68px;
 
     .back-btn {
-        color: ${({ theme }) => theme.colors.blue.text};
+        color: ${({ theme }) => theme.scheme.blue.text};
         gap: 0;
         min-height: auto;
         font-weight: 300;
@@ -94,7 +94,7 @@ export const ModalHeader = styled.header`
         min-height: 32px;
         border-radius: 100%;
         background-color: ${({ theme }) => theme.colors.hover};
-        color: ${({ theme }) => theme.colors.greyText};
+        color: ${({ theme }) => theme.scheme.grey.text};
         z-index: 0;
 
         svg {

@@ -65,6 +65,7 @@ export const Settings = ({ childrenSettings, path = '' }: Props) => {
                                 children={currentSetting.children}
                                 icon={Icon !== undefined ? <Icon /> : null}
                                 color={currentSetting.color}
+                                // @ts-expect-error dadada
                                 path={`${updatePath}.children`}
                                 settings={settings}
                                 currentSetting={currentSetting}

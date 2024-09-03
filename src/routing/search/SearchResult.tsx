@@ -85,35 +85,35 @@ export const SearchResult = () => {
             {notSearchedYet && (
                 <Flex wrap="wrap" padding="40px 0px" gap={10}>
                     <PlaylistCollectionItem
-                        background={theme.colors.blue.action}
+                        background={theme.scheme.blue.action}
                         title="Rap"
                     />
                     <PlaylistCollectionItem
-                        background={theme.colors.red.action}
+                        background={theme.scheme.red.action}
                         title="Hip Hop"
                     />
                     <PlaylistCollectionItem
-                        background={theme.colors.purple.main}
+                        background={theme.scheme.purple.main}
                         title="Jazz"
                     />
                     <PlaylistCollectionItem
-                        background={theme.colors.orange.main}
+                        background={theme.scheme.orange.main}
                         title="Chill"
                     />
                     <PlaylistCollectionItem
-                        background={theme.colors.green.main}
+                        background={theme.scheme.green.main}
                         title="Sport"
                     />
                     <PlaylistCollectionItem
-                        background={theme.colors.orange.main}
+                        background={theme.scheme.orange.main}
                         title="Pop"
                     />
                     <PlaylistCollectionItem
-                        background={theme.colors.blue.action}
+                        background={theme.scheme.blue.action}
                         title="Metal"
                     />
                     <PlaylistCollectionItem
-                        background={theme.colors.red.action}
+                        background={theme.scheme.red.action}
                         title="Chill"
                     />
                 </Flex>

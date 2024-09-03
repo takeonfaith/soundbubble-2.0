@@ -17,10 +17,10 @@ const SimilarAuthorsPageStyled = styled.div`
         padding: 20px;
         gap: 8px;
     }
-`
+`;
 
 export const SimilarAuthorsPage = () => {
-    const { similarAuthors } = userModel.useUserPage();
+    const [{ similarAuthors }] = userModel.useUserPage();
 
     return (
         <PageWrapper>

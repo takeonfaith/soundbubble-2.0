@@ -18,11 +18,11 @@ export const LoginModalStyled = styled.div`
         font-size: 0.85rem;
         position: absolute;
         font-weight: 300;
-        color: ${({ theme }) => theme.colors.blue.text};
+        color: ${({ theme }) => theme.scheme.blue.text};
         padding: 2px 8px;
 
         &:hover {
-            background: ${({ theme }) => theme.colors.blue.transparent};
+            background: ${({ theme }) => theme.scheme.blue.transparent};
         }
     }
 
@@ -112,7 +112,7 @@ export const Blocks = styled.div`
         height: 100px;
         filter: blur(70px);
         inset: 37%;
-        background-color: ${({ theme }) => theme.colors.blue.action};
+        background-color: ${({ theme }) => theme.scheme.blue.action};
     }
 
     @media (max-width: 768px) {
@@ -135,31 +135,31 @@ export const Blocks = styled.div`
         top: 90px;
         left: 120px;
         animation-delay: 0.2s;
-        color: ${({ theme }) => theme.colors.blue.action};
+        color: ${({ theme }) => theme.scheme.blue.action};
     }
     .block:nth-child(2) {
         top: 100px;
         right: 120px;
         animation-delay: 0.8s;
-        color: ${({ theme }) => theme.colors.red.action};
+        color: ${({ theme }) => theme.scheme.red.action};
     }
     .block:nth-child(3) {
         bottom: 120px;
         left: 70px;
         animation-delay: 0.5s;
-        color: ${({ theme }) => theme.colors.purple.main};
+        color: ${({ theme }) => theme.scheme.purple.main};
     }
     .block:nth-child(4) {
         bottom: 130px;
         right: 90px;
         animation-delay: 0s;
-        color: ${({ theme }) => theme.colors.green.main};
+        color: ${({ theme }) => theme.scheme.green.main};
     }
     .block:nth-child(5) {
         bottom: 70px;
         right: 200px;
         animation-delay: 0.1s;
-        color: ${({ theme }) => theme.colors.orange.main};
+        color: ${({ theme }) => theme.scheme.orange.main};
     }
 
     @media (max-width: 768px) {

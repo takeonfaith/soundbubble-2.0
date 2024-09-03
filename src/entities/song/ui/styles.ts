@@ -284,7 +284,7 @@ export const Listens = styled.div`
 export const LikeButton = styled(Button)`
     width: 30px;
     min-height: 30px;
-    color: ${({ theme }) => theme.colors.greyText};
+    color: ${({ theme }) => theme.scheme.grey.text};
 
     svg {
         width: 22px;

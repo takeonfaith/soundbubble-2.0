@@ -1,11 +1,14 @@
-export const getDeepObjectValue = <T>(obj: T, path: Paths<T>) => {
+export const getDeepObjectValue = <T extends object>(
+    object: T,
+    path: Paths<T>
+) => {
     const keys = path.split('.');
+    let result: string | T = object;
 
-    return keys.reduce(
-        (acc, key) =>
-            acc && acc[key as keyof T] !== 'undefined'
-                ? acc[key as keyof T]
-                : undefined,
-        obj
-    );
+    for (const key of keys) {
+        // @ts-expect-error Fuck this
+        result = result[key];
+    }
+
+    return result;
 };

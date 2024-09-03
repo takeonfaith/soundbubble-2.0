@@ -7,6 +7,7 @@ import {
 import React from 'react';
 import { useTheme } from 'styled-components';
 import { MessageStyled } from './styles';
+import { THEMES } from '../../../app/theme/constants';
 
 type MessageType = 'error' | 'warning' | 'info' | 'success' | 'tip';
 
@@ -17,7 +18,7 @@ type Props = {
 
 type MessageData = {
     [key in MessageType]: {
-        color: 'blue' | 'green' | 'red' | 'orange' | 'grey';
+        color: keyof typeof THEMES.dark.scheme;
         icon: JSX.Element;
     };
 };
@@ -47,12 +48,12 @@ const MESSAGE_DATA: MessageData = {
 
 export const Message = ({ type, children }: Props) => {
     const theme = useTheme();
-    const col = theme.colors[MESSAGE_DATA[type].color].text;
+    const col = theme.scheme[MESSAGE_DATA[type].color].text;
 
     return (
         <MessageStyled
             color={col}
-            background={theme.colors[MESSAGE_DATA[type].color].transparent}
+            background={theme.scheme[MESSAGE_DATA[type].color].transparent}
         >
             {MESSAGE_DATA[type].icon}
             {children}

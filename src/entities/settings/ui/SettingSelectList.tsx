@@ -22,14 +22,6 @@ export const SettingSelectList = ({
     return (
         <>
             {currentSetting.items.map(({ text, subtext }) => {
-                console.log(
-                    `${path}.value`,
-                    getDeepObjectValue(
-                        settings,
-                        `${path}.value` as Paths<typeof DEFAULT_SETTINGS>
-                    )
-                );
-
                 const selected =
                     text ===
                     getDeepObjectValue(

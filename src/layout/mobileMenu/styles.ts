@@ -37,7 +37,7 @@ export const MobileLinkItemStyled = styled(NavLink)`
 
     &.active {
         opacity: 1;
-        color: ${({ theme }) => theme.colors.blue.action};
+        color: ${({ theme }) => theme.scheme.blue.action};
     }
 `;
 

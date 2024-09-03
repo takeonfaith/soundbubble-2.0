@@ -4,7 +4,7 @@ export const BadgeStyled = styled.div`
     padding: 2px 5px;
     display: inline-block;
     background: #fff;
-    color: ${({ theme }) => theme.colors.blue.action};
+    color: ${({ theme }) => theme.scheme.blue.action};
     font-weight: 600;
     font-size: 0.7rem;
     border-radius: 10px;

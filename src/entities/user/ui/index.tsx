@@ -1,14 +1,14 @@
 import { IconChevronRight, IconDiscountCheckFilled } from '@tabler/icons-react';
 import { memo } from 'react';
+import { Button } from '../../../shared/components/button';
 import { Flex } from '../../../shared/components/flex';
-import { DARK_THEME } from '../../../shared/constants/theme';
 import { getLastSeen } from '../lib/getLastSeen';
 import { TUser } from '../model/types';
 import { TOrientation } from '../types';
 import { UserCover } from './UserCover';
 import { UserStatus } from './UserStatus';
 import { OnlineIndicator, UserItemStyled } from './styles';
-import { Button } from '../../../shared/components/button';
+import { useTheme } from 'styled-components';
 
 type Props = {
     user: TUser | null | undefined;
@@ -28,6 +28,7 @@ export const UserItem = memo(
         showLastSeen,
         orientation = 'vertical',
     }: Props) => {
+        const theme = useTheme();
         if (!user) return null;
 
         const {
@@ -79,7 +80,7 @@ export const UserItem = memo(
                         <h4>{displayName}</h4>
                         {isVerified && (
                             <IconDiscountCheckFilled
-                                style={{ color: DARK_THEME.colors.blue.main }}
+                                style={{ color: theme.scheme.blue.main }}
                                 className="verified-icon"
                             />
                         )}

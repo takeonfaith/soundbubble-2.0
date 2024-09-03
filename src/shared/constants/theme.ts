@@ -1,3 +1,40 @@
+const COLOR_SCHEME_DARK = {
+    blue: {
+        main: '#75a8fa',
+        action: '#5193ff',
+        text: '#92b8ff',
+        mild: '#1b2c4e',
+        transparent: '#5394ff4f',
+        transparent2: '#5394ff2b',
+    },
+    purple: {
+        main: '#d38eff',
+        text: '#d38eff',
+        transparent: '#d38eff'
+    },
+    red: {
+        main: '#ff5b5b',
+        text: '#ffb3b3',
+        action: '#ff4949',
+        transparent: '#ff636314',
+    },
+    orange: {
+        main: '#ffa574',
+        text: '#ffb3b3',
+        transparent: '#ff636314',
+    },
+    green: {
+        main: '#4de0aa',
+        text: '#ffb3b3',
+        transparent: '#ff636314',
+    },
+    grey: {
+        main: '#8b8b8b',
+        text: '#8b8b8b',
+        transparent: '#4444444f',
+    },
+};
+
 export const DARK_THEME = {
     borderRadius: {
         mild: '6px',
@@ -31,41 +68,50 @@ export const DARK_THEME = {
         greyText2: '#6a6a6a',
         header: '#1010109e',
         player: '#c4c4c4',
-        blue: {
-            text: '#92b8ff',
-            main: '#75a8fa',
-            action: '#5193ff',
-            mild: '#1b2c4e',
-            transparent: '#5394ff4f',
-            transparent2: '#5394ff2b',
-        },
-        purple: {
-            main: '#d38eff',
-        },
-        red: {
-            text: '#ffb3b3',
-            action: '#ff4949',
-            transparent: '#ff636314',
-            main: '#ff5b5b',
-        },
-        orange: {
-            text: '#ffb3b3',
-            transparent: '#ff636314',
-            main: '#ffa574',
-        },
-        green: {
-            text: '#ffb3b3',
-            transparent: '#ff636314',
-            main: '#4de0aa',
-        },
-        grey: {
-            text: '#8b8b8b',
-            transparent: '#4444444f',
-        },
+    },
+    scheme: {
+        ...COLOR_SCHEME_DARK,
     },
 };
 
 export type TTheme = typeof DARK_THEME;
+
+const COLOR_SCHEME_LIGHT = {
+    blue: {
+        text: '#5275b5',
+        main: '#5275b5',
+        action: '#3481fe',
+        mild: '#dfeaff',
+        transparent: '#5394ff24',
+        transparent2: '#5394ff2b',
+    },
+    purple: {
+        main: '#9332d1',
+        text: '#9332d1',
+        transparent: '#9332d134',
+    },
+    red: {
+        text: '#bc4242',
+        action: '#f44f4f',
+        transparent: '#ff636314',
+        main: '#cf3737',
+    },
+    orange: {
+        text: '#9e4e29',
+        transparent: '#ff636314',
+        main: '#d69c40',
+    },
+    green: {
+        text: '#358e34',
+        transparent: '#41d9831f',
+        main: '#25a073',
+    },
+    grey: {
+        main: '#595959',
+        text: '#595959',
+        transparent: '#dddddd4f',
+    },
+};
 
 export const LIGHT_THEME: TTheme = {
     borderRadius: {
@@ -100,36 +146,8 @@ export const LIGHT_THEME: TTheme = {
         header: '#ffffff9e',
         greyText: '#a2a2a2',
         greyText2: '#6a6a6a',
-        blue: {
-            text: '#5275b5',
-            main: '#5275b5',
-            action: '#3481fe',
-            mild: '#dfeaff',
-            transparent: '#5394ff24',
-            transparent2: '#5394ff2b',
-        },
-        purple: {
-            main: '#9332d1',
-        },
-        red: {
-            text: '#bc4242',
-            action: '#f44f4f',
-            transparent: '#ff636314',
-            main: '#cf3737',
-        },
-        orange: {
-            text: '#9e4e29',
-            transparent: '#ff636314',
-            main: '#d69c40',
-        },
-        green: {
-            text: '#358e34',
-            transparent: '#41d9831f',
-            main: '#25a073',
-        },
-        grey: {
-            text: '#595959',
-            transparent: '#dddddd4f',
-        },
+    },
+    scheme: {
+        ...COLOR_SCHEME_LIGHT,
     },
 };

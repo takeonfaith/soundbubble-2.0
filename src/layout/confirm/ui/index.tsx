@@ -14,6 +14,11 @@ export const Confirm = () => {
         confirmModel.events.close();
     };
 
+    const handleAccept = () => {
+        onAccept?.();
+        handleClose();
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -21,7 +26,7 @@ export const Confirm = () => {
             <ConfirmStyled>
                 <CloseButton onClick={handleClose} />
                 {icon && <ConfirmIcon color={iconColor}>{icon}</ConfirmIcon>}
-                <Flex d="column" gap={10}>
+                <Flex d="column" gap={10} width="100%">
                     <h3>{text || 'Are you sure you want to proceed?'}</h3>
                     {subtext && (
                         <Subtext style={{ fontSize: '1rem' }}>
@@ -30,12 +35,13 @@ export const Confirm = () => {
                     )}
                 </Flex>
                 <ConfirmButtons>
-                    <DefaultButton onClick={onReject ?? handleClose}>
+                    <DefaultButton
+                        onClick={onReject ?? handleClose}
+                        appearance="primary"
+                    >
                         No
                     </DefaultButton>
-                    <DefaultButton onClick={onAccept} appearance="primary">
-                        Yes
-                    </DefaultButton>
+                    <DefaultButton onClick={handleAccept}>Yes</DefaultButton>
                 </ConfirmButtons>
             </ConfirmStyled>
         </ModalBackground>

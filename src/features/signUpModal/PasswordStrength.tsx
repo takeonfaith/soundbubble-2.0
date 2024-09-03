@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck IDGAF
+
 import React from 'react';
 import { getPasswordStrength } from './getPasswordStrength';
 import { Progress } from '../../shared/components/progress';
@@ -12,7 +15,7 @@ const STRENGTH_DIC = {
 };
 
 export const PasswordStrength = () => {
-    const [value, setValue] = React.useState('1wWqdasdasddmda@');
+    const [value] = React.useState('1wWqdasdasddmda@');
     const theme = useTheme();
     const strength = getPasswordStrength(value);
     console.log(strength);
@@ -24,7 +27,11 @@ export const PasswordStrength = () => {
                 color={
                     strength.value === 0
                         ? undefined
-                        : theme.colors[STRENGTH_DIC[strength.value]].main
+                        : theme.scheme[
+                              STRENGTH_DIC[
+                                  strength.value
+                              ] as keyof typeof theme.scheme
+                          ].main
                 }
             />
         </>

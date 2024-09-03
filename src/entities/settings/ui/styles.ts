@@ -27,7 +27,7 @@ export const SectionStyled = styled.div`
 
     & button:not(:last-child),
     & > div:not(:last-child) {
-        border-bottom: 1px solid ${({ theme }) => theme.colors.grey.transparent};
+        border-bottom: 1px solid ${({ theme }) => theme.scheme.grey.transparent};
         border-radius: 0;
     }
 
@@ -57,7 +57,7 @@ export const SelectListButton = styled(Button)`
 
     &:active {
         transform: scale(1);
-        background: ${({ theme }) => theme.colors.grey.transparent};
+        background: ${({ theme }) => theme.scheme.grey.transparent};
     }
 
     .left-icon {
@@ -69,7 +69,7 @@ export const SelectListButton = styled(Button)`
     .check-icon {
         width: 18px;
         height: 18px;
-        color: ${({ theme }) => theme.colors.blue.action};
+        color: ${({ theme }) => theme.scheme.blue.action};
     }
 `;
 

@@ -86,7 +86,7 @@ export const PageTop = ({
                             Info
                         </Button>
                         <Divider />
-                        <Button color={theme.colors.red.text}>
+                        <Button color={theme.scheme.red.text}>
                             <IconTrash />
                             Delete
                         </Button>

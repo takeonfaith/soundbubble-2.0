@@ -8,7 +8,7 @@ type TSettingGeneral = {
 
 export type TSettingLink = TSettingGeneral & {
     type: 'link';
-    color?: keyof (typeof THEMES.dark)['colors'];
+    color: keyof typeof THEMES.dark.scheme;
     children: TSettings;
 };
 

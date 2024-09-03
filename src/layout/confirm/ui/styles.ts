@@ -30,7 +30,7 @@ export const ConfirmStyled = styled.div`
         min-height: 32px;
         border-radius: 100%;
         background-color: ${({ theme }) => theme.colors.hover};
-        color: ${({ theme }) => theme.colors.greyText};
+        color: ${({ theme }) => theme.scheme.grey.text};
         z-index: 0;
 
         svg {

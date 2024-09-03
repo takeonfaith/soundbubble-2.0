@@ -1,19 +1,18 @@
 import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
-import { Form } from '../../shared/components/form';
 import { Passwords } from './Passwords';
 import { SignUpModalStyled } from './styles';
 
-const fields = [
-    {
-        id: 'email',
-        label: 'Email Address',
-        type: 'email',
-        placeholder: 'Enter your email',
-        required: true,
-    },
-] as const;
+// const fields = [
+//     {
+//         id: 'email',
+//         label: 'Email Address',
+//         type: 'email',
+//         placeholder: 'Enter your email',
+//         required: true,
+//     },
+// ] as const;
 
 export const Email = () => {
     const handleNext = () => {
@@ -35,12 +34,12 @@ export const Email = () => {
                 gap={20}
                 ai="flex-start"
             >
-                <Form
+                {/* <Form
                     fields={fields}
                     submitErrorMessage={undefined}
                     submitText={''}
                     onSumbit={() => null}
-                />
+                /> */}
             </Flex>
             <Flex width="100%" gap={10}>
                 <DefaultButton

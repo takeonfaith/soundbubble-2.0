@@ -35,7 +35,7 @@ const SwitchToggleStyled = styled.label<{ $width: number; $height: number }>`
     }
 
     input:checked + .switchToggle {
-        background: ${({ theme }) => theme.colors.blue.action};
+        background: ${({ theme }) => theme.scheme.blue.action};
     }
 `;
 

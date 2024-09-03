@@ -35,10 +35,10 @@ export const UserItemStyled = styled(Link)`
         .verified-icon {
             position: absolute;
             right: 2px;
-            top: calc(var(--size) - 10px);
-            width: 16px;
-            height: 16px;
-            background: #fff;
+            top: calc(var(--size) - 18px);
+            width: 20px;
+            height: 20px;
+            background: ${({ theme }) => theme.colors.pageBackground};
             border-radius: 100%;
         }
     }
@@ -58,7 +58,7 @@ export const UserItemStyled = styled(Link)`
                 top: -10px;
                 left: -10px;
                 width: calc(100% + 20px);
-                height: calc(100% + 20px);
+                height: calc(100%);
                 background: ${({ theme }) => theme.colors.hover};
                 border-radius: 10px;
                 transition: opacity 0.2s ease;
@@ -196,7 +196,7 @@ export const OnlineIndicator = styled.div`
     width: 10px;
     height: 10px;
     border-radius: 10px;
-    background: ${({ theme }) => theme.colors.blue.action};
+    background: ${({ theme }) => theme.scheme.blue.action};
     outline: 2px solid ${({ theme }) => theme.colors.pageBackground};
     position: absolute;
     bottom: 0px;

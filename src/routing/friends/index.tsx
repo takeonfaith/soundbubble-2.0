@@ -67,8 +67,8 @@ export const FriendsPage = () => {
                                             key={friend.uid}
                                             orientation="horizontal"
                                         >
-                                            <Button $width="40px">
-                                                <IconMessage2 />
+                                            <Button $width="45px">
+                                                <IconMessage2 size={20}/>
                                             </Button>
                                         </UserItem>
                                     );

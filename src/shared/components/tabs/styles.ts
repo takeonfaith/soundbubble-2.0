@@ -76,7 +76,7 @@ export const CurrentTabItem = styled.div<{
     padding: 10px 16px;
     height: ${({ $height }) => $height};
     border-radius: 16px;
-    background: ${({ theme }) => theme.colors.blue.action};
+    background: ${({ theme }) => theme.scheme.blue.action};
     position: absolute;
     transition: 0.2s;
     transform: translateX(calc(${({ $shift }) => `${$shift} * 100%`}));

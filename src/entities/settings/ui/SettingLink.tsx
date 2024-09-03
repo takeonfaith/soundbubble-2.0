@@ -6,16 +6,15 @@ import { THEMES } from '../../../app/theme/constants';
 import { modalModel } from '../../../layout/modal/model';
 import { Flex } from '../../../shared/components/flex';
 import { Subtext } from '../../../shared/components/subtext';
+import { DEFAULT_SETTINGS } from '../model/constants';
 import { TSettingLink, TSettings } from '../model/types';
 import { SettingButton, SettingButtonIcon, SettingButtonText } from './styles';
-import { DEFAULT_SETTINGS } from '../model/constants';
-import { getDeepObjectValue } from '../../../shared/funcs/getDeepObjectValue';
 
 type Props = {
     title: string;
     children: TSettings;
     icon: React.ReactNode;
-    color: keyof typeof THEMES.dark;
+    color: keyof typeof THEMES.dark.scheme;
     path: Paths<typeof DEFAULT_SETTINGS>;
     settings: typeof DEFAULT_SETTINGS;
     currentSetting: TSettingLink;
@@ -27,7 +26,6 @@ export const SettingLink = ({
     icon,
     color,
     path,
-    settings,
     currentSetting,
 }: Props) => {
     const theme = useTheme();
@@ -64,7 +62,7 @@ export const SettingLink = ({
             <Flex gap={20}>
                 {icon && (
                     <SettingButtonIcon
-                        color={color ? theme.colors[color].main : 'grey'}
+                        color={color ? theme.scheme[color].main : 'grey'}
                     >
                         {icon}
                     </SettingButtonIcon>

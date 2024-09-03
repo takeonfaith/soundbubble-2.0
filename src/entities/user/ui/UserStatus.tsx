@@ -6,7 +6,7 @@ const UserStatusStyled = styled.span`
 	opacity: 0.5;
 
 	&.online {
-		color: ${({ theme, color }) => color ?? theme.colors.blue.action};
+		color: ${({ theme, color }) => color ?? theme.scheme.blue.action};
 		opacity: 1;
 	}
 `

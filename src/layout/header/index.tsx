@@ -26,13 +26,24 @@ import {
     MobileChildren,
 } from './styles';
 import { Settings } from '../../entities/settings/ui';
+import { confirmModel } from '../confirm/model';
+import { useTheme } from 'styled-components';
 
 const UserContextMenu = () => {
     const [{ data }] = userModel.useUser();
     const navigate = useNavigate();
+    const theme = useTheme();
 
     const handleLogout = () => {
-        userModel.events.logout();
+        confirmModel.events.open({
+            text: 'Are you sure you want to log out?',
+            onAccept: () => {
+                userModel.events.logout();
+            },
+            subtext: 'All your data is saved',
+            icon: <IconLogout />,
+            iconColor: theme.scheme.red.action,
+        });
     };
 
     const handleShare = () => {

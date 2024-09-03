@@ -1,7 +1,6 @@
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { Form } from '../../shared/components/form';
-import { SubmitObj } from '../../shared/components/form/types';
 import { Message } from '../../shared/components/mesage';
 import { useForm } from '../../shared/hooks/useForm';
 import { SignUpModalStyled } from '../signUpModal/styles';

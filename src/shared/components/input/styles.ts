@@ -53,17 +53,17 @@ export const Label = styled.label`
     font-weight: 300;
     display: inline-block;
     width: 100%;
-    color: ${({ theme }) => theme.colors.greyText};
+    color: ${({ theme }) => theme.scheme.grey.text};
 `;
 
 export const InputError = styled(Label)`
     margin-bottom: 0;
     margin-top: 4px;
-    color: ${({ theme }) => theme.colors.red.text};
+    color: ${({ theme }) => theme.scheme.red.text};
 `;
 
 export const Required = styled.span`
-    color: ${({ theme }) => theme.colors.red.main};
+    color: ${({ theme }) => theme.scheme.red.main};
 `;
 
 export const InputStyled = styled.input<{
@@ -81,7 +81,7 @@ export const InputStyled = styled.input<{
     font-weight: 200;
     width: 100%;
     border: ${({ theme, $hasError }) =>
-        $hasError ? `1px solid ${theme.colors.red.text}` : 'none'};
+        $hasError ? `1px solid ${theme.scheme.red.text}` : 'none'};
     padding-left: ${({ $hasIcon }) => ($hasIcon ? '40px' : '14px')};
     padding-right: ${({ $hasRightIcon }) => ($hasRightIcon ? '40px' : '14px')};
 

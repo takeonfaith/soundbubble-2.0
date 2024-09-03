@@ -4,12 +4,12 @@ import { SongMoreContextMenu } from '../../entities/song/ui/SongMoreContextMenu'
 import { userModel } from '../../entities/user/model';
 import { AddSongToPlaylistModal } from '../../features/addSongToPlaylistModal';
 import { ShareModal } from '../../features/shareModal';
-import { usePlayerMusicControls } from '../fullScreenPlayer/PlayerMusicControls';
 import { modalModel } from '../modal/model';
 import { popupModel } from '../popup/model';
 import { CompactLyrics } from './CompactLyrics';
 import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
 import { SongsQueue } from './SongsQueue';
+import { usePlayerMusicControls } from '../fullScreenPlayer/hooks/usePlayerMusicControls';
 
 export const usePlayer = () => {
     const { currentSong } = songModel.useSong();

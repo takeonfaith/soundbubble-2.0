@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IconArrowUpLeft, IconHistory, IconSearch } from '@tabler/icons-react';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
@@ -28,52 +27,6 @@ export const HintItem = ({
     const hintIcon = item.icon ? item.icon : icon ? icon : <IconSearch />;
     const hintName = item.fullName;
     const showCover = false;
-
-    // const coverDictionary = (type: TPlace, el: any) => {
-    //     const covers: Record<TPlace, React.ReactNode> = {
-    //         users: (
-    //             <UserCover
-    //                 isAuthor={false}
-    //                 src={(el as TUser).photoURL}
-    //                 colors={el.imageColors}
-    //                 size="30px"
-    //             />
-    //         ),
-    //         author: (
-    //             <UserCover
-    //                 isAuthor
-    //                 src={(el as TUser).photoURL}
-    //                 colors={el.imageColors}
-    //                 size="30px"
-    //             />
-    //         ),
-    //         song: (
-    //             <SongCover
-    //                 src={(el as TSong).cover}
-    //                 colors={(el as TSong).imageColors}
-    //                 size={'30px'}
-    //             />
-    //         ),
-    //         playlist: (
-    //             <PlaylistCover
-    //                 src={(el as TPlaylist).image}
-    //                 colors={el.imageColors}
-    //                 size="30px"
-    //                 isAlbum={false}
-    //             />
-    //         ),
-    //         album: (
-    //             <PlaylistCover
-    //                 src={(el as TPlaylist).image}
-    //                 colors={el.imageColors}
-    //                 size="30px"
-    //                 isAlbum
-    //             />
-    //         ),
-    //     };
-
-    //     return covers[type];
-    // };
 
     const handleCopy = (e: Evt<'btn'>) => {
         e.stopPropagation();

@@ -6,9 +6,9 @@ const MessageLinkStyled = styled.a`
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	color: ${({ theme }) => theme.colors.blue.main};
+	color: ${({ theme }) => theme.scheme.blue.main};
 	padding: 4px;
-	background: ${({ theme }) => theme.colors.blue.transparent2};
+	background: ${({ theme }) => theme.scheme.blue.transparent2};
 	border-radius: 6px;
 `
 

@@ -8,9 +8,9 @@ export const CenterButton = styled.div`
     align-items: center;
     justify-content: center;
     border-radius: 100%;
-    background: ${({ theme }) => theme.colors.blue.action};
+    background: ${({ theme }) => theme.scheme.blue.action};
     color: #fff;
-    box-shadow: 0 4px 50px ${({ theme }) => theme.colors.blue.action};
+    box-shadow: 0 4px 50px ${({ theme }) => theme.scheme.blue.action};
     position: absolute;
     top: 50%;
     left: 50%;

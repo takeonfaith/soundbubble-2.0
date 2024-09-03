@@ -49,7 +49,7 @@ export const SidebarSection = styled.div`
 
         &:hover {
             background: ${({ theme }) => theme.colors.hover};
-            color: ${({ theme }) => theme.colors.blue.main};
+            color: ${({ theme }) => theme.scheme.blue.main};
         }
     }
 `;
@@ -75,7 +75,7 @@ export const SidebarLink = styled(NavLink)`
     &.active {
         & > div > div {
             opacity: 1;
-            color: ${({ theme }) => theme.colors.blue.main};
+            color: ${({ theme }) => theme.scheme.blue.main};
         }
 
         svg {
@@ -120,7 +120,7 @@ export const NotificationBadge = styled.span`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: ${({ theme }) => theme.colors.red.main};
+    background: ${({ theme }) => theme.scheme.red.main};
     border-radius: 10px;
     color: #fff;
     font-weight: 400;

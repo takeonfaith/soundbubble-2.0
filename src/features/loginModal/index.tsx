@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Flex } from '@components/flex';
 
@@ -29,8 +30,8 @@ import {
     RightSideStyled,
 } from './styles';
 
-type Props = {
-    actionAfterLogin?: (params?: unknown[]) => unknown;
+type Props<T> = {
+    actionAfterLogin?: T;
     title?: string;
 };
 
@@ -55,10 +56,10 @@ const fields = [
     },
 ] as const;
 
-export const LoginModal = ({
+export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
     actionAfterLogin,
     title = 'Welcome back to Soundbubble',
-}: Props) => {
+}: Props<T>) => {
     const [{ data, error }, _, loading] = userModel.useUser();
     const { formProps, onSumbit } = useForm({
         fields,

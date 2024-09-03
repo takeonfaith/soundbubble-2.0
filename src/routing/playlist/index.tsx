@@ -5,14 +5,13 @@ import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { userModel } from '../../entities/user/model';
 import { ShareModal } from '../../features/shareModal';
 import { modalModel } from '../../layout/modal/model';
-import { DefaultButton } from '../../shared/components/button/DefaultButton';
-import { Flex } from '../../shared/components/flex';
+import { Button } from '../../shared/components/button';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { Subtext } from '../../shared/components/subtext';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
-import { PageTop } from './pageTop';
+import { PageTop } from './PageTop';
 import { SkeletonLoading } from './Skeleton';
 import {
     BottomPlaylist,
@@ -20,7 +19,6 @@ import {
     PlaylistPageStyled,
     PlaylistSimilar,
 } from './styles';
-import { Button } from '../../shared/components/button';
 
 export const PlaylistPage = () => {
     const { currentPlaylist, currentPlaylistSongs, loading, error } =
@@ -85,14 +83,16 @@ export const PlaylistPage = () => {
                                     description="Playlist is empty"
                                 >
                                     {isAuthor && (
-                                        <DefaultButton
-                                            width="130px"
-                                            appearance="secondary"
+                                        <Button
+                                            $width="130px"
+                                            $height="35px"
+                                            className="outline"
                                             onClick={handleAddSongsModal}
+                                            style={{ fontSize: '0.85rem' }}
                                         >
                                             <IconPlus size={18} />
                                             Add songs
-                                        </DefaultButton>
+                                        </Button>
                                     )}
                                 </PageMessage>
                             )}
@@ -106,18 +106,29 @@ export const PlaylistPage = () => {
                             />
                         </PlaylistPageSongs>
                         <BottomPlaylist>
-                            <Button
-                                $height="35px"
-                                $width="130px"
-                                className="outline"
-                            >
-                                <IconPlus />
-                                Add songs
-                            </Button>
-                            <Subtext style={{ fontSize: '0.85rem' }}>
-                                {currentPlaylistSongs?.length ?? 0} songs,
-                                {getHumanDuration(totalDuration, 'text')}
-                            </Subtext>
+                            {(currentPlaylistSongs?.length ?? 0) > 0 &&
+                                isAuthor && (
+                                    <Button
+                                        $height="35px"
+                                        $width="130px"
+                                        className="outline"
+                                        style={{ fontSize: '0.85rem' }}
+                                    >
+                                        <IconPlus size={18} />
+                                        Add songs
+                                    </Button>
+                                )}
+                            {(currentPlaylistSongs?.length ?? 0) > 0 && (
+                                <Subtext
+                                    style={{
+                                        fontSize: '0.85rem',
+                                        opacity: '0.4',
+                                    }}
+                                >
+                                    {currentPlaylistSongs?.length ?? 0} songs,
+                                    {getHumanDuration(totalDuration, 'text')}
+                                </Subtext>
+                            )}
                         </BottomPlaylist>
                         <PlaylistSimilar></PlaylistSimilar>
                     </PlaylistPageStyled>

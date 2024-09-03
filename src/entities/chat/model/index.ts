@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { createGate, useGate, useUnit } from 'effector-react';
 import { Database } from '../../../database';
@@ -190,6 +189,7 @@ sample({
 
 sample({
     clock: sendMessage,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     fn: ({ chatId, message: { status, ...message } }) => {
         return { chatId, message };
     },

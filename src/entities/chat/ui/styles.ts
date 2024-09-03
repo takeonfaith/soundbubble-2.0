@@ -10,7 +10,7 @@ export const ChatItemStyled = styled(Link)`
     background: ${({ theme }) => theme.colors.pageBackground};
 
     &.selected {
-        background: ${({ theme }) => theme.colors.blue.transparent};
+        background: ${({ theme }) => theme.scheme.blue.transparent};
     }
 
     &:hover {
@@ -85,6 +85,6 @@ export const LastMessageSentTimeStyled = styled.div`
         width: 16px;
         height: 16px;
         opacity: 1;
-        color: ${({ theme }) => theme.colors.blue.main};
+        color: ${({ theme }) => theme.scheme.blue.main};
     }
 `;

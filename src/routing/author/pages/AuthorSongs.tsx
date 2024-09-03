@@ -7,7 +7,7 @@ import {
 } from '../../../shared/components/pageWrapper';
 
 export const AuthorSongs = () => {
-    const { user: currentPageUser, songs } = userModel.useUserPage();
+    const [{ user: currentPageUser, songs }] = userModel.useUserPage();
     const queueInfo = {
         listName: currentPageUser?.displayName ?? 'Author',
         listIcon: currentPageUser?.photoURL,

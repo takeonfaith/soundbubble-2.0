@@ -38,7 +38,7 @@ export const UserTop = () => {
                         subtext: 'You can add them again if you want',
                         onAccept: () => null,
                         icon: <IconUserX />,
-                        iconColor: theme.colors.red.action,
+                        iconColor: theme.scheme.red.action,
                     });
                 },
             };
@@ -56,7 +56,7 @@ export const UserTop = () => {
                         text: 'You sure you want to cancel friends request?',
                         onAccept: () => null,
                         icon: <IconUserX />,
-                        iconColor: theme.colors.red.action,
+                        iconColor: theme.scheme.red.action,
                     });
                 },
             };

@@ -30,11 +30,11 @@ export const BottomButtons = ({ isAdmin, isPageOwner, queueInfo, buttonColor }: 
 
 	if (isAdmin && isPageOwner) {
 		return <ButtonsStyled className='bottom-buttons'>
-			<Button onClick={() => modalModel.events.open({ content: <AddSongModal />, title: "Add new song" })} $background={theme.colors.pageBackground} style={{ color: theme.colors.blue.main, gap: '10px' }}>
+			<Button onClick={() => modalModel.events.open({ content: <AddSongModal />, title: "Add new song" })} $background={theme.colors.pageBackground} style={{ color: theme.scheme.blue.main, gap: '10px' }}>
 				<IconMusicPlus size={18} />
 				New song
 			</Button>
-			<Button onClick={() => modalModel.events.open({ content: <AddAlbumModal />, title: "Add new album" })} $background={theme.colors.pageTopButton} style={{ color: theme.colors.blue.main, gap: '10px' }}>
+			<Button onClick={() => modalModel.events.open({ content: <AddAlbumModal />, title: "Add new album" })} $background={theme.colors.pageTopButton} style={{ color: theme.scheme.blue.main, gap: '10px' }}>
 				<IconVinyl size={18} />
 				New album
 			</Button>

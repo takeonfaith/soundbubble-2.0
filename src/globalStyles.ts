@@ -46,7 +46,7 @@ export const GlobalStyles = createGlobalStyle`
 	}
 
 	input:focus, [type=text]:focus, select:focus, textarea:focus {
-		outline: 1px solid ${({ theme }) => theme.colors.blue.main};
+		outline: 1px solid ${({ theme }) => theme.scheme.blue.main};
 	}
 
 	@keyframes generalAppear {

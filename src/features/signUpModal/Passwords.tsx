@@ -2,27 +2,25 @@ import styled from 'styled-components';
 import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
-import { Form } from '../../shared/components/form';
 import { PasswordStrength } from './PasswordStrength';
 import { SignUpModalStyled } from './styles';
-import { SwitchToggle } from '../../shared/components/switchToggle';
 
-const fields = [
-    {
-        label: 'Password',
-        id: 'password',
-        type: 'password',
-        placeholder: 'Enter your password',
-        required: true,
-    },
-    {
-        label: 'Confirm Password',
-        id: 'confirmPassword',
-        type: 'password',
-        placeholder: 'Confirm your password',
-        required: true,
-    },
-] as const;
+// const fields = [
+//     {
+//         label: 'Password',
+//         id: 'password',
+//         type: 'password',
+//         placeholder: 'Enter your password',
+//         required: true,
+//     },
+//     {
+//         label: 'Confirm Password',
+//         id: 'confirmPassword',
+//         type: 'password',
+//         placeholder: 'Confirm your password',
+//         required: true,
+//     },
+// ] as const;
 
 export const PasswordRules = styled.div`
     background: ${({ theme }) => theme.colors.pageBackground2};
@@ -42,12 +40,9 @@ export const Passwords = () => {
                 jc="center"
             >
                 <PasswordStrength />
-                <Form
-                    fields={fields}
-                    submitErrorMessage={undefined}
-                    submitText={''}
-                    onSumbit={() => null}
-                />
+                {/* <Form fields={fields} valueObj={undefined} handleChange={function (key: string): (val: string | React.ChangeEvent<HTMLInputElement>) => void {
+                    throw new Error('Function not implemented.');
+                } } /> */}
             </Flex>
             <Flex width="100%" gap={10}>
                 <DefaultButton

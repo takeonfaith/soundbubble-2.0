@@ -64,7 +64,7 @@ export const HintItemStyled = styled.li`
 
     &:focus {
         background: ${({ theme }) => theme.colors.hover};
-        outline: 1px solid ${({ theme }) => theme.colors.greyText};
+        outline: 1px solid ${({ theme }) => theme.scheme.grey.text};
     }
 
     @media (hover: hover) {
@@ -86,7 +86,7 @@ export const HintItemStyled = styled.li`
     }
 
     &.selected {
-        background: ${({ theme }) => theme.colors.blue.transparent};
+        background: ${({ theme }) => theme.scheme.blue.transparent};
         font-weight: 400;
     }
 
@@ -107,7 +107,7 @@ export const HintIcon = styled.div`
     align-items: center;
 
     svg {
-        color: ${({ theme }) => theme.colors.greyText};
+        color: ${({ theme }) => theme.scheme.grey.text};
         width: 20px;
         height: 20px;
     }

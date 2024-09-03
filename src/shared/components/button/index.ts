@@ -40,14 +40,14 @@ export const Button = styled.button<{
     }
 
     &.primary {
-        background: ${({ theme }) => theme.colors.blue.action};
+        background: ${({ theme }) => theme.scheme.blue.action};
         box-shadow: 0 10px 20px
-            rgba(${({ theme }) => hexToRgbA(theme.colors.blue.action)}, 0.3);
+            rgba(${({ theme }) => hexToRgbA(theme.scheme.blue.action)}, 0.3);
     }
 
     &.secondary {
         background: ${({ theme }) => theme.colors.hover};
-        color: ${({ theme }) => theme.colors.blue.action};
+        color: ${({ theme }) => theme.scheme.blue.action};
     }
 
     &.outline {

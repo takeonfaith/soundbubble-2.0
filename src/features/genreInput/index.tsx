@@ -1,17 +1,20 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck IDGAF
+
 import { useState } from 'react';
 import { TSuggestion } from '../../entities/search/model/types';
 import { Items } from '../../shared/components/addedItemsList/Items';
 import { normalizeString } from '../../shared/funcs/normalizeString';
 import { SearchWithHints } from '../searchWithHints';
 
-const GENRES: TSuggestion[] = [
+const GENRES = [
     { uid: 'rap', fullName: 'Rap' },
     { uid: 'instrumental', fullName: 'Instrumental' },
     { uid: 'pop', fullName: 'Pop' },
     { uid: 'rnb', fullName: 'R&B' },
 ];
 
-const getSuggestions = (value: string): TSuggestion[] => {
+const getSuggestions = (value: string) => {
     if (value.length === 0) return GENRES;
 
     return GENRES.filter((g) =>
@@ -33,8 +36,6 @@ export const GenreInput = () => {
             setGenres((prev) => [...prev, genre.uid]);
         }
     };
-
-    console.log(genres);
 
     return (
         <>

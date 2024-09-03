@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoginModal } from 'features/loginModal';
 import { modalModel } from 'layout/modal/model';
 import { userModel } from '../../entities/user/model';
@@ -6,7 +7,7 @@ export const usePrivateAction = () => {
     const [{ data }] = userModel.useUser();
 
     const openLoginModal =
-        <T extends (params: unknown[]) => unknown>(fn?: T) =>
+        <T extends (params: any[]) => unknown>(fn?: T) =>
         () => {
             modalModel.events.open({
                 title: '',
@@ -21,7 +22,7 @@ export const usePrivateAction = () => {
             });
         };
 
-    const loggedIn = <T extends (params: unknown[]) => unknown>(fn: T) => {
+    const loggedIn = <T extends (params: any) => unknown>(fn: T) => {
         if (data === null) {
             return openLoginModal(fn);
         }
