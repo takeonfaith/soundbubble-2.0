@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck IDGAF
-
 import {
     IconHeart,
     IconSquareRoundedPlus,
@@ -23,6 +20,9 @@ import { AddSongToPlaylistModal } from '../../../features/addSongToPlaylistModal
 import { useNavigate } from 'react-router';
 import { Flex } from '../../../shared/components/flex';
 import { UserItem } from '../../user/ui';
+import { useToggleLike } from '../hooks/useToggleLike';
+import { createUserObject } from '../../user/lib/createUserObject';
+import { SongInfo } from './SongInfo';
 
 const AuthorsModal = ({ authors }: { authors: TAuthor[] | undefined }) => {
     if (!authors) return null;
@@ -36,10 +36,17 @@ const AuthorsModal = ({ authors }: { authors: TAuthor[] | undefined }) => {
             padding="20px"
         >
             {authors.map((author) => {
+                const user = createUserObject({
+                    uid: author.uid,
+                    displayName: author.displayName,
+                    photoURL: author.photoURL,
+                    isAuthor: true,
+                });
+
                 return (
                     <UserItem
                         key={author.uid}
-                        user={author}
+                        user={user}
                         onClick={() => modalModel.events.close()}
                         orientation="horizontal"
                     />
@@ -58,6 +65,7 @@ export const SongMoreContextMenu = ({ song }: Props) => {
     const [library] = userModel.useSongLibrary();
     const isLiked = library?.find((s) => s.id === song?.id);
     const navigate = useNavigate();
+    const { handleToggleLike } = useToggleLike(song);
 
     const handleShare = () => {
         modalModel.events.open({
@@ -89,9 +97,17 @@ export const SongMoreContextMenu = ({ song }: Props) => {
 
     const handleLike = () => {
         if (song) {
-            userModel.events.addSongToLibrary(song);
+            handleToggleLike();
             popupModel.events.close();
         }
+    };
+
+    const handleInfoModal = () => {
+        modalModel.events.open({
+            title: ``,
+            content: <SongInfo song={song} />,
+        });
+        popupModel.events.close();
     };
 
     return (
@@ -120,7 +136,7 @@ export const SongMoreContextMenu = ({ song }: Props) => {
                 <IconShare3 />
                 Share
             </Button>
-            <Button>
+            <Button onClick={handleInfoModal}>
                 <IconInfoCircle />
                 Info
             </Button>

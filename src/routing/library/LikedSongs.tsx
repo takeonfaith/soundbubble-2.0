@@ -3,10 +3,11 @@ import { SongListSkeleton } from '../../entities/song/ui/SongListSkeleton';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { userModel } from '../../entities/user/model';
 import { LoginButton } from '../../features/loginButton';
+import { Flex } from '../../shared/components/flex';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { Flex } from '../../shared/components/flex';
+import { AddButton } from './AddButton';
 
 export const LikedSongs = () => {
     const [library, loading] = userModel.useSongLibrary();
@@ -17,7 +18,7 @@ export const LikedSongs = () => {
             <SkeletonPageAnimation
                 loading={loading}
                 skeleton={
-                    <Flex padding='20px' width='100%'>
+                    <Flex padding="20px" width="100%">
                         <SongListSkeleton quantity={20} />
                     </Flex>
                 }
@@ -45,6 +46,7 @@ export const LikedSongs = () => {
                     />
                 )}
             </SkeletonPageAnimation>
+            <AddButton />
         </ContentWrapper>
     );
 };

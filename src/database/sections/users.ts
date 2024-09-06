@@ -5,7 +5,15 @@ import {
     TUser,
 } from '@user/model/types';
 import { getDataFromDoc } from 'database/lib/getDataFromDoc';
-import { getDocs, limit, orderBy, query, where } from 'firebase/firestore';
+import {
+    arrayRemove,
+    arrayUnion,
+    getDocs,
+    limit,
+    orderBy,
+    query,
+    where,
+} from 'firebase/firestore';
 import { Playlists, Songs } from '.';
 import { FB } from '../../firebase';
 import { ERRORS } from '../../shared/constants';
@@ -174,6 +182,38 @@ export class Users {
             );
         } catch (error) {
             throw new Error('Failed to listen to users changes');
+        }
+    }
+
+    static async addSongToLibrary(userId: string, songId: string) {
+        try {
+            await FB.updateById('users', userId, {
+                addedSongs: arrayUnion(songId),
+            });
+        } catch (error) {
+            throw new Error((error as unknown as Error).message);
+        }
+    }
+
+    static async removeSongFromLibrary(userId: string, songId: string) {
+        try {
+            await FB.updateById('users', userId, {
+                addedSongs: arrayRemove(songId),
+            });
+        } catch (error) {
+            throw new Error('Failed to remove song from library');
+        }
+    }
+
+    static async updateLibrary(userId: string, songs: string[]) {
+        try {
+            await FB.updateById('users', userId, {
+                addedSongs: songs,
+            });
+        } catch (error) {
+            throw new Error(
+                `Failed to update library, ${(error as Error).message}`
+            );
         }
     }
 }

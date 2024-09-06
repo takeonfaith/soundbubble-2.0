@@ -13,10 +13,16 @@ import { AuthorPageWrapper } from '../author/styles';
 import { SkeletonLoading } from './SkeletonLoading';
 import { SectionStyled } from './styles';
 import { UserTop } from './UserTop';
+import { TUser } from '../../entities/user/model/types';
 
-export const UserPage = () => {
+type Props = {
+    data?: TUser | null;
+};
+
+export const UserPage = ({ data }: Props) => {
     const [{ user: currentPageUser, songs, lastSongPlayed, friends }, loading] =
         userModel.useUserPage();
+    const userPageData = data ?? currentPageUser;
 
     useUrlParamId({
         page: 'user',
@@ -36,9 +42,9 @@ export const UserPage = () => {
     }, []);
 
     const queueInfo = {
-        listName: currentPageUser?.displayName ?? 'Author',
-        listIcon: currentPageUser?.photoURL,
-        listUrl: `/author/${currentPageUser?.uid}`,
+        listName: userPageData?.displayName ?? 'Author',
+        listIcon: userPageData?.photoURL,
+        listUrl: `/author/${userPageData?.uid}`,
         songs: songs.slice(0, MAX_SONGS),
     };
 
@@ -48,9 +54,9 @@ export const UserPage = () => {
         <AuthorPageWrapper>
             <SkeletonPageAnimation
                 skeleton={<SkeletonLoading />}
-                loading={!currentPageUser || loading}
+                loading={!userPageData || loading}
             >
-                <UserTop />
+                <UserTop user={userPageData} />
                 {lastSongPlayed && (
                     <SectionStyled>
                         <div className="title">
@@ -64,7 +70,7 @@ export const UserPage = () => {
                         <div className="title">
                             <NavigationTitle
                                 showNavigation={songs.length > MAX_SONGS}
-                                to={`/author/${currentPageUser?.uid}/songs`}
+                                to={`/author/${userPageData?.uid}/songs`}
                             >
                                 <h3>Added songs</h3>
                             </NavigationTitle>
@@ -75,12 +81,12 @@ export const UserPage = () => {
                         />
                     </SectionStyled>
                 )}
-                <Playlists title="Playlists" uid={currentPageUser?.uid} />
+                <Playlists title="Playlists" uid={userPageData?.uid} />
                 <SectionStyled>
                     <div className="title">
                         <NavigationTitle
                             showNavigation={songs.length > MAX_SONGS}
-                            to={`/author/${currentPageUser?.uid}/songs`}
+                            to={`/author/${userPageData?.uid}/songs`}
                         >
                             <h3>Friends</h3>
                         </NavigationTitle>

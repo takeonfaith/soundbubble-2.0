@@ -2,7 +2,7 @@ import { DefaultButton } from '../../../shared/components/button/DefaultButton';
 import { CloseButton } from '../../../shared/components/closeButton';
 import { Flex } from '../../../shared/components/flex';
 import { Subtext } from '../../../shared/components/subtext';
-import { ModalBackground } from '../../modal/styles';
+import { ModalBackground } from '../../modal/ui/styles';
 import { confirmModel } from '../model';
 import { ConfirmButtons, ConfirmIcon, ConfirmStyled } from './styles';
 

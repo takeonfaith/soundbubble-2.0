@@ -6,6 +6,7 @@ import {
     IconSettings,
     IconUserCircle,
 } from '@tabler/icons-react';
+import { Logo } from '../../../shared/components/logo';
 
 export const DEFAULT_SETTINGS = {
     settings: {
@@ -17,16 +18,34 @@ export const DEFAULT_SETTINGS = {
                 color: 'red',
                 icon: IconUserCircle,
                 type: 'link',
-                children: {
-
-                },
+                children: {},
             },
             general: {
                 key: 'General',
                 color: 'blue',
                 icon: IconSettings,
                 type: 'link',
-                children: {},
+                children: {
+                    multiButton: {
+                        type: 'section',
+                        key: 'Multi-Button',
+                        items: {
+                            multiButton: {
+                                key: 'Multi-Button',
+                                type: 'toggle',
+                                icon: () => Logo({ short: true }),
+                                value: true,
+                                children: {
+                                    multiButton: {
+                                        key: 'Multi-Button',
+                                        type: 'toggle',
+                                        value: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             },
             lang: {
                 key: 'Language',
@@ -101,7 +120,8 @@ export const DEFAULT_SETTINGS = {
                                 type: 'toggle',
                                 icon: IconKeyframes,
                                 value: true,
-                                subtext: 'Will increase performance if disabled',
+                                subtext:
+                                    'Will increase performance if disabled',
                             },
                             gradients: {
                                 key: 'Gradients',

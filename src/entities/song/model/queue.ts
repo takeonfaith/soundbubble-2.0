@@ -13,7 +13,6 @@ const handleNext = ({
     loop: LoopMode;
 }): TQueueStore => {
     const { currentSongIndex, songs } = queue;
-    console.log(loop);
 
     const newIndex = currentSongIndex !== null ? currentSongIndex + 1 : null;
 
@@ -74,13 +73,6 @@ sample({
     target: previous,
 });
 
-// sample({
-//     clock: previous,
-//     source: { queue: $queue, loop: $loopMode },
-//     fn: handlePrevious,
-//     target: $queue,
-// });
-
 sample({
     clock: changeLoopMode,
     source: $loopMode,
@@ -122,12 +114,6 @@ sample({
     filter: Boolean,
     target: toPreviousSong,
 });
-sample({
-    clock: previous,
-    source: $needToPreviousSong,
-    filter: Boolean,
-    target: toPreviousSong,
-});
 
 sample({
     clock: previous,
@@ -139,16 +125,19 @@ sample({
 sample({
     clock: toPreviousSong,
     source: $queue,
-    filter: queue => !!queue.currentSongIndex,
-    fn: (queue) => ({ ...queue, currentSongIndex: queue.currentSongIndex! - 1 }),
+    filter: (queue) => !!queue.currentSongIndex,
+    fn: (queue) => ({
+        ...queue,
+        currentSongIndex: queue.currentSongIndex! - 1,
+    }),
     target: $queue,
 });
 
 sample({
-  clock: toStartSong,
-  source: $playback,
-  filter: Boolean,
-  fn: (playback) => ({...playback, currentTime: 0}),
-  target: $playback
-})
+    clock: toStartSong,
+    source: $playback,
+    filter: Boolean,
+    fn: (playback) => ({ ...playback, currentTime: 0 }),
+    target: $playback,
+});
 // #endregion

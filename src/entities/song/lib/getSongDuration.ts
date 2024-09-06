@@ -1,4 +1,4 @@
-export const getAudioDuration = (songSrc: string) => {
+export const getSongDuration = (songSrc: string) => {
     return new Promise<number>((resolve, reject) => {
         const audio = new Audio(songSrc);
 

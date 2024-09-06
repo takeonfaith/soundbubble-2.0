@@ -24,7 +24,6 @@ const useAppAudio = () => {
     };
 
     const handleEnded = () => {
-        console.log('ended');
         if (
             loop === LoopMode.noloop &&
             queue.currentSongIndex === queue.songs.length - 1
@@ -36,8 +35,6 @@ const useAppAudio = () => {
     };
 
     useEffect(() => {
-        // console.log(audioRef.current, +lastRangeValue, !isNaN(lastRangeValue ?? 0));
-
         if (
             audioRef.current &&
             isDefined(lastRangeValue) &&

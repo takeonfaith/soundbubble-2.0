@@ -1,11 +1,11 @@
 import { CloseButton } from '@components/closeButton';
 import { IconChevronLeft } from '@tabler/icons-react';
-import { Button } from '../../shared/components/button';
-import { Flex } from '../../shared/components/flex';
-import { PageStack } from '../../shared/components/pageStack';
-import { useMobileSheetSwipe } from '../../shared/hooks/useMobileSheetSwipe';
-import { modalModel } from './model';
-import { MOBILE_MODAL_SIZE, SIZES } from './model/constants';
+import { Button } from '../../../shared/components/button';
+import { Flex } from '../../../shared/components/flex';
+import { PageStack } from '../../../shared/components/pageStack';
+import { useMobileSheetSwipe } from '../../../shared/hooks/useMobileSheetSwipe';
+import { modalModel } from '../model';
+import { MOBILE_MODAL_SIZE, SIZES } from '../model/constants';
 import {
     ModalBackground,
     ModalContent,

@@ -10,11 +10,12 @@ const COLOR_SCHEME_DARK = {
     purple: {
         main: '#d38eff',
         text: '#d38eff',
-        transparent: '#d38eff'
+        transparent: '#d38eff',
     },
     red: {
         main: '#ff5b5b',
         text: '#ffb3b3',
+        mild: '#3c2b2b',
         action: '#ff4949',
         transparent: '#ff636314',
     },
@@ -25,7 +26,8 @@ const COLOR_SCHEME_DARK = {
     },
     green: {
         main: '#4de0aa',
-        text: '#ffb3b3',
+        text: '#b3ffc7',
+        mild: '#1f2a1f',
         transparent: '#ff636314',
     },
     grey: {
@@ -68,6 +70,7 @@ export const DARK_THEME = {
         greyText2: '#6a6a6a',
         header: '#1010109e',
         player: '#c4c4c4',
+        toast: '#444444',
     },
     scheme: {
         ...COLOR_SCHEME_DARK,
@@ -91,10 +94,11 @@ const COLOR_SCHEME_LIGHT = {
         transparent: '#9332d134',
     },
     red: {
+        main: '#cf3737',
         text: '#bc4242',
         action: '#f44f4f',
+        mild: '#ffebeb',
         transparent: '#ff636314',
-        main: '#cf3737',
     },
     orange: {
         text: '#9e4e29',
@@ -102,9 +106,10 @@ const COLOR_SCHEME_LIGHT = {
         main: '#d69c40',
     },
     green: {
-        text: '#358e34',
-        transparent: '#41d9831f',
         main: '#25a073',
+        text: '#358e34',
+        mild: '#ebffeb',
+        transparent: '#41d9831f',
     },
     grey: {
         main: '#595959',
@@ -146,6 +151,7 @@ export const LIGHT_THEME: TTheme = {
         header: '#ffffff9e',
         greyText: '#a2a2a2',
         greyText2: '#6a6a6a',
+        toast: '#fff',
     },
     scheme: {
         ...COLOR_SCHEME_LIGHT,

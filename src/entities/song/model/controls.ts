@@ -27,8 +27,6 @@ export const useControls = () => {
             return play();
         },
         next: () => {
-            console.log('next');
-
             next();
         },
         previous: () => {
@@ -36,8 +34,6 @@ export const useControls = () => {
                 previous();
                 return;
             }
-
-            console.log(state);
 
             setLastRangeValue(0);
             setCurrentLyricIndex(0);

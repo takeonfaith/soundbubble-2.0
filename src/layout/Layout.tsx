@@ -5,11 +5,12 @@ import { useMediaMetadata } from '../shared/hooks/useMediaMetadata';
 import { FullScreenFullScreenPlayer } from './fullScreenPlayer';
 import { InitialLoading } from './initialLoading';
 import { MobileMenu } from './mobileMenu';
-import { Modal } from './modal';
+import { Modal } from './modal/ui';
 import { Player } from './player';
 import { Popup } from './popup';
 import { Sidebar } from './sidebar';
 import { Confirm } from './confirm/ui';
+import { Toast } from './toast/ui';
 
 export const LayoutStyled = styled.div`
     height: calc(100dvh - var(--player-size) - var(--page-gap) * 2);
@@ -59,6 +60,7 @@ export const Layout = () => {
             </LayoutStyled>
             <Player />
             <Confirm />
+            <Toast />
             <MobileMenu />
         </>
     );

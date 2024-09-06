@@ -29,6 +29,8 @@ export const Player = () => {
         isLiked,
         currentSong,
         handleLyrics,
+        handleToggleLike,
+        performingAction,
         handleShowQueue,
         handleShare,
         handleMore,
@@ -78,6 +80,8 @@ export const Player = () => {
                         width="42px"
                         isLiked={isLiked}
                         song={currentSong}
+                        onClick={handleToggleLike}
+                        loading={performingAction}
                         likeColor={currentSong?.imageColors[0]}
                     />
                     <Button

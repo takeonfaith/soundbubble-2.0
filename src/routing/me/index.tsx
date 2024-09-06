@@ -1,8 +1,9 @@
 import { userModel } from '../../entities/user/model';
-import { AuthorPage } from '../author';
+import { UserPage } from '../user';
 
 export const MePage = () => {
     const [{ data }] = userModel.useUser();
+    console.log(data);
 
-    return <AuthorPage userData={data} />;
+    return <UserPage data={data} />;
 };

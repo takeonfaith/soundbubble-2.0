@@ -1,5 +1,4 @@
 import {
-    IconBrandSafari,
     IconDisc,
     IconHeart,
     IconHistory,
@@ -12,6 +11,7 @@ import {
     IconUser,
     IconUsers,
     IconVinyl,
+    IconWaveSine,
 } from '@tabler/icons-react';
 import { AuthorPage } from './author';
 import { AuthorSongs } from './author/pages/AuthorSongs';
@@ -47,8 +47,8 @@ export type TRoute = {
 export const allRoutes: TRoute[] = [
     {
         url: 'discover',
-        title: 'Discover',
-        icon: <IconBrandSafari />,
+        title: 'Wave',
+        icon: <IconWaveSine />,
         component: <DiscoverPage />,
         section: 'features',
         private: false,
@@ -224,7 +224,7 @@ const getRoutes = <T extends (typeof allRoutes)[number]['title'][]>(
 };
 
 export const menuRoutes = getRoutes([
-    'Discover',
+    'Wave',
     'Search',
     'Trends',
     'Liked',
@@ -235,7 +235,7 @@ export const menuRoutes = getRoutes([
 ]);
 
 export const mobileMenuRoutes = getRoutes([
-    'Discover',
+    'Wave',
     'Liked',
     'Chat',
     'Search',

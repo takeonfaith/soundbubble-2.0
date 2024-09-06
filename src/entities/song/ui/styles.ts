@@ -124,6 +124,19 @@ export const SongStyled = styled.div`
     transition: 0.1s background;
     --icon-size: 18px;
 
+    &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+
+        .like-button {
+            display: flex;
+        }
+
+        .duration {
+            display: none;
+        }
+    }
+
     &.playing {
         background: ${({ theme }) => theme.colors.hover};
     }

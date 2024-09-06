@@ -13,15 +13,17 @@ import { Subtext } from '../../shared/components/subtext';
 import { UserTopStyled, UserInfo, UserInfoName, UserButtons } from './styles';
 import { confirmModel } from '../../layout/confirm/model';
 import { useTheme } from 'styled-components';
+import { TUser } from '../../entities/user/model/types';
 
-export const UserTop = () => {
-    const [{ user: currentPageUser }] = userModel.useUserPage();
+type Props = {
+    user: TUser | null;
+};
+
+export const UserTop = ({ user }: Props) => {
     const [{ data }] = userModel.useUser();
     const theme = useTheme();
     const friends = data?.friends ?? [];
-    const friend = friends.find(
-        (friend) => friend.uid === currentPageUser?.uid
-    );
+    const friend = friends.find((friend) => friend.uid === user?.uid);
 
     const getFriendButtonContent = () => {
         if (friend?.status === 'added')
@@ -86,18 +88,18 @@ export const UserTop = () => {
     const friendButton = getFriendButtonContent();
 
     return (
-        <UserTopStyled color={currentPageUser?.imageColors[0] ?? '#696969'}>
+        <UserTopStyled color={user?.imageColors[0] ?? '#696969'}>
             <UserCover
                 size="150px"
-                src={currentPageUser?.photoURL}
-                colors={currentPageUser?.imageColors}
+                src={user?.photoURL}
+                colors={user?.imageColors}
                 isAuthor={false}
             />
             <UserInfo>
                 <UserInfoName>
-                    <h2>{currentPageUser?.displayName ?? 'User'}</h2>
+                    <h2>{user?.displayName ?? 'User'}</h2>
                     <Subtext style={{ fontSize: '0.9rem' }}>
-                        {getLastSeen(currentPageUser?.online).status}
+                        {getLastSeen(user?.online).status}
                     </Subtext>
                 </UserInfoName>
                 <UserButtons>

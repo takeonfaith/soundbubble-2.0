@@ -26,3 +26,4 @@ export const DEFAULT_PAGE_STORE: TPageStore = {
 };
 
 export const MAX_SEARCH_HISTORY_QUANTITY = 10;
+export const REMOVE_FROM_LIBRARY_TIMEOUT = 9000;

@@ -3,6 +3,7 @@ import { TSong } from '../../entities/song/model/types';
 import { DARK_THEME } from '../../shared/constants/theme';
 import { LikeButtonStyled } from './styles';
 import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
+import { Loading } from '../../shared/components/loading';
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     //TODO: Remove connection to song so that it can be reused to other entities
@@ -13,6 +14,7 @@ type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     height?: string;
     isLiked: boolean;
     background?: string;
+    loading?: boolean;
 };
 
 export const LikeButton = ({
@@ -23,6 +25,7 @@ export const LikeButton = ({
     height,
     width = '30px',
     onClick,
+    loading,
     ...props
 }: Props) => {
     const { loggedIn } = usePrivateAction();
@@ -44,7 +47,13 @@ export const LikeButton = ({
             onClick={onLikeClick}
             $likeColor={likeColor}
         >
-            {isLiked ? <IconHeartFilled /> : <IconHeart />}
+            {loading ? (
+                <Loading />
+            ) : isLiked ? (
+                <IconHeartFilled />
+            ) : (
+                <IconHeart />
+            )}
         </LikeButtonStyled>
     );
 };

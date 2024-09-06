@@ -3,6 +3,7 @@ import { createGate, useGate, useUnit } from 'effector-react';
 import { Database } from '../../../database';
 import { Playlists, Users } from '../../../database/sections';
 import { TExtendedSuggestion } from '../../../features/searchWithHints/types';
+import { toastModel } from '../../../layout/toast/model';
 import { ERRORS } from '../../../shared/constants';
 import { errorEffect } from '../../../shared/effector/errorEffect';
 import { getDataFromEffect } from '../../../shared/effector/getDataFromEffect';
@@ -15,6 +16,7 @@ import {
     DEFAULT_SIGN_UP_DATA,
     DEFAULT_STORE,
     MAX_SEARCH_HISTORY_QUANTITY,
+    REMOVE_FROM_LIBRARY_TIMEOUT,
 } from './constants';
 import {
     CreateUserCreditsType,
@@ -23,6 +25,7 @@ import {
     TStore,
     TUser,
 } from './types';
+import { throttle } from 'patronum';
 
 const loginFx = createEffect(
     async (credits: LoginCreditsType): Promise<TUser | null> => {
@@ -200,7 +203,7 @@ const loadSimilarAuthors = createEvent<TSong[]>();
 const resetUserPage = createEvent();
 const updateFriends = createEvent<TUser[]>();
 const setIsLoadingUsers = createEvent<boolean>();
-const addSongToLibrary = createEvent<TSong>();
+
 export const addOwnPlaylistToLibrary = createEvent<TPlaylist>();
 export const setSearchHistory = createEvent<SetSearchHistoryProps>();
 const updateSignUpFormData = createEvent<{
@@ -218,7 +221,7 @@ $userSignUpFormData.reset(logout);
 
 const $isLoadingUser = createStore<boolean>(true);
 
-const $library = createStore<TSong[]>([]);
+export const $library = createStore<TSong[]>([]);
 $library.reset(logout);
 
 const $lastSongPlayed = createStore<TSong | null>(null);
@@ -382,20 +385,172 @@ sample({
     target: setSearchHistoryFx,
 });
 
+// #region Add song and remove from library
+
+export const addSongToLibraryFx = createEffect(
+    async ({ userId, song }: { userId: string | undefined; song: TSong }) => {
+        if (!userId) return;
+
+        await Database.Users.addSongToLibrary(userId, song.id);
+    }
+);
+
+export const removeSongFromLibraryFx = createEffect(
+    async ({
+        userId,
+        songId,
+    }: {
+        userId: string | undefined;
+        songId: string;
+    }) => {
+        if (!userId) return;
+
+        await Database.Users.removeSongFromLibrary(userId, songId);
+    }
+);
+
+const updateLibraryFx = createEffect(
+    async ({
+        userId,
+        songs,
+    }: {
+        userId: string | undefined;
+        songs: string[];
+    }) => {
+        if (!userId) return;
+
+        await Database.Users.updateLibrary(userId, songs);
+    }
+);
+
+removeSongFromLibraryFx.doneData.watch(() => {
+    toastModel.events.show({
+        message: 'Removed from Liked',
+        type: 'info',
+        action: {
+            text: 'Undo',
+            onClick: () => {
+                revertRemove();
+            },
+        },
+        showTimer: true,
+        duration: REMOVE_FROM_LIBRARY_TIMEOUT,
+    });
+});
+
+removeSongFromLibraryFx.failData.watch((err) => {
+    toastModel.events.show({
+        message: `Failed to remove song from Liked. Reason: ${err.message}`,
+        type: 'error',
+        duration: 8000,
+    });
+});
+
+addSongToLibraryFx.doneData.watch(() => {
+    toastModel.events.show({
+        message: 'Song added to Liked',
+        type: 'success',
+        duration: 5000,
+    });
+});
+
+addSongToLibraryFx.failData.watch((err) => {
+    toastModel.events.show({
+        message: `Failed to add song to Liked. Reason: ${err.message}`,
+        type: 'error',
+        duration: 8000,
+    });
+});
+
+const addSongToLibrary = createEvent<TSong>();
+const removeSongFromLibrary = createEvent<TSong>();
+const toggleLikeSong = createEvent<{ song: TSong; isLiked: boolean }>();
+const revertRemove = createEvent();
+const resetCopiedLibrary = createEvent();
+
+const $copiedLibrary = createStore<TSong[]>([]).reset(resetCopiedLibrary);
+
+sample({
+    clock: toggleLikeSong,
+    filter: ({ isLiked }) => isLiked,
+    fn: ({ song }) => song,
+    target: removeSongFromLibrary,
+});
+
+sample({
+    clock: toggleLikeSong,
+    filter: ({ isLiked }) => !isLiked,
+    fn: ({ song }) => song,
+    target: addSongToLibrary,
+});
+
 sample({
     clock: addSongToLibrary,
+    source: { user: $user },
+    fn: ({ user }, song) => ({ userId: user?.data?.uid, song: song }),
+    target: addSongToLibraryFx,
+});
+
+sample({
+    clock: addSongToLibraryFx.done,
     source: $library,
-    fn: (library, song) => {
-        console.log(library.find((s) => s.id === song.id));
-
-        if (library.find((s) => s.id === song.id)) {
-            return library.filter((s) => s.id !== song.id);
-        }
-
-        return [song, ...library];
+    fn: (library, { params }) => {
+        return [params.song, ...library];
     },
     target: $library,
 });
+
+sample({
+    clock: removeSongFromLibrary,
+    source: $library,
+    fn: (library) => library,
+    target: $copiedLibrary,
+});
+
+sample({
+    clock: removeSongFromLibrary,
+    source: { user: $user },
+    fn: ({ user }, song) => ({ userId: user?.data?.uid, songId: song.id }),
+    target: removeSongFromLibraryFx,
+});
+
+sample({
+    clock: removeSongFromLibraryFx.done,
+    source: $library,
+    fn: (library, { params: { songId } }) => {
+        return library.filter((s) => s.id !== songId);
+    },
+    target: $library,
+});
+
+const throttled = throttle(
+    removeSongFromLibraryFx.doneData,
+    REMOVE_FROM_LIBRARY_TIMEOUT
+).watch(() => {
+    resetCopiedLibrary();
+});
+
+sample({
+    clock: revertRemove,
+    source: { user: $user, oldLibrary: $copiedLibrary },
+    fn: ({ user, oldLibrary }) => {
+        throttled.unsubscribe();
+
+        return {
+            userId: user.data?.uid,
+            songs: oldLibrary.map((s) => s.id).reverse(),
+        };
+    },
+    target: [updateLibraryFx],
+});
+
+sample({
+    clock: updateLibraryFx.doneData,
+    source: $copiedLibrary,
+    fn: (copiedLibrary) => copiedLibrary,
+    target: [$library, resetCopiedLibrary],
+});
+// #endregion
 
 export const userModel = {
     useUser: () => useUnit([$user, $isLoadingUser, loginFx.pending]),
@@ -418,8 +573,8 @@ export const userModel = {
         resetUserPage,
         updateFriends,
         setIsLoadingUsers,
-        addSongToLibrary,
         addOwnPlaylistToLibrary,
+        toggleLikeSong,
     },
     gates: {
         useLoadUser: () => useGate(userGate),

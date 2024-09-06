@@ -10,6 +10,7 @@ import { CompactLyrics } from './CompactLyrics';
 import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
 import { SongsQueue } from './SongsQueue';
 import { usePlayerMusicControls } from '../fullScreenPlayer/hooks/usePlayerMusicControls';
+import { useToggleLike } from '../../entities/song/hooks/useToggleLike';
 
 export const usePlayer = () => {
     const { currentSong } = songModel.useSong();
@@ -17,6 +18,7 @@ export const usePlayer = () => {
     const controls = usePlayerMusicControls();
     const isLiked = !!library.find((s) => s.id === currentSong?.id);
     const { loggedIn } = usePrivateAction();
+    const { handleToggleLike, performingAction } = useToggleLike(currentSong);
 
     const handleOpenFullScreenPlayer = () => {
         songModel.fullscreen.open();
@@ -36,6 +38,7 @@ export const usePlayer = () => {
         modalModel.events.open({
             title: `Share "${currentSong?.name}" with friends`,
             content: <ShareModal entity={currentSong} />,
+            sizeY: 'l',
         });
     });
 
@@ -69,6 +72,8 @@ export const usePlayer = () => {
         currentSong,
         controls,
         isLiked,
+        handleToggleLike,
+        performingAction,
         handleLyrics,
         handleAddToPlaylist,
         handleShare,

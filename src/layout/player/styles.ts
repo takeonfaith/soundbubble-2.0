@@ -88,7 +88,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
     .duration-numbers {
         opacity: 0.6;
         position: absolute;
-        right: -6px;
+        right: -5px;
         width: 100%;
         top: 24px;
         min-width: 70px;
@@ -99,10 +99,10 @@ export const PlayerStyled = styled.div<{ $background: string }>`
 
         @media (max-width: 1270px) {
             right: none;
-            left: calc(50% + 4px);
+            left: calc(50% + 2px);
             top: 40px;
             transform: translateX(-50%);
-            width: 355px;
+            width: 352px;
         }
 
         & > * {
@@ -192,6 +192,10 @@ export const PlayerActionButtons = styled.div`
     display: flex;
     justify-content: flex-end;
     gap: 10px;
+
+    & .like-button.liked {
+        filter: brightness(${({ theme }) => theme.colors.brightness});
+    }
 
     @media (max-width: 1000px) {
         display: none;

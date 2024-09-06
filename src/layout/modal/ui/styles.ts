@@ -1,7 +1,7 @@
 import { DarkBackground } from '@components/darkBackground';
 import styled from 'styled-components';
-import { MOBILE_MODAL_SIZE, SIZES } from './model/constants';
-import { PAGE_TRANSITION_DURATION } from '../../shared/components/pageStack/constants';
+import { MOBILE_MODAL_SIZE, SIZES } from '../model/constants';
+import { PAGE_TRANSITION_DURATION } from '../../../shared/components/pageStack/constants';
 
 export const ModalBackground = styled(DarkBackground)`
     position: absolute;

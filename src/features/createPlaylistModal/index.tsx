@@ -9,6 +9,7 @@ import { PhotoInput } from '../../shared/components/photoInput';
 import { useState } from 'react';
 import { useForm } from '../../shared/hooks/useForm';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
+import { toastModel } from '../../layout/toast/model';
 
 const CreatePlaylistModalStyled = styled.div`
     padding: 0 20px;
@@ -50,6 +51,10 @@ export const CreatePlaylistModal = () => {
                 onSuccess: (playlist) => {
                     navigate(`/playlist/${playlist.id}`);
                     modalModel.events.close();
+                    toastModel.events.show({
+                        message: 'Playlist created successfully',
+                        type: 'success',
+                    });
                 },
             });
         },

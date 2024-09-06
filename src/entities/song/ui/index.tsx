@@ -12,7 +12,7 @@ import { popupModel } from '../../../layout/popup/model';
 import { PlayingAnimation } from '../../../shared/components/playingAnimation';
 import { Subtext } from '../../../shared/components/subtext';
 import { useIsSongLiked } from '../../../shared/hooks/useIsSongLiked';
-import { userModel } from '../../user/model';
+import { useToggleLike } from '../hooks/useToggleLike';
 import { getHumanDuration } from '../lib/getHumanDuration';
 import { TSong } from '../model/types';
 import { SongCover } from './SongCover';
@@ -46,6 +46,7 @@ export const SongItem = memo(
     ({ song, playing, loading, index, onClick }: Props) => {
         const { name, authors, imageColors, cover, listens, duration } = song;
         const isLiked = useIsSongLiked(song);
+        const { handleToggleLike, performingAction } = useToggleLike(song);
 
         const handleMore: React.MouseEventHandler<HTMLButtonElement> = (e) => {
             e.stopPropagation();
@@ -59,19 +60,15 @@ export const SongItem = memo(
 
         const handleClick = () => onClick(song, index);
 
-        const handleLike = () => {
-            if (song) {
-                userModel.events.addSongToLibrary(song);
-            }
-        };
-
         return (
             <SongStyled
                 onClick={handleClick}
                 tabIndex={0}
                 role="button"
                 aria-pressed="false"
-                className={playing || loading ? 'playing' : ''}
+                className={`${playing || loading ? 'playing' : ''} ${
+                    performingAction ? 'disabled' : ''
+                }`}
             >
                 <SongLeft $color1={imageColors[0]}>
                     <SongCover size="35px" src={cover} colors={imageColors}>
@@ -124,8 +121,9 @@ export const SongItem = memo(
                         height="35px"
                         song={song}
                         isLiked={isLiked}
-                        likeColor={'red'}
-                        onClick={handleLike}
+                        likeColor={'grey'}
+                        onClick={handleToggleLike}
+                        loading={performingAction}
                     />
                     <Subtext className="duration">
                         {getHumanDuration(duration)}
