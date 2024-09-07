@@ -17,10 +17,21 @@ export const CompactUser = styled.div`
     justify-content: center;
     background: ${({ theme }) => theme.colors.hover};
     font-size: 0.75rem;
+    font-weight: 300;
     gap: 10px;
     padding: 4px;
     border-radius: 15px;
     animation: appear 0.2s forwards;
+
+    svg {
+        width: 18px;
+        height: 18px;
+        opacity: 0.5;
+    }
+
+    &.no-image {
+        padding-left: 14px;
+    }
 
     @keyframes appear {
         0% {

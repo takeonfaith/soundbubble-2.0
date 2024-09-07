@@ -9,6 +9,8 @@ import { UserCover } from './UserCover';
 import { UserStatus } from './UserStatus';
 import { OnlineIndicator, UserItemStyled } from './styles';
 import { useTheme } from 'styled-components';
+import { LikeButton } from '../../../features/likeButton';
+import { useToggleUserLike } from '../hooks/useToggleUserLike';
 
 type Props = {
     user: TUser | null | undefined;
@@ -29,6 +31,8 @@ export const UserItem = memo(
         orientation = 'vertical',
     }: Props) => {
         const theme = useTheme();
+        const { handleToggleLike, isLiked } = useToggleUserLike(user);
+
         if (!user) return null;
 
         const {
@@ -46,6 +50,7 @@ export const UserItem = memo(
         const link = isAuthor ? `/author/${uid}` : `/user/${uid}`;
 
         const handleClick = (e: Evt<'a'>) => {
+            e.stopPropagation();
             onClick?.(user, e);
         };
 
@@ -56,6 +61,15 @@ export const UserItem = memo(
                 className={orientation}
                 onClick={handleClick}
             >
+                {orientation === 'vertical' && isAuthor && (
+                    <LikeButton
+                        entity={user}
+                        likeColor={'grey'}
+                        isLiked={isLiked}
+                        onClick={handleToggleLike}
+                        className='plane'
+                    />
+                )}
                 <UserCover
                     colors={imageColors}
                     src={photoURL}

@@ -4,7 +4,7 @@ export type TAuthor = {
     photoURL: string;
 };
 
-export type TLyric = { text: string; startTime: number };
+export type TLyric = { text: string; startTime: number | 'undefined' };
 
 export type TSong = {
     name: string;
@@ -17,6 +17,9 @@ export type TSong = {
     authors: TAuthor[];
     imageColors: string[];
     duration: number;
+    genres?: string[];
+    langs?: string[];
+    moods?: string[];
 };
 
 export type SongState = 'playing' | 'pause' | 'loading';

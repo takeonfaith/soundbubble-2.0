@@ -1,8 +1,10 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { createGate, useGate, useUnit } from 'effector-react';
+import { throttle } from 'patronum';
 import { Database } from '../../../database';
 import { Playlists, Users } from '../../../database/sections';
 import { TExtendedSuggestion } from '../../../features/searchWithHints/types';
+import { confirmModel } from '../../../layout/confirm/model';
 import { toastModel } from '../../../layout/toast/model';
 import { ERRORS } from '../../../shared/constants';
 import { errorEffect } from '../../../shared/effector/errorEffect';
@@ -25,7 +27,8 @@ import {
     TStore,
     TUser,
 } from './types';
-import { throttle } from 'patronum';
+import { getAuthorsToString } from '../../song/lib/getAuthorsToString';
+import { filterOneArrayWithAnother } from '../../../shared/funcs/filterOneArrayWithAnother';
 
 const loginFx = createEffect(
     async (credits: LoginCreditsType): Promise<TUser | null> => {
@@ -203,6 +206,20 @@ const loadSimilarAuthors = createEvent<TSong[]>();
 const resetUserPage = createEvent();
 const updateFriends = createEvent<TUser[]>();
 const setIsLoadingUsers = createEvent<boolean>();
+
+const addAuthorsToLibrary = createEvent<{
+    authors: TUser[];
+    showToast: boolean;
+}>();
+const removeAuthorsFromLibrary = createEvent<{
+    authors: TUser[];
+    showToast: boolean;
+}>();
+const toggleAuthorLiked = createEvent<{
+    authors: TUser[];
+    isLiked: boolean;
+    showToast: boolean;
+}>();
 
 export const addOwnPlaylistToLibrary = createEvent<TPlaylist>();
 export const setSearchHistory = createEvent<SetSearchHistoryProps>();
@@ -487,8 +504,12 @@ sample({
 sample({
     clock: addSongToLibrary,
     source: { user: $user },
-    fn: ({ user }, song) => ({ userId: user?.data?.uid, song: song }),
-    target: addSongToLibraryFx,
+    fn: ({ user }, song) => ({
+        userId: user?.data?.uid,
+        song: song,
+        authors: song.authors,
+    }),
+    target: [addSongToLibraryFx],
 });
 
 sample({
@@ -498,6 +519,18 @@ sample({
         return [params.song, ...library];
     },
     target: $library,
+});
+
+sample({
+    clock: addSongToLibraryFx.done,
+    fn: ({ params }) => ({
+        authors: params.song.authors.map((a) => ({
+            ...a,
+            isAuthor: true,
+        })) as TUser[],
+        showToast: false,
+    }),
+    target: addAuthorsToLibrary,
 });
 
 sample({
@@ -552,6 +585,147 @@ sample({
 });
 // #endregion
 
+// #region Add author to library
+
+type TAuthorEffectProps = {
+    userId: string | undefined;
+    authors: TUser[];
+    showToast?: boolean;
+};
+
+export const addAuthorsToLibraryFx = createEffect<
+    TAuthorEffectProps,
+    Promise<void>,
+    Error
+>();
+export const removeAuthorsFromLibraryFx = createEffect<
+    TAuthorEffectProps,
+    Promise<void>,
+    Error
+>();
+
+toggleAuthorLiked.watch(({ authors, isLiked, showToast }) => {
+    if (isLiked) {
+        confirmModel.events.open({
+            text: `Are you sure you want to unfollow ${getAuthorsToString(
+                authors
+            )}?`,
+            onAccept: () => removeAuthorsFromLibrary({ authors, showToast }),
+            iconColor: 'red',
+        });
+    } else {
+        addAuthorsToLibrary({ authors, showToast });
+    }
+});
+
+sample({
+    clock: addAuthorsToLibrary,
+    source: { user: $user },
+    fn: ({ user }, props) => ({ userId: user?.data?.uid, ...props }),
+    target: addAuthorsToLibraryFx,
+});
+
+sample({
+    clock: addAuthorsToLibraryFx.done,
+    source: $addedAuthors,
+    fn: (addedAuthors, { params: { authors } }) => [
+        ...filterOneArrayWithAnother(
+            authors,
+            addedAuthors,
+            (a) => a.uid,
+            (arr) => arr.map((a) => a.uid)
+        ),
+        ...addedAuthors,
+    ],
+    target: $addedAuthors,
+});
+
+sample({
+    clock: removeAuthorsFromLibrary,
+    source: { user: $user },
+    fn: ({ user }, props) => ({ userId: user?.data?.uid, ...props }),
+    target: removeAuthorsFromLibraryFx,
+});
+
+sample({
+    clock: removeAuthorsFromLibraryFx.done,
+    source: $addedAuthors,
+    fn: (addedAuthors, { params: { authors } }) =>
+        filterOneArrayWithAnother(
+            addedAuthors,
+            authors,
+            (u) => u.uid,
+            (arr) => arr.map((a) => a.uid)
+        ),
+    target: $addedAuthors,
+});
+
+addAuthorsToLibraryFx.use(async ({ userId, authors }) => {
+    if (!userId) return;
+
+    await Database.Users.addAuthorToLibrary(
+        userId,
+        authors.map((a) => a.uid)
+    );
+});
+
+// --- Notifications ---
+
+addAuthorsToLibraryFx.done.watch(({ params: { showToast } }) => {
+    if (showToast) {
+        toastModel.events.show({
+            message: 'Author added to Liked',
+            type: 'success',
+            duration: 3000,
+        });
+    }
+});
+
+addAuthorsToLibraryFx.fail.watch(({ params: { showToast }, error }) => {
+    if (showToast) {
+        toastModel.events.show({
+            message: `Failed to add author to Liked`,
+            reason: error.message,
+            type: 'error',
+            duration: 8000,
+        });
+    }
+});
+
+removeAuthorsFromLibraryFx.use(async ({ userId, authors }) => {
+    if (!userId) return;
+
+    await Database.Users.removeAuthorFromLibrary(
+        userId,
+        authors.map((a) => a.uid)
+    );
+});
+
+// --- Notifications ---
+
+removeAuthorsFromLibraryFx.done.watch(({ params: { showToast } }) => {
+    if (showToast) {
+        toastModel.events.show({
+            message: 'Author removed from Liked',
+            type: 'info',
+            duration: 5000,
+        });
+    }
+});
+
+removeAuthorsFromLibraryFx.fail.watch(({ params: { showToast }, error }) => {
+    if (showToast) {
+        toastModel.events.show({
+            message: `Failed to remove author from Liked`,
+            reason: error.message,
+            type: 'error',
+            duration: 8000,
+        });
+    }
+});
+
+// #endregion
+
 export const userModel = {
     useUser: () => useUnit([$user, $isLoadingUser, loginFx.pending]),
     useSongLibrary: () => useUnit([$library, loadLibraryFx.pending]),
@@ -575,6 +749,7 @@ export const userModel = {
         setIsLoadingUsers,
         addOwnPlaylistToLibrary,
         toggleLikeSong,
+        toggleAuthorLiked,
     },
     gates: {
         useLoadUser: () => useGate(userGate),

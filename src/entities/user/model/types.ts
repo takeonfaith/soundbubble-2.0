@@ -1,3 +1,4 @@
+import { Timestamp } from 'firebase/firestore';
 import { TPlaylist } from '../../playlist/model/types';
 import { TPlace } from '../../search/model/types';
 import { TSong } from '../../song/model/types';
@@ -28,6 +29,7 @@ export type TUser = {
     online: number;
     photoURL: string;
     subscribers: number;
+    regDate: Timestamp;
 };
 
 export type LoginCreditsType = {

@@ -1,4 +1,5 @@
 import {
+    IconCirclePlus,
     IconEditCircle,
     IconLogout,
     IconSettings,
@@ -8,8 +9,10 @@ import {
 import React from 'react';
 import { Location, useLocation, useNavigate } from 'react-router';
 import { toggleTheme } from '../../app/theme';
+import { Settings } from '../../entities/settings/ui';
 import { userModel } from '../../entities/user/model';
 import { UserCover } from '../../entities/user/ui/UserCover';
+import { AddSongModal } from '../../features/addSongModal';
 import { LoginButton } from '../../features/loginButton';
 import { ShareModal } from '../../features/shareModal';
 import { allRoutes, TRoute } from '../../routing/routes';
@@ -17,22 +20,20 @@ import { Button } from '../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
 import { Divider } from '../../shared/components/divider';
 import { Flex } from '../../shared/components/flex';
+import { confirmModel } from '../confirm/model';
 import { modalModel } from '../modal/model';
 import { popupModel } from '../popup/model';
 import {
+    AdminCircle,
     DesktopChildren,
     HeaderPageTitle,
     HeaderStyled,
     MobileChildren,
 } from './styles';
-import { Settings } from '../../entities/settings/ui';
-import { confirmModel } from '../confirm/model';
-import { useTheme } from 'styled-components';
 
 const UserContextMenu = () => {
     const [{ data }] = userModel.useUser();
     const navigate = useNavigate();
-    const theme = useTheme();
 
     const handleLogout = () => {
         confirmModel.events.open({
@@ -42,7 +43,7 @@ const UserContextMenu = () => {
             },
             subtext: 'All your data is saved',
             icon: <IconLogout />,
-            iconColor: theme.scheme.red.action,
+            iconColor: 'red',
         });
     };
 
@@ -58,6 +59,14 @@ const UserContextMenu = () => {
         modalModel.events.open({
             title: 'Settings',
             content: <Settings />,
+        });
+        popupModel.events.close();
+    };
+
+    const handleUploadSong = () => {
+        modalModel.events.open({
+            title: 'Upload song',
+            content: <AddSongModal />,
         });
         popupModel.events.close();
     };
@@ -81,6 +90,11 @@ const UserContextMenu = () => {
             <Button onClick={handleShare}>
                 <IconShare3 />
                 Share profile
+            </Button>
+            <Divider />
+            <Button onClick={handleUploadSong}>
+                <IconCirclePlus />
+                Upload song
             </Button>
             <Divider />
             <Button>
@@ -138,7 +152,7 @@ export const Header = ({ children, hide, className }: Props) => {
         popupModel.events.open({
             content: <UserContextMenu />,
             e,
-            height: 289,
+            height: 345,
         });
     };
 
@@ -156,6 +170,7 @@ export const Header = ({ children, hide, className }: Props) => {
                 <Flex width="300px" gap={20} jc="flex-end">
                     {data && (
                         <Button $width="40px" onClick={handleOpenUserPopup}>
+                            {data.isAdmin && <AdminCircle />}
                             <UserCover
                                 colors={data?.imageColors}
                                 src={data?.photoURL}

@@ -84,3 +84,5 @@ export const ToastButton = styled(Button)`
     font-size: 0.85rem;
     opacity: 0.8;
 `;
+
+export const ReasonStyled = styled.div``

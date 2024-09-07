@@ -30,7 +30,7 @@ export const CenterButton = styled.div`
 
 export const InputWrapper = styled.div`
     width: 100%;
-    height: 260px;
+    min-height: 260px;
     position: relative;
     display: flex;
     align-items: center;

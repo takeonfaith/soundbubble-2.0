@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const UserItemStyled = styled(Link)`
-    --size: calc(100vw / 10 - 17px);
+    --size: calc((100vw - var(--sidebar-width)) / 8 - 37px);
 
     display: flex;
     flex-direction: column;
@@ -12,10 +12,24 @@ export const UserItemStyled = styled(Link)`
     width: var(--size);
     padding: 0;
     border-radius: ${({ theme }) => theme.borderRadius.big};
+    position: relative;
 
     .verified-icon {
         width: 16px;
         height: 16px;
+    }
+
+    & .like-button {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        z-index: 10;
+        background: ${({ theme }) => theme.colors.pageBackground};
+        border-radius: 20px;
+        width: 40px;
+        visibility: hidden;
+        opacity: 0;
+        transition: 0.2s opacity;
     }
 
     &.vertical-small {
@@ -76,6 +90,11 @@ export const UserItemStyled = styled(Link)`
                     opacity: 1;
                 }
             }
+
+            & .like-button {
+                opacity: 1;
+                visibility: visible;
+            }
         }
     }
 
@@ -91,30 +110,26 @@ export const UserItemStyled = styled(Link)`
         }
     }
 
-    @media (max-width: 1350px) {
-        --size: calc(100vw / 7 - 32px);
-    }
-
     &.vertical {
         h4 {
             font-size: 1rem;
         }
     }
 
-    @media (max-width: 1450px) {
-        --size: calc((100vw - var(--sidebar-width)) / 6 - 38px);
+    @media (max-width: 1500px) {
+        --size: calc((100vw - var(--sidebar-width)) / 6 - 39px);
     }
 
     @media (max-width: 1300px) {
-        --size: calc((100vw - var(--sidebar-width)) / 5 - 43px);
+        --size: calc((100vw - var(--sidebar-width)) / 5 - 40px);
     }
 
     @media (max-width: 1150px) {
-        --size: calc((100vw - var(--sidebar-width)) / 4 - 43px);
+        --size: calc((100vw - var(--sidebar-width)) / 4 - 42px);
     }
 
     @media (max-width: 1000px) {
-        --size: calc(100vw / 5 - 36px);
+        --size: calc(100vw / 5 - 34px);
 
         h4 {
             font-size: 1rem;
@@ -145,7 +160,7 @@ export const UserItemStyled = styled(Link)`
     }
 
     @media (max-width: 850px) {
-        --size: calc(100vw / 4 - 36px);
+        --size: calc(100vw / 4 - 34px);
 
         h4 {
             font-weight: 200;

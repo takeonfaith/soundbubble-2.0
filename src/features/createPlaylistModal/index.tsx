@@ -1,20 +1,20 @@
-import { useNavigate } from 'react-router';
+import { useState } from 'react';
 import styled from 'styled-components';
-import { createDefaultPlaylist } from '../../entities/playlist/lib/createDefaultPlaylist';
 import { playlistModel } from '../../entities/playlist/model';
 import { userModel } from '../../entities/user/model';
-import { modalModel } from '../../layout/modal/model';
+import { DefaultButton } from '../../shared/components/button/DefaultButton';
+import { Flex } from '../../shared/components/flex';
 import { Form } from '../../shared/components/form';
 import { PhotoInput } from '../../shared/components/photoInput';
-import { useState } from 'react';
 import { useForm } from '../../shared/hooks/useForm';
-import { DefaultButton } from '../../shared/components/button/DefaultButton';
-import { toastModel } from '../../layout/toast/model';
+import { createPlaylistObject } from '../../entities/playlist/lib/createPlaylistObject';
 
 const CreatePlaylistModalStyled = styled.div`
-    padding: 0 20px;
-    padding-top: 20px;
+    padding: 20px;
+    padding-top: 0;
     display: flex;
+    min-height: 100%;
+    justify-content: space-between;
     flex-direction: column;
     align-items: center;
     gap: 20px;
@@ -35,11 +35,10 @@ export const CreatePlaylistModal = () => {
     const [loading] = playlistModel.useCreatePlaylist();
     const [colors, setColors] = useState<string[]>([]);
     const [photo, setPhoto] = useState<File | null>(null);
-    const navigate = useNavigate();
     const { formProps, onSumbit } = useForm({
         fields,
         handleSubmit: (obj) => {
-            const playlist = createDefaultPlaylist({
+            const playlist = createPlaylistObject({
                 name: obj.name,
                 image: photo,
                 imageColors: colors,
@@ -48,14 +47,6 @@ export const CreatePlaylistModal = () => {
 
             playlistModel.events.createPlaylist({
                 playlist,
-                onSuccess: (playlist) => {
-                    navigate(`/playlist/${playlist.id}`);
-                    modalModel.events.close();
-                    toastModel.events.show({
-                        message: 'Playlist created successfully',
-                        type: 'success',
-                    });
-                },
             });
         },
     });
@@ -65,18 +56,27 @@ export const CreatePlaylistModal = () => {
     return (
         <CreatePlaylistModalStyled>
             <PhotoInput
+                file={photo}
                 colors={colors}
                 onUpload={(photo) => setPhoto(photo)}
                 onColors={(colors) => setColors(colors)}
             />
-            <Form {...formProps} />
-            <DefaultButton
-                onClick={onSumbit}
-                appearance="primary"
-                loading={loading}
+            <Flex
+                height="100%"
+                width="100%"
+                d="column"
+                gap={20}
+                jc="space-between"
             >
-                Create
-            </DefaultButton>
+                <Form {...formProps} />
+                <DefaultButton
+                    onClick={onSumbit}
+                    appearance="primary"
+                    loading={loading}
+                >
+                    Create
+                </DefaultButton>
+            </Flex>
         </CreatePlaylistModalStyled>
     );
 };

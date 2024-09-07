@@ -3,51 +3,59 @@ import React from 'react';
 import { CompactUser } from '../../../features/shareModal/styles';
 import { Button } from '../button';
 import { Flex } from '../flex';
+import { SkeletonShape } from '../skeleton';
 
 type Props<T extends { id?: string; uid?: string }> = {
-    added: string[];
-    allItems: T[];
-    itemImage: (item: T) => React.ReactNode;
+    added: T[];
+    loading?: boolean;
+    itemImage?: (item: T) => React.ReactNode;
     itemName: (item: T) => string;
-    setAdded: React.Dispatch<React.SetStateAction<string[]>>;
+    setAdded: (items: T[]) => void;
 };
 
 export const Items = <T extends { id?: string; uid?: string }>({
     added,
-    allItems,
     itemImage,
     itemName,
     setAdded,
+    loading,
 }: Props<T>) => {
-    const handleRemoveChosen = (userId: string) => {
+    const handleRemoveChosen = (userId: string | undefined) => {
         return () => {
-            setAdded((prev) => prev.filter((id) => id !== userId));
+            setAdded(added.filter(({ uid, id }) => (uid ?? id) !== userId));
         };
     };
 
     return (
         <Flex wrap="wrap" width="100%" gap={4}>
-            {added.map((id) => {
-                const item = allItems.find(
-                    (item) => (item.id ?? item.uid ?? '') === id
-                );
-
-                if (!item) return null;
-
-                return (
-                    <CompactUser>
-                        {itemImage(item)}
-                        {itemName(item)}
-                        <Button
-                            $width="20px"
-                            $height="20px"
-                            onClick={handleRemoveChosen(id)}
+            {loading && (
+                <>
+                    <SkeletonShape width="100px" height="25px" radius="25px" />
+                    <SkeletonShape width="100px" height="25px" radius="25px" />
+                    <SkeletonShape width="100px" height="25px" radius="25px" />
+                </>
+            )}
+            {!loading &&
+                added.map((obj) => {
+                    const { id, uid } = obj;
+                    return (
+                        <CompactUser
+                            className={`${!itemImage?.(obj) ? 'no-image' : ''}`}
                         >
-                            <IconCircleXFilled size={18} />
-                        </Button>
-                    </CompactUser>
-                );
-            })}
+                            <Flex gap={4}>
+                                {itemImage?.(obj)}
+                                {itemName(obj)}
+                            </Flex>
+                            <Button
+                                $width="20px"
+                                $height="20px"
+                                onClick={handleRemoveChosen(uid ?? id)}
+                            >
+                                <IconCircleXFilled size={18} />
+                            </Button>
+                        </CompactUser>
+                    );
+                })}
         </Flex>
     );
 };

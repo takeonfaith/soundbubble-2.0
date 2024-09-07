@@ -8,15 +8,16 @@ import { UserStatus } from '../../entities/user/ui/UserStatus';
 import { ShareModal } from '../../features/shareModal';
 import { modalModel } from '../../layout/modal/model';
 import { NavigationTitle } from '../../shared/components/navigationTitle';
-import { PageTop } from '../../shared/components/pageTop';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
+import { AuthorPageTop } from './AuthorPageTop';
 import { BottomButtons } from './BottomButtons';
 import { Playlists } from './Playlists';
 import { SimilarAuthors } from './SimilarAuthors';
 import { SkeletonLoading } from './Skeleton';
 import { MAX_SONGS } from './constants';
 import { AuthorPageWrapper, SongsStyled } from './styles';
+import { TQueueStore } from '../../entities/song/model/types';
 
 type Props = {
     userData?: TUser | null;
@@ -50,18 +51,11 @@ export const AuthorPage = ({ userData }: Props) => {
         };
     }, []);
 
-    const queueInfo = {
-        listName: userPageData?.displayName ?? 'Author',
-        listIcon: userPageData?.photoURL,
-        listUrl: `/author/${userPageData?.uid}`,
+    const queueInfo: TQueueStore = {
+        name: userPageData?.displayName ?? 'Author',
+        image: userPageData?.photoURL,
+        url: `/author/${userPageData?.uid}`,
         songs: songs.slice(0, MAX_SONGS),
-    };
-
-    const handleClickShare = () => {
-        modalModel.events.open({
-            title: `Share ${currentPageUser?.displayName} with friends`,
-            content: <ShareModal entity={currentPageUser} />,
-        });
     };
 
     return (
@@ -71,41 +65,7 @@ export const AuthorPage = ({ userData }: Props) => {
                 loading={!currentPageUser || loading}
                 skeleton={<SkeletonLoading />}
             >
-                <PageTop
-                    handleClickShare={handleClickShare}
-                    id={userPageData?.uid}
-                    name={userPageData?.displayName}
-                    subtitle={
-                        <UserStatus
-                            color={currentPageUser?.imageColors[1]}
-                            isAuthor={isAuthor}
-                            status={status}
-                            showLastSeen={isFriend || currentUser?.isAdmin}
-                        />
-                    }
-                    numberOfListenersPerMonth={
-                        userPageData?.numberOfListenersPerMonth
-                    }
-                    isVerified={userPageData?.isVerified}
-                    subscribers={userPageData?.subscribers}
-                    imageComponent={
-                        <UserCover
-                            isAuthor={isAuthor}
-                            colors={userPageData?.imageColors}
-                            src={userPageData?.photoURL}
-                            size="200px"
-                        />
-                    }
-                    colors={userPageData?.imageColors}
-                    bottomButtons={
-                        <BottomButtons
-                            buttonColor={userPageData?.imageColors[1]}
-                            isAdmin={isAdmin}
-                            isPageOwner={isPageOwner}
-                            queueInfo={queueInfo}
-                        />
-                    }
-                />
+                <AuthorPageTop author={userPageData} queueInfo={queueInfo} />
                 <SongsStyled>
                     <div className="title">
                         <NavigationTitle

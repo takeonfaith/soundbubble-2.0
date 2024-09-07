@@ -11,7 +11,7 @@ type Props = {
     isAlbum?: boolean;
 };
 
-export const createDefaultPlaylist = ({
+export const createPlaylistObject = ({
     name,
     image,
     imageColors,

@@ -33,6 +33,7 @@ const COLOR_SCHEME_DARK = {
     grey: {
         main: '#8b8b8b',
         text: '#8b8b8b',
+        mild: '#353535',
         transparent: '#4444444f',
     },
 };
@@ -114,6 +115,7 @@ const COLOR_SCHEME_LIGHT = {
     grey: {
         main: '#595959',
         text: '#595959',
+        mild: '#f0f0f0',
         transparent: '#dddddd4f',
     },
 };

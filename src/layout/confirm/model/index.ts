@@ -1,5 +1,6 @@
 import { createEvent, createStore, sample } from 'effector';
 import { useUnit } from 'effector-react';
+import { DARK_THEME } from '../../../shared/constants/theme';
 
 const DEFAULT_STORE = {
     text: '',
@@ -16,7 +17,7 @@ type TConfirmStore = {
     onReject?: () => void;
     isOpen?: boolean;
     icon?: React.ReactNode | null;
-    iconColor?: string;
+    iconColor?: keyof typeof DARK_THEME.scheme;
 };
 
 const open = createEvent<Omit<TConfirmStore, 'isOpen'>>();

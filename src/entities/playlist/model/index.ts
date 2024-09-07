@@ -1,6 +1,9 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { useUnit } from 'effector-react';
 import { Database } from '../../../database';
+import { modalModel } from '../../../layout/modal/model';
+import { toastModel } from '../../../layout/toast/model';
+import { emulateRequest } from '../../../shared/funcs/emulateRequest';
 import { TSong } from '../../song/model/types';
 import { TPlaylist, TUploadPlaylist } from './types';
 
@@ -71,21 +74,28 @@ const addSongToPlaylistsFx = createEffect(
 );
 
 const createPlaylistsFx = createEffect(
-    async ({
-        playlist,
-        onSuccess,
-    }: {
-        playlist: TUploadPlaylist;
-        onSuccess: (playlist: TPlaylist) => void;
-    }) => {
-        // await emulateRequest(2000, true, playlist);
-        const uploadedPlaylist = await Database.Playlists.createPlaylist(
-            playlist
-        );
-
-        onSuccess(uploadedPlaylist);
+    async ({ playlist }: { playlist: TUploadPlaylist }) => {
+        return await emulateRequest(1000, true);
+        await Database.Playlists.createPlaylist(playlist);
     }
 );
+
+createPlaylistsFx.done.watch(({ params: { playlist } }) => {
+    location.href = `soundbubble-2.0/playlist/${playlist.id}`;
+    modalModel.events.close();
+    toastModel.events.show({
+        message: 'Playlist created successfully',
+        type: 'success',
+    });
+});
+
+createPlaylistsFx.fail.watch(({ error }) => {
+    toastModel.events.show({
+        message: 'Failed to create playlist',
+        reason: error.message,
+        type: 'error',
+    });
+});
 
 const loadPlaylist = createEvent<string>();
 const addSongToPlaylists = createEvent<{
@@ -94,7 +104,6 @@ const addSongToPlaylists = createEvent<{
 }>();
 const createPlaylist = createEvent<{
     playlist: TUploadPlaylist;
-    onSuccess: (playlist: TPlaylist) => void;
 }>();
 
 const $store = createStore<TStore>(DEFAULT_STORE);

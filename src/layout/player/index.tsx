@@ -38,6 +38,8 @@ export const Player = () => {
     } = usePlayer();
     const theme = useTheme();
 
+    console.log(currentSong);
+
     return (
         <PlayerStyled
             onClick={handleOpenFullScreenPlayer}
@@ -79,13 +81,14 @@ export const Player = () => {
                         disabled={!currentSong}
                         width="42px"
                         isLiked={isLiked}
-                        song={currentSong}
+                        entity={currentSong}
                         onClick={handleToggleLike}
                         loading={performingAction}
                         likeColor={currentSong?.imageColors[0]}
                     />
                     <Button
                         $width="42px"
+                        $height="42px"
                         disabled={!currentSong}
                         onClick={handleShowQueue}
                     >
@@ -93,6 +96,7 @@ export const Player = () => {
                     </Button>
                     <Button
                         $width="42px"
+                        $height="42px"
                         disabled={!currentSong}
                         onClick={handleShare}
                     >
@@ -100,6 +104,7 @@ export const Player = () => {
                     </Button>
                     <Button
                         $width="42px"
+                        $height="42px"
                         disabled={!currentSong?.lyrics.length}
                         onClick={handleLyrics}
                     >
@@ -107,6 +112,7 @@ export const Player = () => {
                     </Button>
                     <Button
                         $width="42px"
+                        $height="42px"
                         onClick={handleMore}
                         disabled={!currentSong}
                     >

@@ -8,7 +8,7 @@ export const PageGridStyled = styled.div`
     height: fit-content;
 
     @media (max-width: 768px) {
-        gap: 20px;
+        gap: 0px;
     }
 `;
 

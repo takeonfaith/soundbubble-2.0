@@ -1,15 +1,14 @@
 import { IconHeart, IconHeartFilled } from '@tabler/icons-react';
-import { TSong } from '../../entities/song/model/types';
-import { DARK_THEME } from '../../shared/constants/theme';
-import { LikeButtonStyled } from './styles';
-import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
+import { TEntity } from '../../entities/search/model/types';
 import { Loading } from '../../shared/components/loading';
+import { DARK_THEME } from '../../shared/constants/theme';
+import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
+import { LikeButtonStyled } from './styles';
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    //TODO: Remove connection to song so that it can be reused to other entities
-    song: TSong | null;
+    entity: TEntity | null;
     likeColor: string | undefined;
-    onClick?: (song: TSong) => void;
+    onClick?: (event: Evt<'btn'>, entity: TEntity) => void;
     width?: string;
     height?: string;
     isLiked: boolean;
@@ -18,8 +17,8 @@ type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 export const LikeButton = ({
-    song,
     isLiked,
+    entity,
     likeColor = DARK_THEME.colors.greyText,
     background,
     height,
@@ -32,8 +31,8 @@ export const LikeButton = ({
 
     const onLikeClick = loggedIn((e: Evt<'btn'>) => {
         e.stopPropagation();
-        if (song) {
-            onClick?.(song);
+        if (entity) {
+            onClick?.(e, entity);
         }
     });
 
@@ -43,8 +42,11 @@ export const LikeButton = ({
             $width={width}
             $height={height}
             $background={background}
-            className={'like-button ' + (isLiked ? 'liked' : '')}
+            className={`like-button ${isLiked ? 'liked' : ''} ${
+                props.className ?? ''
+            }`}
             onClick={onLikeClick}
+            disabled={loading || props.disabled}
             $likeColor={likeColor}
         >
             {loading ? (

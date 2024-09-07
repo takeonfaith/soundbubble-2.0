@@ -119,7 +119,7 @@ export const SongItem = memo(
                     <LikeButton
                         width="35px"
                         height="35px"
-                        song={song}
+                        entity={song}
                         isLiked={isLiked}
                         likeColor={'grey'}
                         onClick={handleToggleLike}

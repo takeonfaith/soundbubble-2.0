@@ -6,7 +6,8 @@ export const Flex = styled.div<{
         | 'center'
         | 'flex-start'
         | 'flex-end'
-        | 'space-around';
+        | 'space-around'
+        | 'space-evenly';
     ai?: 'center' | 'flex-start' | 'flex-end' | 'baseline';
     gap?: number;
     d?: 'column' | 'row';

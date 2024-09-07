@@ -3,6 +3,9 @@ import styled from "styled-components";
 export const LoadingStyled = styled.div`
   width: 18px;
   height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   svg {
     animation: loadinganim 0.5s infinite linear;

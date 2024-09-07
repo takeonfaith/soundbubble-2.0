@@ -4,7 +4,7 @@ import {
     IconTrash,
     IconX,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ColorExtractor } from 'react-color-extractor';
 import { Button } from '../button';
 import { DefaultButton } from '../button/DefaultButton';
@@ -18,18 +18,25 @@ import {
 } from './styles';
 
 type Props = {
+    file: File | null;
     colors: string[];
     onUpload: (photo: File | null) => void;
     onColors: (colors: string[]) => void;
 };
 
-export const PhotoInput = ({ colors, onColors, onUpload }: Props) => {
+export const PhotoInput = ({ colors, onColors, onUpload, file }: Props) => {
     const [preview, setPreview] = useState<string | null>(null);
     const [showColors, setShowColors] = useState(false);
 
     const getColors = (colors: string[]) => {
         onColors(colors);
     };
+
+    useEffect(() => {
+        if (file) {
+            setPreview(URL.createObjectURL(file));
+        }
+    }, [file]);
 
     const handleFile = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event?.target?.files?.[0];
@@ -69,16 +76,13 @@ export const PhotoInput = ({ colors, onColors, onUpload }: Props) => {
             {preview && !showColors && (
                 <Flex width="100%" gap={10}>
                     <DefaultButton
-                        appearance="secondary"
+                        appearance="outline"
                         onClick={() => setShowColors(true)}
                     >
                         <IconColorFilter size={16} />
                         Colors
                     </DefaultButton>
-                    <DefaultButton
-                        appearance="secondary"
-                        onClick={handleDelete}
-                    >
+                    <DefaultButton appearance="outline" onClick={handleDelete}>
                         <IconTrash size={16} />
                         Delete
                     </DefaultButton>

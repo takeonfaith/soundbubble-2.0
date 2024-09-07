@@ -22,7 +22,9 @@ export const HistoryPage = () => {
                 <SkeletonPageAnimation
                     color=""
                     loading={loading}
-                    skeleton={<SongListSkeleton />}
+                    skeleton={
+                        <SongListSkeleton padding="var(--page-padding)" />
+                    }
                 >
                     <VerticalSongsList
                         songs={history}

@@ -19,6 +19,10 @@ export const HeaderStyled = styled.header`
     color: ${({ theme }) => theme.colors.textColor};
     z-index: 11;
 
+    .general-cover {
+        outline: 2px solid ${({ theme }) => theme.colors.pageBackground};
+    }
+
     &.hidden,
     &.hide-on-desktop {
         display: none;
@@ -63,5 +67,15 @@ export const HeaderPageTitle = styled.h2`
 
     @media (max-width: 1000px) {
         font-weight: 500;
+        width: 100%;
     }
+`;
+
+export const AdminCircle = styled.div`
+    position: absolute;
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+    border-radius: 100%;
+    background: ${({ theme: { scheme } }) =>
+        `linear-gradient(45deg, ${scheme.blue.action}, ${scheme.purple.main}, ${scheme.red.main}, ${scheme.orange.main})`};
 `;

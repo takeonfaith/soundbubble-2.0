@@ -5,20 +5,21 @@ import {
     TUser,
 } from '@user/model/types';
 import { getDataFromDoc } from 'database/lib/getDataFromDoc';
+import { NextOrObserver, User } from 'firebase/auth';
 import {
     arrayRemove,
     arrayUnion,
     getDocs,
+    increment,
     limit,
     orderBy,
     query,
     where,
 } from 'firebase/firestore';
 import { Playlists, Songs } from '.';
+import { TPlaylist } from '../../entities/playlist/model/types';
 import { FB } from '../../firebase';
 import { ERRORS } from '../../shared/constants';
-import { NextOrObserver, User } from 'firebase/auth';
-import { TPlaylist } from '../../entities/playlist/model/types';
 
 export class Users {
     static ref = FB.get('users');
@@ -116,7 +117,6 @@ export class Users {
         try {
             if (albums.length === 0) return [];
 
-            console.log(albums);
             const snapshot = await getDocs(
                 query(
                     Playlists.ref,
@@ -213,6 +213,46 @@ export class Users {
         } catch (error) {
             throw new Error(
                 `Failed to update library, ${(error as Error).message}`
+            );
+        }
+    }
+
+    static async addAuthorToLibrary(userId: string, authorIds: string[]) {
+        try {
+            await FB.updateById('users', userId, {
+                addedAuthors: arrayUnion(...authorIds),
+            });
+
+            const reqs = authorIds.map((id) => {
+                return FB.updateById('users', id, {
+                    subscribers: increment(1),
+                });
+            });
+
+            await Promise.all(reqs);
+        } catch (error) {
+            throw new Error(
+                `Failed to add author to library, ${(error as Error).message}`
+            );
+        }
+    }
+
+    static async removeAuthorFromLibrary(userId: string, authorIds: string[]) {
+        try {
+            await FB.updateById('users', userId, {
+                addedAuthors: arrayRemove(...authorIds),
+            });
+
+            const reqs = authorIds.map((id) => {
+                return FB.updateById('users', id, {
+                    subscribers: increment(-1),
+                });
+            });
+
+            await Promise.all(reqs);
+        } catch (error) {
+            throw new Error(
+                `Failed to add author to library, ${(error as Error).message}`
             );
         }
     }

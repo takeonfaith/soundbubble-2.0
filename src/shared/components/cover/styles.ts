@@ -16,6 +16,7 @@ export const GeneralCoverStyled = styled(BeautifulBackground)<{
     width: ${({ $size }) => $size ?? 'var(--size)'};
     min-width: ${({ $size }) => $size ?? 'var(--size)'};
     height: ${({ $size }) => $size ?? 'var(--size)'};
+    min-height: ${({ $size }) => $size ?? 'var(--size)'};
     display: flex;
     justify-content: center;
     /* background: ${({ $color1 }) => $color1 ?? 'grey'}; */

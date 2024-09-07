@@ -56,6 +56,11 @@ export const Button = styled.button<{
         border: 1px solid ${({ theme }) => theme.colors.border};
     }
 
+    &.plane {
+        background: transparent;
+        color: ${({ theme }) => theme.colors.textColor};
+    }
+
     &:active {
         filter: brightness(0.85);
         transform: scale(0.99);
@@ -77,6 +82,10 @@ export const Button = styled.button<{
         &.outline:hover,
         &.secondary:hover {
             filter: brightness(0.9);
+        }
+
+        &.plane:hover {
+            background: ${({ theme }) => theme.scheme.grey.mild};
         }
     }
 

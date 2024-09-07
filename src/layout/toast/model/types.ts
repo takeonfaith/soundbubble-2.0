@@ -10,4 +10,5 @@ export type TToast = {
         onClick: () => void;
     };
     type: TToastType;
+    reason?: string;
 };

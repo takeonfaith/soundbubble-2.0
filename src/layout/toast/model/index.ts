@@ -10,6 +10,7 @@ const DEFAULT_TOAST_STORE: TToast = {
     isShow: false,
     showTimer: false,
     type: 'info',
+    reason: undefined,
 };
 
 const show = createEvent<
