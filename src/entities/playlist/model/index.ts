@@ -73,6 +73,21 @@ const addSongToPlaylistsFx = createEffect(
     }
 );
 
+addSongToPlaylistsFx.done.watch(() => {
+    toastModel.events.show({
+        message: 'Song added to playlist',
+        type: 'success',
+    });
+});
+
+addSongToPlaylistsFx.failData.watch((error) => {
+    toastModel.events.show({
+        message: 'Failed to add song to playlist',
+        reason: error.message,
+        type: 'error',
+    });
+});
+
 const createPlaylistsFx = createEffect(
     async ({ playlist }: { playlist: TUploadPlaylist }) => {
         return await emulateRequest(1000, true);

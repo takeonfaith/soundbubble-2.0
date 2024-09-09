@@ -11,6 +11,7 @@ import { Popup } from './popup';
 import { Sidebar } from './sidebar';
 import { Confirm } from './confirm/ui';
 import { Toast } from './toast/ui';
+import { chatModel } from '../entities/chat/model';
 
 export const LayoutStyled = styled.div`
     height: calc(100dvh - var(--player-size) - var(--page-gap) * 2);
@@ -44,6 +45,7 @@ const RightSide = styled.div`
 
 export const Layout = () => {
     const fullScreen = songModel.fullscreen.useFullScreen();
+    const { currentChatId } = chatModel.useChats();
     useMediaMetadata();
 
     return (
@@ -52,7 +54,7 @@ export const Layout = () => {
             <FullScreenFullScreenPlayer open={fullScreen} />
             <Modal />
             <Popup />
-            <LayoutStyled>
+            <LayoutStyled className={currentChatId ? 'chat-page' : ''}>
                 <Sidebar />
                 <RightSide>
                     <Outlet />

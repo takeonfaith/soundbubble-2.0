@@ -8,11 +8,12 @@ type Props = {
     listName: string | null;
     listIcon: string | undefined;
     listUrl: string | null;
+    showSerialNumber?: boolean;
 };
 
 export const PlaneSongList = (props: Props) => {
     const { currentSong, state, loaded } = songModel.useSong();
-    const { songs } = props;
+    const { songs, showSerialNumber } = props;
     const { handlePlay } = useHandleSongPlay(props);
 
     return (
@@ -23,6 +24,7 @@ export const PlaneSongList = (props: Props) => {
                 return (
                     <SongItem
                         onClick={handlePlay}
+                        showSerialNumber={showSerialNumber}
                         index={index}
                         key={song.id + index}
                         song={song}

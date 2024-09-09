@@ -23,7 +23,7 @@ export const UserItemStyled = styled(Link)`
         position: absolute;
         top: 0px;
         right: 0px;
-        z-index: 10;
+        z-index: 20;
         background: ${({ theme }) => theme.colors.pageBackground};
         border-radius: 20px;
         width: 40px;

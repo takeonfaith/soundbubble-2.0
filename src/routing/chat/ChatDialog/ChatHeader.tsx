@@ -57,9 +57,9 @@ export const ChatHeader = () => {
         <ChatHeaderStyled>
             <Flex gap={8}>
                 <Button $width="35px" $height='35px' style={{ borderRadius: '100%' }}>
-                    <IconArrowLeft size={20} onClick={() => navigate(-1)} />
+                    <IconArrowLeft size={20} onClick={() => navigate('/chat')} />
                 </Button>
-                <Flex gap={16}>
+                <Flex gap={10}>
                     {!!Object.keys(chatData).length && (
                         <>
                             <UserCover
@@ -78,7 +78,7 @@ export const ChatHeader = () => {
                                     <OnlineIndicator />
                                 )}
                             </UserCover>
-                            <Flex d="column" ai="flex-start">
+                            <Flex d="column" ai="flex-start" gap={1}>
                                 <ChatTitle>{chatTitle ?? 'Untitled'}</ChatTitle>
                                 <ChatTypingIndicator
                                     typing={typing}

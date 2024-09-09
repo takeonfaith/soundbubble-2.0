@@ -13,22 +13,29 @@ import {
     FieldValue,
     QueryFieldFilterConstraint,
     QueryOrderByConstraint,
+    QuerySnapshot,
     collection,
     doc,
     getDoc,
+    getDocs,
     initializeFirestore,
+    limit,
     onSnapshot,
+    orderBy,
     query,
     setDoc,
     updateDoc,
+    where,
 } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { getDataFromDoc } from './database/lib/getDataFromDoc';
+import { TChat, TMessage } from './entities/chat/model/types';
 import { TPlaylist } from './entities/playlist/model/types';
 import { TSuggestion } from './entities/search/model/types';
 import { TSong } from './entities/song/model/types';
 import { TSearchHistory, TUser } from './entities/user/model/types';
 import getUID from './shared/funcs/getUID';
+import { asyncRequests } from './shared/funcs/asyncRequests';
 
 const config: FirebaseOptions = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -64,6 +71,8 @@ type TCollectionType<T extends TCollections> = T extends 'songs'
     ? { history: TSearchHistory[] }
     : T extends 'search'
     ? TSuggestion
+    : T extends 'newChats'
+    ? TChat
     : never;
 
 type TStorageFolder =
@@ -78,6 +87,8 @@ type DataType<T extends TCollections> =
     | Partial<{
           [key in keyof TCollectionType<T>]: FieldValue;
       }>;
+
+const MAX_FIRESTORE_IN_QUERY_LIMIT = 30;
 
 export class FB {
     static app = initializeApp(config);
@@ -104,7 +115,7 @@ export class FB {
         id: string,
         data: TCollectionType<T>
     ) {
-        const ref = await this.get(collectionType);
+        const ref = this.get(collectionType);
         const docRef = doc(ref, id);
         return await setDoc(docRef, data);
     }
@@ -114,7 +125,7 @@ export class FB {
         id: string,
         data: DataType<T>
     ) {
-        const ref = await this.get(collectionType);
+        const ref = this.get(collectionType);
         const docRef = doc(ref, id);
 
         return await updateDoc<DocumentData, DocumentData>(docRef, data);
@@ -141,6 +152,35 @@ export class FB {
         const data = await getDoc(docRef);
 
         return data.data() as TCollectionType<T>;
+    }
+
+    static async getByIds<T extends TCollections>(
+        collectionType: T,
+        ids: string[],
+        key = 'id'
+    ): Promise<TCollectionType<T>[]> {
+        const ref = this.get(collectionType);
+        const uids = [...ids];
+        const batches: Promise<QuerySnapshot<DocumentData, DocumentData>>[] =
+            [];
+
+        while (uids.length) {
+            // firestore limits batches to 30
+            const batch = uids.splice(0, MAX_FIRESTORE_IN_QUERY_LIMIT);
+
+            // add the batch request to to a queue
+            const q = query(ref, where(key, 'in', [...batch]));
+
+            batches.push(getDocs(q));
+        }
+
+        const result = await Promise.all(batches).then((content) => {
+            return content
+                .map((doc) => getDataFromDoc<TCollectionType<T>>(doc))
+                .flat();
+        });
+
+        return result;
     }
 
     static async listenTo<T extends TCollections>(
@@ -173,3 +213,35 @@ export class FB {
         return downloadURL;
     }
 }
+
+// // add last message field to chats
+// const addLastMessage = async () => {
+//     const snapshot = await getDocs(FB.get('newChats'));
+
+//     const allChats = getDataFromDoc<TChat>(snapshot);
+//     const lastMessagesSnapshots = allChats.map(async (chat) => {
+//         const q = query(
+//             FB.getSubCollection('newChats', `${chat.id}/messages`),
+//             orderBy('sentTime', 'desc'),
+//             limit(1)
+//         );
+//         const docs = await getDocs(q);
+//         return { docs, chatId: chat.id };
+//     });
+
+//     const res = await Promise.all(lastMessagesSnapshots).then((messages) => {
+//         return messages.map((m) => ({
+//             messages: getDataFromDoc<TMessage>(m.docs).flat(),
+//             chatId: m.chatId,
+//         }));
+//     });
+
+//     asyncRequests(allChats, (chat) => {
+//         return FB.updateById('newChats', chat.id, {
+//             lastMessage: res.find(({ chatId }) => chatId === chat.id)
+//                 ?.messages[0],
+//         });
+//     });
+// };
+
+// addLastMessage();

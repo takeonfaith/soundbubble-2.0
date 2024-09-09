@@ -4,9 +4,9 @@ import {
     IconCirclePlus,
 } from '@tabler/icons-react';
 import React, { useEffect, useRef, useState } from 'react';
+import { createMessageObject } from '../../../entities/chat/lib/createMessageObject';
 import { SYSTEM_MESSAGE_SENDER } from '../../../entities/chat/lib/getLastMessageSender';
 import { chatModel } from '../../../entities/chat/model';
-import { TMessage } from '../../../entities/chat/model/types';
 import { userModel } from '../../../entities/user/model';
 import { TUser } from '../../../entities/user/model/types';
 import { UserCover } from '../../../entities/user/ui/UserCover';
@@ -16,12 +16,9 @@ import { Button } from '../../../shared/components/button';
 import { Flex } from '../../../shared/components/flex';
 import { Loading } from '../../../shared/components/loading';
 import { areDatesEqual } from '../../../shared/funcs/areDatesEqual';
-import getUID from '../../../shared/funcs/getUID';
-import { useUrlParamId } from '../../../shared/hooks/useUrlParamId';
 import { prepareMessages } from '../lib/prepareMessages';
 import { ChatHeader } from './ChatHeader';
 import { MessageItem } from './MessageItem';
-import { SystemMessageItem } from './SystemMessageItem';
 import {
     AvatarSection,
     ChatDialogStyled,
@@ -33,6 +30,7 @@ import {
     MessagesSection,
     ScrollToChatBottomButton,
     SendButton,
+    SystemMessageItemStyled,
     UserAvatarStyled,
 } from './styles';
 
@@ -66,21 +64,6 @@ import {
 // 	</Flex>
 // }
 
-const createNewMessage = (userId: string, message: string): TMessage => {
-    return {
-        id: getUID(),
-        sender: userId,
-        message,
-        sentTime: new Date().getTime(),
-        seenBy: [userId],
-        attachedAlbums: [],
-        attachedSongs: [],
-        attachedAuthors: [],
-        inResponseToMessage: '',
-        status: 'pending',
-    };
-};
-
 export const ChatDialog = () => {
     const {
         chats,
@@ -90,8 +73,7 @@ export const ChatDialog = () => {
         chatData,
         //   firstUnreadMessageId,
     } = chatModel.useChats();
-    console.log(currentChatId);
-    
+
     const [{ data }] = userModel.useUser();
     const preparedMessages = prepareMessages(currentChatMessages);
     const currentChat = chats.find((chat) => chat.id === currentChatId);
@@ -116,21 +98,15 @@ export const ChatDialog = () => {
     const [value, setValue] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
 
-    useUrlParamId({
-        page: 'chat',
-        onChangeId: (id) => {
-            setShouldScrollToBottom(true);
-            chatModel.events.setCurrentChatId(id);
-        },
-    });
+    useEffect(() => {
+        setShouldScrollToBottom(true);
+    }, [currentChatId]);
 
     const handleChangeValue = (e: Evt<'input'>) => {
         setValue(e.currentTarget.value);
     };
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-        console.log(e.currentTarget.scrollTop, e.currentTarget.scrollHeight);
-
         if (e.currentTarget.scrollTop >= e.currentTarget.scrollHeight - 800) {
             setShouldScrollToBottom(true);
         } else {
@@ -141,7 +117,7 @@ export const ChatDialog = () => {
     const handleSendMessage = () => {
         if (value.trim().length === 0 || !data?.uid) return;
         if (currentChatId) {
-            const message = createNewMessage(data?.uid, value);
+            const message = createMessageObject(data?.uid, { message: value });
 
             chatModel.events.sendMessage({ chatId: currentChatId, message });
         }
@@ -150,8 +126,6 @@ export const ChatDialog = () => {
     };
 
     useEffect(() => {
-        console.log(shouldScrollToBottom);
-
         if (anchorRef.current && shouldScrollToBottom) {
             anchorRef.current.scrollIntoView({
                 block: 'end',
@@ -236,10 +210,11 @@ export const ChatDialog = () => {
                                                 );
                                             if (isSystemMessage)
                                                 return (
-                                                    <SystemMessageItem
-                                                        message={message}
+                                                    <SystemMessageItemStyled
                                                         key={message.id}
-                                                    />
+                                                    >
+                                                        {message.message}
+                                                    </SystemMessageItemStyled>
                                                 );
                                             return (
                                                 <React.Fragment

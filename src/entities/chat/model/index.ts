@@ -5,17 +5,19 @@ import { TEntity } from '../../search/model/types';
 import { $user, logout } from '../../user/model';
 import { TChat, TChatData, TMessage } from './types';
 
-const getChatsFx = createEffect(async (userId: string) => {
-    try {
-        const data = await Database.Chats.getChatsByUserId(userId);
+const getChatsFx = createEffect(
+    async ({ userId, chatIds }: { userId: string; chatIds: string[] }) => {
+        try {
+            const data = await Database.Chats.getChatsByIds(userId, chatIds);
 
-        return data;
-    } catch (error) {
-        console.log(error);
+            return data;
+        } catch (error) {
+            console.log(error);
 
-        throw new Error((error as Error).message);
+            throw new Error((error as Error).message);
+        }
     }
-});
+);
 
 // TODO: оптимизировать, удалив дубликаты, чтобы не делать лишних запросов
 const getChatDataFx = createEffect(
@@ -79,19 +81,19 @@ const sendMessageFx = createEffect(
 );
 
 const getTotalUnreadCount = createEvent<TChat[]>();
-const setCurrentChatId = createEvent<string | undefined>();
+const setCurrentChatId = createEvent<string | undefined | null>();
 const setChatData = createEvent<TChatData>();
 const loadPreviousMessages = createEvent();
 const sendMessage = createEvent<{ chatId: string; message: TMessage }>();
 const updateLastMessage = createEvent<{
     message: TMessage | undefined;
-    chatId: string | undefined;
+    chatId: string | undefined | null;
 }>();
 const sortChats = createEvent();
 const seenMessage = createEvent<string>();
 
 const $chats = createStore<TChat[]>([]);
-const $currentChatId = createStore<string | undefined>('');
+const $currentChatId = createStore<string | undefined | null>('');
 const $currentChatMessages = createStore<TMessage[]>([]);
 const $unreadCounts = createStore<Record<string, number>>({});
 const $totalUnreadCount = createStore(0);
@@ -120,16 +122,25 @@ const getUnreadCount = (unreadCounts: Record<string, number>) => {
     }, 0);
 };
 
+const $addedChats = $user.map((user) => user?.data?.chats);
+
 sample({
     clock: [chatGate.open, $userId],
     source: {
         gateStatus: chatGate.status,
         userId: $userId,
         chats: $chats,
+        addedChats: $addedChats,
     },
-    filter: ({ chats, userId, gateStatus }) =>
-        gateStatus && userId !== null && chats.length === 0,
-    fn: ({ userId }) => userId as string,
+    filter: ({ chats, userId, gateStatus, addedChats }) =>
+        gateStatus &&
+        userId !== null &&
+        chats.length === 0 &&
+        (addedChats?.length ?? 0) > 0,
+    fn: ({ userId, addedChats }) => ({
+        userId: userId as string,
+        chatIds: addedChats as string[],
+    }),
     target: getChatsFx,
 });
 
@@ -253,16 +264,22 @@ sample({
         ...lastMessage,
         [chatId!]: message!,
     }),
-    target: [$lastMessage, sortChats],
+    target: $lastMessage,
+});
+
+sample({
+    clock: $lastMessage,
+    target: sortChats,
 });
 
 sample({
     clock: sortChats,
     source: { chats: $chats, lastMessages: $lastMessage },
-    fn: ({ chats, lastMessages }) =>
-        chats.sort(
-            (a, b) => lastMessages[b.id].sentTime - lastMessages[a.id].sentTime
-        ),
+    fn: ({ chats, lastMessages }) => {
+        return chats.sort(
+            (a, b) => lastMessages[b.id]?.sentTime - lastMessages[a.id]?.sentTime
+        );
+    },
     target: $chats,
 });
 

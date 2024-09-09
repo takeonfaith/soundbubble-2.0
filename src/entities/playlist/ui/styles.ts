@@ -14,7 +14,7 @@ export const ControlButton = styled(Button)<{ $color: string }>`
     min-height: auto;
     border-radius: 100px;
     color: ${({ $color }) => $color};
-    background: ${({ theme }) => theme.colors.pageTopButton};
+    background: ${({ theme }) => theme.colors.pageTopButton} !important;
     transition: 0.1s opacity;
     opacity: 0;
     z-index: 10;

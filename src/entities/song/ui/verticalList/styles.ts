@@ -14,6 +14,10 @@ export const Titles = styled.div`
     background: ${({ theme }) => theme.colors.pageBackground};
     z-index: 2;
 
+    &.showSerialNumber {
+        grid-template-columns: 105px 1fr 1fr 200px 86px;
+    }
+
     @media (max-width: 1080px) {
         display: none;
     }

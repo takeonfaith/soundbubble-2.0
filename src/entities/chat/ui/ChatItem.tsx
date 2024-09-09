@@ -45,7 +45,6 @@ export const ChatItem = ({
     chat,
     isSelected,
     unreadCount,
-    lastMessage,
     chatData,
     children,
     onClick,
@@ -58,6 +57,7 @@ export const ChatItem = ({
     const chatImage = isGroupChat ? chat.chatImage : chatPartner?.photoURL;
     const chatTitle = isGroupChat ? chat.chatName : chatPartner?.displayName;
     const status = getLastSeen(chatPartner?.online).status;
+    const lastMessage = chat.lastMessage;
     const sendStatus = getSendStatus(lastMessage);
 
     const { sender } = getLastMessageSender(

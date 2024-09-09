@@ -10,8 +10,10 @@ import { ERRORS } from '../../../shared/constants';
 import { errorEffect } from '../../../shared/effector/errorEffect';
 import { getDataFromEffect } from '../../../shared/effector/getDataFromEffect';
 import { loadingEffect } from '../../../shared/effector/loadingEffect';
+import { filterOneArrayWithAnother } from '../../../shared/funcs/filterOneArrayWithAnother';
 import { tryWrapper } from '../../../shared/funcs/trywrapper';
 import { TPlaylist } from '../../playlist/model/types';
+import { getAuthorsToString } from '../../song/lib/getAuthorsToString';
 import { TSong } from '../../song/model/types';
 import {
     DEFAULT_PAGE_STORE,
@@ -27,8 +29,6 @@ import {
     TStore,
     TUser,
 } from './types';
-import { getAuthorsToString } from '../../song/lib/getAuthorsToString';
-import { filterOneArrayWithAnother } from '../../../shared/funcs/filterOneArrayWithAnother';
 
 const loginFx = createEffect(
     async (credits: LoginCreditsType): Promise<TUser | null> => {
@@ -611,7 +611,6 @@ toggleAuthorLiked.watch(({ authors, isLiked, showToast }) => {
                 authors
             )}?`,
             onAccept: () => removeAuthorsFromLibrary({ authors, showToast }),
-            iconColor: 'red',
         });
     } else {
         addAuthorsToLibrary({ authors, showToast });
@@ -620,8 +619,17 @@ toggleAuthorLiked.watch(({ authors, isLiked, showToast }) => {
 
 sample({
     clock: addAuthorsToLibrary,
-    source: { user: $user },
-    fn: ({ user }, props) => ({ userId: user?.data?.uid, ...props }),
+    source: { user: $user, addedAuthors: $addedAuthors },
+    fn: ({ user, addedAuthors }, { showToast, authors }) => ({
+        userId: user?.data?.uid,
+        showToast,
+        authors: filterOneArrayWithAnother(
+            authors,
+            addedAuthors,
+            (item) => item.uid,
+            (arr) => arr.map((i) => i.uid)
+        ),
+    }),
     target: addAuthorsToLibraryFx,
 });
 

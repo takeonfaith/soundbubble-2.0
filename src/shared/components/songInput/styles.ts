@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Subtext } from '../subtext';
 
 export const SongInputStyled = styled.form`
     width: 100%;
@@ -70,6 +71,7 @@ export const SongInputIcon = styled.div`
     color: ${({ theme }) => theme.scheme.blue.action};
     box-shadow: ${({ theme }) => theme.colors.shadow};
     border-radius: 15px;
+    position: relative;
 
     svg {
         width: 30px;
@@ -99,4 +101,35 @@ export const UploadedSongStyled = styled.div`
 export const UploadedSongName = styled.div`
     font-size: 1rem;
     font-weight: 200;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 300px;
+`;
+
+export const UploadedSongAuthor = styled(Subtext)`
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 300px;
+`;
+
+export const DragIconAnimated = styled.div`
+    svg {
+        width: 30px;
+        height: 30px;
+        animation: pulse 1s linear infinite;
+
+        @keyframes pulse {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(3px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+    }
 `;

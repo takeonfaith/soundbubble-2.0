@@ -1,16 +1,18 @@
-import { IconFileMusic, IconMusicUp, IconX } from '@tabler/icons-react';
+import { IconArrowDown, IconMusicUp, IconX } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 import { getHumanDuration } from '../../../entities/song/lib/getHumanDuration';
 import { getSongDuration } from '../../../entities/song/lib/getSongDuration';
 import { SongCover } from '../../../entities/song/ui/SongCover';
+import { toastModel } from '../../../layout/toast/model';
 import { Button } from '../button';
 import { Flex } from '../flex';
-import { Message } from '../mesage';
 import { Subtext } from '../subtext';
 import {
+    DragIconAnimated,
     SongInputIcon,
     SongInputLabel,
     SongInputStyled,
+    UploadedSongAuthor,
     UploadedSongName,
     UploadedSongStyled,
 } from './styles';
@@ -39,7 +41,7 @@ const UploadedSong = ({
                 />
                 <Flex gap={0} d="column" ai="flex-start">
                     <UploadedSongName>{name}</UploadedSongName>
-                    <Subtext>{author}</Subtext>
+                    <UploadedSongAuthor>{author}</UploadedSongAuthor>
                 </Flex>
             </Flex>
             <Flex gap={10}>
@@ -69,7 +71,9 @@ export const SongInput = ({ file, onChange, error }: Props) => {
     const inputRef = useRef<HTMLInputElement>(null);
 
     // handle drag events
-    const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
+    const handleDrag = (
+        e: React.DragEvent<HTMLDivElement | HTMLFormElement>
+    ) => {
         e.preventDefault();
         e.stopPropagation();
         if (e.type === 'dragenter' || e.type === 'dragover') {
@@ -102,9 +106,15 @@ export const SongInput = ({ file, onChange, error }: Props) => {
         } else if (files) {
             file = files[0];
         }
+        console.log(file);
 
-        if (file) {
+        if (file && file.type.includes('audio')) {
             onChange(file);
+        } else {
+            toastModel.events.show({
+                message: 'Please select a valid audio file',
+                type: 'error',
+            });
         }
     };
 
@@ -118,7 +128,6 @@ export const SongInput = ({ file, onChange, error }: Props) => {
 
     return (
         <>
-            {error && <Message type="error">{error}</Message>}
             <SongInputStyled
                 onDragEnter={handleDrag}
                 onSubmit={(e) => e.preventDefault()}
@@ -128,7 +137,12 @@ export const SongInput = ({ file, onChange, error }: Props) => {
             >
                 <SongInputLabel htmlFor="file-upload">
                     <SongInputIcon>
-                        <IconMusicUp />
+                        {dragActive && (
+                            <DragIconAnimated>
+                                <IconArrowDown />
+                            </DragIconAnimated>
+                        )}
+                        {!dragActive && <IconMusicUp />}
                     </SongInputIcon>
                     <Flex d="column" gap={8}>
                         <h3>Drag and drop audio files</h3>
@@ -139,7 +153,6 @@ export const SongInput = ({ file, onChange, error }: Props) => {
                         className="outline"
                         onClick={onButtonClick}
                     >
-                        <IconFileMusic size={18} opacity={0.8}/>
                         Browse files
                     </Button>
                 </SongInputLabel>

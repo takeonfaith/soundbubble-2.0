@@ -11,10 +11,19 @@ import {
 import { CreateChatModal } from '../../features/createChatModal';
 import { modalModel } from '../../layout/modal/model';
 import { chatModel } from '../../entities/chat/model';
+import { Flex } from '../../shared/components/flex';
+import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
+import { ChatsSkeleton } from './ChatsSkeleton';
 
 export const ChatList = () => {
-    const { chats, chatData, lastMessage, unreadCounts, currentChatId } =
-        chatModel.useChats();
+    const {
+        chats,
+        chatData,
+        lastMessage,
+        unreadCounts,
+        currentChatId,
+        loadingChats,
+    } = chatModel.useChats();
 
     const handleCreateChatModal = () => {
         modalModel.events.open({
@@ -26,6 +35,9 @@ export const ChatList = () => {
     return (
         <ListOfChats className={!currentChatId ? 'no-chat' : ''}>
             <DesktopWrapperStyled>
+                <Flex padding="0 0 10px 20px">
+                    <h2>Chats</h2>
+                </Flex>
                 <ChatSearchStyled>
                     <Input
                         icon={<IconSearch />}
@@ -37,18 +49,23 @@ export const ChatList = () => {
                 </ChatSearchStyled>
             </DesktopWrapperStyled>
             <ChatListStyled>
-                {chats.map((chat) => {
-                    return (
-                        <ChatItem
-                            isSelected={currentChatId === chat.id}
-                            unreadCount={unreadCounts[chat.id]}
-                            lastMessage={lastMessage[chat.id]}
-                            chatData={chatData}
-                            chat={chat}
-                            key={chat.id}
-                        />
-                    );
-                })}
+                <SkeletonPageAnimation
+                    loading={loadingChats || !chatData}
+                    skeleton={<ChatsSkeleton />}
+                >
+                    {chats.map((chat) => {
+                        return (
+                            <ChatItem
+                                isSelected={currentChatId === chat.id}
+                                unreadCount={unreadCounts[chat.id]}
+                                lastMessage={lastMessage[chat.id]}
+                                chatData={chatData}
+                                chat={chat}
+                                key={chat.id}
+                            />
+                        );
+                    })}
+                </SkeletonPageAnimation>
             </ChatListStyled>
         </ListOfChats>
     );

@@ -22,6 +22,8 @@ import {
     SongTitle,
 } from './styles';
 import { usePlayer } from './usePlayer';
+import { chatModel } from '../../entities/chat/model';
+import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 
 export const Player = () => {
     const {
@@ -38,7 +40,11 @@ export const Player = () => {
     } = usePlayer();
     const theme = useTheme();
 
-    console.log(currentSong);
+    const { isMobile } = useCurrentDevice();
+
+    const { currentChatId } = chatModel.useChats();
+
+    if (currentChatId && isMobile) return null;
 
     return (
         <PlayerStyled

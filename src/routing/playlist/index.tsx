@@ -24,9 +24,10 @@ export const PlaylistPage = () => {
     const { currentPlaylist, currentPlaylistSongs, loading, error } =
         playlistModel.usePlaylist();
     const [{ data }] = userModel.useUser();
-    const isAuthor = !!currentPlaylist?.authors.find(
-        (author) => author.uid === data?.uid
-    );
+    const isOwner =
+        data?.isAdmin ||
+        !!currentPlaylist?.authors.find((author) => author.uid === data?.uid);
+
     useUrlParamId({
         page: 'playlist',
         onChangeId: (id) => {
@@ -65,13 +66,13 @@ export const PlaylistPage = () => {
                 >
                     <PlaylistPageStyled>
                         <PageTop
-                            isAuthor={isAuthor}
                             handleClickShare={handleClickShare}
                             id={''}
                             name={currentPlaylist?.name}
                             numberOfListenersPerMonth={currentPlaylist?.listens}
                             subscribers={currentPlaylist?.subscribers}
                             isPrivate={currentPlaylist?.isPrivate}
+                            isOwner={isOwner}
                             colors={currentPlaylist?.imageColors}
                         />
 
@@ -82,7 +83,7 @@ export const PlaylistPage = () => {
                                     title="Oops!"
                                     description="Playlist is empty"
                                 >
-                                    {isAuthor && (
+                                    {isOwner && (
                                         <Button
                                             $width="130px"
                                             $height="35px"
@@ -107,7 +108,7 @@ export const PlaylistPage = () => {
                         </PlaylistPageSongs>
                         <BottomPlaylist>
                             {(currentPlaylistSongs?.length ?? 0) > 0 &&
-                                isAuthor && (
+                                isOwner && (
                                     <Button
                                         $height="35px"
                                         $width="130px"

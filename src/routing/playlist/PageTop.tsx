@@ -31,6 +31,7 @@ import {
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
 import { Wave } from '../../shared/images';
 import { BottomButtons } from '../author/BottomButtons';
+import { confirmModel } from '../../layout/confirm/model';
 
 type Props = {
     id: string | undefined;
@@ -40,7 +41,7 @@ type Props = {
     colors: string[] | undefined;
     isVerified?: boolean;
     isPrivate?: boolean;
-    isAuthor: boolean;
+    isOwner: boolean;
     handleClickShare: () => void;
 };
 
@@ -51,7 +52,7 @@ export const PageTop = ({
     subscribers,
     colors,
     isVerified,
-    isAuthor,
+    isOwner,
     handleClickShare,
 }: Props) => {
     const navigate = useNavigate();
@@ -59,10 +60,23 @@ export const PageTop = ({
     const { currentPlaylist, currentPlaylistSongs } =
         playlistModel.usePlaylist();
 
+    const handleDeletePlaylist = () => {
+        confirmModel.events.open({
+            text: 'Are you sure you want to delete this playlist?',
+            onAccept: () => {
+                // playlistModel.events.deletePlaylist(currentPlaylist?.id);
+                navigate(-1);
+            },
+            subtext: 'This action cannot be undone',
+            icon: <IconTrash />,
+            iconColor: 'red',
+        });
+    };
+
     const handleOpenMore = (e: Evt<'btn'>) => {
         e.stopPropagation();
 
-        if (isAuthor) {
+        if (isOwner) {
             popupModel.events.open({
                 e,
                 height: 248,
@@ -86,7 +100,10 @@ export const PageTop = ({
                             Info
                         </Button>
                         <Divider />
-                        <Button color={theme.scheme.red.text}>
+                        <Button
+                            color={theme.scheme.red.text}
+                            onClick={handleDeletePlaylist}
+                        >
                             <IconTrash />
                             Delete
                         </Button>
@@ -143,13 +160,13 @@ export const PageTop = ({
                                     {currentPlaylist?.isAlbum
                                         ? 'Album'
                                         : 'Playlist'}{' '}
-                                    /{' '}
+                                    ·{' '}
                                 </span>
                             }
                             <Authors
                                 width="fit-content"
                                 authors={currentPlaylist?.authors}
-                                isUser={!isAuthor}
+                                isUser={!currentPlaylist?.isAlbum}
                             />
                         </Flex>
                     </div>
@@ -180,7 +197,7 @@ export const PageTop = ({
             </TopLeftCorner>
             <TopRightCorner>
                 <LikeButton
-                    song={null}
+                    entity={null}
                     isLiked={false}
                     likeColor={undefined}
                     height="40px"
@@ -198,9 +215,9 @@ export const PageTop = ({
                 isAdmin={false}
                 isPageOwner={false}
                 queueInfo={{
-                    listName: currentPlaylist?.name ?? '',
-                    listIcon: undefined,
-                    listUrl: `/playlist/${currentPlaylist?.id ?? ''}`,
+                    name: currentPlaylist?.name ?? '',
+                    image: undefined,
+                    url: `/playlist/${currentPlaylist?.id ?? ''}`,
                     songs: currentPlaylistSongs ?? [],
                 }}
             />

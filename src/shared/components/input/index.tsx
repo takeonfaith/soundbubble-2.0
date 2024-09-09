@@ -39,7 +39,7 @@ export const Input = forwardRef(
                     </Label>
                 )}
                 <InputFieldWrapper>
-                    <LeftIcon>{icon}</LeftIcon>
+                    {icon && <LeftIcon>{icon}</LeftIcon>}
                     <InputStyled
                         $hasError={!!error}
                         $hasIcon={!!icon}

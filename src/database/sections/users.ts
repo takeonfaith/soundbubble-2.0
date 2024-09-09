@@ -64,7 +64,7 @@ export class Users {
         sortByListners?: boolean
     ) {
         try {
-            if ((uids ?? []).length === 0) return [];
+            if (!uids || uids.length === 0) return [];
 
             const additionalParams = [];
 
@@ -73,12 +73,10 @@ export class Users {
                     orderBy('numberOfListenersPerMonth', 'desc')
                 );
             }
+            const res = await FB.getByIds('users', uids, 'uid');
+            console.log({ res });
 
-            const snapshot = await getDocs(
-                query(this.ref, where('uid', 'in', uids), ...additionalParams)
-            );
-
-            return getDataFromDoc<TUser>(snapshot);
+            return res;
         } catch (error) {
             console.error(error);
             return [];

@@ -46,7 +46,9 @@ export const AddSongToPlaylistModal = ({ song }: Props) => {
                     <>
                         <DefaultButton
                             appearance="primary"
-                            onClick={() => handleAdd(playlists)}
+                            onClick={() =>
+                                handleAdd(playlists.map((p) => p.id))
+                            }
                         >
                             Save changes
                         </DefaultButton>

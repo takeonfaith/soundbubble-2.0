@@ -7,14 +7,15 @@ import { AddedItemsListStyled } from './styles';
 
 type Props<T extends { id?: string; uid?: string }> = {
     inputPlaceholder: string;
-    added: string[];
     allItems: T[];
     searchValue: string;
     setSearchValue: React.Dispatch<React.SetStateAction<string>>;
-    itemImage: (item: T) => React.ReactNode;
-    itemName: (item: T) => string;
-    setAdded: React.Dispatch<React.SetStateAction<string[]>>;
     setVisibleItems: React.Dispatch<React.SetStateAction<T[]>>;
+    added: T[];
+    loading?: boolean;
+    itemImage?: (item: T) => React.ReactNode;
+    itemName: (item: T) => string;
+    setAdded: (items: T[]) => void;
 };
 
 export const AddedItemsList = <T extends { id?: string; uid?: string }>(

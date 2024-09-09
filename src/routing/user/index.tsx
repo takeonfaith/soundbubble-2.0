@@ -48,8 +48,6 @@ export const UserPage = ({ data }: Props) => {
         songs: songs.slice(0, MAX_SONGS),
     };
 
-    console.log(loading);
-
     return (
         <AuthorPageWrapper>
             <SkeletonPageAnimation

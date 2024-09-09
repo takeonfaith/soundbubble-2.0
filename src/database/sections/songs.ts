@@ -8,15 +8,15 @@ import {
     where,
 } from 'firebase/firestore';
 import { Users } from '.';
+import { Database } from '..';
+import { createLyricsObject } from '../../entities/song/lib/createLyricsObject';
+import { createSongObject } from '../../entities/song/lib/createSongObject';
+import { TUploadSongForm } from '../../features/addSongModal/model';
 import { FB } from '../../firebase';
 import { ERRORS } from '../../shared/constants';
-import { getDataFromDoc } from '../lib/getDataFromDoc';
-import { TUploadSongForm } from '../../features/addSongModal/model';
-import { createSongObject } from '../../entities/song/lib/createSongObject';
-import getUID from '../../shared/funcs/getUID';
 import { asyncRequests } from '../../shared/funcs/asyncRequests';
-import { createLyricsObject } from '../../entities/song/lib/createLyricsObject';
-import { Database } from '..';
+import getUID from '../../shared/funcs/getUID';
+import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { createDefaultSuggestion } from '../../entities/search/lib/createDefaultSuggestion';
 
 export class Songs {
@@ -119,7 +119,7 @@ export class Songs {
             const songLyrics = createLyricsObject(lyrics);
 
             const fullAuthors = await asyncRequests(authors, (a) => {
-                return Database.Users.getUserByUid(a.id);
+                return Database.Users.getUserByUid(a.uid);
             });
 
             const newSong = createSongObject({
@@ -141,8 +141,6 @@ export class Songs {
                 releaseDate: releaseDate,
             });
 
-            console.log(newSong);
-
             await FB.setById('songs', id, newSong);
             await asyncRequests(newSong.authors, (author) =>
                 FB.updateById('users', author.uid, {
@@ -151,6 +149,8 @@ export class Songs {
             );
             await FB.setById('search', id, createDefaultSuggestion(newSong));
         } catch (error) {
+            console.log(error);
+
             throw new Error(
                 `Failed to upload song, ${(error as Error).message}`
             );

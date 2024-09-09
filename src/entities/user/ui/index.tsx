@@ -50,6 +50,8 @@ export const UserItem = memo(
         const link = isAuthor ? `/author/${uid}` : `/user/${uid}`;
 
         const handleClick = (e: Evt<'a'>) => {
+            console.log(e);
+
             e.stopPropagation();
             onClick?.(user, e);
         };
@@ -64,10 +66,10 @@ export const UserItem = memo(
                 {orientation === 'vertical' && isAuthor && (
                     <LikeButton
                         entity={user}
-                        likeColor={'grey'}
+                        likeColor={imageColors?.[0] ?? 'grey'}
                         isLiked={isLiked}
                         onClick={handleToggleLike}
-                        className='plane'
+                        className="plane"
                     />
                 )}
                 <UserCover

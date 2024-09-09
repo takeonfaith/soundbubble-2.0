@@ -7,13 +7,13 @@ import {
     setDoc,
     where,
 } from 'firebase/firestore';
-import { TChat, TChatData, TMessage } from '../../entities/chat/model/types';
+import { TChatData, TMessage } from '../../entities/chat/model/types';
+import { TEntity } from '../../entities/search/model/types';
 import { FB } from '../../firebase';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { Playlists } from './playlists';
 import { Songs } from './songs';
 import { Users } from './users';
-import { TEntity } from '../../entities/search/model/types';
 
 export class Chats {
     static ref = FB.get('newChats');
@@ -21,30 +21,29 @@ export class Chats {
         return query(this.ref, where('participants', 'array-contains', userId));
     }
 
-    static async getChatsByUserId(userId: string) {
+    static async getChatsByIds(userId: string, chatIds: string[]) {
         try {
-            const docs = await getDocs(this.ownChatsQuery(userId));
-
-            const chats = getDataFromDoc<TChat>(docs);
-
+            const chats = await FB.getByIds('newChats', chatIds);
+            console.log(chats);
+            
             const lastMessages: Record<string, TMessage> = {};
             let chatDataObject: TChatData = {};
 
             const unreadCount: Record<string, number> = {};
 
-            const reqs = chats.map(async (chat) => {
-                const { messages, chatData } =
-                    await this.getChatMessagesByChatId(chat.id, 'desc', 1);
-                chatDataObject = Object.assign(chatDataObject, chatData);
-                lastMessages[chat.id] = messages[0];
-                unreadCount[chat.id] = (messages[0]?.seenBy ?? [])?.includes(
-                    userId
-                )
-                    ? 0
-                    : 1;
-            });
+            // const reqs = chats.map(async (chat) => {
+            //     const { messages, chatData } =
+            //         await this.getChatMessagesByChatId(chat.id, 'desc', 1);
+            //     chatDataObject = Object.assign(chatDataObject, chatData);
+            //     lastMessages[chat.id] = messages[0];
+            //     unreadCount[chat.id] = (messages[0]?.seenBy ?? [])?.includes(
+            //         userId
+            //     )
+            //         ? 0
+            //         : 1;
+            // });
 
-            await Promise.all(reqs);
+            // await Promise.all(reqs);
 
             return {
                 chats: chats.sort(

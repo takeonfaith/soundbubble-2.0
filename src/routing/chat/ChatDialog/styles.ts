@@ -167,7 +167,7 @@ export const MessagesDate = styled.div`
 
     @media (max-width: 768px) {
         font-size: 0.7rem;
-        width: 110px;
+        width: 118px;
         background: ${({ theme }) => theme.colors.pageBackground};
         padding: 4px;
         color: ${({ theme }) => theme.scheme.grey.text};

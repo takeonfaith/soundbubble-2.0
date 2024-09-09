@@ -24,6 +24,7 @@ import {
     PauseOverlay,
     PlayButton,
     PlayOverlay,
+    SerialNumberStyled,
     SongButtons,
     SongInfo,
     SongLeft,
@@ -40,10 +41,11 @@ type Props = {
     index: number;
     onClick: (song: TSong, index: number) => void;
     noImage?: boolean;
+    showSerialNumber?: boolean;
 };
 
 export const SongItem = memo(
-    ({ song, playing, loading, index, onClick }: Props) => {
+    ({ song, playing, loading, index, onClick, showSerialNumber }: Props) => {
         const { name, authors, imageColors, cover, listens, duration } = song;
         const isLiked = useIsSongLiked(song);
         const { handleToggleLike, performingAction } = useToggleLike(song);
@@ -70,6 +72,9 @@ export const SongItem = memo(
                     performingAction ? 'disabled' : ''
                 }`}
             >
+                {showSerialNumber && (
+                    <SerialNumberStyled>#{index + 1}</SerialNumberStyled>
+                )}
                 <SongLeft $color1={imageColors[0]}>
                     <SongCover size="35px" src={cover} colors={imageColors}>
                         {!loading && !playing && (

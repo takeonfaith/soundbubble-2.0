@@ -8,6 +8,7 @@ import { SongInput } from '../../shared/components/songInput';
 import { SignUpModalStyled } from '../signUpModal/styles';
 import { $addSongForm, updateField } from './model';
 import { SongNameAndAuthor } from './SongNameAndAuthor';
+import { toastModel } from '../../layout/toast/model';
 
 export const AddSongModal = () => {
     const { songFile } = useUnit($addSongForm);
@@ -21,7 +22,10 @@ export const AddSongModal = () => {
                 sizeY: 's',
             });
         } else {
-            setError('Song file is required');
+            toastModel.events.show({
+                type: 'error',
+                message: 'Song file is required',
+            });
         }
     };
 
@@ -37,8 +41,14 @@ export const AddSongModal = () => {
 
         const [author, name] = file.name.replace('.mp3', '').split('-');
         updateField({ id: 'songFile', value: file });
-        updateField({ id: 'name', value: name.trim() });
-        updateField({ id: 'author', value: author.trim() });
+        updateField({
+            id: 'name',
+            value: author.includes('feat') ? author.trim() : name.trim(),
+        });
+        updateField({
+            id: 'author',
+            value: author.includes('feat') ? name.trim() : author.trim(),
+        });
         getSongDuration(URL.createObjectURL(file)).then((res) =>
             updateField({ id: 'duration', value: res })
         );

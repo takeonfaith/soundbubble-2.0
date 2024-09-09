@@ -350,3 +350,15 @@ export const VerticalSongStyled = styled.div`
         display: none;
     }
 `;
+
+export const SerialNumberStyled = styled.span`
+    opacity: 0.5;
+    font-weight: 300;
+    min-width: 50px;
+    font-size: 0.9rem;
+
+    @container (max-width: 699px) {
+        min-width: 35px;
+        font-size: 0.8rem;
+    }
+`;

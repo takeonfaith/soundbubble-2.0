@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { getEntityId, getEntityImage } from '../../features/searchWithHints/lib/getDividedEntity';
+import {
+    getEntityId,
+    getEntityImage,
+} from '../../features/searchWithHints/lib/getDividedEntity';
 import { getEntityType } from '../../features/searchWithHints/lib/getEntityType';
 import { GeneralCover } from '../components/cover/GeneralCover';
 import { ENTITIES_ICONS } from '../constants/icons';
@@ -8,16 +11,20 @@ import { TEntity } from '../../entities/search/model/types';
 export const useAddedItemsList = <T extends TEntity>(list: T[]) => {
     const [visibleItems, setVisibleItems] = useState(list);
     const [searchValue, setSearchValue] = useState('');
-    const [addedItems, setAddedItems] = useState<string[]>([]);
+    const [addedItems, setAddedItems] = useState<T[]>([]);
 
     const handleClick = (item: T, e: Evt<'a'>) => {
         e.preventDefault();
-        const id = getEntityId(item);
-        const isChosen = addedItems.find((item) => item === id);
+
+        const isChosen = addedItems.find(
+            (i) => getEntityId(i) === getEntityId(item)
+        );
         if (isChosen) {
-            setAddedItems((prev) => prev.filter((itemId) => itemId !== id));
+            setAddedItems((prev) =>
+                prev.filter((i) => getEntityId(i) !== getEntityId(item))
+            );
         } else {
-            setAddedItems((prev) => [...prev, id]);
+            setAddedItems((prev) => [...prev, item]);
             if (searchValue.length !== 0) {
                 setSearchValue('');
                 setVisibleItems(list);
@@ -32,8 +39,10 @@ export const useAddedItemsList = <T extends TEntity>(list: T[]) => {
     };
 
     const getItemImage = (item: TEntity) => {
+        console.log(item);
+
         const type = getEntityType(item);
-        const image = getEntityImage(item)
+        const image = getEntityImage(item);
         return (
             <GeneralCover
                 fallbackIcon={ENTITIES_ICONS[type]}

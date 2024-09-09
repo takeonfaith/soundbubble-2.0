@@ -44,4 +44,5 @@ export const ListOfChats = styled.div`
 export const ChatListStyled = styled.div`
     display: flex;
     flex-direction: column;
+    position: relative;
 `;

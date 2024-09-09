@@ -7,13 +7,12 @@ import {
 } from '@tabler/icons-react';
 import { getLastSeen } from '../../entities/user/lib/getLastSeen';
 import { userModel } from '../../entities/user/model';
+import { TUser } from '../../entities/user/model/types';
 import { UserCover } from '../../entities/user/ui/UserCover';
+import { confirmModel } from '../../layout/confirm/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Subtext } from '../../shared/components/subtext';
-import { UserTopStyled, UserInfo, UserInfoName, UserButtons } from './styles';
-import { confirmModel } from '../../layout/confirm/model';
-import { useTheme } from 'styled-components';
-import { TUser } from '../../entities/user/model/types';
+import { UserButtons, UserInfo, UserInfoName, UserTopStyled } from './styles';
 
 type Props = {
     user: TUser | null;
@@ -21,7 +20,6 @@ type Props = {
 
 export const UserTop = ({ user }: Props) => {
     const [{ data }] = userModel.useUser();
-    const theme = useTheme();
     const friends = data?.friends ?? [];
     const friend = friends.find((friend) => friend.uid === user?.uid);
 
@@ -40,7 +38,7 @@ export const UserTop = ({ user }: Props) => {
                         subtext: 'You can add them again if you want',
                         onAccept: () => null,
                         icon: <IconUserX />,
-                        iconColor: theme.scheme.red.action,
+                        iconColor: 'red',
                     });
                 },
             };
@@ -58,7 +56,7 @@ export const UserTop = ({ user }: Props) => {
                         text: 'You sure you want to cancel friends request?',
                         onAccept: () => null,
                         icon: <IconUserX />,
-                        iconColor: theme.scheme.red.action,
+                        iconColor: 'red',
                     });
                 },
             };

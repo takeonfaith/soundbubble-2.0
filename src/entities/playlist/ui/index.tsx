@@ -77,7 +77,7 @@ export const PlaylistItem = ({
                 <ControlButton
                     $color={imageColors[0]}
                     onClick={handleLoadPlaylistSongs}
-                    className={orientation}
+                    className={`${orientation} plane`}
                 >
                     {isCurrentPlaying ? (
                         <PlayingAnimation playing color={imageColors[0]} />
@@ -114,7 +114,7 @@ export const PlaylistItem = ({
                                     textOverflow: 'ellipsis',
                                 }}
                             >
-                                {isAlbum ? 'Album' : 'Playlist'} /
+                                {isAlbum ? 'Album' : 'Playlist'} ·
                             </Subtext>
                             <Authors
                                 isUser={!isAlbum}

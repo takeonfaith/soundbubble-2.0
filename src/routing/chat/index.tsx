@@ -15,6 +15,7 @@ import { Input } from '../../shared/components/input';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { ChatList } from './ChatList';
 import { PageMessage } from '../../shared/components/pageMessage';
+import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
 
 const ChatPageStyled = styled.div`
     width: 100%;
@@ -58,21 +59,35 @@ export const ChatPage = () => {
         });
     };
 
+    useUrlParamId({
+        page: 'chat',
+        onChangeId: (id) => {
+            chatModel.events.setCurrentChatId(id === undefined ? null : id);
+        },
+    });
+
+    console.log(currentChatId);
+
     return (
         <PageWrapper>
-            <Header className="hide-on-desktop">
-                <MobileChatSearchStyled>
-                    <Flex gap={10} width="100%">
-                        <Input
-                            icon={<IconSearch />}
-                            placeholder="Search for chats..."
-                        />
-                        <Button onClick={handleCreateChatModal} $width="48px">
-                            <IconMessagePlus size={20} />
-                        </Button>
-                    </Flex>
-                </MobileChatSearchStyled>
-            </Header>
+            {!currentChatId && (
+                <Header className="hide-on-desktop">
+                    <MobileChatSearchStyled>
+                        <Flex gap={10} width="100%">
+                            <Input
+                                icon={<IconSearch />}
+                                placeholder="Search for chats..."
+                            />
+                            <Button
+                                onClick={handleCreateChatModal}
+                                $width="48px"
+                            >
+                                <IconMessagePlus size={20} />
+                            </Button>
+                        </Flex>
+                    </MobileChatSearchStyled>
+                </Header>
+            )}
             <ChatPageStyled>
                 <ChatList />
                 <ChatContent className={!currentChatId ? 'no-chat' : ''}>

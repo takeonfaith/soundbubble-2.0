@@ -1,4 +1,5 @@
 import {
+    IconMoodCry,
     IconMoodHappy,
     IconMoodLookDown,
     IconMoodLookUp,
@@ -56,6 +57,12 @@ const MOODS: TExtendedSuggestion[] = [
         place: 'users',
         icon: <IconMoodShare />,
     },
+    {
+        uid: 'emotional',
+        fullName: 'Emotional',
+        place: 'users',
+        icon: <IconMoodCry />,
+    },
 ];
 
 const GENRES: TExtendedSuggestion[] = [
@@ -71,6 +78,7 @@ const GENRES: TExtendedSuggestion[] = [
     { uid: 'blues', fullName: 'Blues', place: 'users' },
     { uid: 'jazz', fullName: 'Jazz', place: 'users' },
     { uid: 'world', fullName: 'World', place: 'users' },
+    { uid: 'ambient', fullName: 'Ambient', place: 'users' },
     { uid: 'african', fullName: 'African', place: 'users' },
 ];
 

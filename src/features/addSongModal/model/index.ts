@@ -1,12 +1,11 @@
 import { createEvent, createStore, sample } from 'effector';
-import { TShortAuthor } from '../../authorsInput';
 import { TExtendedSuggestion } from '../../searchWithHints/types';
 
 const DEFAULT_FORM_STORE = {
     songFile: null as File | null,
     name: '',
     author: '',
-    authors: [] as TShortAuthor[],
+    authors: [] as TExtendedSuggestion[],
     duration: 0,
     coverFile: null as File | null,
     imageColors: [] as string[],

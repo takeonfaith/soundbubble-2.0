@@ -30,6 +30,7 @@ export type TUser = {
     photoURL: string;
     subscribers: number;
     regDate: Timestamp;
+    chats?: string[];
 };
 
 export type LoginCreditsType = {

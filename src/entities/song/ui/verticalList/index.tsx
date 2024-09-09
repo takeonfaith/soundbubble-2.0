@@ -7,13 +7,16 @@ type Props = {
     listName: string | null;
     listIcon: string | undefined;
     listUrl: string | null;
+    showSerialNumber?: boolean;
 };
 
 export const VerticalSongsList = (props: Props) => {
     return (
         <SongsVerticalListStyled>
             {!!props.songs.length && (
-                <Titles>
+                <Titles
+                    className={props.showSerialNumber ? 'showSerialNumber' : ''}
+                >
                     <Title></Title>
                     <Title>Name</Title>
                     <Title>Author</Title>

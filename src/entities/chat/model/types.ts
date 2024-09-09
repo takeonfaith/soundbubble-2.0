@@ -10,7 +10,7 @@ export type TMessage = {
     inResponseToMessage: string;
     seenBy: string[];
     id: string;
-    status?: 'pending' | 'error'
+    status?: 'pending' | 'error';
 };
 
 export type TChat = {
@@ -20,6 +20,8 @@ export type TChat = {
     participants: string[];
     chatName: string;
     chatImage: string;
+    admins?: string[];
+    lastMessage?: TMessage;
 };
 
 export type TChatData = Record<string, TEntity>;

@@ -12,14 +12,9 @@ type Props = {
     value: string;
     required: boolean;
     error: string | undefined;
-    addedAuthors: TShortAuthor[];
+    addedAuthors: TSuggestion[];
     loadingItems: boolean;
-    onSumbit: (addedAuthors: TShortAuthor[]) => void;
-};
-
-export type TShortAuthor = {
-    id: string;
-    fullName: string;
+    onSumbit: (addedAuthors: TExtendedSuggestion[]) => void;
 };
 
 export const AuthorsInput = ({
@@ -52,11 +47,8 @@ export const AuthorsInput = ({
         _: string,
         suggestion: TExtendedSuggestion | null
     ) => {
-        if (suggestion && !addedAuthors.find((a) => a.id === suggestion.uid)) {
-            onSumbit([
-                ...addedAuthors,
-                { fullName: suggestion?.fullName, id: suggestion?.uid },
-            ]);
+        if (suggestion && !addedAuthors.find((a) => a.uid === suggestion.uid)) {
+            onSumbit([...addedAuthors, suggestion]);
         }
     };
 
