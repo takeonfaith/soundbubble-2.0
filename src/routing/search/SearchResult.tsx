@@ -77,12 +77,12 @@ export const SearchResult = () => {
     const noResult =
         params.get('query') !== null && result.length === 0 && !isLoading;
 
-    const notSearchedYet =
-        params.get('query') === null && result.length === 0 && !isLoading;
+    // const notSearchedYet =
+    //     params.get('query') === null && result.length === 0 && !isLoading;
 
     return (
         <ContentWrapper>
-            {notSearchedYet && (
+            {/* {notSearchedYet && (
                 <Flex wrap="wrap" padding="40px 0px" gap={10}>
                     <PlaylistCollectionItem
                         background={theme.scheme.blue.action}
@@ -117,7 +117,7 @@ export const SearchResult = () => {
                         title="Chill"
                     />
                 </Flex>
-            )}
+            )} */}
             <SearchPageWrapper>
                 <SkeletonPageAnimation
                     color=""

@@ -28,7 +28,7 @@ const COLOR_SCHEME_DARK = {
         main: '#4de0aa',
         text: '#b3ffc7',
         mild: '#1f2a1f',
-        transparent: '#ff636314',
+        transparent: '#63ff7e14',
     },
     grey: {
         main: '#8b8b8b',

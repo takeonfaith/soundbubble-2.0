@@ -2,6 +2,7 @@ import { TSong } from '@song/model/types';
 import {
     arrayUnion,
     getDocs,
+    increment,
     limit,
     orderBy,
     query,
@@ -154,6 +155,23 @@ export class Songs {
             throw new Error(
                 `Failed to upload song, ${(error as Error).message}`
             );
+        }
+    }
+
+    static async addListening(song: TSong | null) {
+        try {
+            if (song) {
+                await FB.updateById('songs', song.id, {
+                    listens: increment(1),
+                });
+                await asyncRequests(song.authors, (author) => {
+                    return FB.updateById('users', author.uid, {
+                        numberOfListenersPerMonth: increment(1),
+                    });
+                });
+            }
+        } catch (error) {
+            console.error(error);
         }
     }
 }

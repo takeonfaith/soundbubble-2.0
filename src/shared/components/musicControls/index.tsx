@@ -80,9 +80,7 @@ export const MusicControls = ({
             <Flex jc="space-between" width="100%" className="control-buttons">
                 <SmallControlButton
                     $color1={buttonColor}
-                    className={
-                        shuffle ? 'queue-button selected' : 'queue-button'
-                    }
+                    className={`queue-button ${shuffle ? 'selected' : ''} `}
                     onClick={handleShuffle}
                 >
                     <IconArrowsShuffle />
@@ -112,11 +110,9 @@ export const MusicControls = ({
                     </ControlButton>
                 </Flex>
                 <SmallControlButton
-                    className={
-                        loopMode !== LoopMode.noloop
-                            ? 'queue-button selected'
-                            : 'queue-button'
-                    }
+                    className={`queue-button ${
+                        loopMode !== LoopMode.noloop ? 'selected' : ''
+                    }`}
                     onClick={handleLoopMode}
                     $color1={buttonColor}
                 >

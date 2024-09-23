@@ -7,7 +7,7 @@ import {
 } from '@tabler/icons-react';
 import { getLastSeen } from '../../entities/user/lib/getLastSeen';
 import { userModel } from '../../entities/user/model';
-import { TUser } from '../../entities/user/model/types';
+import { FriendStatus, TUser } from '../../entities/user/model/types';
 import { UserCover } from '../../entities/user/ui/UserCover';
 import { confirmModel } from '../../layout/confirm/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
@@ -24,7 +24,7 @@ export const UserTop = ({ user }: Props) => {
     const friend = friends.find((friend) => friend.uid === user?.uid);
 
     const getFriendButtonContent = () => {
-        if (friend?.status === 'added')
+        if (friend?.status === FriendStatus.added)
             return {
                 text: (
                     <>
@@ -43,7 +43,7 @@ export const UserTop = ({ user }: Props) => {
                 },
             };
 
-        if (friend?.status === 'awaiting') {
+        if (friend?.status === FriendStatus.requested) {
             return {
                 text: (
                     <>
@@ -62,7 +62,7 @@ export const UserTop = ({ user }: Props) => {
             };
         }
 
-        if (friend?.status === 'requested') {
+        if (friend?.status === FriendStatus.awaiting) {
             return {
                 text: (
                     <>
@@ -80,6 +80,11 @@ export const UserTop = ({ user }: Props) => {
                     Add to friends
                 </>
             ),
+            onClick: () => {
+                if (user) {
+                    userModel.events.friendRequest(user?.uid);
+                }
+            },
         };
     };
 

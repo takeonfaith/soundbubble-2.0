@@ -133,7 +133,7 @@ export const ControlButton = styled.button`
     &:not(:disabled) {
         @media (hover: hover) {
             &:hover {
-                background: ${({ theme }) => theme.colors.lightHover};
+                background: ${({ theme }) => theme.colors.hover};
 
                 svg {
                     filter: drop-shadow(0 0 15px black);
@@ -211,12 +211,30 @@ export const DurationText = styled.div`
 export const SmallControlButton = styled(ControlButton)<{ $color1?: string }>`
     width: 40px;
     height: 40px;
+    position: relative;
+
+    &::before {
+        content: '';
+        display: none;
+        width: 3px;
+        height: 3px;
+        border-radius: 10px;
+        background: #fff;
+        position: absolute;
+        bottom: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 
     &.selected {
-        background: ${({ theme }) => theme.colors.lightHover};
+        background: ${({ theme }) => theme.colors.skeleton};
         svg {
-            color: #000;
+            color: inherit;
             opacity: 1;
+        }
+
+        &::before {
+            display: block;
         }
     }
 

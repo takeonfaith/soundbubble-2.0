@@ -25,9 +25,9 @@ export class Chats {
         try {
             const chats = await FB.getByIds('newChats', chatIds);
             console.log(chats);
-            
+
             const lastMessages: Record<string, TMessage> = {};
-            let chatDataObject: TChatData = {};
+            const chatDataObject: TChatData = {};
 
             const unreadCount: Record<string, number> = {};
 
@@ -108,7 +108,11 @@ export class Chats {
                 `newChats/${chatId}/messages/${message.id}`
             );
 
-            return await setDoc(ref, message);
+            await setDoc(ref, message);
+
+            FB.updateById('newChats', chatId, {
+                lastMessage: message,
+            });
         } catch (error) {
             throw new Error(
                 'Failed to send message' + (error as Error).toString()

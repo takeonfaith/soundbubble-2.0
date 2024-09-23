@@ -17,6 +17,8 @@ export const usePlayerMusicControls = () => {
     const handleChangeTime: React.ChangeEventHandler<HTMLInputElement> = (
         e
     ) => {
+        console.log(e.target.value);
+
         songModel.playblack.setIsSliding(true);
         songModel.playblack.setCurrentTime(+e.target.value);
     };

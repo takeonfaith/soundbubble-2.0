@@ -236,6 +236,7 @@ export const menuRoutes = getRoutes([
 
 export const mobileMenuRoutes = getRoutes([
     'Wave',
+    'Trends',
     'Liked',
     'Chat',
     'Search',

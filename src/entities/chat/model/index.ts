@@ -4,6 +4,7 @@ import { Database } from '../../../database';
 import { TEntity } from '../../search/model/types';
 import { $user, logout } from '../../user/model';
 import { TChat, TChatData, TMessage } from './types';
+import { toastModel } from '../../../layout/toast/model';
 
 const getChatsFx = createEffect(
     async ({ userId, chatIds }: { userId: string; chatIds: string[] }) => {
@@ -67,24 +68,48 @@ const getCurrentChatMessagesFx = createEffect(
 );
 
 const sendMessageFx = createEffect(
-    async ({ chatId, message }: { chatId: string; message: TMessage }) => {
+    async ({
+        chatId,
+        message,
+    }: {
+        chatId: string;
+        message: TMessage;
+        showToast?: boolean;
+    }) => {
         try {
-            // await new Promise((res, rej) => setTimeout(() => res('sa'), 1000));
             await Database.Chats.sendMessage(chatId, message);
-            console.log('error never appeared');
         } catch (error) {
-            console.log(error);
-
             throw new Error((error as Error).message);
         }
     }
 );
 
+sendMessageFx.done.watch(({ params }) => {
+    if (params.showToast) {
+        toastModel.events.show({
+            type: 'success',
+            message: 'Message sent',
+        });
+    }
+});
+
+sendMessageFx.failData.watch((err) => {
+    toastModel.events.show({
+        type: 'error',
+        reason: err.message,
+        message: 'Failed to send message',
+    });
+});
+
 const getTotalUnreadCount = createEvent<TChat[]>();
 const setCurrentChatId = createEvent<string | undefined | null>();
 const setChatData = createEvent<TChatData>();
 const loadPreviousMessages = createEvent();
-const sendMessage = createEvent<{ chatId: string; message: TMessage }>();
+const sendMessage = createEvent<{
+    chatId: string;
+    message: TMessage;
+    showToast?: boolean;
+}>();
 const updateLastMessage = createEvent<{
     message: TMessage | undefined;
     chatId: string | undefined | null;
@@ -201,8 +226,8 @@ sample({
 sample({
     clock: sendMessage,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    fn: ({ chatId, message: { status, ...message } }) => {
-        return { chatId, message };
+    fn: ({ chatId, message: { status, ...message }, showToast }) => {
+        return { chatId, message, showToast };
     },
     target: [sendMessageFx],
 });
@@ -277,7 +302,8 @@ sample({
     source: { chats: $chats, lastMessages: $lastMessage },
     fn: ({ chats, lastMessages }) => {
         return chats.sort(
-            (a, b) => lastMessages[b.id]?.sentTime - lastMessages[a.id]?.sentTime
+            (a, b) =>
+                lastMessages[b.id]?.sentTime - lastMessages[a.id]?.sentTime
         );
     },
     target: $chats,

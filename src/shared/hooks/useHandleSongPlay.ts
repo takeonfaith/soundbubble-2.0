@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { songModel } from '../../entities/song/model';
 import { TQueueStore, TSong } from '../../entities/song/model/types';
 
@@ -11,18 +12,22 @@ type Props = {
 export const useHandleSongPlay = (props: Props) => {
     const { play } = songModel.useControls();
 
-    const handlePlay = (song: TSong, index: number) => {
-        const queue: TQueueStore | undefined = {
-            currentSongIndex: index,
-            name: props.listName,
-            image: props.listIcon,
-            url: props.listUrl,
-            songs: props.songs,
-            shuffle: false,
-        };
+    const handlePlay = useCallback(
+        (song: TSong, index: number) => {
+            
+            const queue: TQueueStore | undefined = {
+                currentSongIndex: index,
+                name: props.listName,
+                image: props.listIcon,
+                url: props.listUrl,
+                songs: props.songs,
+                shuffle: false,
+            };
 
-        play(song, queue);
-    };
+            play(song, queue);
+        },
+        [play, props.listIcon, props.listName, props.listUrl, props.songs]
+    );
 
     return { handlePlay };
 };

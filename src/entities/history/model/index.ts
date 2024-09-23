@@ -1,4 +1,4 @@
-import { createEffect, createStore, sample } from 'effector';
+import { createEffect, createEvent, createStore, sample } from 'effector';
 import { createGate, useGate, useUnit } from 'effector-react';
 import { Database } from '../../../database';
 import { getDataFromEffect } from '../../../shared/effector/getDataFromEffect';
@@ -14,6 +14,20 @@ const loadListenHistoryFx = createEffect(async (userId: string) => {
     }
 });
 
+const addToHistoryFx = createEffect(
+    async ({ userId, song }: { userId: string; song: TSong | null }) => {
+        // Срабатывает два раза потому что я гавноед
+        // Срабатывает в queue.watch и самом load
+        // Надо это все переписать к чертовой бабушке
+        if (song) {
+            await Database.History.addSongToHistory(userId, song.id);
+            return song;
+        }
+    }
+);
+
+export const addToHistory = createEvent<TSong | null>();
+
 const historyGate = createGate();
 
 const $listeningHistory = createStore<TSong[]>([]);
@@ -28,10 +42,33 @@ sample({
         userId: $userId,
         history: $listeningHistory,
     },
-    filter: ({ history, userId, gateStatus }) =>
-        gateStatus && userId !== null && history.length === 0,
+    filter: ({ history, userId }) => userId !== null && history.length === 0,
     fn: ({ userId }) => userId as string,
     target: loadListenHistoryFx,
+});
+
+sample({
+    clock: addToHistory,
+    source: { userId: $userId, listeningHistory: $listeningHistory },
+    filter: ({ userId, listeningHistory }, song) => {
+        console.log(listeningHistory);
+
+        return (
+            !!song &&
+            !!userId &&
+            listeningHistory &&
+            listeningHistory[0].id !== song.id
+        );
+    },
+    fn: ({ userId }, song) => ({ userId: userId as string, song }),
+    target: addToHistoryFx,
+});
+
+sample({
+    clock: addToHistoryFx.doneData,
+    source: $listeningHistory,
+    fn: (store, song) => (song ? [song, ...store] : [...store]),
+    target: $listeningHistory,
 });
 
 // sample({
@@ -52,4 +89,7 @@ getDataFromEffect(loadListenHistoryFx, $listeningHistory);
 export const historyModel = {
     useHistory: () => useUnit([$listeningHistory, loadListenHistoryFx.pending]),
     useLoadHistory: () => useGate(historyGate),
+    events: {
+        addToHistory,
+    },
 };

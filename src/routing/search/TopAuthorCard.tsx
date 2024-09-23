@@ -149,9 +149,9 @@ export const TopAuthorCard = ({ author }: { author: TUser }) => {
                         isAdmin={false}
                         isPageOwner={false}
                         queueInfo={{
-                            listName: '',
-                            listIcon: undefined,
-                            listUrl: '',
+                            name: '',
+                            image: undefined,
+                            url: '',
                             songs: [],
                         }}
                     />

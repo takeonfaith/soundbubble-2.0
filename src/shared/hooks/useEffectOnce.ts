@@ -4,7 +4,7 @@ export const useEffectOnce = (
     effect: () => (() => void) | void,
     deps: unknown[]
 ) => {
-    const destroyFunc = useRef<() => void>();
+    const destroyFunc = useRef<(() => void) | void>();
     const effectCalled = useRef(false);
     const renderAfterCalled = useRef(false);
 
@@ -29,5 +29,6 @@ export const useEffectOnce = (
                 destroyFunc.current();
             }
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, deps);
 };

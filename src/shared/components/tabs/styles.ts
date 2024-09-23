@@ -44,10 +44,14 @@ export const TabItemStyled = styled(Link)<{ $width?: string; $height: string }>`
         border-radius: 20px;
         font-size: 0.9rem;
         opacity: 1;
+
+        &.selected {
+            color: #fff;
+        }
     }
 
     &.selected {
-        color: #fff;
+        color: ${({ theme }) => theme.colors.textColor};
         opacity: 1;
         font-weight: 400;
         background: transparent;
@@ -76,7 +80,7 @@ export const CurrentTabItem = styled.div<{
     padding: 10px 16px;
     height: ${({ $height }) => $height};
     border-radius: 16px;
-    background: ${({ theme }) => theme.scheme.blue.action};
+    background: ${({ theme }) => theme.colors.context};
     position: absolute;
     transition: 0.2s;
     transform: translateX(calc(${({ $shift }) => `${$shift} * 100%`}));
@@ -92,6 +96,7 @@ export const CurrentTabItem = styled.div<{
 
         left: 0;
         top: 0;
+        background: ${({ theme }) => theme.scheme.blue.action};
     }
 
     @media (max-width: 1000px) {

@@ -3,8 +3,6 @@ import { TPlaylist } from '../../playlist/model/types';
 import { TPlace } from '../../search/model/types';
 import { TSong } from '../../song/model/types';
 
-type TFriendStatus = 'added' | 'awaiting' | 'requested';
-
 export type TUser = {
     uid: string;
     displayName: string;
@@ -13,7 +11,7 @@ export type TUser = {
     addedAuthors?: string[];
     addedPlaylists: string[];
     addedSongs?: string[];
-    friends?: { uid: string; status: TFriendStatus }[];
+    friends?: { uid: string; status: FriendStatus }[];
     imageColors: string[];
     isVerified: boolean;
     isAdmin?: boolean;
@@ -61,3 +59,9 @@ export type TPageStore = {
 };
 
 export type TSearchHistory = { id: string; type: TPlace };
+
+export enum FriendStatus {
+    added = 'added',
+    awaiting = 'awaiting',
+    requested = 'requested',
+}

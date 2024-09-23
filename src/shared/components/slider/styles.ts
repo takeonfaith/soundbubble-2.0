@@ -99,7 +99,7 @@ export const SliderStyled = styled.input<{ color: string | undefined }>`
 export const HoverStripe = styled.div`
     height: 8px;
     position: absolute;
-    background: ${({ theme }) => theme.colors.hover};
+    background: ${({ theme }) => theme.colors.skeleton};
     border-radius: 20px 0 0 20px;
     pointer-events: none;
 `;

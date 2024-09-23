@@ -32,5 +32,5 @@ export const useToggleLike = (song: TSong | null) => {
         }
     }, [isAddingSong, isRemovingSong]);
 
-    return { handleToggleLike, performingAction };
+    return { handleToggleLike, performingAction, isLiked };
 };

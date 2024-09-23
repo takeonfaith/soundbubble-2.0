@@ -1,15 +1,13 @@
-import { createEvent, createStore, createWatch, sample } from 'effector';
-import { useUnit } from 'effector-react';
-import { DEFAULT_STORE } from './constants';
-import { TQueueStore, TSong, TStore } from './types';
-import { changeLoopMode, next, previous, setQueue, useQueue } from './queue';
 import {
-    setCurrentTime,
-    setDuration,
-    setIsSliding,
-    setLastRangeValue,
-    usePlayback,
-} from './playback';
+    createEffect,
+    createEvent,
+    createStore,
+    createWatch,
+    sample,
+} from 'effector';
+import { useUnit } from 'effector-react';
+import { addToHistory } from '../../history/model';
+import { DEFAULT_STORE } from './constants';
 import { useControls } from './controls';
 import { close, open, useFullScreen } from './fullscreen';
 import {
@@ -20,6 +18,19 @@ import {
     setShouldCalculateLyrics,
     useLyrics,
 } from './lyrics';
+import {
+    setCurrentTime,
+    setDuration,
+    setIsSliding,
+    setLastRangeValue,
+    usePlayback,
+} from './playback';
+import { changeLoopMode, next, previous, setQueue, useQueue } from './queue';
+import { TQueueStore, TSong, TStore } from './types';
+import { throttle } from 'patronum';
+import { Database } from '../../../database';
+
+const addListeningFx = createEffect<TSong, Promise<void>>();
 
 export const play = createEvent();
 export const pause = createEvent();
@@ -28,10 +39,23 @@ export const load = createEvent<{
     queue: TQueueStore | undefined;
 }>();
 const loaded = createEvent();
+const addListening = createEvent<TSong>();
 
 // const $currentSongStore = createStore(null);
 
 export const $songStore = createStore<TStore>(DEFAULT_STORE);
+const $currentSongDuration = $songStore.map(
+    (song) => ((song.currentSong?.duration ?? 0) / 2) * 1000
+);
+
+const { unsubscribe } = throttle(load, $currentSongDuration).watch(
+    ({ song }) => {
+        console.log('listening added');
+        if (song) {
+            addListening(song);
+        }
+    }
+);
 
 sample({
     clock: play,
@@ -43,7 +67,10 @@ sample({
 sample({
     clock: pause,
     source: $songStore,
-    fn: (old): TStore => ({ ...old, state: 'pause' }),
+    fn: (old): TStore => {
+        unsubscribe();
+        return { ...old, state: 'pause' };
+    },
     target: $songStore,
 });
 
@@ -59,7 +86,19 @@ sample({
 
 sample({
     clock: load,
-    target: setQueue,
+    target: [setQueue],
+});
+
+sample({
+    clock: load,
+    fn: (old) => old.song,
+    target: addToHistory,
+});
+
+sample({
+    clock: addListening,
+    fn: (songId) => songId,
+    target: addListeningFx,
 });
 
 createWatch({
@@ -82,6 +121,10 @@ sample({
         currentSong: song,
     }),
     target: $songStore,
+});
+
+addListeningFx.use(async (song) => {
+    Database.Songs.addListening(song);
 });
 
 export const songModel = {

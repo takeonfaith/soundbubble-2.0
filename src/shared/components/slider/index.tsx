@@ -69,6 +69,7 @@ export const Slider = ({
                 type="range"
                 value={value}
                 max={duration}
+                step={0.5}
                 min={0}
                 onChange={onChangeTime}
                 onMouseMove={handleMouse}

@@ -16,6 +16,7 @@ import {
     UploadedSongName,
     UploadedSongStyled,
 } from './styles';
+import { getHumanFileSize } from '../../funcs/getHumanFileSize';
 
 const UploadedSong = ({
     file,
@@ -24,7 +25,10 @@ const UploadedSong = ({
     file: File;
     handleRemove: (file: File) => void;
 }) => {
-    const [author, name] = file.name.replace('.mp3', '').split('-');
+    const [author, name] = file.name
+        .replace('.mp3', '')
+        .replace(/[_|]/g, ' ')
+        .split('-');
     const [duration, setDuration] = useState(0);
 
     useEffect(() => {
@@ -40,14 +44,19 @@ const UploadedSong = ({
                     colors={['grey', 'grey', 'grey', 'grey', 'grey', 'grey']}
                 />
                 <Flex gap={0} d="column" ai="flex-start">
-                    <UploadedSongName>{name}</UploadedSongName>
+                    <UploadedSongName>{name ?? 'Song'}</UploadedSongName>
                     <UploadedSongAuthor>{author}</UploadedSongAuthor>
                 </Flex>
             </Flex>
             <Flex gap={10}>
-                <Subtext style={{ fontSize: '0.67rem', fontWeight: '400' }}>
-                    {getHumanDuration(duration)}
-                </Subtext>
+                <Flex d="column" ai="flex-end">
+                    <Subtext style={{ fontSize: '0.67rem', fontWeight: '400' }}>
+                        {getHumanDuration(duration)}
+                    </Subtext>
+                    <Subtext style={{ fontSize: '0.6rem', fontWeight: '400' }}>
+                        {getHumanFileSize(file.size)}
+                    </Subtext>
+                </Flex>
                 <Button
                     $width="34px"
                     $height="34px"

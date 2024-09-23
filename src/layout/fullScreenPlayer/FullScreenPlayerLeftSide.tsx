@@ -5,9 +5,9 @@ import { IconPlaylist, IconQuote } from '@tabler/icons-react';
 import { SongCover } from '../../entities/song/ui/SongCover';
 
 import { LikeButton } from '@features/likeButton';
+import { useToggleLike } from '../../entities/song/hooks/useToggleLike';
 import { VolumeButton } from '../../features/volumeButton';
 import { SmallControlButton } from '../../shared/components/musicControls/styles';
-import { useIsSongLiked } from '../../shared/hooks/useIsSongLiked';
 import { PlayerMusicControls } from './PlayerMusicControls';
 import {
     BottomControlButtons,
@@ -32,7 +32,8 @@ export const FullScreenPlayerLeftSide = ({
     handleClickControlButton,
 }: Props) => {
     const { currentSong } = songModel.useSong();
-    const isLiked = useIsSongLiked(currentSong);
+    const { handleToggleLike, isLiked, performingAction } =
+        useToggleLike(currentSong);
 
     const onAuthorClick = () => songModel.fullscreen.close();
 
@@ -47,16 +48,17 @@ export const FullScreenPlayerLeftSide = ({
                     />
                 </PlayerCover>
 
-                <Flex d="column" gap={2}>
-                    <Flex width="100%" gap={10}>
+                <Flex d="column" gap={2} width="100%">
+                    <Flex width="100%" gap={10} jc="space-between">
                         <PlayerTitle>
                             {currentSong?.name ?? 'Untitled'}
                         </PlayerTitle>
                         <LikeButton
                             isLiked={isLiked}
                             height="30px"
-                            song={currentSong}
-                            onClick={() => null}
+                            entity={currentSong}
+                            loading={performingAction}
+                            onClick={handleToggleLike}
                             likeColor={currentSong?.imageColors[1]}
                         />
                     </Flex>

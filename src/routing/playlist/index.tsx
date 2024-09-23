@@ -19,6 +19,7 @@ import {
     PlaylistPageStyled,
     PlaylistSimilar,
 } from './styles';
+import { AddSongsToPlaylistModal } from './AddSongsToPlaylistModal';
 
 export const PlaylistPage = () => {
     const { currentPlaylist, currentPlaylistSongs, loading, error } =
@@ -47,7 +48,8 @@ export const PlaylistPage = () => {
     const handleAddSongsModal = () => {
         modalModel.events.open({
             title: 'Add songs to playlist',
-            content: <></>,
+            content: <AddSongsToPlaylistModal />,
+            sizeY: 'l',
         });
     };
 

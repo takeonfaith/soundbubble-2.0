@@ -1,23 +1,18 @@
 import { useEffect } from 'react';
+import { TQueueStore } from '../../entities/song/model/types';
 import { GridSongList } from '../../entities/song/ui/gridList';
 import { getLastSeen } from '../../entities/user/lib/getLastSeen';
 import { userModel } from '../../entities/user/model';
 import { TUser } from '../../entities/user/model/types';
-import { UserCover } from '../../entities/user/ui/UserCover';
-import { UserStatus } from '../../entities/user/ui/UserStatus';
-import { ShareModal } from '../../features/shareModal';
-import { modalModel } from '../../layout/modal/model';
 import { NavigationTitle } from '../../shared/components/navigationTitle';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
 import { AuthorPageTop } from './AuthorPageTop';
-import { BottomButtons } from './BottomButtons';
 import { Playlists } from './Playlists';
 import { SimilarAuthors } from './SimilarAuthors';
 import { SkeletonLoading } from './Skeleton';
 import { MAX_SONGS } from './constants';
 import { AuthorPageWrapper, SongsStyled } from './styles';
-import { TQueueStore } from '../../entities/song/model/types';
 
 type Props = {
     userData?: TUser | null;

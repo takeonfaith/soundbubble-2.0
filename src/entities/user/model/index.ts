@@ -556,7 +556,7 @@ sample({
     target: $library,
 });
 
-const throttled = throttle(
+const { unsubscribe } = throttle(
     removeSongFromLibraryFx.doneData,
     REMOVE_FROM_LIBRARY_TIMEOUT
 ).watch(() => {
@@ -567,7 +567,7 @@ sample({
     clock: revertRemove,
     source: { user: $user, oldLibrary: $copiedLibrary },
     fn: ({ user, oldLibrary }) => {
-        throttled.unsubscribe();
+        unsubscribe();
 
         return {
             userId: user.data?.uid,
@@ -734,6 +734,60 @@ removeAuthorsFromLibraryFx.fail.watch(({ params: { showToast }, error }) => {
 
 // #endregion
 
+// #region Add playlist to library
+
+// #endregion
+
+// #region Add to friends
+const friendRequestFx = createEffect<
+    { userId: string; friendId: string },
+    Promise<void>
+>();
+
+const friendRequest = createEvent<string>();
+
+sample({
+    clock: friendRequest,
+    source: { user: $user },
+    filter: ({ user }) => !!user,
+    fn: ({ user }, friendId) => ({
+        userId: user?.data?.uid as string,
+        friendId,
+    }),
+    target: friendRequestFx,
+});
+
+// sample({
+//     clock: friendRequestFx.done,
+//     source: $user,
+//     fn: (user) => ({
+//         userId: user?.data?.uid as string,
+//         friendId: friendRequestFx.doneData.friendId,
+//     }),
+//     target: ,
+// })
+
+friendRequestFx.use(async ({ userId, friendId }) => {
+    await Database.Users.friendRequest(userId, friendId);
+});
+
+friendRequestFx.done.watch(() => {
+    toastModel.events.show({
+        message: 'Friendship request sent',
+        type: 'success',
+    });
+});
+
+friendRequestFx.failData.watch((err) => {
+    toastModel.events.show({
+        message: 'Failed to send friend request',
+        type: 'error',
+        reason: err.message,
+        duration: 10000,
+    });
+});
+// #end region
+
 export const userModel = {
     useUser: () => useUnit([$user, $isLoadingUser, loginFx.pending]),
     useSongLibrary: () => useUnit([$library, loadLibraryFx.pending]),
@@ -758,6 +812,7 @@ export const userModel = {
         addOwnPlaylistToLibrary,
         toggleLikeSong,
         toggleAuthorLiked,
+        friendRequest,
     },
     gates: {
         useLoadUser: () => useGate(userGate),

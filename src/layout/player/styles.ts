@@ -1,6 +1,7 @@
 import { styled } from 'styled-components';
 import { BeautifulBackground } from '../../shared/components/beautifulBackground';
 import { hexToRgbA } from '../../shared/funcs/hexToRgba';
+import { ANIMATION_DURATION } from './constants';
 
 export const PlayerStyled = styled.div<{ $background: string }>`
     width: calc(100% - var(--sidebar-width) - var(--page-gap));
@@ -42,7 +43,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
         }
 
         .queue-button {
-            color: ${({ theme }) => theme.colors.textColor};
+            color: ${({ theme }) => theme.colors.textColor} !important;
             transform: scale(0.9);
 
             &.selected {
@@ -50,6 +51,10 @@ export const PlayerStyled = styled.div<{ $background: string }>`
 
                 & svg {
                     color: ${({ theme }) => theme.colors.textColor};
+                }
+
+                &::before {
+                    background: ${({ theme }) => theme.colors.textColor};
                 }
             }
         }
@@ -79,7 +84,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
         }
 
         @media (max-width: 1270px) {
-            width: 350px;
+            width: 400px;
             margin-top: -4px;
             margin-right: 0;
         }
@@ -102,7 +107,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
             left: calc(50% + 2px);
             top: 40px;
             transform: translateX(-50%);
-            width: 352px;
+            width: 404px;
         }
 
         & > * {
@@ -199,5 +204,113 @@ export const PlayerActionButtons = styled.div`
 
     @media (max-width: 1000px) {
         display: none;
+    }
+`;
+
+export const FriendsList = styled.div`
+    width: 150px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    pointer-events: none;
+    opacity: 0;
+    transition: 0.3s opacity, 0.3s right;
+    position: absolute;
+    right: 100px;
+    z-index: 10;
+    padding: 6px 10px;
+
+    button {
+        font-size: 0.8rem;
+        min-width: 30px;
+        min-height: 30px;
+        height: 30px;
+        border-radius: 100%;
+        background: ${({ theme }) => theme.colors.hover};
+    }
+
+    .general-cover {
+        cursor: pointer;
+    }
+`;
+
+export const ShareButtonStyled = styled.div`
+    display: flex;
+    align-items: center;
+
+    &.has-hover {
+        &:hover {
+            ${FriendsList} {
+                background: ${({ theme }) => theme.colors.modal};
+                opacity: 1;
+                right: 162px;
+                pointer-events: all;
+                padding: 10px;
+                border-radius: 50px;
+            }
+        }
+    }
+`;
+
+export const SendAnimationStyled = styled.div`
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+
+    &.animation1 {
+        animation: send1 ${ANIMATION_DURATION / 1000}s forwards linear;
+        @keyframes send1 {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-10px, -20px);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-30px, 0);
+                opacity: 0;
+            }
+        }
+    }
+
+    &.animation2 {
+        animation: send2 ${ANIMATION_DURATION / 1000}s forwards linear;
+        @keyframes send2 {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-35px, -20px);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-70px, 0);
+                opacity: 0;
+            }
+        }
+    }
+
+    &.animation3 {
+        animation: send3 ${ANIMATION_DURATION / 1000}s forwards linear;
+        @keyframes send3 {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-70px, -30px);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-110px, 0);
+                opacity: 0;
+            }
+        }
     }
 `;

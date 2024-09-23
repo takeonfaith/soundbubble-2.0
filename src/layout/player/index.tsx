@@ -1,10 +1,6 @@
-import {
-    IconDots,
-    IconPlaylist,
-    IconQuote,
-    IconShare3,
-} from '@tabler/icons-react';
+import { IconDots, IconPlaylist, IconQuote } from '@tabler/icons-react';
 import { useTheme } from 'styled-components';
+import { chatModel } from '../../entities/chat/model';
 import { SongCover } from '../../entities/song/ui/SongCover';
 import { LikeButton } from '../../features/likeButton';
 import { Authors } from '../../shared/components/authors';
@@ -13,6 +9,8 @@ import { Flex } from '../../shared/components/flex';
 import { MusicControls } from '../../shared/components/musicControls';
 import { MusicControlsStyled } from '../../shared/components/musicControls/styles';
 import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
+import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
+import { ShareButton } from './ShareButton';
 import {
     MobilePlayButton,
     PlayerActionButtons,
@@ -22,8 +20,6 @@ import {
     SongTitle,
 } from './styles';
 import { usePlayer } from './usePlayer';
-import { chatModel } from '../../entities/chat/model';
-import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 
 export const Player = () => {
     const {
@@ -100,14 +96,7 @@ export const Player = () => {
                     >
                         <IconPlaylist size={20} />
                     </Button>
-                    <Button
-                        $width="42px"
-                        $height="42px"
-                        disabled={!currentSong}
-                        onClick={handleShare}
-                    >
-                        <IconShare3 size={20} />
-                    </Button>
+                    <ShareButton />
                     <Button
                         $width="42px"
                         $height="42px"

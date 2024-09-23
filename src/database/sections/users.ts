@@ -1,6 +1,7 @@
 import { TSong } from '@song/model/types';
 import {
     CreateUserCreditsType,
+    FriendStatus,
     LoginCreditsType,
     TUser,
 } from '@user/model/types';
@@ -251,6 +252,28 @@ export class Users {
         } catch (error) {
             throw new Error(
                 `Failed to add author to library, ${(error as Error).message}`
+            );
+        }
+    }
+
+    static async friendRequest(userId: string, friendId: string) {
+        try {
+            await FB.updateById('users', userId, {
+                friends: arrayUnion({
+                    uid: friendId,
+                    status: FriendStatus.requested,
+                }),
+            });
+
+            await FB.updateById('users', friendId, {
+                friends: arrayUnion({
+                    uid: userId,
+                    status: FriendStatus.awaiting,
+                }),
+            });
+        } catch (error) {
+            throw new Error(
+                `Failed to add friend, ${(error as Error).message}`
             );
         }
     }

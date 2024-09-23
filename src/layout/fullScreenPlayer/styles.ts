@@ -73,6 +73,10 @@ export const PlayerWrapper = styled.div`
     & .like-button {
         color: #fff;
     }
+
+    & .song-slider {
+        filter: brightness(2);
+    }
 `;
 
 export const PlayerCover = styled.div<{ $color1: string | undefined }>`
