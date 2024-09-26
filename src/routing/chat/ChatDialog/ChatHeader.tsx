@@ -1,9 +1,9 @@
 import { IconArrowLeft, IconDots } from '@tabler/icons-react';
+import { useNavigate } from 'react-router';
+import { useChatInfo } from '../../../entities/chat/hooks/useChatInfo';
 import { chatModel } from '../../../entities/chat/model';
 import { ChatTitle } from '../../../entities/chat/ui/styles';
-import { getLastSeen } from '../../../entities/user/lib/getLastSeen';
 import { userModel } from '../../../entities/user/model';
-import { TUser } from '../../../entities/user/model/types';
 import { UserCover } from '../../../entities/user/ui/UserCover';
 import { UserCoverBackground } from '../../../entities/user/ui/UserCoverBackground';
 import { UserStatus } from '../../../entities/user/ui/UserStatus';
@@ -16,31 +16,20 @@ import { Subtext } from '../../../shared/components/subtext';
 import { ChatDialogContextMenu } from './ChatDialogContextMenu';
 import { ChatTypingIndicator } from './ChatTypingIndicator';
 import { ChatHeaderStyled } from './styles';
-import { useNavigate } from 'react-router';
 
 export const ChatHeader = () => {
     const { chats, currentChatId, chatData } = chatModel.useChats();
-    const [{ data }] = userModel.useUser();
+    const [currentUser] = userModel.useUser();
     const currentChat = chats.find((chat) => chat.id === currentChatId);
 
-    const typing =
-        currentChat?.typing
-            .filter((u) => u !== data?.uid)
-            .map((id) => chatData[id] as TUser) ?? [];
-    const notYou =
-        currentChat?.participants.filter((p) => p !== data?.uid) ?? [];
-    const statuses =
-        notYou.map((u) => getLastSeen((chatData[u] as TUser)?.online).status) ??
-        [];
-    const membersOnline = statuses.filter((el) => el === 'online').length;
-    const chatPartner = chatData[notYou[0]] as TUser;
-    const isGroupChat = currentChat?.chatName !== '';
-    const chatImage = isGroupChat
-        ? currentChat?.chatImage
-        : chatPartner?.photoURL;
-    const chatTitle = isGroupChat
-        ? currentChat?.chatName
-        : chatPartner?.displayName;
+    const {
+        chatImage,
+        chatTitle,
+        isGroupChat,
+        typing,
+        membersOnline,
+        statuses,
+    } = useChatInfo(currentChat, chatData, currentUser);
 
     const navigate = useNavigate();
 
@@ -56,8 +45,15 @@ export const ChatHeader = () => {
     return (
         <ChatHeaderStyled>
             <Flex gap={8}>
-                <Button $width="35px" $height='35px' style={{ borderRadius: '100%' }}>
-                    <IconArrowLeft size={20} onClick={() => navigate('/chat')} />
+                <Button
+                    $width="35px"
+                    $height="35px"
+                    style={{ borderRadius: '100%' }}
+                >
+                    <IconArrowLeft
+                        size={20}
+                        onClick={() => navigate('/chat')}
+                    />
                 </Button>
                 <Flex gap={10}>
                     {!!Object.keys(chatData).length && (

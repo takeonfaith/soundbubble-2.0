@@ -67,7 +67,7 @@ sample({
 });
 
 const $history = $searchHistory.map((s) => s);
-const $userId = $user.map((u) => u.data?.uid);
+const $userId = $user.map((u) => u?.uid);
 
 sample({
     clock: getSuggestions,

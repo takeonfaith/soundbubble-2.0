@@ -1,24 +1,19 @@
 import { useCallback, useEffect } from 'react';
 import { songModel } from '../../../entities/song/model';
-import { LoopMode } from '../../../entities/song/model/types';
+import { songModel as songModelNew } from '../../../entities/song/new-model';
 
 export const usePlayerMusicControls = () => {
-    const { currentSong, state } = songModel.useSong();
-    const { currentTime, duration } = songModel.playblack.usePlayback();
-    const { queue, loop } = songModel.queue.useQueue();
-    const { next, previous, play } = songModel.useControls();
-    const disableNextSongButton =
-        queue.songs.length < 2 ||
-        (loop === LoopMode.noloop &&
-            queue.currentSongIndex === queue.songs.length - 1);
+    const { currentSong, state, loopMode, shuffleMode } =
+        songModelNew.useSong();
+    const currentTime = songModelNew.useCurrentTime();
 
-    const handlePlay = useCallback(() => play(), [play]);
+    const disableNextSongButton = false;
+
+    const handlePlay = useCallback(() => songModelNew.controls.play({}), []);
 
     const handleChangeTime: React.ChangeEventHandler<HTMLInputElement> = (
         e
     ) => {
-        console.log(e.target.value);
-
         songModel.playblack.setIsSliding(true);
         songModel.playblack.setCurrentTime(+e.target.value);
     };
@@ -30,10 +25,12 @@ export const usePlayerMusicControls = () => {
     };
 
     const handleLoopMode = () => {
-        songModel.queue.changeLoopMode();
+        songModelNew.queue.toggleLoopMode();
     };
 
-    const handleShuffle = () => {};
+    const handleShuffle = () => {
+        songModelNew.queue.toggleShuffleMode();
+    };
 
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
@@ -54,17 +51,17 @@ export const usePlayerMusicControls = () => {
 
     return {
         currentTime,
-        duration,
+        duration: currentSong?.duration ?? 0,
         colors: currentSong?.imageColors,
         state,
-        loopMode: loop,
-        shuffle: true,
+        loopMode,
+        shuffle: shuffleMode,
         disableNextSongButton,
         handleShuffle,
         handleLoopMode,
         onPlay: handlePlay,
-        onPrev: previous,
-        onNext: next,
+        onPrev: songModelNew.queue.previous,
+        onNext: songModelNew.queue.next,
         handleMouseUp,
         handleChangeTime,
     };

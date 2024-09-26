@@ -4,7 +4,7 @@ import { modalModel } from 'layout/modal/model';
 import { userModel } from '../../entities/user/model';
 
 export const usePrivateAction = () => {
-    const [{ data }] = userModel.useUser();
+    const [currentUser] = userModel.useUser();
 
     const openLoginModal =
         <T extends (params: any[]) => unknown>(fn?: T) =>
@@ -23,7 +23,7 @@ export const usePrivateAction = () => {
         };
 
     const loggedIn = <T extends (params: any) => unknown>(fn: T) => {
-        if (data === null) {
+        if (currentUser === null) {
             return openLoginModal(fn);
         }
 

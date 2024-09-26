@@ -158,12 +158,12 @@ export const SongInfo = ({ song }: Props) => {
                         </Listens>
                     </Flex>
                     <Authors
-                        onAuthorClick={() => modalModel.events.close()}
+                        onAuthorsClick={() => modalModel.events.close()}
                         authors={authors}
                     />
                 </Flex>
                 <Flex gap={10}>
-                    <Subtext>Release: {formattedDate}</Subtext>
+                    <Subtext>Released: {formattedDate}</Subtext>
                 </Flex>
             </Flex>
             <Buttons>

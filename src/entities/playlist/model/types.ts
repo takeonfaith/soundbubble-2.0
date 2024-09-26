@@ -15,5 +15,5 @@ export type TPlaylist = {
 };
 
 export type TUploadPlaylist = Omit<TPlaylist, 'image'> & {
-    image: File | null;
+    image: string | File | null;
 };

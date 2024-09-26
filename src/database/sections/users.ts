@@ -277,4 +277,12 @@ export class Users {
             );
         }
     }
+
+    static async updateUserOnline(userId: string, online: number) {
+        try {
+            await FB.updateById('users', userId, { online });
+        } catch (error) {
+            throw new Error('Failed to update user online status');
+        }
+    }
 }

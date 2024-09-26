@@ -40,12 +40,6 @@ export type CreateUserCreditsType = LoginCreditsType & {
     name: string;
 };
 
-export type TStore = {
-    data: TUser | null;
-    error: Error | null;
-    userPlaylists: TPlaylist[];
-};
-
 export type TPageStore = {
     user: TUser | null;
     error: string | null;

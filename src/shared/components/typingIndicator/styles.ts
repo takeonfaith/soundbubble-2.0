@@ -4,7 +4,7 @@ export const TypingIndicatorStyled = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 28px;
+    width: 22px;
     border-radius: 20px;
 
     & > div:nth-child(1) {
@@ -39,10 +39,10 @@ export const TypingIndicatorStyled = styled.div`
 `;
 
 export const TypingIndicatorItem = styled.div`
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 100%;
     opacity: 0;
     transform: scale(0);
-    background: grey;
+    background: ${({ theme }) => theme.scheme.blue.action};
 `;

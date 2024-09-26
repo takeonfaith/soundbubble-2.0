@@ -6,8 +6,8 @@ import {
     IconShare3,
     IconSun,
 } from '@tabler/icons-react';
-import React from 'react';
-import { Location, useLocation, useNavigate } from 'react-router';
+import React, { useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 import { toggleTheme } from '../../app/theme';
 import { Settings } from '../../entities/settings/ui';
 import { userModel } from '../../entities/user/model';
@@ -32,7 +32,7 @@ import {
 } from './styles';
 
 const UserContextMenu = () => {
-    const [{ data }] = userModel.useUser();
+    const [currentUser] = userModel.useUser();
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -50,7 +50,7 @@ const UserContextMenu = () => {
     const handleShare = () => {
         modalModel.events.open({
             title: `Share profile with friends`,
-            content: <ShareModal entity={data} />,
+            content: <ShareModal entity={currentUser} />,
         });
         popupModel.events.close();
     };
@@ -80,10 +80,10 @@ const UserContextMenu = () => {
                 }}
             >
                 <UserCover
-                    colors={data?.imageColors ?? ['grey']}
-                    src={data?.photoURL}
+                    colors={currentUser?.imageColors ?? ['grey']}
+                    src={currentUser?.photoURL}
                     size={'20px'}
-                    isAuthor={data?.isAuthor}
+                    isAuthor={currentUser?.isAuthor}
                 />
                 Go to profile
             </Button>
@@ -118,23 +118,39 @@ const UserContextMenu = () => {
     );
 };
 
-const getCurrentRoute = (
-    allRoutes: TRoute[],
-    location: Location<unknown>
-): TRoute | null => {
-    const { pathname } = location;
-    const splitted = pathname.split('/');
-    for (let i = 0; i < allRoutes.length; i++) {
-        const route = allRoutes[i];
+function getCurrentRoute(routes: TRoute[], currentUrl: string): TRoute | null {
+    const findRoute = (
+        routeArray: TRoute[],
+        urlParts: string[]
+    ): TRoute | null => {
+        for (const route of routeArray) {
+            const routeUrlParts = route.url.split('/').filter((part) => part);
+            if (
+                routeUrlParts.every((part, index) => part === urlParts[index])
+            ) {
+                if (routeUrlParts.length === urlParts.length) {
+                    return route;
+                }
+                if (route.children) {
+                    const remainingUrlParts = urlParts.slice(
+                        routeUrlParts.length
+                    );
+                    const childRoute = findRoute(
+                        route.children,
+                        remainingUrlParts
+                    );
+                    if (childRoute) {
+                        return childRoute;
+                    }
+                }
+            }
+        }
+        return null;
+    };
 
-        if (route.children) {
-            const res = getCurrentRoute(route.children, location);
-            if (res) return res;
-        } else if (splitted[1] === route.url) return route;
-    }
-
-    return null;
-};
+    const urlParts = currentUrl.split('/').filter((part) => part);
+    return findRoute(routes, urlParts);
+}
 
 type Props = {
     children?: React.ReactNode;
@@ -143,9 +159,12 @@ type Props = {
 };
 
 export const Header = ({ children, hide, className }: Props) => {
-    const [{ data }] = userModel.useUser();
+    const [currentUser] = userModel.useUser();
     const location = useLocation();
-    const currentRoute = getCurrentRoute(allRoutes, location);
+    const currentRoute = useMemo(
+        () => getCurrentRoute(allRoutes, location.pathname),
+        [location.pathname]
+    );
 
     const handleOpenUserPopup = (e: Evt<'btn'>) => {
         e.stopPropagation();
@@ -168,14 +187,14 @@ export const Header = ({ children, hide, className }: Props) => {
                 <HeaderPageTitle>{currentRoute?.title}</HeaderPageTitle>
                 <DesktopChildren>{children}</DesktopChildren>
                 <Flex width="300px" gap={20} jc="flex-end">
-                    {data && (
+                    {currentUser && (
                         <Button $width="40px" onClick={handleOpenUserPopup}>
-                            {data.isAdmin && <AdminCircle />}
+                            {currentUser.isAdmin && <AdminCircle />}
                             <UserCover
-                                colors={data?.imageColors}
-                                src={data?.photoURL}
+                                colors={currentUser?.imageColors}
+                                src={currentUser?.photoURL}
                                 size={'30px'}
-                                isAuthor={data?.isAuthor}
+                                isAuthor={currentUser?.isAuthor}
                             />
                         </Button>
                     )}

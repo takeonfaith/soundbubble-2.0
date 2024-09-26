@@ -29,7 +29,7 @@ export const Sidebar = () => {
     const { loggedIn } = usePrivateAction();
     const [ownPlaylists] = userModel.useOwnPlaylists();
     const chatUnreadCount = chatModel.useChatUnreadCount();
-    const [{ data }] = userModel.useUser();
+    const [currentUser] = userModel.useUser();
 
     const notificationsDic: Record<string, number> = {
         chat: chatUnreadCount,
@@ -75,9 +75,9 @@ export const Sidebar = () => {
 
             <SidebarSection>
                 <Flex jc="space-between" width="100%">
-                    <NavigationTitle showNavigation={!!data} to="/playlists">
+                    <NavigationTitle showNavigation={!!currentUser} to="/playlists">
                         <SidebarSectionTitle
-                            className={data ? 'clickable' : ''}
+                            className={currentUser ? 'clickable' : ''}
                         >
                             Your Playlists
                         </SidebarSectionTitle>

@@ -1,226 +1,155 @@
-import {
-    IconArrowLeft,
-    IconDiscountCheckFilled,
-    IconDotsVertical,
-    IconEdit,
-    IconHeadphones,
-    IconInfoCircle,
-    IconLock,
-    IconMusicPlus,
-    IconShare3,
-    IconTrash,
-    IconUserPlus,
-} from '@tabler/icons-react';
-import { useNavigate } from 'react-router';
-import { useTheme } from 'styled-components';
-import { playlistModel } from '../../entities/playlist/model';
+import { IconHeadphones, IconUserPlus } from '@tabler/icons-react';
+import { styled } from 'styled-components';
+import { TPlaylist } from '../../entities/playlist/model/types';
 import { PlaylistCover } from '../../entities/playlist/ui/PlaylistCover';
-import { LikeButton } from '../../features/likeButton';
-import { popupModel } from '../../layout/popup/model';
+import { TAuthor, TQueue } from '../../entities/song/model/types';
 import { Authors } from '../../shared/components/authors';
-import { Button } from '../../shared/components/button';
-import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
-import { Divider } from '../../shared/components/divider';
 import { Flex } from '../../shared/components/flex';
-import {
-    PageTopStyled,
-    TopBackground,
-    TopLeftCorner,
-    TopRightCorner,
-} from '../../shared/components/pageTop/styles';
+import { Subtext } from '../../shared/components/subtext';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
-import { Wave } from '../../shared/images';
-import { BottomButtons } from '../author/BottomButtons';
-import { confirmModel } from '../../layout/confirm/model';
+import { getTotalSongsDuration } from '../../shared/funcs/getTotalSongsDuration';
+import { PlaylistControlButtons } from './PlaylistControlButtons';
+import { hexToRgbA } from '../../shared/funcs/hexToRgba';
+
+const PageTopStyled = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+`;
+
+const PageTopWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    overflow: visible;
+    padding-left: 8px;
+    margin-bottom: 20px;
+    width: 100%;
+    background: linear-gradient(
+        180deg,
+        ${({ color }) => `rgba(${color}, 0.3)`},
+        transparent
+    );
+
+    & .authors {
+        font-size: 0.95rem;
+    }
+`;
+
+const IconWrapper = styled.div`
+    width: 200px;
+    height: 200px;
+    background: ${({ theme }) => theme.scheme.blue.mild};
+    border-radius: 20px;
+    color: ${({ theme }) => theme.scheme.blue.action};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+        width: 60%;
+        height: 60%;
+        filter: drop-shadow(0 0 35px);
+    }
+`;
+
+const PlaylistControlButtonsStyled = styled.div`
+    position: sticky;
+    padding: 12px 0 0px 8px;
+    margin-bottom: 28px;
+    z-index: 11;
+    width: fit-content;
+    background: ${({ theme }) => theme.colors.pageBackground};
+`;
 
 type Props = {
-    id: string | undefined;
+    queue: TQueue;
     name: string | undefined;
-    numberOfListenersPerMonth: number | undefined;
-    subscribers: number | undefined;
-    colors: string[] | undefined;
-    isVerified?: boolean;
-    isPrivate?: boolean;
-    isOwner: boolean;
-    handleClickShare: () => void;
-};
+    authors: TAuthor[] | undefined;
+    playlist: TPlaylist | null;
+    icon?: React.ReactNode;
+    hasHeader?: boolean;
+} & React.HTMLAttributes<HTMLDivElement>;
 
 export const PageTop = ({
+    queue,
+    authors,
     name,
-    isPrivate,
-    numberOfListenersPerMonth,
-    subscribers,
-    colors,
-    isVerified,
-    isOwner,
-    handleClickShare,
+    icon,
+    playlist,
+    hasHeader,
+    ...props
 }: Props) => {
-    const navigate = useNavigate();
-    const theme = useTheme();
-    const { currentPlaylist, currentPlaylistSongs } =
-        playlistModel.usePlaylist();
-
-    const handleDeletePlaylist = () => {
-        confirmModel.events.open({
-            text: 'Are you sure you want to delete this playlist?',
-            onAccept: () => {
-                // playlistModel.events.deletePlaylist(currentPlaylist?.id);
-                navigate(-1);
-            },
-            subtext: 'This action cannot be undone',
-            icon: <IconTrash />,
-            iconColor: 'red',
-        });
-    };
-
-    const handleOpenMore = (e: Evt<'btn'>) => {
-        e.stopPropagation();
-
-        if (isOwner) {
-            popupModel.events.open({
-                e,
-                height: 248,
-                content: (
-                    <DefaultContextMenuStyled>
-                        <Button>
-                            <IconEdit />
-                            Edit
-                        </Button>
-                        <Button>
-                            <IconMusicPlus />
-                            Add Songs
-                        </Button>
-                        <Divider />
-                        <Button onClick={handleClickShare}>
-                            <IconShare3 />
-                            Share
-                        </Button>
-                        <Button>
-                            <IconInfoCircle />
-                            Info
-                        </Button>
-                        <Divider />
-                        <Button
-                            color={theme.scheme.red.text}
-                            onClick={handleDeletePlaylist}
-                        >
-                            <IconTrash />
-                            Delete
-                        </Button>
-                    </DefaultContextMenuStyled>
-                ),
-            });
-        } else {
-            popupModel.events.open({
-                e,
-                height: 96,
-                content: (
-                    <DefaultContextMenuStyled>
-                        <Button onClick={handleClickShare}>
-                            <IconShare3 />
-                            Share
-                        </Button>
-                        <Button>
-                            <IconInfoCircle />
-                            Info
-                        </Button>
-                    </DefaultContextMenuStyled>
-                ),
-            });
-        }
-    };
-
     return (
-        <PageTopStyled $colors={colors}>
-            <PlaylistCover
-                size="200px"
-                isAlbum={currentPlaylist?.isAlbum ?? false}
-                src={currentPlaylist?.image}
-                colors={currentPlaylist?.imageColors}
-            />
-            <Flex gap={8} d="column" ai="center">
-                <Flex gap={4} d="column">
-                    <Flex gap={6}>
-                        <h2>{name}</h2>
-                        {isVerified && (
-                            <IconDiscountCheckFilled color={colors?.[1]} />
+        <>
+            <PageTopWrapper
+                color={hexToRgbA(playlist?.imageColors[0])}
+                {...props}
+            >
+                {playlist ? (
+                    <PlaylistCover
+                        size="200px"
+                        src={playlist?.image}
+                        colors={playlist?.imageColors}
+                        isAlbum={false}
+                    />
+                ) : (
+                    <IconWrapper>{icon}</IconWrapper>
+                )}
+                <Flex gap={20} d="column" ai="flex-start">
+                    <Flex d="column" ai="flex-start" gap={6}>
+                        <h1 style={{ fontWeight: '500' }}>{name}</h1>
+                        <Authors authors={authors} isAuthor={false} />
+                    </Flex>
+                    <Flex gap={10}>
+                        {playlist && (
+                            <>
+                                <Flex gap={10}>
+                                    <Flex gap={4}>
+                                        <Subtext
+                                            style={{ fontSize: '0.85rem' }}
+                                        >
+                                            {formatBigNumber(playlist.listens)}
+                                        </Subtext>
+                                        <IconHeadphones
+                                            size={14}
+                                            opacity={0.5}
+                                        />
+                                    </Flex>
+                                    ·
+                                    <Flex gap={4}>
+                                        <Subtext
+                                            style={{ fontSize: '0.85rem' }}
+                                        >
+                                            {formatBigNumber(
+                                                playlist.subscribers
+                                            )}
+                                        </Subtext>
+                                        <IconUserPlus size={14} opacity={0.5} />
+                                    </Flex>
+                                </Flex>
+                                ·
+                            </>
                         )}
-                        {isPrivate && <IconLock size={20} />}
-                    </Flex>
-                    <div className="subtitle">
-                        <Flex gap={3}>
-                            {
-                                <span
-                                    style={{
-                                        fontSize: '0.8rem',
-                                        fontWeight: '300',
-                                        opacity: '0.6',
-                                    }}
-                                >
-                                    {currentPlaylist?.isAlbum
-                                        ? 'Album'
-                                        : 'Playlist'}{' '}
-                                    ·{' '}
-                                </span>
-                            }
-                            <Authors
-                                width="fit-content"
-                                authors={currentPlaylist?.authors}
-                                isUser={!currentPlaylist?.isAlbum}
-                            />
-                        </Flex>
-                    </div>
-                </Flex>
-                <Flex
-                    gap={20}
-                    style={{ opacity: '0.8', fontWeight: '300' }}
-                    className="stats"
-                >
-                    <Flex gap={4}>
-                        {formatBigNumber(numberOfListenersPerMonth)}
-                        <IconHeadphones size={16} />
-                    </Flex>
-                    <Flex gap={4}>
-                        {formatBigNumber(subscribers)}
-                        <IconUserPlus size={16} />
+                        <Subtext style={{ fontSize: '0.85rem' }}>
+                            {queue.songs.length} songs,{' '}
+                            {getTotalSongsDuration(queue.songs)}
+                        </Subtext>
                     </Flex>
                 </Flex>
-            </Flex>
-            <TopLeftCorner>
-                <Button
-                    $height="40px"
-                    $width="40px"
-                    onClick={() => navigate(-1)}
-                >
-                    <IconArrowLeft size={20} />
-                </Button>
-            </TopLeftCorner>
-            <TopRightCorner>
-                <LikeButton
-                    entity={null}
-                    isLiked={false}
-                    likeColor={undefined}
-                    height="40px"
-                    width="40px"
+            </PageTopWrapper>
+            <PlaylistControlButtonsStyled
+                style={{ top: hasHeader ? '10px' : '0px' }}
+                className="playlist-control"
+            >
+                <PlaylistControlButtons
+                    queue={queue}
+                    primaryColor={
+                        playlist ? playlist?.imageColors[0] ?? '#3f3f3f' : undefined
+                    }
+                    playlist={playlist}
                 />
-                <Button $height="40px" $width="40px" onClick={handleOpenMore}>
-                    <IconDotsVertical size={20} />
-                </Button>
-            </TopRightCorner>
-            <TopBackground>
-                <img src={Wave} />
-            </TopBackground>
-            <BottomButtons
-                buttonColor={currentPlaylist?.imageColors[0]}
-                isAdmin={false}
-                isPageOwner={false}
-                queueInfo={{
-                    name: currentPlaylist?.name ?? '',
-                    image: undefined,
-                    url: `/playlist/${currentPlaylist?.id ?? ''}`,
-                    songs: currentPlaylistSongs ?? [],
-                }}
-            />
-        </PageTopStyled>
+            </PlaylistControlButtonsStyled>
+        </>
     );
 };

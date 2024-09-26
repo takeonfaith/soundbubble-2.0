@@ -8,7 +8,7 @@ import {
 } from '../../user/model';
 import { TSong } from '../model/types';
 
-export const useToggleLike = (song: TSong | null) => {
+export const useToggleLike = (song: TSong | undefined) => {
     const [isAddingSong, isRemovingSong] = useUnit([
         addSongToLibraryFx.pending,
         removeSongFromLibraryFx.pending,

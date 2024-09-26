@@ -26,7 +26,7 @@ import {
     usePlayback,
 } from './playback';
 import { changeLoopMode, next, previous, setQueue, useQueue } from './queue';
-import { TQueueStore, TSong, TStore } from './types';
+import { SongState, TQueueStore, TSong, TStore } from './types';
 import { throttle } from 'patronum';
 import { Database } from '../../../database';
 
@@ -45,9 +45,10 @@ const addListening = createEvent<TSong>();
 
 export const $songStore = createStore<TStore>(DEFAULT_STORE);
 const $currentSongDuration = $songStore.map(
-    (song) => ((song.currentSong?.duration ?? 0) / 2) * 1000
+    (song) => ((song.currentSong?.duration ?? 0) / 4) * 1000
 );
 
+// TODO: Заменить на play
 const { unsubscribe } = throttle(load, $currentSongDuration).watch(
     ({ song }) => {
         console.log('listening added');
@@ -60,7 +61,7 @@ const { unsubscribe } = throttle(load, $currentSongDuration).watch(
 sample({
     clock: play,
     source: $songStore,
-    fn: (old): TStore => ({ ...old, state: 'playing' }),
+    fn: (old): TStore => ({ ...old, state: SongState.playing }),
     target: $songStore,
 });
 
@@ -69,7 +70,7 @@ sample({
     source: $songStore,
     fn: (old): TStore => {
         unsubscribe();
-        return { ...old, state: 'pause' };
+        return { ...old, state: SongState.pause };
     },
     target: $songStore,
 });
@@ -116,7 +117,7 @@ sample({
     source: $songStore,
     fn: (old, { song }): TStore => ({
         ...old,
-        state: 'loading',
+        state: SongState.loading,
         loaded: false,
         currentSong: song,
     }),

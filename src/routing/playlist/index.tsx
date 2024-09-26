@@ -1,6 +1,6 @@
 import { IconError404Off, IconMusicOff, IconPlus } from '@tabler/icons-react';
 import { playlistModel } from '../../entities/playlist/model';
-import { getHumanDuration } from '../../entities/song/lib/getHumanDuration';
+import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { userModel } from '../../entities/user/model';
 import { ShareModal } from '../../features/shareModal';
@@ -10,7 +10,10 @@ import { PageMessage } from '../../shared/components/pageMessage';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { Subtext } from '../../shared/components/subtext';
+import { getTotalSongsDuration } from '../../shared/funcs/getTotalSongsDuration';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
+import { AddSongsButton } from './AddSongsButton';
+import { AddSongsToPlaylistModal } from './AddSongsToPlaylistModal';
 import { PageTop } from './PageTop';
 import { SkeletonLoading } from './Skeleton';
 import {
@@ -19,15 +22,17 @@ import {
     PlaylistPageStyled,
     PlaylistSimilar,
 } from './styles';
-import { AddSongsToPlaylistModal } from './AddSongsToPlaylistModal';
 
 export const PlaylistPage = () => {
     const { currentPlaylist, currentPlaylistSongs, loading, error } =
         playlistModel.usePlaylist();
-    const [{ data }] = userModel.useUser();
+
+    const [currentUser] = userModel.useUser();
     const isOwner =
-        data?.isAdmin ||
-        !!currentPlaylist?.authors.find((author) => author.uid === data?.uid);
+        currentUser?.isAdmin ||
+        !!currentPlaylist?.authors.find(
+            (author) => author.uid === currentUser?.uid
+        );
 
     useUrlParamId({
         page: 'playlist',
@@ -48,15 +53,17 @@ export const PlaylistPage = () => {
     const handleAddSongsModal = () => {
         modalModel.events.open({
             title: 'Add songs to playlist',
-            content: <AddSongsToPlaylistModal />,
+            content: <AddSongsToPlaylistModal playlist={currentPlaylist} />,
             sizeY: 'l',
         });
     };
 
-    const totalDuration = currentPlaylistSongs?.reduce((acc, song) => {
-        acc += song.duration;
-        return acc;
-    }, 0);
+    const queue = createQueueObject({
+        name: currentPlaylist?.name,
+        songs: currentPlaylistSongs ?? [],
+        imageUrl: currentPlaylist?.image,
+        url: `/playlist/${currentPlaylist?.id}`,
+    });
 
     return (
         <PageWrapper>
@@ -68,14 +75,14 @@ export const PlaylistPage = () => {
                 >
                     <PlaylistPageStyled>
                         <PageTop
-                            handleClickShare={handleClickShare}
-                            id={''}
                             name={currentPlaylist?.name}
-                            numberOfListenersPerMonth={currentPlaylist?.listens}
-                            subscribers={currentPlaylist?.subscribers}
-                            isPrivate={currentPlaylist?.isPrivate}
-                            isOwner={isOwner}
-                            colors={currentPlaylist?.imageColors}
+                            playlist={currentPlaylist}
+                            queue={queue}
+                            authors={currentPlaylist?.authors}
+                            style={{
+                                padding:
+                                    '80px var(--page-padding) 0 calc(var(--page-padding) + 8px)',
+                            }}
                         />
 
                         <PlaylistPageSongs>
@@ -99,28 +106,15 @@ export const PlaylistPage = () => {
                                     )}
                                 </PageMessage>
                             )}
-                            <VerticalSongsList
-                                songs={currentPlaylistSongs ?? []}
-                                listName={currentPlaylist?.name ?? ''}
-                                listIcon={currentPlaylist?.image ?? ''}
-                                listUrl={`/playlist/${
-                                    currentPlaylist?.id ?? ''
-                                }`}
-                            />
-                        </PlaylistPageSongs>
-                        <BottomPlaylist>
+                            <VerticalSongsList queue={queue} />
                             {(currentPlaylistSongs?.length ?? 0) > 0 &&
                                 isOwner && (
-                                    <Button
-                                        $height="35px"
-                                        $width="130px"
-                                        className="outline"
-                                        style={{ fontSize: '0.85rem' }}
-                                    >
-                                        <IconPlus size={18} />
-                                        Add songs
-                                    </Button>
+                                    <AddSongsButton
+                                        playlist={currentPlaylist}
+                                    />
                                 )}
+                        </PlaylistPageSongs>
+                        <BottomPlaylist>
                             {(currentPlaylistSongs?.length ?? 0) > 0 && (
                                 <Subtext
                                     style={{
@@ -129,7 +123,9 @@ export const PlaylistPage = () => {
                                     }}
                                 >
                                     {currentPlaylistSongs?.length ?? 0} songs,
-                                    {getHumanDuration(totalDuration, 'text')}
+                                    {getTotalSongsDuration(
+                                        currentPlaylistSongs
+                                    )}
                                 </Subtext>
                             )}
                         </BottomPlaylist>

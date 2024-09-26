@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { songModel } from '../../entities/song/model';
+import { songModel } from '../../entities/song/new-model';
 import { Queue } from '../fullScreenPlayer/Queue';
 
 const SongsQueueStyled = styled.div`
@@ -13,7 +13,9 @@ const SongsQueueStyled = styled.div`
 `;
 
 export const SongsQueue = () => {
-    const { queue } = songModel.queue.useQueue();
+    const { queue } = songModel.useSong();
+    console.log('rerender');
+
     return (
         <SongsQueueStyled>
             <h2>Queue</h2>

@@ -11,7 +11,8 @@ import { BeautifulBackground } from '../../shared/components/beautifulBackground
 import { Flex } from '../../shared/components/flex';
 import { Subtext } from '../../shared/components/subtext';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
-import { BottomButtons } from '../author/BottomButtons';
+import { ControlButtons } from '../../features/controlButtons';
+import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 
 const TopAutorCardStyled = styled(Link)`
     width: 100%;
@@ -56,7 +57,7 @@ const LeftSide = styled(Flex)`
     @media (max-width: 768px) {
         width: 100%;
     }
-`
+`;
 
 const TopAuthorCardBackgroundStyled = styled(BeautifulBackground)`
     animation: none;
@@ -101,6 +102,13 @@ const CountStyled = styled.div`
 `;
 
 export const TopAuthorCard = ({ author }: { author: TUser }) => {
+    const queue = createQueueObject({
+        name: author.displayName,
+        imageUrl: author.photoURL,
+        url: `/author/${author.uid}`,
+        songs: [],
+    });
+
     return (
         <TopAutorCardStyled to={`/author/${author.uid}`}>
             <Flex
@@ -144,17 +152,12 @@ export const TopAuthorCard = ({ author }: { author: TUser }) => {
                             </Flex>
                         </Flex>
                     </Flex>
-                    <BottomButtons
-                        buttonColor={author.imageColors[1]}
-                        isAdmin={false}
-                        isPageOwner={false}
-                        queueInfo={{
-                            name: '',
-                            image: undefined,
-                            url: '',
-                            songs: [],
-                        }}
-                    />
+                    <Flex gap={8} width='350px'>
+                        <ControlButtons
+                            queue={queue}
+                            buttonColor={author.imageColors[2]}
+                        />
+                    </Flex>
                 </LeftSide>
                 <UserCover
                     isAuthor={author?.isAdmin}

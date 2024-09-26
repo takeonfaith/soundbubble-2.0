@@ -8,9 +8,10 @@ const COLOR_SCHEME_DARK = {
         transparent2: '#5394ff2b',
     },
     purple: {
+        action: '#a665e3',
         main: '#d38eff',
         text: '#d38eff',
-        transparent: '#d38eff',
+        transparent: '#d38eff40',
     },
     red: {
         main: '#ff5b5b',
@@ -90,6 +91,7 @@ const COLOR_SCHEME_LIGHT = {
         transparent2: '#5394ff2b',
     },
     purple: {
+        action: '#a665e3',
         main: '#9332d1',
         text: '#9332d1',
         transparent: '#9332d134',

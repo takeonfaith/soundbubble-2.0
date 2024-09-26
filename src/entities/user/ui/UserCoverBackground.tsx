@@ -17,16 +17,18 @@ export const ChatBackgroundStyled = styled.div<{
     font-size: calc(${({ $width }) => $width ?? '50px'} / 3);
 
     @media (max-width: 768px) {
-		width: ${({ $width }) => $width ?? '55px'};
+        width: ${({ $width }) => $width ?? '55px'};
     }
 `;
 
 type Props = {
-    name: string;
+    name: string | undefined | null;
     width?: string;
 };
 
 export const UserCoverBackground = ({ name, width }: Props) => {
+    if (!name) return null;
+
     const abbr =
         name?.split(' ').length === 1
             ? name[0].toUpperCase() + name[1].toUpperCase()

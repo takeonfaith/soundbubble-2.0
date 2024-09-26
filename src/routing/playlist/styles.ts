@@ -3,21 +3,16 @@ import { Flex } from '../../shared/components/flex';
 
 export const PlaylistPageStyled = styled.div`
     width: 100%;
-`;
 
-export const PlaylistPageTop = styled.div<{ background: string }>`
-    background: ${({ background }) => background};
-    width: 100%;
-    height: 320px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    .playlist-control {
+        padding: 16px calc(var(--page-padding) + 8px);
+        width: 100%;
+    }
 `;
 
 export const PlaylistPageSongs = styled.div`
     width: 100%;
-    padding: var(--page-padding);
-    padding-top: 40px;
+    padding: 0 var(--page-padding);
     padding-bottom: 0;
 
     @media (max-width: 1000px) {
@@ -30,19 +25,10 @@ export const PlaylistPageSongs = styled.div`
     }
 `;
 
-export const PlaylistCover = styled.div`
-    width: 250px;
-    height: 250px;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-`;
-
 export const BottomPlaylist = styled.div`
     padding: 0 calc(var(--page-padding) + 6px);
     margin-top: 20px;
+    margin-bottom: 30px;
     display: flex;
     flex-direction: column;
     gap: 20px;

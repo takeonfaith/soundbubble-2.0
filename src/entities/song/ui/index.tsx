@@ -25,6 +25,7 @@ import {
     PlayButton,
     PlayOverlay,
     SerialNumberStyled,
+    SongAuthors,
     SongButtons,
     SongInfo,
     SongLeft,
@@ -32,20 +33,29 @@ import {
     SongNameAndListens,
     SongStyled,
 } from './styles';
+import { formatBigNumber } from '../../../shared/funcs/formatBigNumber';
 
 type Props = {
     song: TSong;
     playing: boolean;
     loading: boolean;
-    loaded: boolean;
     index: number;
     onClick: (song: TSong, index: number) => void;
     noImage?: boolean;
     showSerialNumber?: boolean;
+    children?: React.ReactNode;
 };
 
 export const SongItem = memo(
-    ({ song, playing, loading, index, onClick, showSerialNumber }: Props) => {
+    ({
+        song,
+        playing,
+        loading,
+        index,
+        onClick,
+        showSerialNumber,
+        children,
+    }: Props) => {
         const { name, authors, imageColors, cover, listens, duration } = song;
         const isLiked = useIsSongLiked(song);
         const { handleToggleLike, performingAction } = useToggleLike(song);
@@ -105,15 +115,13 @@ export const SongItem = memo(
                         <SongNameAndListens>
                             <SongName>{name}</SongName>
                             <Listens>
-                                {listens}
+                                {formatBigNumber(listens)}
                                 <IconHeadphones />
                             </Listens>
                         </SongNameAndListens>
-                        <Authors
-                            width="100%"
-                            authors={authors}
-                            disableOnMobile
-                        />
+                        <SongAuthors>
+                            <Authors authors={authors} disableOnMobile />
+                        </SongAuthors>
                     </SongInfo>
                 </SongLeft>
                 <Listens className="outside">
@@ -121,21 +129,25 @@ export const SongItem = memo(
                     <IconHeadphones />
                 </Listens>
                 <SongButtons>
-                    <LikeButton
-                        width="35px"
-                        height="35px"
-                        entity={song}
-                        isLiked={isLiked}
-                        likeColor={'grey'}
-                        onClick={handleToggleLike}
-                        loading={performingAction}
-                    />
+                    {!children && (
+                        <LikeButton
+                            width="35px"
+                            height="35px"
+                            entity={song}
+                            isLiked={isLiked}
+                            likeColor={'grey'}
+                            onClick={handleToggleLike}
+                            loading={performingAction}
+                        />
+                    )}
                     <Subtext className="duration">
                         {getHumanDuration(duration)}
                     </Subtext>
-                    <MoreInfoButton onClick={handleMore}>
-                        <IconDots />
-                    </MoreInfoButton>
+                    {children ?? (
+                        <MoreInfoButton onClick={handleMore}>
+                            <IconDots />
+                        </MoreInfoButton>
+                    )}
                 </SongButtons>
             </SongStyled>
         );

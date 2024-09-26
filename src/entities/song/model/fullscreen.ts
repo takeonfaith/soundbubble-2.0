@@ -1,23 +1,13 @@
-import { createEvent, createStore, sample } from "effector";
-import { useUnit } from "effector-react";
+import { createApi, createStore } from 'effector';
+import { useUnit } from 'effector-react';
 
 const $fullScreen = createStore<boolean>(false);
 
-export const open = createEvent();
-export const close = createEvent();
-
-sample({
-  clock: open,
-  fn: () => true,
-  target: $fullScreen,
-});
-
-sample({
-  clock: close,
-  fn: () => false,
-  target: $fullScreen,
+export const { open, close } = createApi($fullScreen, {
+    open: () => true,
+    close: () => false,
 });
 
 export const useFullScreen = () => {
-  return useUnit($fullScreen);
+    return useUnit($fullScreen);
 };

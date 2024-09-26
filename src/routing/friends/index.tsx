@@ -26,13 +26,13 @@ const FriendsWrapper = styled.div`
 `;
 
 export const FriendsPage = () => {
-    const [{ data }] = userModel.useUser();
+    const [currentUser] = userModel.useUser();
     const [friends, loading] = userModel.useFriends();
 
     return (
         <PageWrapper>
             <Header>
-                {!!data && (
+                {!!currentUser && (
                     <FriendsWrapper>
                         <Input
                             placeholder="Search for friends..."
@@ -50,7 +50,7 @@ export const FriendsPage = () => {
                         loading={loading}
                         skeleton={<UserListSkeleton orientation="horizontal" />}
                     >
-                        {!data && (
+                        {!currentUser && (
                             <PageMessage
                                 icon={IconUserOff}
                                 title={'No friends'}
@@ -68,7 +68,7 @@ export const FriendsPage = () => {
                                             orientation="horizontal"
                                         >
                                             <Button $width="45px">
-                                                <IconMessage2 size={20}/>
+                                                <IconMessage2 size={20} />
                                             </Button>
                                         </UserItem>
                                     );

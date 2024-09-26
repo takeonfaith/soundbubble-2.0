@@ -87,6 +87,7 @@ export const CurrentTabItem = styled.div<{
     left: 4px;
     top: 4px;
     z-index: 0;
+    border: 1px solid ${({ theme }) => theme.colors.border};
 
     &.chips {
         transform: translateX(

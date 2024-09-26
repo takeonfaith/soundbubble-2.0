@@ -10,7 +10,7 @@ import { ToastButton, ToastStyled, ReasonStyled } from './styles';
 export const Toast = () => {
     const { message, isShow, type, action, duration, showTimer, reason } =
         toastModel.useToast();
-    const [{ data }] = userModel.useUser();
+    const [currentUser] = userModel.useUser();
 
     const handleOpenReason = () => {
         modalModel.events.open({
@@ -49,7 +49,7 @@ export const Toast = () => {
                     {action?.text}
                 </ToastButton>
             )}
-            {data?.isAdmin && reason && (
+            {currentUser?.isAdmin && reason && (
                 <ToastButton
                     $height="25px"
                     style={{ padding: '0 10px' }}

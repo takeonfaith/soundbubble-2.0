@@ -44,8 +44,12 @@ const UploadedSong = ({
                     colors={['grey', 'grey', 'grey', 'grey', 'grey', 'grey']}
                 />
                 <Flex gap={0} d="column" ai="flex-start">
-                    <UploadedSongName>{name ?? 'Song'}</UploadedSongName>
-                    <UploadedSongAuthor>{author}</UploadedSongAuthor>
+                    <UploadedSongName>
+                        {author.includes('feat') ? author : name ?? 'Song'}
+                    </UploadedSongName>
+                    <UploadedSongAuthor>
+                        {(author.includes('feat') ? name : author) ?? 'Unknown authors'}
+                    </UploadedSongAuthor>
                 </Flex>
             </Flex>
             <Flex gap={10}>

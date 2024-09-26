@@ -15,14 +15,14 @@ import { PlaneSongList } from '../../entities/song/ui/planeList';
 import { TUser } from '../../entities/user/model/types';
 import { UserItem } from '../../entities/user/ui';
 import { getEntityType } from '../../features/searchWithHints/lib/getEntityType';
-import { PageMessage } from '../../shared/components/pageMessage';
 import { Flex } from '../../shared/components/flex';
+import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { ENTITIES_ICONS } from '../../shared/constants/icons';
 import { SearchSkeleton } from './SearchSkeleton';
 import { TopAuthorCard } from './TopAuthorCard';
-import { PlaylistCollectionItem } from '../../features/playlistCollections';
+import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 
 const SearchPageWrapper = styled.div`
     max-width: 650px;
@@ -43,10 +43,11 @@ const dic: Record<
 > = {
     song: (song: TSong) => (
         <PlaneSongList
-            songs={[song]}
-            listName="Search"
-            listIcon={''}
-            listUrl={`/search?query=${song.name}&type=query`}
+            queue={createQueueObject({
+                songs: [song],
+                name: 'Search',
+                url: `/search/?query=${song.name}`,
+            })}
         />
     ),
     author: (user: TUser) => <UserItem user={user} orientation="horizontal" />,
@@ -63,7 +64,6 @@ export const SearchResult = () => {
     const [params] = useSearchParams();
     const [result, isLoading] = useUnit([$searchResult, $isLoadingResult]);
     const [searchQuery] = useUnit([$searchQuery]);
-    const theme = useTheme();
 
     const first = result[0];
 

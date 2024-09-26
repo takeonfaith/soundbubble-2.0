@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { BeautifulBackground } from '../../shared/components/beautifulBackground';
 
-const DESKTOP_COVER_WIDTH = '${DESKTOP_COVER_WIDTH}';
+export const DESKTOP_COVER_WIDTH = '400px';
 const MOBILE_COVER_WIDTH = '86vw';
 
 export const FullScreenPlayerStyled = styled(BeautifulBackground)`
@@ -183,6 +183,10 @@ export const RightSide = styled.div`
 
     &.visible {
         animation: slide-appear 0.5s forwards;
+    }
+
+    & * {
+        color: #fff;
     }
 
     @keyframes slide-appear {

@@ -1,10 +1,6 @@
-import { TPageStore, TStore } from './types';
+import { TPageStore } from './types';
 
-export const DEFAULT_STORE: TStore = {
-    data: null,
-    error: null,
-    userPlaylists: [],
-};
+export const DEFAULT_USER_STORE = null;
 
 export const DEFAULT_SIGN_UP_DATA = {
     fullName: '',

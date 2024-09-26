@@ -6,7 +6,7 @@ export const SkeletonSection = styled.div<{ $background?: string }>`
     height: 100%;
     left: 0;
     top: 0;
-    z-index: 10;
+    z-index: 12;
     background: linear-gradient(
         360deg,
         ${({ theme, $background }) =>

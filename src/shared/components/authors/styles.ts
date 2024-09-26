@@ -7,15 +7,23 @@ export const AuthorsStyled = styled.div<{
     $disableOnDesktop: boolean;
 }>`
     font-size: 0.8rem;
-    opacity: 0.7;
     font-weight: 300;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    width: ${({ $width }) => $width ?? '100%'};
+    width: ${({ $width }) => $width ?? 'fit-content'};
     opacity: 0.5;
     pointer-events: ${({ $disableOnDesktop }) =>
         $disableOnDesktop ? 'none' : 'all'};
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    position: relative;
+    border-radius: 4px;
+
+    @media (hover: hover) {
+        &:hover {
+            background-color: ${({ theme }) => theme.colors.darkHover};
+        }
+    }
 
     @media (max-width: 1000px) {
         pointer-events: ${({ $disableOnMobile }) =>

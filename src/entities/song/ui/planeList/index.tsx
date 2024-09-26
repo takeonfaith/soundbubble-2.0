@@ -1,20 +1,26 @@
 import { SongItem } from '..';
-import { useHandleSongPlay } from '../../../../shared/hooks/useHandleSongPlay';
-import { songModel } from '../../model';
-import { TSong } from '../../model/types';
+import { SongState, TQueue, TSong } from '../../model/types';
+import { songModel } from '../../new-model';
 
 type Props = {
-    songs: TSong[];
-    listName: string | null;
-    listIcon: string | undefined;
-    listUrl: string | null;
+    queue: TQueue | null;
     showSerialNumber?: boolean;
 };
 
 export const PlaneSongList = (props: Props) => {
-    const { currentSong, state, loaded } = songModel.useSong();
-    const { songs, showSerialNumber } = props;
-    const { handlePlay } = useHandleSongPlay(props);
+    const { currentSong, state } = songModel.useSong();
+    const { queue, showSerialNumber } = props;
+
+    if (!queue) return null;
+
+    const { songs } = queue;
+
+    const handlePlay = (_: TSong, currentSongIndex: number) => {
+        songModel.controls.play({
+            queue,
+            currentSongIndex,
+        });
+    };
 
     return (
         <>
@@ -28,9 +34,8 @@ export const PlaneSongList = (props: Props) => {
                         index={index}
                         key={song.id + index}
                         song={song}
-                        playing={isCurrent && state === 'playing'}
-                        loading={isCurrent && state === 'loading'}
-                        loaded={isCurrent && loaded}
+                        playing={isCurrent && state === SongState.playing}
+                        loading={isCurrent && state === SongState.loading}
                     />
                 );
             })}

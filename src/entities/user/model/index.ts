@@ -1,5 +1,6 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { createGate, useGate, useUnit } from 'effector-react';
+import { User } from 'firebase/auth';
 import { throttle } from 'patronum';
 import { Database } from '../../../database';
 import { Playlists, Users } from '../../../database/sections';
@@ -18,7 +19,7 @@ import { TSong } from '../../song/model/types';
 import {
     DEFAULT_PAGE_STORE,
     DEFAULT_SIGN_UP_DATA,
-    DEFAULT_STORE,
+    DEFAULT_USER_STORE,
     MAX_SEARCH_HISTORY_QUANTITY,
     REMOVE_FROM_LIBRARY_TIMEOUT,
 } from './constants';
@@ -26,23 +27,18 @@ import {
     CreateUserCreditsType,
     LoginCreditsType,
     TPageStore,
-    TStore,
     TUser,
 } from './types';
 
-const loginFx = createEffect(
-    async (credits: LoginCreditsType): Promise<TUser | null> => {
-        return tryWrapper(async () => {
-            const { email, password } = credits;
-            if (!email || !password)
-                throw new Error(
-                    ERRORS.loginFailed('Не указана почта или пароль')
-                );
+const loginFx = createEffect(async (credits: LoginCreditsType) => {
+    return tryWrapper(async () => {
+        const { email, password } = credits;
+        if (!email || !password)
+            throw new Error(ERRORS.loginFailed('Не указана почта или пароль'));
 
-            await Database.Users.login(credits);
-        }, 'operationFailed');
-    }
-);
+        await Database.Users.login(credits);
+    }, 'operationFailed');
+});
 
 const logoutFx = createEffect(() => {
     return tryWrapper(async () => {
@@ -50,21 +46,21 @@ const logoutFx = createEffect(() => {
     }, 'operationFailed');
 });
 
-const loadLibraryFx = createEffect(async (store: TStore) => {
+const loadLibraryFx = createEffect(async (store: TUser) => {
     return tryWrapper<TSong[]>(async () => {
-        const addedSongs = store.data?.addedSongs?.reverse() ?? [];
+        const addedSongs = store?.addedSongs?.reverse() ?? [];
         const result = await Database.Songs.getSongsByUids(addedSongs);
 
         return result;
     }, 'operationFailed');
 });
 
-const loadOwnPlaylistsFx = createEffect(async (store: TStore) => {
+const loadOwnPlaylistsFx = createEffect(async (store: TUser) => {
     try {
-        if (!store.data) throw new Error('Failed to load added playlists');
+        if (!store) throw new Error('Failed to load added playlists');
 
         const ownPlaylists = await Playlists.getPlaylistsByUids(
-            store.data.ownPlaylists
+            store.ownPlaylists
         );
 
         return ownPlaylists;
@@ -73,12 +69,12 @@ const loadOwnPlaylistsFx = createEffect(async (store: TStore) => {
     }
 });
 
-const loadAddedPlaylistsFx = createEffect(async (store: TStore) => {
+const loadAddedPlaylistsFx = createEffect(async (store: TUser) => {
     try {
-        if (!store.data) throw new Error('Failed to load added playlists');
+        if (!store) throw new Error('Failed to load added playlists');
 
         const addedPlaylists = await Playlists.getPlaylistsByUids(
-            store.data.addedPlaylists
+            store.addedPlaylists
         );
 
         return addedPlaylists;
@@ -127,10 +123,10 @@ const loadSimilarAuthorsFx = createEffect(async (songs: TSong[]) => {
 });
 
 // TODO: отписка на logout
-const loadFriendsFx = createEffect(async (store: TStore) => {
+const loadFriendsFx = createEffect(async (store: TUser) => {
     try {
         const friends =
-            store.data?.friends
+            store?.friends
                 ?.filter((friend) => friend.status === 'added')
                 .map((friend) => friend.uid) ?? [];
 
@@ -140,9 +136,9 @@ const loadFriendsFx = createEffect(async (store: TStore) => {
     }
 });
 
-const loadLastSongPlayedFx = createEffect(async (store: TStore) => {
+const loadLastSongPlayedFx = createEffect(async (store: TUser) => {
     try {
-        const lastSongId = store.data?.lastSongPlayed;
+        const lastSongId = store?.lastSongPlayed;
         if (!lastSongId) return null;
 
         const lastSongPlayed = await Database.Songs.getSongByUid(lastSongId);
@@ -152,9 +148,9 @@ const loadLastSongPlayedFx = createEffect(async (store: TStore) => {
     }
 });
 
-const loadAddedAuthorsFx = createEffect(async (store: TStore) => {
+const loadAddedAuthorsFx = createEffect(async (store: TUser) => {
     try {
-        const authors = store.data?.addedAuthors ?? [];
+        const authors = store?.addedAuthors ?? [];
 
         const users = await Database.Users.getUsersByUids(authors);
 
@@ -165,9 +161,9 @@ const loadAddedAuthorsFx = createEffect(async (store: TStore) => {
 });
 
 const loadUserSearchHistoryFx = createEffect(
-    async (store: TStore): Promise<TExtendedSuggestion[]> => {
+    async (store: TUser): Promise<TExtendedSuggestion[]> => {
         try {
-            const userId = store.data?.uid;
+            const userId = store?.uid;
 
             return await Database.SearchHistory.getSearchHistory(userId);
         } catch (error) {
@@ -196,16 +192,36 @@ const setSearchHistoryFx = createEffect(
     }
 );
 
+const loadUserDataFx = createEffect(async (user: User | null) => {
+    if (!user) return null;
+
+    return await Database.Users.getUserByUid(user.uid);
+});
+
+loadUserDataFx.failData.watch((err) => {
+    toastModel.events.show({
+        type: 'error',
+        message: 'Failed to load your data',
+        reason: err.message,
+        duration: 20000,
+    });
+});
+
+const updateUserOnlineFx = createEffect(async (user: User | null) => {
+    if (!user) return;
+
+    await Database.Users.updateUserOnline(user.uid, Date.now());
+});
+
 const login = createEvent<LoginCreditsType>();
 export const logout = createEvent();
 const createUser = createEvent<CreateUserCreditsType>();
 const setUser = createEvent<TUser>();
-const setLoggining = createEvent<boolean>();
 const getUserPage = createEvent<string>();
 const loadSimilarAuthors = createEvent<TSong[]>();
 const resetUserPage = createEvent();
 const updateFriends = createEvent<TUser[]>();
-const setIsLoadingUsers = createEvent<boolean>();
+const loadUserData = createEvent<User | null>();
 
 const addAuthorsToLibrary = createEvent<{
     authors: TUser[];
@@ -230,13 +246,11 @@ const updateSignUpFormData = createEvent<{
 
 const userGate = createGate();
 
-export const $user = createStore<TStore>(DEFAULT_STORE);
+export const $user = createStore<TUser | null>(DEFAULT_USER_STORE);
 $user.reset(logout);
 
 const $userSignUpFormData = createStore(DEFAULT_SIGN_UP_DATA);
 $userSignUpFormData.reset(logout);
-
-const $isLoadingUser = createStore<boolean>(true);
 
 export const $library = createStore<TSong[]>([]);
 $library.reset(logout);
@@ -273,8 +287,14 @@ sample({
 });
 
 sample({
-    clock: setIsLoadingUsers,
-    target: $isLoadingUser,
+    clock: loadUserData,
+    target: loadUserDataFx,
+});
+
+sample({
+    clock: loadUserDataFx.doneData,
+    filter: Boolean,
+    target: setUser,
 });
 
 sample({
@@ -288,27 +308,6 @@ sample({
 });
 
 sample({
-    clock: login,
-    source: $user,
-    fn: (store) => ({ ...store, error: null }),
-    target: $user,
-});
-
-sample({
-    clock: loginFx.doneData,
-    source: $user,
-    fn: (store) => ({ ...store }),
-    target: $user,
-});
-
-sample({
-    clock: loginFx.failData,
-    source: $user,
-    fn: (store, error) => ({ ...store, error }),
-    target: $user,
-});
-
-sample({
     clock: updateFriends,
     fn: (friends) => friends,
     target: $friends,
@@ -316,10 +315,10 @@ sample({
 
 sample({
     clock: setUser,
-    source: $user,
-    fn: (store, data) => ({ ...store, data }),
+    fn: (user) => user,
     target: [
         $user,
+        updateUserOnlineFx,
         loadLibraryFx,
         loadOwnPlaylistsFx,
         loadAddedPlaylistsFx,
@@ -336,13 +335,6 @@ getDataFromEffect(loadLastSongPlayedFx, $lastSongPlayed);
 getDataFromEffect(loadAddedPlaylistsFx, $addedPlaylists);
 getDataFromEffect(loadAddedAuthorsFx, $addedAuthors);
 getDataFromEffect(loadUserSearchHistoryFx, $searchHistory);
-
-sample({
-    clock: setLoggining,
-    source: $user,
-    fn: (store, logginining) => ({ ...store, logginining }),
-    target: $user,
-});
 
 sample({
     clock: addOwnPlaylistToLibrary,
@@ -505,7 +497,7 @@ sample({
     clock: addSongToLibrary,
     source: { user: $user },
     fn: ({ user }, song) => ({
-        userId: user?.data?.uid,
+        userId: user?.uid,
         song: song,
         authors: song.authors,
     }),
@@ -543,7 +535,7 @@ sample({
 sample({
     clock: removeSongFromLibrary,
     source: { user: $user },
-    fn: ({ user }, song) => ({ userId: user?.data?.uid, songId: song.id }),
+    fn: ({ user }, song) => ({ userId: user?.uid, songId: song.id }),
     target: removeSongFromLibraryFx,
 });
 
@@ -570,7 +562,7 @@ sample({
         unsubscribe();
 
         return {
-            userId: user.data?.uid,
+            userId: user?.uid,
             songs: oldLibrary.map((s) => s.id).reverse(),
         };
     },
@@ -621,7 +613,7 @@ sample({
     clock: addAuthorsToLibrary,
     source: { user: $user, addedAuthors: $addedAuthors },
     fn: ({ user, addedAuthors }, { showToast, authors }) => ({
-        userId: user?.data?.uid,
+        userId: user?.uid,
         showToast,
         authors: filterOneArrayWithAnother(
             authors,
@@ -651,7 +643,7 @@ sample({
 sample({
     clock: removeAuthorsFromLibrary,
     source: { user: $user },
-    fn: ({ user }, props) => ({ userId: user?.data?.uid, ...props }),
+    fn: ({ user }, props) => ({ userId: user?.uid, ...props }),
     target: removeAuthorsFromLibraryFx,
 });
 
@@ -751,7 +743,7 @@ sample({
     source: { user: $user },
     filter: ({ user }) => !!user,
     fn: ({ user }, friendId) => ({
-        userId: user?.data?.uid as string,
+        userId: user?.uid as string,
         friendId,
     }),
     target: friendRequestFx,
@@ -789,7 +781,7 @@ friendRequestFx.failData.watch((err) => {
 // #end region
 
 export const userModel = {
-    useUser: () => useUnit([$user, $isLoadingUser, loginFx.pending]),
+    useUser: () => useUnit([$user, loadUserDataFx.pending, loginFx.pending]),
     useSongLibrary: () => useUnit([$library, loadLibraryFx.pending]),
     useOwnPlaylists: () => useUnit([$ownPlaylists, loadOwnPlaylistsFx.pending]),
     useAddedPlaylists: () =>
@@ -804,15 +796,14 @@ export const userModel = {
         loadSimilarAuthors,
         createUser,
         setUser,
-        setLoggining,
         getUserPage,
         resetUserPage,
         updateFriends,
-        setIsLoadingUsers,
         addOwnPlaylistToLibrary,
         toggleLikeSong,
         toggleAuthorLiked,
         friendRequest,
+        loadUserData,
     },
     gates: {
         useLoadUser: () => useGate(userGate),

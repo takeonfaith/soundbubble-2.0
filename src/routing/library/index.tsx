@@ -1,11 +1,9 @@
-import { IconSearch } from '@tabler/icons-react';
 import { Outlet, useLocation } from 'react-router';
+import { userModel } from '../../entities/user/model';
 import { Header } from '../../layout/header';
 import { Flex } from '../../shared/components/flex';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { Tabs } from '../../shared/components/tabs';
-import { SearchButton } from './styles';
-import { userModel } from '../../entities/user/model';
 
 const TABS = [
     { title: 'Songs', url: '' },
@@ -18,12 +16,12 @@ export const Library = () => {
     const initialCurrentTab = TABS.findIndex(
         (a) => a.url === location.pathname.split('/').at(-1)
     );
-    const [{ data }] = userModel.useUser();
+    const [currentUser] = userModel.useUser();
 
     return (
         <PageWrapper>
             <Header>
-                {!!data && (
+                {!!currentUser && (
                     <Flex width="100%" jc="center" gap={10}>
                         <Tabs
                             tabs={TABS}
@@ -31,9 +29,6 @@ export const Library = () => {
                                 initialCurrentTab === -1 ? 0 : initialCurrentTab
                             }
                         />
-                        <SearchButton>
-                            <IconSearch />
-                        </SearchButton>
                     </Flex>
                 )}
             </Header>

@@ -2,41 +2,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Flex } from '@components/flex';
 
-import {
-    IconBrandSafari,
-    IconMessageCircle,
-    IconMicrophone2,
-    IconMusic,
-    IconVinyl,
-} from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { userModel } from '../../entities/user/model';
 import { modalModel } from '../../layout/modal/model';
 import { Button } from '../../shared/components/button';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Form } from '../../shared/components/form';
-import { Logo } from '../../shared/components/logo';
 import { Subtext } from '../../shared/components/subtext';
 import { useForm } from '../../shared/hooks/useForm';
 import { SignUpModal } from '../signUpModal';
 import { ForgotPasswordModal } from './ForgotPasswordModal';
-import {
-    Blocks,
-    BlockStyled,
-    LoginButtons,
-    LoginModalStyled,
-    PARTICLES_QUANTITY,
-    PromoStyled,
-    RightSideStyled,
-} from './styles';
+import { LoginButtons, LoginModalStyled, RightSideStyled } from './styles';
+import { LeftSide } from './LeftSide';
 
 type Props<T> = {
     actionAfterLogin?: T;
     title?: string;
-};
-
-const Block = ({ icon }: { icon: React.ReactNode }) => {
-    return <BlockStyled className="block">{icon}</BlockStyled>;
 };
 
 const fields = [
@@ -60,13 +41,13 @@ export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
     actionAfterLogin,
     title = 'Welcome back to Soundbubble',
 }: Props<T>) => {
-    const [{ data, error }, _, loading] = userModel.useUser();
+    const [currentUser, _, loading] = userModel.useUser();
     const { formProps, onSumbit } = useForm({
         fields,
         handleSubmit: (obj) => {
             userModel.events.login(obj);
         },
-        submitErrorMessage: error?.message,
+        submitErrorMessage: '',
     });
 
     const handleOpenSignUp = () => {
@@ -79,35 +60,18 @@ export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
     };
 
     useEffect(() => {
-        if (data) {
+        if (currentUser) {
             if (actionAfterLogin) {
                 actionAfterLogin();
             } else {
                 modalModel.events.close();
             }
         }
-    }, [actionAfterLogin, data]);
+    }, [actionAfterLogin, currentUser]);
 
     return (
         <LoginModalStyled>
-            <PromoStyled>
-                <Logo short />
-                <Blocks>
-                    <Block icon={<IconMusic />} />
-                    <Block icon={<IconVinyl />} />
-                    <Block icon={<IconMicrophone2 />} />
-                    <Block icon={<IconBrandSafari />} />
-                    <Block icon={<IconMessageCircle />} />
-
-                    <div className="particles">
-                        {Array.from(Array(PARTICLES_QUANTITY)).map(
-                            (_, index) => {
-                                return <div className="particle" key={index} />;
-                            }
-                        )}
-                    </div>
-                </Blocks>
-            </PromoStyled>
+            <LeftSide />
             <RightSideStyled>
                 <Flex d="column" gap={10}>
                     <div className="emoji">

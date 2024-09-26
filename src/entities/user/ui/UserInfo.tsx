@@ -95,7 +95,7 @@ export const UserInfo = ({ user }: Props) => {
     };
 
     return (
-        <UserInfoStyled shadowColor={imageColors[0] ?? 'grey'}>
+        <UserInfoStyled shadowColor={imageColors[0] ?? '#e0e0e0'}>
             <UserCover
                 isAuthor
                 size="200px"

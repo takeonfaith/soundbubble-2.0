@@ -14,8 +14,7 @@ export const HeaderStyled = styled.header`
     position: sticky;
     scroll-padding-top: 150px;
     /* border-bottom: 1px solid ${({ theme }) => theme.colors.border}; */
-    background: ${({ theme }) => theme.colors.header};
-    backdrop-filter: blur(16px);
+    background: ${({ theme }) => theme.colors.pageBackground};
     color: ${({ theme }) => theme.colors.textColor};
     z-index: 11;
 
@@ -77,5 +76,5 @@ export const AdminCircle = styled.div`
     height: calc(100% - 2px);
     border-radius: 100%;
     background: ${({ theme: { scheme } }) =>
-        `linear-gradient(45deg, ${scheme.blue.action}, ${scheme.purple.main}, ${scheme.red.main}, ${scheme.orange.main})`};
+        `linear-gradient(45deg, ${scheme.blue.action}, ${scheme.purple.main}, ${scheme.red.main})`};
 `;

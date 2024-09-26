@@ -1,11 +1,10 @@
 import { useCallback, useEffect } from 'react';
 import { getAuthorsToString } from '../../entities/song/lib/getAuthorsToString';
-import { songModel } from '../../entities/song/model';
+import { songModel as songModelNew } from '../../entities/song/new-model';
 
 export const useMediaMetadata = () => {
-    const { currentSong } = songModel.useSong();
-    const { queue } = songModel.queue.useQueue();
-    const { currentTime } = songModel.playblack.usePlayback();
+    const { currentSong, queue } = songModelNew.useSong();
+    const currentTime = songModelNew.useCurrentTime();
 
     const updatePositionState = useCallback(() => {
         if (currentSong) {
@@ -18,31 +17,31 @@ export const useMediaMetadata = () => {
     }, [currentSong, currentTime]);
 
     function playSong() {
-        console.log('play');
-
-        songModel.events.play();
+        songModelNew.controls.play({});
     }
 
     function pauseSong() {
-        console.log('pause');
-
-        songModel.events.pause();
+        songModelNew.controls.pause();
     }
 
     const nextSong = () => {
-        songModel.queue.next();
+        songModelNew.queue.next('from_end_track');
     };
 
     const prevSong = () => {
-        songModel.queue.previous();
+        songModelNew.queue.previous();
+    };
+
+    const stopSong = () => {
+        songModelNew.controls.stop();
     };
 
     useEffect(() => {
-        if ('mediaSession' in navigator && currentSong !== null) {
+        if ('mediaSession' in navigator && !!currentSong) {
             navigator.mediaSession.metadata = new window.MediaMetadata({
                 title: currentSong.name,
                 artist: getAuthorsToString(currentSong.authors),
-                album: queue.name ?? '-',
+                album: '-',
                 artwork: [
                     {
                         src: currentSong.cover,
@@ -54,7 +53,7 @@ export const useMediaMetadata = () => {
 
             navigator.mediaSession.setActionHandler('play', playSong);
             navigator.mediaSession.setActionHandler('pause', pauseSong);
-            navigator.mediaSession.setActionHandler('stop', pauseSong);
+            navigator.mediaSession.setActionHandler('stop', stopSong);
             navigator.mediaSession.setActionHandler('nexttrack', () => {
                 nextSong();
                 updatePositionState();
@@ -64,5 +63,5 @@ export const useMediaMetadata = () => {
                 updatePositionState();
             });
         }
-    }, [currentSong, queue.name, updatePositionState]);
+    }, [currentSong, queue, updatePositionState]);
 };

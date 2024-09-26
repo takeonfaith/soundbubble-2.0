@@ -22,7 +22,11 @@ export type TSong = {
     moods?: string[];
 };
 
-export type SongState = 'playing' | 'pause' | 'loading';
+export enum SongState {
+    playing = 'playing',
+    pause = 'pause',
+    loading = 'loading',
+}
 
 export type TStore = {
     currentSong: TSong | null;
@@ -56,4 +60,12 @@ export type TQueueStore = {
 export type TLyricsStore = {
     lyrics: TLyric[];
     currentLyricIndex: number;
+};
+
+export type TQueue = {
+    songs: TSong[];
+    name: string;
+    id: string;
+    url: string;
+    imageUrl: string;
 };

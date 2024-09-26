@@ -6,8 +6,8 @@ import { Songs } from '../../../database/sections';
 import { PlayPauseIcon } from '../../../shared/components/playPauseIcon';
 import { PlayingAnimation } from '../../../shared/components/playingAnimation';
 import { Subtext } from '../../../shared/components/subtext';
-import { songModel } from '../../song/model';
-import { TQueueStore, TSong } from '../../song/model/types';
+import { createQueueObject } from '../../song/lib/createQueueObject';
+import { songModel } from '../../song/new-model';
 import { TOrientation } from '../../user/types';
 import { TPlaylist } from '../model/types';
 import { PlaylistCover } from './PlaylistCover';
@@ -30,25 +30,10 @@ export const PlaylistItem = ({
 }: Props) => {
     const { image, name, imageColors, authors, id, songs, isAlbum, isPrivate } =
         playlist;
-    const { play } = songModel.useControls();
-    const { state } = songModel.useSong();
-    const { queue } = songModel.queue.useQueue();
+    const { queue, state } = songModel.useSong();
     const [loading, setLoading] = useState(false);
-    const url = `/playlist/${id}`;
-    const isCurrentPlaying = state === 'playing' && queue.url === url;
-
-    const handlePlay = (songs: TSong[], index: number) => {
-        const queue: TQueueStore | undefined = {
-            currentSongIndex: index,
-            name,
-            image,
-            url,
-            songs: songs,
-            shuffle: false,
-        };
-
-        play(songs[0], queue);
-    };
+    const url = `/${isAlbum ? 'album' : 'playlist'}/${id}`;
+    const isCurrentPlaying = state === 'playing' && queue?.id === id;
 
     const handleLoadPlaylistSongs = (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -56,7 +41,16 @@ export const PlaylistItem = ({
         e.preventDefault();
         setLoading(true);
         Songs.getSongsByUids(songs).then((songs) => {
-            handlePlay(songs, 0);
+            songModel.controls.play({
+                queue: createQueueObject({
+                    id,
+                    url,
+                    name,
+                    imageUrl: image,
+                    songs,
+                }),
+                currentSongIndex: 0,
+            });
             setLoading(false);
         });
     };
@@ -70,7 +64,7 @@ export const PlaylistItem = ({
             as={as}
             onClick={handleClick}
             className={`${orientation} ${isCurrentPlaying ? 'playing' : ''}`}
-            to={`/playlist/${id}`}
+            to={url}
             $color1={imageColors?.[0]}
         >
             {!children && (
@@ -99,9 +93,9 @@ export const PlaylistItem = ({
             />
             <Flex width="100%" jc="space-between">
                 <Flex d="column" width="100%" gap={0} ai="flex-start">
-                    <Flex width="100%">
+                    <Flex gap={2}>
                         <PalylistTitle>{name}</PalylistTitle>
-                        {isPrivate && <IconLock size={18} />}
+                        {isPrivate && <IconLock size={16} />}
                     </Flex>
                     {orientation === 'vertical' ? (
                         <Authors authors={authors} />
@@ -112,15 +106,20 @@ export const PlaylistItem = ({
                                     whiteSpace: 'nowrap',
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
+                                    fontWeight: 200,
+                                    fontSize: '0.8rem',
                                 }}
                             >
-                                {isAlbum ? 'Album' : 'Playlist'} ·
+                                {isAlbum ? 'Album' : 'Playlist'}{' '}
+                                {authors.length !== 0 && '·'}
                             </Subtext>
-                            <Authors
-                                isUser={!isAlbum}
-                                width="fit-content"
-                                authors={authors}
-                            />
+                            {authors.length !== 0 && (
+                                <Authors
+                                    isAuthor={isAlbum}
+                                    width="fit-content"
+                                    authors={authors}
+                                />
+                            )}
                         </Flex>
                     )}
                 </Flex>

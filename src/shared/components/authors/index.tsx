@@ -1,30 +1,42 @@
 import { TAuthor } from '@song/model/types';
-import { AuthorStyled, AuthorsStyled } from './styles';
+import { useNavigate } from 'react-router';
+import { getAuthorsToString } from '../../../entities/song/lib/getAuthorsToString';
+import { AuthorsModal } from '../../../entities/song/ui/AuthorsModal';
+import { modalModel } from '../../../layout/modal/model';
+import { AuthorsStyled } from './styles';
 
 type Props = {
     authors: TAuthor[] | undefined;
-    onAuthorClick?: (author: TAuthor) => void;
+    onAuthorsClick?: () => void;
     width?: string;
     disableOnDesktop?: boolean;
     disableOnMobile?: boolean;
     authorsQuantity?: number;
-    isUser?: boolean;
+    isAuthor?: boolean;
 };
 
 export const Authors = ({
     authors,
-    onAuthorClick,
+    onAuthorsClick,
     width,
-    isUser = false,
-    authorsQuantity = 4,
+    isAuthor = true,
     disableOnDesktop = false,
     disableOnMobile = true,
 }: Props) => {
-    const handleAuthorClick = (author: TAuthor) => {
-        return (e: Evt<'a'>) => {
-            e.stopPropagation();
-            onAuthorClick?.(author);
-        };
+    const navigate = useNavigate();
+
+    const handleOpenAuthors = (e: Evt<'div'>) => {
+        e.stopPropagation();
+        onAuthorsClick?.();
+
+        if ((authors?.length ?? 0) > 1) {
+            modalModel.events.open({
+                title: `Authors`,
+                content: <AuthorsModal isAuthor={isAuthor} authors={authors} />,
+            });
+        } else {
+            navigate(`/author/${authors?.[0].uid}`);
+        }
     };
 
     return (
@@ -33,25 +45,9 @@ export const Authors = ({
             $width={width}
             $disableOnDesktop={disableOnDesktop}
             $disableOnMobile={disableOnMobile}
+            onClick={handleOpenAuthors}
         >
-            {authors?.slice(0, authorsQuantity)?.map((author, index) => {
-                const to = isUser
-                    ? `/user/${author.uid}`
-                    : `/author/${author.uid}`;
-                return (
-                    <>
-                        {index !== 0 ? '&' : ' '}
-                        <AuthorStyled
-                            onClick={handleAuthorClick(author)}
-                            to={to}
-                            key={author.uid + index}
-                        >
-                            {author.displayName}
-                        </AuthorStyled>
-                    </>
-                );
-            })}
-            {(authors?.length ?? 0) > authorsQuantity && '...'}
+            {authors && getAuthorsToString(authors).trim()}
             {!authors?.length && '-'}
         </AuthorsStyled>
     );

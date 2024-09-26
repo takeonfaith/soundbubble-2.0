@@ -19,9 +19,7 @@ import {
     getDoc,
     getDocs,
     initializeFirestore,
-    limit,
     onSnapshot,
-    orderBy,
     query,
     setDoc,
     updateDoc,
@@ -29,13 +27,12 @@ import {
 } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { getDataFromDoc } from './database/lib/getDataFromDoc';
-import { TChat, TMessage } from './entities/chat/model/types';
+import { TChat } from './entities/chat/model/types';
 import { TPlaylist } from './entities/playlist/model/types';
 import { TSuggestion } from './entities/search/model/types';
 import { TSong } from './entities/song/model/types';
 import { TSearchHistory, TUser } from './entities/user/model/types';
 import getUID from './shared/funcs/getUID';
-import { asyncRequests } from './shared/funcs/asyncRequests';
 
 const config: FirebaseOptions = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

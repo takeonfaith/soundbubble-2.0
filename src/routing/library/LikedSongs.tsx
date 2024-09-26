@@ -1,4 +1,5 @@
-import { IconMusicOff } from '@tabler/icons-react';
+import { IconHeart, IconHeartFilled, IconMusicOff } from '@tabler/icons-react';
+import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { SongListSkeleton } from '../../entities/song/ui/SongListSkeleton';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { userModel } from '../../entities/user/model';
@@ -7,11 +8,17 @@ import { Flex } from '../../shared/components/flex';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { AddButton } from './AddButton';
+import { PageTop } from '../playlist/PageTop';
 
 export const LikedSongs = () => {
     const [library, loading] = userModel.useSongLibrary();
-    const [{ data }] = userModel.useUser();
+    const [currentUser] = userModel.useUser();
+
+    const queue = createQueueObject({
+        name: 'Library',
+        songs: library,
+        url: '',
+    });
 
     return (
         <ContentWrapper>
@@ -23,13 +30,18 @@ export const LikedSongs = () => {
                     </Flex>
                 }
             >
-                <VerticalSongsList
-                    listName="Library"
-                    listIcon={''}
-                    listUrl="/library"
-                    songs={library}
-                />
-                {!data && (
+                {currentUser && (
+                    <PageTop
+                        authors={[currentUser]}
+                        queue={queue}
+                        name="Liked Songs"
+                        icon={<IconHeartFilled />}
+                        playlist={null}
+                        hasHeader
+                    />
+                )}
+                <VerticalSongsList queue={queue} />
+                {!currentUser && (
                     <PageMessage
                         icon={IconMusicOff}
                         title={'Need to log in'}
@@ -38,7 +50,7 @@ export const LikedSongs = () => {
                         <LoginButton />
                     </PageMessage>
                 )}
-                {data && !library.length && (
+                {currentUser && !library.length && (
                     <PageMessage
                         icon={IconMusicOff}
                         title="No songs added to library"
@@ -46,7 +58,7 @@ export const LikedSongs = () => {
                     />
                 )}
             </SkeletonPageAnimation>
-            <AddButton />
+            {/* <AddButton /> */}
         </ContentWrapper>
     );
 };

@@ -2,26 +2,22 @@ import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
 import { SongItem } from '..';
 import { ArrowButton } from '../../../../shared/components/horizontalList/styles';
 import { useScrollList } from '../../../../shared/components/horizontalList/useScrollList';
-import { useHandleSongPlay } from '../../../../shared/hooks/useHandleSongPlay';
-import { songModel } from '../../model';
-import { TSong } from '../../model/types';
-import { GridSongListStyled, GridWrapper } from './styles';
 import useCurrentDevice from '../../../../shared/hooks/useCurrentDevice';
+import { TQueue, TSong } from '../../model/types';
+import { songModel } from '../../new-model';
+import { GridSongListStyled, GridWrapper } from './styles';
 
 type Props = {
-    songs: TSong[];
-    listName: string | null;
-    listIcon: string | undefined;
-    listUrl: string | null;
+    queue: TQueue;
     children?: (songs: TSong[]) => React.ReactNode;
 };
 
 export const GridSongList = (props: Props) => {
-    const { songs, children } = props;
-    const { currentSong, state, loaded } = songModel.useSong();
-    const { handlePlay } = useHandleSongPlay(props);
+    const { queue, children } = props;
+    const { currentSong, state } = songModel.useSong();
     const { isMobile } = useCurrentDevice();
     const maxGridRows = isMobile ? 4 : 3;
+    const { songs } = queue;
     const items = children?.(songs) ?? (
         <>
             {songs.map((song, index) => {
@@ -29,13 +25,17 @@ export const GridSongList = (props: Props) => {
 
                 return (
                     <SongItem
-                        onClick={handlePlay}
+                        onClick={() =>
+                            songModel.controls.play({
+                                queue,
+                                currentSongIndex: index,
+                            })
+                        }
                         index={index}
                         key={song.id + index}
                         song={song}
                         playing={isCurrent && state === 'playing'}
                         loading={isCurrent && state === 'loading'}
-                        loaded={isCurrent && loaded}
                     />
                 );
             })}

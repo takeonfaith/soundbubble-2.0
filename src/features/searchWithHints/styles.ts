@@ -21,7 +21,7 @@ export const HintsStyled = styled.ul`
     gap: 4px;
     color: ${({ theme }) => theme.colors.textColor};
     border-top: none;
-    z-index: 1;
+    z-index: 12;
     box-shadow: ${({ theme }) => theme.colors.shadow};
     animation: appear 0.3s;
 

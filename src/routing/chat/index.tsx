@@ -66,8 +66,6 @@ export const ChatPage = () => {
         },
     });
 
-    console.log(currentChatId);
-
     return (
         <PageWrapper>
             {!currentChatId && (

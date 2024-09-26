@@ -5,7 +5,7 @@ import { TChatData, TMessage } from '../../../entities/chat/model/types';
 import { TPlaylist } from '../../../entities/playlist/model/types';
 import { PlaylistItem } from '../../../entities/playlist/ui';
 import { TEntity } from '../../../entities/search/model/types';
-import { TSong } from '../../../entities/song/model/types';
+import { createQueueObject } from '../../../entities/song/lib/createQueueObject';
 import { PlaneSongList } from '../../../entities/song/ui/planeList';
 import { TUser } from '../../../entities/user/model/types';
 import { UserItem } from '../../../entities/user/ui';
@@ -34,7 +34,15 @@ type Props = {
     onSeen: (messageId: string) => void;
 };
 
-const renderAttachments = (attachments: string[], chatData: TChatData) => {
+const renderAttachments = (
+    attachments: string[],
+    chatData: TChatData,
+    message: TMessage
+) => {
+    const queue = createQueueObject({
+        name: (chatData[message.sender] as TUser).displayName,
+        url: `/chat`,
+    });
     return attachments.map((s) => {
         const entity = chatData[s] as TEntity;
 
@@ -61,14 +69,7 @@ const renderAttachments = (attachments: string[], chatData: TChatData) => {
             );
         }
 
-        return (
-            <PlaneSongList
-                songs={[entity as TSong]}
-                listName={null}
-                listIcon={undefined}
-                listUrl={null}
-            />
-        );
+        return <PlaneSongList queue={queue} />;
     });
 };
 
@@ -162,15 +163,18 @@ export const MessageItem = ({
                                 <AttachmentStyled>
                                     {renderAttachments(
                                         message.attachedSongs,
-                                        chatData
+                                        chatData,
+                                        message
                                     )}
                                     {renderAttachments(
                                         message.attachedAlbums,
-                                        chatData
+                                        chatData,
+                                        message
                                     )}
                                     {renderAttachments(
                                         message.attachedAuthors,
-                                        chatData
+                                        chatData,
+                                        message
                                     )}
                                 </AttachmentStyled>
                             )}

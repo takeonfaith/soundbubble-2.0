@@ -1,4 +1,5 @@
 import { CloseButton } from '@components/closeButton';
+import { songModel as songModelNew } from '@song/new-model';
 import { songModel } from '@song/model';
 import { FullScreenPlayerLeftSide } from './FullScreenPlayerLeftSide';
 import { FullScreenPlayerRightSide } from './FullScreenPlayerRightSide';
@@ -12,8 +13,7 @@ type Props = {
 };
 
 export const FullScreenFullScreenPlayer = ({ open }: Props) => {
-    const { currentSong } = songModel.useSong();
-    const { queue } = songModel.queue.useQueue();
+    const { currentSong, queue } = songModelNew.useSong();
     const [animatedOpen, setAnimatedOpen] = useState(open);
     const [rightSideType, setRightSideType] = useState<TRightSideType>(null);
     const hasLyrics =
@@ -64,7 +64,7 @@ export const FullScreenFullScreenPlayer = ({ open }: Props) => {
                     <FullScreenPlayerLeftSide
                         type={rightSideType}
                         handleClickControlButton={handleClickControlButton}
-                        hasQueue={queue.songs.length > 0}
+                        hasQueue={(queue?.songs.length ?? 0) > 0}
                         hasLyrics={hasLyrics}
                     />
                     <FullScreenPlayerRightSide type={rightSideType} />

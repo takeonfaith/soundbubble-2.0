@@ -5,7 +5,6 @@ import { HashRouter } from 'react-router-dom';
 import { AppRouter } from 'routing/AppRouter';
 import styled, { ThemeProvider } from 'styled-components';
 import { useTheme } from './app/theme';
-import { Database } from './database';
 import { userModel } from './entities/user/model';
 import { FB } from './firebase';
 import { GlobalStyles } from './globalStyles';
@@ -27,14 +26,8 @@ function App() {
     const { themeParams } = useTheme();
 
     useEffect(() => {
-        userModel.events.setIsLoadingUsers(true);
         FB.onAuthStateChanged(async (userCred) => {
-            userModel.events.setIsLoadingUsers(false);
-
-            if (userCred?.uid) {
-                const user = await Database.Users.getUserByUid(userCred.uid);
-                userModel.events.setUser(user);
-            }
+            userModel.events.loadUserData(userCred);
         });
     }, []);
 

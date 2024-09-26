@@ -6,7 +6,7 @@ import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
 import { LikeButtonStyled } from './styles';
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    entity: TEntity | null;
+    entity: TEntity | null | undefined;
     likeColor: string | undefined;
     onClick?: (event: Evt<'btn'>, entity: TEntity) => void;
     width?: string;
@@ -56,6 +56,7 @@ export const LikeButton = ({
             ) : (
                 <IconHeart />
             )}
+            {props.children}
         </LikeButtonStyled>
     );
 };

@@ -14,6 +14,7 @@ import { SkeletonLoading } from './SkeletonLoading';
 import { SectionStyled } from './styles';
 import { UserTop } from './UserTop';
 import { TUser } from '../../entities/user/model/types';
+import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 
 type Props = {
     data?: TUser | null;
@@ -41,12 +42,12 @@ export const UserPage = ({ data }: Props) => {
         };
     }, []);
 
-    const queueInfo = {
-        listName: userPageData?.displayName ?? 'Author',
-        listIcon: userPageData?.photoURL,
-        listUrl: `/author/${userPageData?.uid}`,
+    const queue = createQueueObject({
+        name: userPageData?.displayName,
         songs: songs.slice(0, MAX_SONGS),
-    };
+        imageUrl: userPageData?.photoURL,
+        url: `/user/${userPageData?.uid}`,
+    });
 
     return (
         <AuthorPageWrapper>
@@ -60,7 +61,9 @@ export const UserPage = ({ data }: Props) => {
                         <div className="title">
                             <h3>Last played song</h3>
                         </div>
-                        <GridSongList {...queueInfo} songs={[lastSongPlayed]} />
+                        <GridSongList
+                            queue={{ ...queue, songs: [lastSongPlayed] }}
+                        />
                     </SectionStyled>
                 )}
                 {songs.length > 0 && (
@@ -73,10 +76,7 @@ export const UserPage = ({ data }: Props) => {
                                 <h3>Added songs</h3>
                             </NavigationTitle>
                         </div>
-                        <GridSongList
-                            {...queueInfo}
-                            songs={songs.slice(0, MAX_SONGS)}
-                        />
+                        <GridSongList queue={queue} />
                     </SectionStyled>
                 )}
                 <Playlists title="Playlists" uid={userPageData?.uid} />

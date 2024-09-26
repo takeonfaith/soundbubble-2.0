@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { TQueueStore } from '../../entities/song/model/types';
+import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { GridSongList } from '../../entities/song/ui/gridList';
-import { getLastSeen } from '../../entities/user/lib/getLastSeen';
 import { userModel } from '../../entities/user/model';
 import { TUser } from '../../entities/user/model/types';
 import { NavigationTitle } from '../../shared/components/navigationTitle';
@@ -20,16 +19,7 @@ type Props = {
 
 export const AuthorPage = ({ userData }: Props) => {
     const [{ user: currentPageUser, songs }, loading] = userModel.useUserPage();
-    const [{ data: currentUser }] = userModel.useUser();
     const userPageData = userData ?? currentPageUser;
-    const [friends] = userModel.useFriends();
-    const isFriend = !!friends.find((f) => f.uid === currentPageUser?.uid);
-    const { status } = getLastSeen(currentPageUser?.online);
-    const [isAuthor, isAdmin, isPageOwner] = [
-        userPageData?.isAuthor ?? false,
-        userPageData?.isAdmin ?? false,
-        currentUser?.uid === userPageData?.uid,
-    ];
 
     useUrlParamId({
         page: 'author',
@@ -46,12 +36,12 @@ export const AuthorPage = ({ userData }: Props) => {
         };
     }, []);
 
-    const queueInfo: TQueueStore = {
-        name: userPageData?.displayName ?? 'Author',
-        image: userPageData?.photoURL,
+    const queue = createQueueObject({
+        name: userPageData?.displayName,
+        imageUrl: userPageData?.photoURL,
         url: `/author/${userPageData?.uid}`,
-        songs: songs.slice(0, MAX_SONGS),
-    };
+        songs,
+    });
 
     return (
         <AuthorPageWrapper>
@@ -60,7 +50,7 @@ export const AuthorPage = ({ userData }: Props) => {
                 loading={!currentPageUser || loading}
                 skeleton={<SkeletonLoading />}
             >
-                <AuthorPageTop author={userPageData} queueInfo={queueInfo} />
+                <AuthorPageTop author={userPageData} queue={queue} />
                 <SongsStyled>
                     <div className="title">
                         <NavigationTitle
@@ -70,10 +60,7 @@ export const AuthorPage = ({ userData }: Props) => {
                             <h3>Top Songs</h3>
                         </NavigationTitle>
                     </div>
-                    <GridSongList
-                        {...queueInfo}
-                        songs={songs.slice(0, MAX_SONGS)}
-                    />
+                    <GridSongList queue={queue} />
                 </SongsStyled>
                 <Playlists uid={userPageData?.uid} title="Top Albums" />
                 {!loading && (

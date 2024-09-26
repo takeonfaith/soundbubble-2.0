@@ -11,10 +11,11 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { useTheme } from 'styled-components';
-import { TQueueStore } from '../../entities/song/model/types';
+import { TQueue } from '../../entities/song/model/types';
 import { useToggleUserLike } from '../../entities/user/hooks/useToggleUserLike';
 import { TUser } from '../../entities/user/model/types';
 import { UserCover } from '../../entities/user/ui/UserCover';
+import { UserInfo } from '../../entities/user/ui/UserInfo';
 import { UserStatus } from '../../entities/user/ui/UserStatus';
 import { LikeButton } from '../../features/likeButton';
 import { ShareModal } from '../../features/shareModal';
@@ -30,15 +31,15 @@ import {
     TopRightCorner,
 } from '../../shared/components/pageTop/styles';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
-import { BottomButtons } from './BottomButtons';
-import { UserInfo } from '../../entities/user/ui/UserInfo';
+import { ButtonsStyled } from './styles';
+import { ControlButtons } from '../../features/controlButtons';
 
 type Props = {
     author: TUser | null;
-    queueInfo: TQueueStore;
+    queue: TQueue;
 };
 
-export const AuthorPageTop = ({ author, queueInfo }: Props) => {
+export const AuthorPageTop = ({ author, queue }: Props) => {
     const navigate = useNavigate();
     const theme = useTheme();
     const { handleToggleLike, isLiked, performingAction } =
@@ -168,12 +169,9 @@ export const AuthorPageTop = ({ author, queueInfo }: Props) => {
             {/* <TopBackground>
 			  		<img src={Wave} />
 		  		</TopBackground> */}
-            <BottomButtons
-                buttonColor={imageColors[1]}
-                isAdmin={false}
-                isPageOwner={false}
-                queueInfo={queueInfo}
-            />
+            <ButtonsStyled>
+                <ControlButtons queue={queue} buttonColor={imageColors[0]} />
+            </ButtonsStyled>
         </PageTopStyled>
     );
 };

@@ -19,8 +19,8 @@ type Props = {
 };
 
 export const UserTop = ({ user }: Props) => {
-    const [{ data }] = userModel.useUser();
-    const friends = data?.friends ?? [];
+    const [currentUser] = userModel.useUser();
+    const friends = currentUser?.friends ?? [];
     const friend = friends.find((friend) => friend.uid === user?.uid);
 
     const getFriendButtonContent = () => {

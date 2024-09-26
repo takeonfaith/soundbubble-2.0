@@ -1,19 +1,19 @@
 import React from 'react';
+import { useToggleLike } from '../../entities/song/hooks/useToggleLike';
 import { songModel } from '../../entities/song/model';
+import { songModel as songModelNew } from '../../entities/song/new-model';
 import { SongMoreContextMenu } from '../../entities/song/ui/SongMoreContextMenu';
 import { userModel } from '../../entities/user/model';
 import { AddSongToPlaylistModal } from '../../features/addSongToPlaylistModal';
-import { ShareModal } from '../../features/shareModal';
+import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
+import { usePlayerMusicControls } from '../fullScreenPlayer/hooks/usePlayerMusicControls';
 import { modalModel } from '../modal/model';
 import { popupModel } from '../popup/model';
 import { CompactLyrics } from './CompactLyrics';
-import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
 import { SongsQueue } from './SongsQueue';
-import { usePlayerMusicControls } from '../fullScreenPlayer/hooks/usePlayerMusicControls';
-import { useToggleLike } from '../../entities/song/hooks/useToggleLike';
 
 export const usePlayer = () => {
-    const { currentSong } = songModel.useSong();
+    const { currentSong } = songModelNew.useSong();
     const [library] = userModel.useSongLibrary();
     const controls = usePlayerMusicControls();
     const isLiked = !!library.find((s) => s.id === currentSong?.id);
@@ -33,14 +33,6 @@ export const usePlayer = () => {
             e,
         });
     };
-
-    const handleShare = loggedIn(() => {
-        modalModel.events.open({
-            title: `Share "${currentSong?.name}" with friends`,
-            content: <ShareModal entity={currentSong} />,
-            sizeY: 'l',
-        });
-    });
 
     const handleAddToPlaylist = loggedIn(() => {
         modalModel.events.open({
@@ -76,7 +68,6 @@ export const usePlayer = () => {
         performingAction,
         handleLyrics,
         handleAddToPlaylist,
-        handleShare,
         handleMore,
         handleShowQueue,
         handleOpenFullScreenPlayer,

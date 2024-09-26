@@ -31,7 +31,7 @@ const fields = [
 ] as const;
 
 export const CreatePlaylistModal = () => {
-    const [{ data }] = userModel.useUser();
+    const [currentUser] = userModel.useUser();
     const [loading] = playlistModel.useCreatePlaylist();
     const [colors, setColors] = useState<string[]>([]);
     const [photo, setPhoto] = useState<File | null>(null);
@@ -42,7 +42,7 @@ export const CreatePlaylistModal = () => {
                 name: obj.name,
                 image: photo,
                 imageColors: colors,
-                authors: data ? [data] : [],
+                authors: currentUser ? [currentUser] : [],
             });
 
             playlistModel.events.createPlaylist({
@@ -51,7 +51,7 @@ export const CreatePlaylistModal = () => {
         },
     });
 
-    if (!data) return null;
+    if (!currentUser) return null;
 
     return (
         <CreatePlaylistModalStyled>

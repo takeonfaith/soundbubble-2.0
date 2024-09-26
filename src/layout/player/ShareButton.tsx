@@ -13,14 +13,14 @@ import { ANIMATION_DURATION } from './constants';
 
 export const ShareButton = () => {
     const { chats, chatData } = chatModel.useChats();
-    const [{ data }] = userModel.useUser();
+    const [currentUser] = userModel.useUser();
     const { currentSong } = songModel.useSong();
     const [animation, setAnimation] = useState<number | null>(null);
 
     const handleShare = (chatId: string, index: number) => {
         return () => {
-            if (data && currentSong) {
-                const message = createMessageObject(data?.uid, {
+            if (currentUser && currentSong) {
+                const message = createMessageObject(currentUser?.uid, {
                     message: '',
                     attachedSongs: [currentSong.id],
                 });
@@ -53,9 +53,16 @@ export const ShareButton = () => {
                     .reverse()
                     .map((chat, index) => {
                         return (
-                            <Button onClick={handleShare(chat.id, index)}>
+                            <Button
+                                onClick={handleShare(chat.id, index)}
+                                key={chat.id}
+                            >
                                 <UserCover
-                                    src={getChatImage(chat, chatData, data)}
+                                    src={getChatImage(
+                                        chat,
+                                        chatData,
+                                        currentUser
+                                    )}
                                     size={'30px'}
                                     colors={undefined}
                                     isAuthor={false}

@@ -30,7 +30,6 @@ export const Player = () => {
         handleToggleLike,
         performingAction,
         handleShowQueue,
-        handleShare,
         handleMore,
         handleOpenFullScreenPlayer,
     } = usePlayer();

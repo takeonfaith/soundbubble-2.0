@@ -1,0 +1,37 @@
+import { getLastSeen } from '../../user/lib/getLastSeen';
+import { TUser } from '../../user/model/types';
+import { TChat, TChatData } from '../model/types';
+
+export const useChatInfo = (
+    chat: TChat | undefined,
+    chatData: TChatData,
+    currentUser: TUser | null
+) => {
+    const notYou =
+        chat?.participants.filter((p) => p !== currentUser?.uid) ?? [];
+    const statuses =
+        notYou.map((u) => getLastSeen((chatData[u] as TUser)?.online).status) ??
+        [];
+    const typing =
+        chat?.typing
+            .filter((u) => u !== currentUser?.uid)
+            .map((id) => chatData[id] as TUser) ?? [];
+    const chatPartner = chatData[notYou[0]] as TUser;
+    const isGroupChat = chat?.chatName !== '';
+    const chatImage = isGroupChat ? chat?.chatImage : chatPartner?.photoURL;
+    const chatTitle = isGroupChat
+        ? chat?.chatName ?? ''
+        : chatPartner?.displayName ?? '';
+    const membersOnline = statuses.filter((el) => el === 'online').length;
+
+    return {
+        chatTitle,
+        chatImage,
+        isGroupChat,
+        chatPartner,
+        notYou,
+        typing,
+        membersOnline,
+        statuses,
+    };
+};

@@ -31,6 +31,10 @@ import { SearchPage } from './search';
 import { SongPage } from './song';
 import { TrendsPage } from './trends';
 import { UserPage } from './user';
+import { AlbumPage } from './album';
+import { TrendsPageAlbums } from './trends/TrendsPageAlbums';
+import { TrendsPageSongs } from './trends/TrendsPageSongs';
+import { TrendsPageAuthors } from './trends/TrendsPageAuthors';
 
 type Section = 'features' | 'your activities' | 'your music';
 
@@ -68,6 +72,32 @@ export const allRoutes: TRoute[] = [
         component: <TrendsPage />,
         section: 'features',
         private: false,
+        children: [
+            {
+                url: '',
+                title: 'Trending Music',
+                icon: <IconMusic />,
+                component: <TrendsPageSongs />,
+                section: 'features',
+                private: false,
+            },
+            {
+                url: 'albums',
+                title: 'Trending Albums',
+                icon: <IconDisc />,
+                component: <TrendsPageAlbums />,
+                section: 'features',
+                private: false,
+            },
+            {
+                url: 'authors',
+                title: 'Trending Authors',
+                icon: <IconMicrophone2 />,
+                component: <TrendsPageAuthors />,
+                section: 'features',
+                private: false,
+            },
+        ],
     },
     {
         url: '',
@@ -79,7 +109,7 @@ export const allRoutes: TRoute[] = [
         children: [
             {
                 url: '',
-                title: 'Liked Songs',
+                title: '',
                 icon: <IconMusic />,
                 component: <LikedSongs />,
                 section: 'your music',
@@ -161,6 +191,14 @@ export const allRoutes: TRoute[] = [
         title: 'Playlist',
         icon: <IconDisc />,
         component: <PlaylistPage />,
+        section: 'your music',
+        private: true,
+    },
+    {
+        url: 'album/:id',
+        title: 'Album',
+        icon: <IconVinyl />,
+        component: <AlbumPage />,
         section: 'your music',
         private: true,
     },

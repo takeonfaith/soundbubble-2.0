@@ -1,48 +1,34 @@
 import { isDefined } from '@shared/funcs/isDefined';
-import { songModel } from '@song/model';
 import React, { useEffect, useRef } from 'react';
 import { LoopMode } from './entities/song/model/types';
+import { songModel as songModelNew } from './entities/song/new-model';
+import { songModel } from './entities/song/model';
 
 const useAppAudio = () => {
-    const { state } = songModel.useSong();
-    const { loop, queue } = songModel.queue.useQueue();
-    const { lastRangeValue, isSliding } = songModel.playblack.usePlayback();
-    const { next, previous } = songModel.useControls();
+    const { state, lastTime } = songModelNew.useSong();
+    const { isSliding } = songModel.playblack.usePlayback();
     const audioRef = useRef<HTMLAudioElement>(null);
 
-    const handleOnCanPlay: React.ReactEventHandler<HTMLAudioElement> = (e) => {
-        songModel.events.loaded();
-        songModel.playblack.setDuration(e.currentTarget.duration);
-        songModel.playblack.setLastRangeValue(null);
+    const handleOnCanPlay: React.ReactEventHandler<HTMLAudioElement> = () => {
+        songModelNew.state.loaded();
     };
 
     const handlePlaying: React.ReactEventHandler<HTMLAudioElement> = (e) => {
         if (!isSliding) {
-            songModel.playblack.setCurrentTime(e.currentTarget.currentTime);
+            songModelNew.playback.setCurrentTime(e.currentTarget.currentTime);
             songModel.lyrics.nextCurrentLyric(e.currentTarget.currentTime);
         }
     };
 
     const handleEnded = () => {
-        if (
-            loop === LoopMode.noloop &&
-            queue.currentSongIndex === queue.songs.length - 1
-        ) {
-            previous();
-            return;
-        }
-        next();
+        songModelNew.queue.next('from_end_track');
     };
 
     useEffect(() => {
-        if (
-            audioRef.current &&
-            isDefined(lastRangeValue) &&
-            !isNaN(lastRangeValue ?? 0)
-        ) {
-            audioRef.current.currentTime = +lastRangeValue;
+        if (audioRef.current && isDefined(lastTime) && !isNaN(lastTime ?? 0)) {
+            audioRef.current.currentTime = lastTime;
         }
-    }, [lastRangeValue]);
+    }, [lastTime]);
 
     useEffect(() => {
         if (audioRef.current) {
@@ -56,7 +42,6 @@ const useAppAudio = () => {
 
     return {
         audioRef,
-        loop,
         handleEnded,
         handlePlaying,
         handleOnCanPlay,
@@ -64,15 +49,15 @@ const useAppAudio = () => {
 };
 
 export const AppAudio = () => {
-    const { audioRef, loop, handleOnCanPlay, handlePlaying, handleEnded } =
+    const { audioRef, handleOnCanPlay, handlePlaying, handleEnded } =
         useAppAudio();
-    const { currentSong } = songModel.useSong();
+    const { currentSong, loopMode } = songModelNew.useSong();
 
     return (
         <audio
             onEnded={handleEnded}
             src={currentSong?.songSrc}
-            loop={loop === LoopMode.loopone}
+            loop={loopMode === LoopMode.loopone}
             ref={audioRef}
             onTimeUpdate={handlePlaying}
             onCanPlay={handleOnCanPlay}

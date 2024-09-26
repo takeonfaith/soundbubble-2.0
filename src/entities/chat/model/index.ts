@@ -138,7 +138,7 @@ $firstUnreadMessageId.reset(logout);
 
 const chatGate = createGate();
 
-const $userId = $user.map((user) => user?.data?.uid ?? null);
+const $userId = $user.map((user) => user?.uid ?? null);
 
 const getUnreadCount = (unreadCounts: Record<string, number>) => {
     return Object.keys(unreadCounts).reduce((acc, key) => {
@@ -147,7 +147,7 @@ const getUnreadCount = (unreadCounts: Record<string, number>) => {
     }, 0);
 };
 
-const $addedChats = $user.map((user) => user?.data?.chats);
+const $addedChats = $user.map((user) => user?.chats);
 
 sample({
     clock: [chatGate.open, $userId],

@@ -1,5 +1,6 @@
 import { Authors } from '@components/authors';
 import { Flex } from '@components/flex';
+import { songModel as songModelNew } from '@song/new-model';
 import { songModel } from '@song/model';
 import { IconPlaylist, IconQuote } from '@tabler/icons-react';
 import { SongCover } from '../../entities/song/ui/SongCover';
@@ -11,6 +12,7 @@ import { SmallControlButton } from '../../shared/components/musicControls/styles
 import { PlayerMusicControls } from './PlayerMusicControls';
 import {
     BottomControlButtons,
+    DESKTOP_COVER_WIDTH,
     LeftSide,
     PlayerCover,
     PlayerTitle,
@@ -31,18 +33,18 @@ export const FullScreenPlayerLeftSide = ({
     hasQueue,
     handleClickControlButton,
 }: Props) => {
-    const { currentSong } = songModel.useSong();
+    const { currentSong } = songModelNew.useSong();
     const { handleToggleLike, isLiked, performingAction } =
         useToggleLike(currentSong);
 
-    const onAuthorClick = () => songModel.fullscreen.close();
+    const onAuthorsClick = () => songModel.fullscreen.close();
 
     return (
         <LeftSide>
             <PlayerWrapper>
                 <PlayerCover $color1={currentSong?.imageColors[0]}>
                     <SongCover
-                        size="400px"
+                        size={DESKTOP_COVER_WIDTH}
                         colors={currentSong?.imageColors}
                         src={currentSong?.cover}
                     />
@@ -64,7 +66,8 @@ export const FullScreenPlayerLeftSide = ({
                     </Flex>
                     <Authors
                         authors={currentSong?.authors}
-                        onAuthorClick={onAuthorClick}
+                        onAuthorsClick={onAuthorsClick}
+                        width="100%"
                     />
                 </Flex>
                 <PlayerMusicControls />

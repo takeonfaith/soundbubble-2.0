@@ -33,7 +33,7 @@ const historyGate = createGate();
 const $listeningHistory = createStore<TSong[]>([]);
 $listeningHistory.reset(logout);
 
-const $userId = $user.map((user) => user.data?.uid ?? null);
+const $userId = $user.map((user) => user?.uid ?? null);
 
 sample({
     clock: [historyGate.open, $userId],

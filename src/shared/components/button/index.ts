@@ -6,6 +6,7 @@ export const Button = styled.button<{
     $width?: string;
     $height?: string;
     $align?: 'left' | 'right' | 'center';
+    $primaryColor?: string;
 }>`
     border: none;
     background: ${({ $background }) => $background ?? 'transparent'};
@@ -29,8 +30,7 @@ export const Button = styled.button<{
     user-select: none;
 
     &:disabled {
-        filter: grayscale(1);
-        opacity: 0.5;
+        filter: grayscale(0.3);
         color: ${({ theme }) => theme.colors.textColor};
         pointer-events: none;
 
@@ -40,9 +40,14 @@ export const Button = styled.button<{
     }
 
     &.primary {
-        background: ${({ theme }) => theme.scheme.blue.action};
+        background: ${({ theme, $primaryColor }) =>
+            $primaryColor ?? theme.scheme.blue.action};
         box-shadow: 0 10px 20px
-            rgba(${({ theme }) => hexToRgbA(theme.scheme.blue.action)}, 0.3);
+            rgba(
+                ${({ theme, $primaryColor }) =>
+                    hexToRgbA($primaryColor ?? theme.scheme.blue.action)},
+                0.3
+            );
     }
 
     &.secondary {
@@ -59,6 +64,11 @@ export const Button = styled.button<{
     &.plane {
         background: transparent;
         color: ${({ theme }) => theme.colors.textColor};
+    }
+
+    &.ghost {
+        background: transparent;
+        color: ${({ theme }) => theme.colors.greyText2};
     }
 
     &:active {
@@ -86,6 +96,10 @@ export const Button = styled.button<{
 
         &.plane:hover {
             background: ${({ theme }) => theme.scheme.grey.mild};
+        }
+
+        &.ghost:hover {
+            color: ${({ theme }) => theme.colors.textColor};
         }
     }
 

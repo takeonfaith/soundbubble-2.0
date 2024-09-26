@@ -5,13 +5,13 @@ import { Flex } from '../../../shared/components/flex';
 import { ENTITIES_ICONS } from '../../../shared/constants/icons';
 import { TPlaylist } from '../../playlist/model/types';
 import { TSong } from '../../song/model/types';
-import { getLastSeen } from '../../user/lib/getLastSeen';
 import { userModel } from '../../user/model';
 import { TUser } from '../../user/model/types';
 import { UserCover } from '../../user/ui/UserCover';
 import { UserCoverBackground } from '../../user/ui/UserCoverBackground';
 import { UserStatus } from '../../user/ui/UserStatus';
 import { OnlineIndicator } from '../../user/ui/styles';
+import { useChatInfo } from '../hooks/useChatInfo';
 import { getLastMessageDate } from '../lib/getLastMessageDate';
 import { getLastMessageSender } from '../lib/getLastMessageSender';
 import { getSendStatus } from '../lib/getSendStatus';
@@ -50,13 +50,12 @@ export const ChatItem = ({
     onClick,
     size = 'm',
 }: Props) => {
-    const [{ data: currentUser }] = userModel.useUser();
-    const isGroupChat = chat.chatName !== '';
-    const notYou = chat.participants.filter((p) => p !== currentUser?.uid);
-    const chatPartner = chatData[notYou[0]] as TUser;
-    const chatImage = isGroupChat ? chat.chatImage : chatPartner?.photoURL;
-    const chatTitle = isGroupChat ? chat.chatName : chatPartner?.displayName;
-    const status = getLastSeen(chatPartner?.online).status;
+    const [currentUser] = userModel.useUser();
+    const { chatTitle, chatImage, isGroupChat, typing, statuses } = useChatInfo(
+        chat,
+        chatData,
+        currentUser
+    );
     const lastMessage = chat.lastMessage;
     const sendStatus = getSendStatus(lastMessage);
 
@@ -81,10 +80,6 @@ export const ChatItem = ({
             ? (chatData[lastMessage?.attachedAlbums[0] ?? ''] as TPlaylist)
                   ?.name
             : null;
-    const typing =
-        chat?.typing
-            .filter((u) => u !== currentUser?.uid)
-            .map((id) => chatData[id] as TUser) ?? [];
 
     const handleClick = (e: Evt<'a'>) => {
         onClick?.(chat, e);
@@ -108,7 +103,9 @@ export const ChatItem = ({
                 colors={['grey']}
                 isAuthor={false}
             >
-                {status === 'online' && !isGroupChat && <OnlineIndicator />}
+                {statuses[0] === 'online' && !isGroupChat && (
+                    <OnlineIndicator />
+                )}
             </UserCover>
             <Flex
                 d="column"
@@ -140,7 +137,7 @@ export const ChatItem = ({
                                     status={
                                         isGroupChat
                                             ? `${chat.participants.length} members`
-                                            : status
+                                            : statuses[0]
                                     }
                                     isAuthor={false}
                                     showLastSeen

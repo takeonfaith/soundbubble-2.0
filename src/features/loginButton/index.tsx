@@ -5,9 +5,9 @@ import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
 
 export const LoginButton = () => {
     const { openLoginModal } = usePrivateAction();
-    const [{ data }, loading] = userModel.useUser();
+    const [currentUser, loading] = userModel.useUser();
 
-    if (data) return null;
+    if (currentUser) return null;
 
     return (
         <DefaultButton
