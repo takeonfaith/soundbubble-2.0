@@ -12,4 +12,8 @@ export const PageMessageStyled = styled.div`
 	svg {
 		stroke-width: 1.7px;
 	}
+
+	h3 {
+		font-weight: 400;
+	}
 `

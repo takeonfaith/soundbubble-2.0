@@ -16,7 +16,7 @@ export const Logo = ({ size, appLike, short = false }: Props) => {
                 className={`logo`}
                 alt="Logo"
             />{' '}
-            {!short && <LogoText to={'/discover'}>Soundbubble</LogoText>}
+            {!short && <LogoText className='logo-text' to={'/discover'}>Soundbubble</LogoText>}
         </LogoWrapper>
     );
 };

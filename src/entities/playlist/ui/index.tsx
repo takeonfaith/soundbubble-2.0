@@ -1,17 +1,18 @@
 import { Authors } from '@components/authors';
 import { Flex } from '@components/flex';
 import { IconLock } from '@tabler/icons-react';
-import { useState } from 'react';
-import { Songs } from '../../../database/sections';
 import { PlayPauseIcon } from '../../../shared/components/playPauseIcon';
 import { PlayingAnimation } from '../../../shared/components/playingAnimation';
 import { Subtext } from '../../../shared/components/subtext';
-import { createQueueObject } from '../../song/lib/createQueueObject';
+import { createLoadQueueObject } from '../../song/lib/createQueueObject';
 import { songModel } from '../../song/new-model';
 import { TOrientation } from '../../user/types';
 import { TPlaylist } from '../model/types';
 import { PlaylistCover } from './PlaylistCover';
 import { ControlButton, PalylistTitle, PlaylistStyled } from './styles';
+import { useEffect, useState } from 'react';
+import { SongState } from '../../song/model/types';
+import { toastModel } from '../../../layout/toast/model';
 
 type Props = {
     playlist: TPlaylist;
@@ -31,33 +32,39 @@ export const PlaylistItem = ({
     const { image, name, imageColors, authors, id, songs, isAlbum, isPrivate } =
         playlist;
     const { queue, state } = songModel.useSong();
-    const [loading, setLoading] = useState(false);
     const url = `/${isAlbum ? 'album' : 'playlist'}/${id}`;
     const isCurrentPlaying = state === 'playing' && queue?.id === id;
-
-    const handleLoadPlaylistSongs = (
-        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
-        e.preventDefault();
-        setLoading(true);
-        Songs.getSongsByUids(songs).then((songs) => {
-            songModel.controls.play({
-                queue: createQueueObject({
-                    id,
-                    url,
-                    name,
-                    imageUrl: image,
-                    songs,
-                }),
-                currentSongIndex: 0,
-            });
-            setLoading(false);
-        });
-    };
+    const [loadingSongs, setLoadingSongs] = useState(false);
 
     const handleClick = (e: Evt<'a'>) => {
         onClick?.(playlist, e);
     };
+
+    const handlePlay = (event: Evt<'btn'>) => {
+        event.preventDefault();
+        if (songs.length > 0) {
+            setLoadingSongs(true);
+            const queue = createLoadQueueObject({
+                id,
+                name,
+                imageUrl: image,
+                songIds: songs,
+                url,
+            });
+            songModel.controls.loadAndPlay({ queue, currentSongIndex: 0 });
+        } else {
+            toastModel.events.show({
+                type: 'info',
+                message: 'This playlist has no songs',
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (state === SongState.playing) {
+            setLoadingSongs(false);
+        }
+    }, [state]);
 
     return (
         <PlaylistStyled
@@ -70,14 +77,14 @@ export const PlaylistItem = ({
             {!children && (
                 <ControlButton
                     $color={imageColors[0]}
-                    onClick={handleLoadPlaylistSongs}
+                    onClick={handlePlay}
                     className={`${orientation} plane`}
                 >
                     {isCurrentPlaying ? (
                         <PlayingAnimation playing color={imageColors[0]} />
                     ) : (
                         <PlayPauseIcon
-                            loading={loading}
+                            loading={loadingSongs}
                             playling={false}
                             size={18}
                         />

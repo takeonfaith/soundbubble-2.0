@@ -1,8 +1,8 @@
 import { isDefined } from '@shared/funcs/isDefined';
 import React, { useEffect, useRef } from 'react';
-import { LoopMode } from './entities/song/model/types';
-import { songModel as songModelNew } from './entities/song/new-model';
 import { songModel } from './entities/song/model';
+import { songModel as songModelNew } from './entities/song/new-model';
+import { LoopMode } from './entities/song/model/types';
 
 const useAppAudio = () => {
     const { state, lastTime } = songModelNew.useSong();
@@ -57,10 +57,11 @@ export const AppAudio = () => {
         <audio
             onEnded={handleEnded}
             src={currentSong?.songSrc}
-            loop={loopMode === LoopMode.loopone}
             ref={audioRef}
+            loop={loopMode === LoopMode.loopone}
             onTimeUpdate={handlePlaying}
             onCanPlay={handleOnCanPlay}
+            // onPause={() => songModelNew.controls.pause()}
         />
     );
 };

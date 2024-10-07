@@ -7,14 +7,19 @@ import {
     sample,
 } from 'effector';
 import { useUnit } from 'effector-react';
-import { throttle } from 'patronum';
+import { debounce } from 'patronum';
 import { Database } from '../../../database';
+import { createQueueObject } from '../lib/createQueueObject';
 import { shuffleSongs } from '../lib/shuffleSongs';
-import { LoopMode, SongState, TQueue, TSong } from '../model/types';
+import { LoopMode, SongState, TLoadQueue, TQueue, TSong } from '../model/types';
 
 type TNextFrom = 'from_next_button' | 'from_end_track';
 
 const addListeningFx = createEffect<TSong, Promise<void>>();
+const loadSongsFx = createEffect<
+    { queue: TLoadQueue; currentSongIndex: number },
+    { queue: TQueue; currentSongIndex: number }
+>();
 
 const play = createEvent<{ queue?: TQueue; currentSongIndex?: number }>();
 const pause = createEvent();
@@ -22,7 +27,15 @@ const stop = createEvent();
 
 const shufflePlay = createEvent<{ queue?: TQueue }>();
 
-const addListening = createEvent<TSong>();
+const loadAndPlay = createEvent<{
+    queue: TLoadQueue;
+    currentSongIndex: number;
+}>();
+const loadAndShuffle = createEvent<{
+    queue: TLoadQueue;
+}>();
+
+// const addListening = createEvent<TSong>();
 
 const initalize = createEvent<{ queue: TQueue; currentSongIndex: number }>();
 
@@ -50,12 +63,20 @@ const $currentSong = combine(
     (queue, currentSongIndex) => queue?.songs[currentSongIndex]
 );
 
-const $currentSongDuration = $currentSong.map(
-    (song) => ((song?.duration ?? 0) / 5) * 1000
-);
+const $currentSongDuration = $currentSong.map((song) => {
+    if (!song) return 0;
 
-$currentSongDuration.watch((duration) => {
-    console.log({ duration });
+    return (song.duration / 2) * 1000;
+});
+
+// Add listeting
+
+const triggerAddListeting = createEvent();
+
+const addListening = debounce(triggerAddListeting, $currentSongDuration);
+
+addListening.watch(() => {
+    console.log('listening added');
 });
 
 const currentTimeApi = createApi($currentTime, {
@@ -81,7 +102,10 @@ const { toggleShuffleMode } = createApi($shuffleMode, {
 
 sample({
     clock: addListening,
-    fn: (song) => song,
+    source: { state: $songState, currentSong: $currentSong },
+    filter: ({ state, currentSong }) =>
+        !!currentSong && state === SongState.playing,
+    fn: ({ currentSong }) => currentSong as TSong,
     target: addListeningFx,
 });
 
@@ -111,6 +135,12 @@ sample({
     source: $queue,
     fn: (queue) => (queue?.songs.length ?? 1) - 1,
     target: $currentSongIndex,
+});
+
+// Trigger add listeting on this events
+sample({
+    clock: [play, shufflePlay, previous, next],
+    target: triggerAddListeting,
 });
 
 // #region Play
@@ -181,13 +211,6 @@ sample({
 });
 
 // #region Pause
-
-const { unsubscribe } = throttle(load, 3000).watch((song) => {
-    if (song) {
-        console.log('new listening added', song);
-        addListening(song);
-    }
-});
 
 sample({
     clock: pause,
@@ -289,13 +312,14 @@ sample({
     clock: next,
     source: {
         loopMode: $loopMode,
-        queue: $queue,
-        currentSongIndex: $currentSongIndex,
     },
-    filter: ({ loopMode, queue, currentSongIndex }, nextFrom) =>
-        loopMode === LoopMode.loopone &&
-        nextFrom === 'from_end_track' &&
-        (queue?.songs.length ?? 1) - 1 > currentSongIndex,
+    filter: ({ loopMode }, nextFrom) =>
+        loopMode === LoopMode.loopone && nextFrom === 'from_end_track',
+    fn: () => {
+        console.log(
+            'Start track from beginning if loopMode === LoopMode.loopone'
+        );
+    },
     target: previous,
 });
 
@@ -372,6 +396,109 @@ sample({
 
 // #endregion
 
+// #region Load songs and play them
+
+sample({
+    clock: loadAndPlay,
+    source: $queue,
+    filter: (currentQueue, { queue }) =>
+        !currentQueue || currentQueue.id !== queue.id,
+    fn: (_, props) => props,
+    target: loadSongsFx,
+});
+
+sample({
+    clock: loadAndPlay,
+    source: { queue: $queue, state: $songState },
+    filter: ({ queue: currentQueue, state }, { queue }) => {
+        if (
+            !!currentQueue &&
+            currentQueue.id === queue.id &&
+            state === SongState.pause
+        ) {
+            console.log('play');
+        }
+        return !!currentQueue && currentQueue.id === queue.id;
+    },
+    fn: ({ queue: currentQueue }, { currentSongIndex }) => ({
+        queue: currentQueue as TQueue,
+        currentSongIndex,
+    }),
+    target: play,
+});
+
+sample({
+    clock: loadSongsFx.doneData,
+    target: initalize,
+});
+
+loadSongsFx.use(async ({ queue, currentSongIndex }) => {
+    const songs = await Database.Songs.getSongsByUids(queue.songIds);
+    const result = createQueueObject({
+        name: queue.name,
+        id: queue.id,
+        imageUrl: queue.imageUrl,
+        url: queue.url,
+        songs,
+    });
+
+    return { queue: result, currentSongIndex };
+});
+
+// #endregion
+
+// #region Load songs and shuffle them
+
+sample({
+    clock: loadAndShuffle,
+    source: $queue,
+    filter: (currentQueue, { queue }) =>
+        !currentQueue || currentQueue.id !== queue.id,
+    fn: (_, { queue }) => ({ queue, currentSongIndex: 0 }),
+    target: loadSongsFx,
+});
+
+// If queue loaded, just shuffle it
+sample({
+    clock: loadAndShuffle,
+    source: $queue,
+    filter: (currentQueue, { queue }) =>
+        !!currentQueue && currentQueue.id === queue.id,
+    fn: (currentQueue) => ({ queue: currentQueue as TQueue }),
+    target: shufflePlay,
+});
+
+sample({
+    clock: loadSongsFx.doneData,
+    source: $queue,
+    fn: (q, { queue }) => {
+        const finalQueue = queue ?? q;
+        return {
+            currentSongIndex: 0,
+            queue: {
+                ...finalQueue,
+                songs: shuffleSongs(finalQueue?.songs as TSong[]),
+            } as TQueue,
+        };
+    },
+    target: initalize,
+});
+
+loadSongsFx.use(async ({ queue, currentSongIndex }) => {
+    const songs = await Database.Songs.getSongsByUids(queue.songIds);
+    const result = createQueueObject({
+        name: queue.name,
+        id: queue.id,
+        imageUrl: queue.imageUrl,
+        url: queue.url,
+        songs,
+    });
+
+    return { queue: result, currentSongIndex };
+});
+
+// #endregion
+
 addListeningFx.use(async (song) => {
     console.log('addListeningFx');
 
@@ -396,6 +523,8 @@ export const songModel = {
         shufflePlay,
         pause,
         stop,
+        loadAndPlay,
+        loadAndShuffle,
     },
     state: {
         load,

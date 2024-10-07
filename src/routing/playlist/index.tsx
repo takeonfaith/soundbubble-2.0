@@ -1,11 +1,10 @@
-import { IconError404Off, IconMusicOff, IconPlus } from '@tabler/icons-react';
+import { IconError404Off, IconMusicOff } from '@tabler/icons-react';
 import { playlistModel } from '../../entities/playlist/model';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { userModel } from '../../entities/user/model';
 import { ShareModal } from '../../features/shareModal';
 import { modalModel } from '../../layout/modal/model';
-import { Button } from '../../shared/components/button';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
@@ -81,7 +80,7 @@ export const PlaylistPage = () => {
                             authors={currentPlaylist?.authors}
                             style={{
                                 padding:
-                                    '80px var(--page-padding) 0 calc(var(--page-padding) + 8px)',
+                                    '60px var(--page-padding) 0 calc(var(--page-padding) + 8px)',
                             }}
                         />
 
@@ -89,22 +88,9 @@ export const PlaylistPage = () => {
                             {currentPlaylist?.songs.length === 0 && (
                                 <PageMessage
                                     icon={IconMusicOff}
-                                    title="Oops!"
-                                    description="Playlist is empty"
-                                >
-                                    {isOwner && (
-                                        <Button
-                                            $width="130px"
-                                            $height="35px"
-                                            className="outline"
-                                            onClick={handleAddSongsModal}
-                                            style={{ fontSize: '0.85rem' }}
-                                        >
-                                            <IconPlus size={18} />
-                                            Add songs
-                                        </Button>
-                                    )}
-                                </PageMessage>
+                                    title="Playlist is empty"
+                                    description=""
+                                />
                             )}
                             <VerticalSongsList queue={queue} />
                             {(currentPlaylistSongs?.length ?? 0) > 0 &&

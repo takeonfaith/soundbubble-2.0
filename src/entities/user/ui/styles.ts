@@ -15,7 +15,7 @@ export const UserItemStyled = styled(Link)`
     position: relative;
 
     .verified-icon {
-        width: 16px;
+        min-width: 16px;
         height: 16px;
     }
 
@@ -125,7 +125,7 @@ export const UserItemStyled = styled(Link)`
     }
 
     @media (max-width: 1150px) {
-        --size: calc((100vw - var(--sidebar-width)) / 4 - 42px);
+        --size: calc((100vw - var(--sidebar-width)) / 5 - 45px);
     }
 
     @media (max-width: 1000px) {

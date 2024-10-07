@@ -1,4 +1,4 @@
-import { IconHeart, IconHeartFilled, IconMusicOff } from '@tabler/icons-react';
+import { IconHeartFilled, IconMusicOff } from '@tabler/icons-react';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { SongListSkeleton } from '../../entities/song/ui/SongListSkeleton';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
@@ -18,6 +18,7 @@ export const LikedSongs = () => {
         name: 'Library',
         songs: library,
         url: '',
+        id: 'library',
     });
 
     return (

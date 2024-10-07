@@ -9,8 +9,8 @@ type Props = {
 export const IconText = ({ icon, text }: Props) => {
     return (
         <IconTextStyled>
-            {icon && <Icon>{icon}</Icon>}
-            <Text>{text}</Text>
+            {icon && <Icon className='icon'>{icon}</Icon>}
+            <Text className="text">{text}</Text>
         </IconTextStyled>
     );
 };

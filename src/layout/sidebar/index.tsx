@@ -23,6 +23,7 @@ import {
     SidebarSectionTitle,
     SidebarStyled,
 } from './styles';
+import { NEW_LAYOUT } from '../../shared/constants';
 
 export const Sidebar = () => {
     const preparedRoutes = groupByField(menuRoutes, 'section');
@@ -44,10 +45,12 @@ export const Sidebar = () => {
 
     return (
         <SidebarStyled>
-            <LogoWrapper>
-                <Logo />
-                <ThemeButton />
-            </LogoWrapper>
+            {!NEW_LAYOUT && (
+                <LogoWrapper>
+                    <Logo />
+                    <ThemeButton />
+                </LogoWrapper>
+            )}
             {Object.keys(preparedRoutes).map((route, index) => {
                 return (
                     <SidebarSection key={index}>
@@ -55,17 +58,15 @@ export const Sidebar = () => {
                         {preparedRoutes[route].map((link) => {
                             return (
                                 <SidebarLink key={link.url} to={link.url}>
-                                    <Flex width="100%" jc="space-between">
-                                        <IconText
-                                            icon={link.icon}
-                                            text={link.title}
-                                        />
-                                        {!!notificationsDic[link.url] && (
-                                            <NotificationBadge>
-                                                {notificationsDic[link.url]}
-                                            </NotificationBadge>
-                                        )}
-                                    </Flex>
+                                    <IconText
+                                        icon={link.icon}
+                                        text={link.title}
+                                    />
+                                    {!!notificationsDic[link.url] && (
+                                        <NotificationBadge>
+                                            {notificationsDic[link.url]}
+                                        </NotificationBadge>
+                                    )}
                                 </SidebarLink>
                             );
                         })}
@@ -75,7 +76,10 @@ export const Sidebar = () => {
 
             <SidebarSection>
                 <Flex jc="space-between" width="100%">
-                    <NavigationTitle showNavigation={!!currentUser} to="/playlists">
+                    <NavigationTitle
+                        showNavigation={!!currentUser}
+                        to="/playlists"
+                    >
                         <SidebarSectionTitle
                             className={currentUser ? 'clickable' : ''}
                         >

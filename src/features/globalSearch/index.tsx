@@ -77,10 +77,6 @@ export const GlobalSearch = ({ queryValue, where, showTabs = true }: Props) => {
     const suggestions = useUnit($searchSuggestions);
 
     const handleChange = (val: string) => {
-        if (val.length === 0) {
-            navigate(`/search${where !== '' ? `?where=${where}` : ''}`);
-        }
-
         clearTimeout(debounceTimer.current);
 
         debounceTimer.current = setTimeout(() => {

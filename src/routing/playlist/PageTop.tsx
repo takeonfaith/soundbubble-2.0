@@ -1,4 +1,4 @@
-import { IconHeadphones, IconUserPlus } from '@tabler/icons-react';
+import { IconHeadphones, IconLock, IconUserPlus } from '@tabler/icons-react';
 import { styled } from 'styled-components';
 import { TPlaylist } from '../../entities/playlist/model/types';
 import { PlaylistCover } from '../../entities/playlist/ui/PlaylistCover';
@@ -10,12 +10,7 @@ import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
 import { getTotalSongsDuration } from '../../shared/funcs/getTotalSongsDuration';
 import { PlaylistControlButtons } from './PlaylistControlButtons';
 import { hexToRgbA } from '../../shared/funcs/hexToRgba';
-
-const PageTopStyled = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-`;
+import { dateToString } from '../../shared/funcs/dateToString';
 
 const PageTopWrapper = styled.div`
     display: flex;
@@ -27,12 +22,18 @@ const PageTopWrapper = styled.div`
     width: 100%;
     background: linear-gradient(
         180deg,
-        ${({ color }) => `rgba(${color}, 0.3)`},
+        ${({ color }) => `rgba(${color}, 0.2)`},
         transparent
     );
 
     & .authors {
         font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 `;
 
@@ -83,7 +84,11 @@ export const PageTop = ({
     return (
         <>
             <PageTopWrapper
-                color={hexToRgbA(playlist?.imageColors[0])}
+                color={
+                    playlist
+                        ? hexToRgbA(playlist?.imageColors[0] ?? '#4a4a4a')
+                        : undefined
+                }
                 {...props}
             >
                 {playlist ? (
@@ -98,7 +103,10 @@ export const PageTop = ({
                 )}
                 <Flex gap={20} d="column" ai="flex-start">
                     <Flex d="column" ai="flex-start" gap={6}>
-                        <h1 style={{ fontWeight: '500' }}>{name}</h1>
+                        <Flex gap={10}>
+                            <h1 style={{ fontWeight: '500' }}>{name}</h1>
+                            {playlist?.isPrivate && <IconLock size={20} />}
+                        </Flex>
                         <Authors authors={authors} isAuthor={false} />
                     </Flex>
                     <Flex gap={10}>
@@ -131,10 +139,16 @@ export const PageTop = ({
                                 ·
                             </>
                         )}
-                        <Subtext style={{ fontSize: '0.85rem' }}>
-                            {queue.songs.length} songs,{' '}
-                            {getTotalSongsDuration(queue.songs)}
-                        </Subtext>
+                        {!playlist ? (
+                            <Subtext style={{ fontSize: '0.85rem' }}>
+                                {queue.songs.length} songs,{' '}
+                                {getTotalSongsDuration(queue.songs)}
+                            </Subtext>
+                        ) : (
+                            <Subtext style={{ fontSize: '0.85rem' }}>
+                                Created: {dateToString(playlist.creationDate)}
+                            </Subtext>
+                        )}
                     </Flex>
                 </Flex>
             </PageTopWrapper>
@@ -145,7 +159,9 @@ export const PageTop = ({
                 <PlaylistControlButtons
                     queue={queue}
                     primaryColor={
-                        playlist ? playlist?.imageColors[0] ?? '#3f3f3f' : undefined
+                        playlist
+                            ? playlist?.imageColors[0] ?? '#3f3f3f'
+                            : undefined
                     }
                     playlist={playlist}
                 />

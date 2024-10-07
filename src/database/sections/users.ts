@@ -75,7 +75,6 @@ export class Users {
                 );
             }
             const res = await FB.getByIds('users', uids, 'uid');
-            console.log({ res });
 
             return res;
         } catch (error) {
@@ -283,6 +282,34 @@ export class Users {
             await FB.updateById('users', userId, { online });
         } catch (error) {
             throw new Error('Failed to update user online status');
+        }
+    }
+
+    static async addPlaylistToLibrary(playlistId: string, userId: string) {
+        try {
+            await FB.updateById('users', userId, {
+                addedPlaylists: arrayUnion(playlistId),
+            });
+
+            await FB.updateById('playlists', playlistId, {
+                subscribers: increment(1),
+            });
+        } catch (error) {
+            throw new Error('Failed to add playlist to library');
+        }
+    }
+
+    static async removePlaylistFromLibrary(playlistId: string, userId: string) {
+        try {
+            await FB.updateById('users', userId, {
+                addedPlaylists: arrayRemove(playlistId),
+            });
+            
+            await FB.updateById('playlists', playlistId, {
+                subscribers: increment(-1),
+            });
+        } catch (error) {
+            throw new Error('Failed to remove playlist from library');
         }
     }
 }

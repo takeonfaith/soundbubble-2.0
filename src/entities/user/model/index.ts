@@ -473,21 +473,21 @@ addSongToLibraryFx.failData.watch((err) => {
 
 const addSongToLibrary = createEvent<TSong>();
 const removeSongFromLibrary = createEvent<TSong>();
-const toggleLikeSong = createEvent<{ song: TSong; isLiked: boolean }>();
+const toggleSongLiked = createEvent<{ song: TSong; isLiked: boolean }>();
 const revertRemove = createEvent();
 const resetCopiedLibrary = createEvent();
 
 const $copiedLibrary = createStore<TSong[]>([]).reset(resetCopiedLibrary);
 
 sample({
-    clock: toggleLikeSong,
+    clock: toggleSongLiked,
     filter: ({ isLiked }) => isLiked,
     fn: ({ song }) => song,
     target: removeSongFromLibrary,
 });
 
 sample({
-    clock: toggleLikeSong,
+    clock: toggleSongLiked,
     filter: ({ isLiked }) => !isLiked,
     fn: ({ song }) => song,
     target: addSongToLibrary,
@@ -726,7 +726,7 @@ removeAuthorsFromLibraryFx.fail.watch(({ params: { showToast }, error }) => {
 
 // #endregion
 
-// #region Add playlist to library
+// #region Add own playlist to library
 
 // #endregion
 
@@ -780,6 +780,134 @@ friendRequestFx.failData.watch((err) => {
 });
 // #end region
 
+// #region Add other playlist to library
+
+type TToggleOtherPlaylistAction = {
+    playlist: TPlaylist;
+    isLiked: boolean;
+    showToast: boolean;
+};
+
+type TEffectOtherPlaylistAction = Omit<
+    TToggleOtherPlaylistAction,
+    'isLiked'
+> & {
+    userId: string;
+};
+
+const dislikeOtherPlaylist =
+    createEvent<Omit<TToggleOtherPlaylistAction, 'isLiked'>>();
+
+const likeOtherPlaylist =
+    createEvent<Omit<TToggleOtherPlaylistAction, 'isLiked'>>();
+
+const toggleOtherPlaylistLiked = createEvent<TToggleOtherPlaylistAction>();
+
+export const addPlaylistFx = createEffect<
+    TEffectOtherPlaylistAction,
+    TPlaylist,
+    Error
+>();
+
+export const removePlaylistFx = createEffect<
+    TEffectOtherPlaylistAction,
+    TPlaylist,
+    Error
+>();
+
+toggleOtherPlaylistLiked.watch(({ playlist, isLiked, showToast }) => {
+    if (isLiked) {
+        confirmModel.events.open({
+            text: `Are you sure you want to remove ${playlist.name} from library?`,
+            onAccept: () => dislikeOtherPlaylist({ playlist, showToast }),
+        });
+    } else {
+        likeOtherPlaylist({ playlist, showToast });
+    }
+});
+
+sample({
+    clock: likeOtherPlaylist,
+    source: $user,
+    fn: (user, props) =>
+        ({ userId: user?.uid, ...props } as TEffectOtherPlaylistAction),
+    target: addPlaylistFx,
+});
+
+sample({
+    clock: dislikeOtherPlaylist,
+    source: $user,
+    fn: (user, props) =>
+        ({ userId: user?.uid, ...props } as TEffectOtherPlaylistAction),
+    target: removePlaylistFx,
+});
+
+addPlaylistFx.use(async ({ playlist, userId }) => {
+    await Database.Users.addPlaylistToLibrary(playlist.id, userId);
+    return playlist;
+});
+
+removePlaylistFx.use(async ({ playlist, userId }) => {
+    await Database.Users.removePlaylistFromLibrary(playlist.id, userId);
+
+    return playlist;
+});
+
+sample({
+    clock: addPlaylistFx.doneData,
+    source: $addedPlaylists,
+    fn: (currentPlaylists, newPlaylist) => [newPlaylist, ...currentPlaylists],
+    target: $addedPlaylists,
+});
+
+sample({
+    clock: removePlaylistFx.doneData,
+    source: $addedPlaylists,
+    fn: (currentPlaylists, newPlaylist) =>
+        currentPlaylists.filter((p) => p.id !== newPlaylist.id),
+    target: $addedPlaylists,
+});
+
+removePlaylistFx.done.watch(({ params: { showToast } }) => {
+    if (showToast) {
+        toastModel.events.show({
+            message: 'Playlist removed from library',
+            type: 'info',
+            duration: 5000,
+        });
+    }
+});
+
+addPlaylistFx.done.watch(({ params: { showToast } }) => {
+    if (showToast) {
+        toastModel.events.show({
+            message: 'Playlist added to library',
+            type: 'success',
+            duration: 3000,
+        });
+    }
+});
+
+addPlaylistFx.failData.watch((err) => {
+    toastModel.events.show({
+        message: 'Failed to add playlist to library',
+        type: 'error',
+        reason: err.message,
+        duration: 8000,
+    });
+});
+
+removePlaylistFx.failData.watch((err) => {
+    toastModel.events.show({
+        message: 'Failed to remove playlist from library',
+        type: 'error',
+        reason: err.message,
+        duration: 8000,
+    });
+});
+
+// #endregion
+
 export const userModel = {
     useUser: () => useUnit([$user, loadUserDataFx.pending, loginFx.pending]),
     useSongLibrary: () => useUnit([$library, loadLibraryFx.pending]),
@@ -800,8 +928,9 @@ export const userModel = {
         resetUserPage,
         updateFriends,
         addOwnPlaylistToLibrary,
-        toggleLikeSong,
+        toggleSongLiked,
         toggleAuthorLiked,
+        toggleOtherPlaylistLiked,
         friendRequest,
         loadUserData,
     },

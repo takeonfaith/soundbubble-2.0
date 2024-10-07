@@ -22,7 +22,7 @@ export const useToggleLike = (song: TSong | undefined) => {
     const handleToggleLike = () => {
         if (song) {
             setIsActing(true);
-            userModel.events.toggleLikeSong({ song, isLiked });
+            userModel.events.toggleSongLiked({ song, isLiked });
         }
     };
 

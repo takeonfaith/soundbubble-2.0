@@ -22,6 +22,7 @@ export const UserTop = ({ user }: Props) => {
     const [currentUser] = userModel.useUser();
     const friends = currentUser?.friends ?? [];
     const friend = friends.find((friend) => friend.uid === user?.uid);
+    const isOwner = user?.uid === currentUser?.uid;
 
     const getFriendButtonContent = () => {
         if (friend?.status === FriendStatus.added)
@@ -106,9 +107,14 @@ export const UserTop = ({ user }: Props) => {
                     </Subtext>
                 </UserInfoName>
                 <UserButtons>
-                    <DefaultButton width="100%" onClick={friendButton.onClick}>
-                        {friendButton.text}
-                    </DefaultButton>
+                    {!isOwner && (
+                        <DefaultButton
+                            width="100%"
+                            onClick={friendButton.onClick}
+                        >
+                            {friendButton.text}
+                        </DefaultButton>
+                    )}
                     {friend?.status === 'added' && (
                         <DefaultButton width="100%">
                             <IconMessage2 size={18} />

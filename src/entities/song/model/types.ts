@@ -69,3 +69,5 @@ export type TQueue = {
     url: string;
     imageUrl: string;
 };
+
+export type TLoadQueue = Omit<TQueue, 'songs'> & { songIds: string[] };

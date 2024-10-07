@@ -156,7 +156,7 @@ export const AuthorPageTop = ({ author, queue }: Props) => {
                 <LikeButton
                     entity={author}
                     isLiked={isLiked}
-                    likeColor={undefined}
+                    likeColor={"#fff"}
                     height="40px"
                     width="40px"
                     loading={performingAction}

@@ -1,20 +1,21 @@
 import { IconArrowsShuffle } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useTheme } from 'styled-components';
-import { SongState, TQueue } from '../../entities/song/model/types';
+import { SongState, TLoadQueue, TQueue } from '../../entities/song/model/types';
 import { songModel } from '../../entities/song/new-model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Loading } from '../../shared/components/loading';
 import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
 
 type Props = {
-    queue: TQueue;
+    queue: TQueue | TLoadQueue;
     buttonColor: string;
 };
 
 export const ControlButtons = ({ queue, buttonColor }: Props) => {
     const { state, currentSongIndex } = songModel.useSong();
     const theme = useTheme();
+    const shouldLoadSongs = 'songIds' in queue;
 
     const style = {
         background: theme.colors.pageTopButton,
@@ -34,22 +35,31 @@ export const ControlButtons = ({ queue, buttonColor }: Props) => {
     return (
         <>
             <DefaultButton
-                loading={state === SongState.loading}
                 onClick={(e) => {
-                    e.stopPropagation();
+                    e.preventDefault();
                     setButtonType('play');
-
-                    songModel.controls.play({
-                        queue,
-                        currentSongIndex,
-                    });
+                    if (shouldLoadSongs) {
+                        songModel.controls.loadAndPlay({
+                            queue,
+                            currentSongIndex,
+                        });
+                    } else {
+                        songModel.controls.play({
+                            queue,
+                            currentSongIndex,
+                        });
+                    }
                 }}
                 style={style}
-                appearance="secondary"
+                disabled={state === SongState.loading}
+                appearance="outline"
+                loading={false}
             >
                 <PlayPauseIcon
                     size={20}
-                    loading={buttonType === 'play'}
+                    loading={
+                        buttonType === 'play' && state === SongState.loading
+                    }
                     playling={false}
                 />
                 Play
@@ -57,13 +67,19 @@ export const ControlButtons = ({ queue, buttonColor }: Props) => {
             <DefaultButton
                 loading={false}
                 onClick={(e) => {
-                    e.stopPropagation();
                     setButtonType('shuffle');
-                    songModel.controls.shufflePlay({ queue });
+                    e.preventDefault();
+                    if (shouldLoadSongs) {
+                        songModel.controls.loadAndShuffle({ queue });
+                    } else {
+                        songModel.controls.shufflePlay({ queue });
+                    }
                 }}
                 style={style}
+                disabled={state === SongState.loading}
+                appearance="outline"
             >
-                {buttonType === 'shuffle' ? (
+                {buttonType === 'shuffle' && state === SongState.loading ? (
                     <Loading />
                 ) : (
                     <IconArrowsShuffle size={20} />

@@ -9,8 +9,15 @@ export const SidebarStyled = styled.aside`
     /* background: ${({ theme }) => theme.colors.sidebar}; */
     /* border-right: 1px solid ${({ theme }) => theme.colors.border}; */
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding-top: 30px;
 
-    @media (max-width: 1000px) {
+    @media (max-width: 1100px) {
+    }
+
+    @media (max-width: 756px) {
         display: none;
     }
 `;
@@ -27,7 +34,7 @@ export const SidebarSection = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2px;
-    margin: 30px 0;
+    margin: 0px 0;
 
     & .add-playlist {
         color: ${({ theme }) => theme.colors.textColor};
@@ -50,6 +57,22 @@ export const SidebarSection = styled.div`
         &:hover {
             background: ${({ theme }) => theme.colors.hover};
             color: ${({ theme }) => theme.scheme.blue.main};
+        }
+    }
+
+    @media (max-width: 1100px) {
+        & .icon {
+            width: 22px;
+            height: 22px;
+
+            svg {
+                width: 22px;
+                height: 22px;
+            }
+        }
+
+        & .text {
+            display: none;
         }
     }
 `;
@@ -82,6 +105,11 @@ export const SidebarLink = styled(NavLink)`
             opacity: 1;
         }
     }
+
+    @media (max-width: 1100px) {
+        display: flex;
+        justify-content: center;
+    }
 `;
 
 export const SidebarSectionTitle = styled.div`
@@ -96,11 +124,15 @@ export const SidebarSectionTitle = styled.div`
     &.clickable {
         cursor: pointer;
 
-        @media (hover: hover) {     
+        @media (hover: hover) {
             &:hover {
                 opacity: 0.5;
             }
         }
+    }
+
+    @media (max-width: 1100px) {
+        display: none;
     }
 `;
 

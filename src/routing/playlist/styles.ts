@@ -68,3 +68,9 @@ export const DesktopGridHeaderStyled = styled(Flex)`
         display: none;
     }
 `;
+
+export const LikeButtonWrapper = styled.div`
+    button {
+        filter: brightness(${({ theme }) => theme.colors.brightness});
+    }
+`;

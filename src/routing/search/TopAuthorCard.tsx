@@ -5,14 +5,15 @@ import {
 } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
+import { createLoadQueueObject } from '../../entities/song/lib/createQueueObject';
 import { TUser } from '../../entities/user/model/types';
 import { UserCover } from '../../entities/user/ui/UserCover';
+import { ControlButtons } from '../../features/controlButtons';
 import { BeautifulBackground } from '../../shared/components/beautifulBackground';
 import { Flex } from '../../shared/components/flex';
 import { Subtext } from '../../shared/components/subtext';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
-import { ControlButtons } from '../../features/controlButtons';
-import { createQueueObject } from '../../entities/song/lib/createQueueObject';
+import { ButtonsStyled } from '../author/styles';
 
 const TopAutorCardStyled = styled(Link)`
     width: 100%;
@@ -31,7 +32,7 @@ const TopAutorCardStyled = styled(Link)`
     }
 
     &:hover {
-        filter: brightness(1.2);
+        filter: brightness(0.9);
     }
 
     @media (max-width: 768px) {
@@ -102,11 +103,12 @@ const CountStyled = styled.div`
 `;
 
 export const TopAuthorCard = ({ author }: { author: TUser }) => {
-    const queue = createQueueObject({
+    const queue = createLoadQueueObject({
         name: author.displayName,
         imageUrl: author.photoURL,
         url: `/author/${author.uid}`,
-        songs: [],
+        songIds: author.ownSongs,
+        id: author.uid,
     });
 
     return (
@@ -152,12 +154,12 @@ export const TopAuthorCard = ({ author }: { author: TUser }) => {
                             </Flex>
                         </Flex>
                     </Flex>
-                    <Flex gap={8} width='350px'>
+                    <ButtonsStyled className='bottom-buttons'>
                         <ControlButtons
                             queue={queue}
-                            buttonColor={author.imageColors[2]}
+                            buttonColor={author.imageColors[0]}
                         />
-                    </Flex>
+                    </ButtonsStyled>
                 </LeftSide>
                 <UserCover
                     isAuthor={author?.isAdmin}

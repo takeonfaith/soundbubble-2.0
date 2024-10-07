@@ -4,8 +4,8 @@ import { hexToRgbA } from '../../funcs/hexToRgba';
 export const CoolestGradientStyled = styled.div<{
     $colors: string[] | undefined;
 }>`
-    --color-bg1: ${({ $colors }) => $colors?.[0] ?? 'purple'};
-    --color-bg2: ${({ theme }) => theme.colors.pageBackground};
+    --color-bg1: ${({ theme }) => theme.colors.pageBackground2};
+    --color-bg2: ${({ theme }) => theme.colors.pageBackground2};
     --color1: ${({ $colors }) => hexToRgbA($colors?.[2]) ?? '18, 113, 255'};
     --color2: ${({ $colors }) => hexToRgbA($colors?.[2]) ?? '221, 74, 255'};
     --color3: ${({ $colors }) => hexToRgbA($colors?.[3]) ?? '100, 220, 255'};

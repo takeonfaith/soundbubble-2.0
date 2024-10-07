@@ -68,7 +68,7 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
     &.playing {
         ${ControlButton} {
             opacity: 1;
-            box-shadow: 0 0px 10px #00000017;
+            border: 1px solid ${({ theme }) => theme.colors.border};
         }
     }
 
@@ -123,7 +123,7 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
 
     @media (max-width: 1100px) {
         &.vertical {
-            --size: calc((100vw - var(--sidebar-width)) / 3 - 43px);
+            --size: calc((100vw - var(--sidebar-width)) / 4 - 30px);
         }
     }
 

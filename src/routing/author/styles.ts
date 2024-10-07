@@ -110,7 +110,7 @@ export const ButtonsStyled = styled.div`
 
 export const SimilarAuthorsStyled = styled.div`
     width: 100%;
-    background: ${({ theme }) => theme.colors.pageBackground4};
+    background: ${({ theme }) => theme.colors.pageBackground2};
     display: flex;
     flex-direction: column;
     padding: 30px 0;

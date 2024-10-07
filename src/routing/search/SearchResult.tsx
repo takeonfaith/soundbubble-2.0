@@ -29,7 +29,7 @@ const SearchPageWrapper = styled.div`
     height: 100%;
     width: 100%;
     margin: 0 auto;
-    margin-top: 40px;
+    margin-top: 10px;
     position: relative;
 
     @media (max-width: 1000px) {
@@ -138,6 +138,7 @@ export const SearchResult = () => {
                                     style={{
                                         fontWeight: 300,
                                         marginBottom: '10px',
+                                        marginLeft: '7px'
                                     }}
                                 >
                                     Result

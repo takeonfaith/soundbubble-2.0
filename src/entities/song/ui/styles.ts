@@ -250,17 +250,14 @@ export const SongName = styled.div`
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    width: 90%;
-
-    @container (min-width: 700px) {
-        white-space: nowrap;
-    }
+    width: fit-content;
 `;
 
 export const SongNameAndListens = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
+    width: calc(100% - 50px);
 
     @container (min-width: 700px) {
         width: 100%;
@@ -269,7 +266,7 @@ export const SongNameAndListens = styled.div`
 
 export const SongAuthors = styled.div`
     width: 100%;
-`
+`;
 
 export const Listens = styled.div`
     display: flex;

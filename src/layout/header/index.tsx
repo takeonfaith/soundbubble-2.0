@@ -30,6 +30,7 @@ import {
     HeaderStyled,
     MobileChildren,
 } from './styles';
+import { NEW_LAYOUT } from '../../shared/constants';
 
 const UserContextMenu = () => {
     const [currentUser] = userModel.useUser();
@@ -184,21 +185,32 @@ export const Header = ({ children, hide, className }: Props) => {
                 gap={30}
                 style={{ zIndex: '10' }}
             >
-                <HeaderPageTitle>{currentRoute?.title}</HeaderPageTitle>
+                <HeaderPageTitle>
+                    {currentRoute?.showTitle !== false
+                        ? currentRoute?.title
+                        : ''}
+                </HeaderPageTitle>
                 <DesktopChildren>{children}</DesktopChildren>
                 <Flex width="300px" gap={20} jc="flex-end">
-                    {currentUser && (
-                        <Button $width="40px" onClick={handleOpenUserPopup}>
-                            {currentUser.isAdmin && <AdminCircle />}
-                            <UserCover
-                                colors={currentUser?.imageColors}
-                                src={currentUser?.photoURL}
-                                size={'30px'}
-                                isAuthor={currentUser?.isAuthor}
-                            />
-                        </Button>
+                    {!NEW_LAYOUT && (
+                        <>
+                            {currentUser && (
+                                <Button
+                                    $width="40px"
+                                    onClick={handleOpenUserPopup}
+                                >
+                                    {currentUser.isAdmin && <AdminCircle />}
+                                    <UserCover
+                                        colors={currentUser?.imageColors}
+                                        src={currentUser?.photoURL}
+                                        size={'30px'}
+                                        isAuthor={currentUser?.isAuthor}
+                                    />
+                                </Button>
+                            )}
+                            <LoginButton />
+                        </>
                     )}
-                    <LoginButton />
                 </Flex>
             </Flex>
             <MobileChildren>{children}</MobileChildren>

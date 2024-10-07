@@ -35,6 +35,7 @@ import { AlbumPage } from './album';
 import { TrendsPageAlbums } from './trends/TrendsPageAlbums';
 import { TrendsPageSongs } from './trends/TrendsPageSongs';
 import { TrendsPageAuthors } from './trends/TrendsPageAuthors';
+import { NEW_LAYOUT } from '../shared/constants';
 
 type Section = 'features' | 'your activities' | 'your music';
 
@@ -46,6 +47,7 @@ export type TRoute = {
     section?: Section;
     icon?: React.ReactNode;
     private?: boolean;
+    showTitle?: boolean;
 };
 
 export const allRoutes: TRoute[] = [
@@ -64,6 +66,7 @@ export const allRoutes: TRoute[] = [
         component: <SearchPage />,
         section: 'features',
         private: false,
+        showTitle: false,
     },
     {
         url: 'trends',
@@ -106,6 +109,7 @@ export const allRoutes: TRoute[] = [
         component: <Library />,
         section: 'your music',
         private: true,
+        showTitle: false,
         children: [
             {
                 url: '',
@@ -263,7 +267,7 @@ const getRoutes = <T extends (typeof allRoutes)[number]['title'][]>(
 
 export const menuRoutes = getRoutes([
     'Wave',
-    'Search',
+    NEW_LAYOUT ? '' : 'Search',
     'Trends',
     'Liked',
     'History',

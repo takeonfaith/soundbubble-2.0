@@ -6,6 +6,7 @@ import { Header } from '../../layout/header';
 import { Divider } from '../../shared/components/divider';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { SearchResult } from './SearchResult';
+import { NEW_LAYOUT } from '../../shared/constants';
 
 const SearchBarStyled = styled.div`
     max-width: 650px;
@@ -37,12 +38,14 @@ export const SearchPage = () => {
 
     return (
         <PageWrapper>
-            <Header>
-                <SearchBarStyled>
-                    <GlobalSearch queryValue={queryValue} where={where} />
-                    <Divider style={{ margin: 0 }} />
-                </SearchBarStyled>
-            </Header>
+            {!NEW_LAYOUT && (
+                <Header>
+                    <SearchBarStyled>
+                        <GlobalSearch queryValue={queryValue} where={where} />
+                        <Divider style={{ margin: 0 }} />
+                    </SearchBarStyled>
+                </Header>
+            )}
             <SearchResult />
         </PageWrapper>
     );

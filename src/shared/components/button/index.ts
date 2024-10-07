@@ -29,16 +29,6 @@ export const Button = styled.button<{
     gap: 8px;
     user-select: none;
 
-    &:disabled {
-        filter: grayscale(0.3);
-        color: ${({ theme }) => theme.colors.textColor};
-        pointer-events: none;
-
-        & > * {
-            opacity: 0.5;
-        }
-    }
-
     &.primary {
         background: ${({ theme, $primaryColor }) =>
             $primaryColor ?? theme.scheme.blue.action};
@@ -77,6 +67,22 @@ export const Button = styled.button<{
 
         &.primary {
             box-shadow: none;
+        }
+    }
+
+    &:disabled {
+        filter: grayscale(0.8);
+        color: ${({ theme }) => theme.colors.greyText};
+        pointer-events: none;
+
+        & .show {
+            opacity: 0.4;
+        }
+
+        &.plane,
+        &.ghost,
+        &.outline {
+            background: ${({ theme }) => theme.scheme.grey.mild};
         }
     }
 

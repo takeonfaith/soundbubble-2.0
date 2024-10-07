@@ -22,6 +22,10 @@ export const GlobalStyles = createGlobalStyle`
         --player-size: 80px;
     	}
 
+		@media (max-width: 1100px) {
+			--sidebar-width: 90px;
+		}
+
 		@media (max-width: 1000px) {
 			--page-padding: 20px;
 			--sidebar-width: 0px;
