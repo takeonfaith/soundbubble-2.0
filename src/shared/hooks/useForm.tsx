@@ -65,7 +65,8 @@ export const useForm = <T extends TField>({
         return Object.keys(errors).length !== 0;
     };
 
-    const onSumbit = () => {
+    const onSumbit = (e: Evt<'btn'>) => {
+        e.preventDefault();
         setSumbitError(undefined);
         const hasErrors = validateFields();
 

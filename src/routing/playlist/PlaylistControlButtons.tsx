@@ -2,12 +2,18 @@ import {
     IconArrowsShuffle,
     IconDots,
     IconInfoCircle,
+    IconLock,
     IconPencil,
     IconPlus,
     IconSearch,
     IconShare3,
+    IconTrash,
+    IconWorld,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useTogglePlaylistLike } from '../../entities/playlist/hooks/useTogglePlaylistLike';
+import { playlistModel } from '../../entities/playlist/model';
 import { TPlaylist } from '../../entities/playlist/model/types';
 import { PlaylistInfo } from '../../entities/playlist/ui/PlaylistInfo';
 import { SongState, TQueue } from '../../entities/song/model/types';
@@ -15,16 +21,18 @@ import { songModel } from '../../entities/song/new-model';
 import { userModel } from '../../entities/user/model';
 import { LikeButton } from '../../features/likeButton';
 import { ShareModal } from '../../features/shareModal';
+import { confirmModel } from '../../layout/confirm/model';
 import { modalModel } from '../../layout/modal/model';
 import { popupModel } from '../../layout/popup/model';
 import { Button } from '../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
+import { Divider } from '../../shared/components/divider';
 import { Flex } from '../../shared/components/flex';
 import { Loading } from '../../shared/components/loading';
 import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
 import { AddSongsToPlaylistModal } from './AddSongsToPlaylistModal';
 import { LikeButtonWrapper } from './styles';
-import { useTogglePlaylistLike } from '../../entities/playlist/hooks/useTogglePlaylistLike';
+import { EditPlaylistModal } from './EditPlaylistModal';
 
 type Props = {
     playlist: TPlaylist | null;
@@ -39,6 +47,7 @@ export const PlaylistControlButtons = ({
 }: Props) => {
     const [currentUser] = userModel.useUser();
     const { state } = songModel.useSong();
+    const navigate = useNavigate();
     const { isLiked, handleToggleLike, performingAction } =
         useTogglePlaylistLike(playlist);
 
@@ -46,13 +55,21 @@ export const PlaylistControlButtons = ({
     const [buttonType, setButtonType] = useState<'play' | 'shuffle' | null>(
         null
     );
-    const isOwner = currentUser
+    const isAuthor = currentUser
         ? playlist?.authors.find((author) => author.uid === currentUser.uid)
         : false;
+
+    const isOwner = playlist?.ownerId === currentUser?.uid;
 
     const buttonsDisabled =
         queue.songs.length === 0 ||
         (!!buttonType && state === SongState.loading);
+
+    useEffect(() => {
+        if (state === SongState.playing) {
+            setButtonType(null);
+        }
+    }, [state]);
 
     const handleInfo = () => {
         modalModel.events.open({
@@ -68,21 +85,101 @@ export const PlaylistControlButtons = ({
         });
     };
 
+    const handleEdit = () => {
+        modalModel.events.open({
+            title: 'Edit playlist',
+            content: <EditPlaylistModal />,
+            sizeY: 'l',
+        });
+    };
+
+    const handleDeletePlaylist = () => {
+        if (playlist) {
+            confirmModel.events.open({
+                icon: <IconTrash />,
+                iconColor: 'red',
+                text: 'Are you sure you want to delete this playlist',
+                subtext: 'This action is irreversible',
+                onAccept: () => {
+                    playlistModel.events.deletePlaylist({
+                        playlist,
+                        onSuccess: () => {
+                            navigate('/');
+                        },
+                    });
+                },
+            });
+        }
+    };
+
+    const handleMakePrivate = () => {
+        if (playlist) {
+            playlistModel.events.updatePlaylist({
+                update: {
+                    isPrivate: !playlist.isPrivate,
+                    lastEditedTime: Date.now(),
+                },
+            });
+            popupModel.events.close();
+        }
+    };
+
+    const handleMakePublic = () => {
+        if (playlist) {
+            confirmModel.events.open({
+                icon: <IconWorld />,
+                iconColor: 'blue',
+                text: 'Are you sure you want to make this playlist public?',
+                subtext: 'Everyone will be able to access this playlist',
+                onAccept: () => {
+                    playlistModel.events.updatePlaylist({
+                        update: {
+                            isPrivate: !playlist.isPrivate,
+                        },
+                    });
+                    popupModel.events.close();
+                },
+            });
+        }
+    };
+
     const handleOpenMore = (e: Evt<'btn'>) => {
         e.stopPropagation();
         popupModel.events.open({
             e,
-            height: 100,
+            height: isAuthor ? (playlist?.isPrivate ? 152.5 : 192.5) : 96,
             content: (
                 <DefaultContextMenuStyled>
-                    <Button onClick={handleShare}>
-                        <IconShare3 />
-                        Share
-                    </Button>
+                    {!playlist?.isPrivate && (
+                        <Button onClick={handleShare}>
+                            <IconShare3 />
+                            Share
+                        </Button>
+                    )}
                     <Button onClick={handleInfo}>
                         <IconInfoCircle />
                         Info
                     </Button>
+                    {isOwner && (
+                        <>
+                            <Divider />
+                            {!playlist?.isPrivate ? (
+                                <Button onClick={handleMakePrivate}>
+                                    <IconLock />
+                                    Make private
+                                </Button>
+                            ) : (
+                                <Button onClick={handleMakePublic}>
+                                    <IconWorld />
+                                    Make public
+                                </Button>
+                            )}
+                            <Button onClick={handleDeletePlaylist}>
+                                <IconTrash />
+                                Delete
+                            </Button>
+                        </>
+                    )}
                 </DefaultContextMenuStyled>
             ),
         });
@@ -95,12 +192,6 @@ export const PlaylistControlButtons = ({
             sizeY: 'l',
         });
     };
-
-    useEffect(() => {
-        if (state === SongState.playing) {
-            setButtonType(null);
-        }
-    }, [state]);
 
     return (
         <Flex width="fit-content" gap={20}>
@@ -151,7 +242,7 @@ export const PlaylistControlButtons = ({
                 </Flex>
             )}
             <Flex gap={6}>
-                {isOwner && (
+                {isAuthor && (
                     <Button
                         $width="130px"
                         className={!noSongs ? 'ghost' : 'primary'}
@@ -166,7 +257,7 @@ export const PlaylistControlButtons = ({
                         Add songs
                     </Button>
                 )}
-                {playlist && !isOwner && (
+                {playlist && !isAuthor && (
                     <LikeButtonWrapper>
                         <LikeButton
                             entity={playlist}
@@ -188,11 +279,12 @@ export const PlaylistControlButtons = ({
                     <IconSearch size={18} />
                     Search
                 </Button>
-                {isOwner && (
+                {isAuthor && (
                     <Button
                         $width="90px"
                         className="ghost"
                         style={{ fontWeight: '300' }}
+                        onClick={handleEdit}
                     >
                         <IconPencil size={18} />
                         Edit

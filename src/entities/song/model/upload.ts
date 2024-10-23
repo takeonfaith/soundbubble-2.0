@@ -10,7 +10,7 @@ const uploadSongFx = createEffect(async (form: TUploadSongForm) => {
 
 uploadSongFx.doneData.watch(() => {
     toastModel.events.show({
-        message: 'Song uploaded successfully',
+        message: 'Song uploaded',
         type: 'success',
         duration: 5000,
     });

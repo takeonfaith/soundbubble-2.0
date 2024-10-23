@@ -35,7 +35,7 @@ export const Authors = ({
                 content: <AuthorsModal isAuthor={isAuthor} authors={authors} />,
             });
         } else {
-            navigate(`/author/${authors?.[0].uid}`);
+            navigate(`/${isAuthor ? 'author' : 'user'}/${authors?.[0].uid}`);
         }
     };
 

@@ -1,19 +1,23 @@
 import {
+    and,
     doc,
     getDocs,
     limit,
+    or,
     orderBy,
     query,
     setDoc,
     where,
 } from 'firebase/firestore';
-import { TChatData, TMessage } from '../../entities/chat/model/types';
+import { TChat, TChatData, TMessage } from '../../entities/chat/model/types';
 import { TEntity } from '../../entities/search/model/types';
 import { FB } from '../../firebase';
+import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { Playlists } from './playlists';
 import { Songs } from './songs';
 import { Users } from './users';
+import { createChatObject } from '../../entities/chat/lib/createChatObject';
 
 export class Chats {
     static ref = FB.get('newChats');
@@ -77,23 +81,43 @@ export class Chats {
             const docs = await getDocs(q);
             const messages = getDataFromDoc<TMessage>(docs);
 
-            const requests = messages.map(async (message) => {
-                return [
-                    ...(await Songs.getSongsByUids(message.attachedSongs)),
-                    ...(await Playlists.getPlaylistsByUids(
-                        message.attachedAlbums
-                    )),
-                    ...(await Users.getUsersByUids(message.attachedAuthors)),
-                ];
+            const attachments = await asyncRequests(messages, (message) => {
+                const playlistIds = [...message.attachedAlbums];
+
+                if (message.playlistInvitation?.id) {
+                    playlistIds.push(message.playlistInvitation?.id);
+                }
+
+                const shouldRequest =
+                    playlistIds.length > 0 ||
+                    message.attachedSongs.length > 0 ||
+                    message.attachedAuthors.length > 0;
+
+                const getAttachments = async (): Promise<TEntity[]> => {
+                    const songs = await Songs.getSongsByUids(
+                        message.attachedSongs
+                    );
+                    const playlists = await Playlists.getPlaylistsByUids(
+                        playlistIds
+                    );
+                    const authors = await Users.getUsersByUids(
+                        message.attachedAuthors
+                    );
+
+                    return [...songs, ...playlists, ...authors];
+                };
+
+                return shouldRequest ? getAttachments() : Promise.resolve(null);
             });
 
-            const res = (await Promise.all(requests)).reduce((acc, r) => {
-                r.forEach((el) => {
+            const res = attachments.reduce((acc, r) => {
+                r?.forEach((el) => {
                     acc['id' in el ? el.id : el.uid] = el;
                 });
 
                 return acc;
             }, {} as Record<string, TEntity>);
+            console.log(res);
 
             return { messages, chatData: res };
         } catch (error) {
@@ -116,6 +140,64 @@ export class Chats {
         } catch (error) {
             throw new Error(
                 'Failed to send message' + (error as Error).toString()
+            );
+        }
+    }
+
+    static async createChat(chat: TChat) {
+        try {
+            await FB.setById('newChats', chat.id, chat);
+            return chat;
+        } catch (error) {
+            throw new Error(
+                'Failed to create chat' + (error as Error).toString()
+            );
+        }
+    }
+
+    static async getChatByUserIds(senderId: string, receiverId: string) {
+        try {
+            const q = query(
+                this.ref,
+                and(
+                    or(
+                        where('participants', '==', [senderId, receiverId]),
+                        where('participants', '==', [receiverId, senderId])
+                    ),
+                    where('chatName', '==', '')
+                ),
+                limit(1)
+            );
+            const docs = await getDocs(q);
+            let chat = getDataFromDoc<TChat>(docs)[0];
+
+            if (!chat) {
+                chat = await this.createChat(
+                    createChatObject([senderId, receiverId], {})
+                );
+            }
+
+            return chat;
+        } catch (error) {
+            throw new Error(
+                'Failed to get chat by user id, ' + (error as Error).toString()
+            );
+        }
+    }
+
+    static async sendMessageByUserId(
+        senderId: string,
+        receiverId: string,
+        message: TMessage
+    ) {
+        try {
+            const chat = await this.getChatByUserIds(senderId, receiverId);
+
+            await this.sendMessage(chat.id, message);
+        } catch (error) {
+            throw new Error(
+                'Failed to send message by user id' +
+                    (error as Error).toString()
             );
         }
     }

@@ -20,6 +20,7 @@ import {
     SongTitle,
 } from './styles';
 import { usePlayer } from './usePlayer';
+import { SongState } from '../../entities/song/model/types';
 
 export const Player = () => {
     const {
@@ -71,7 +72,10 @@ export const Player = () => {
                             }}
                         >
                             <PlayPauseIcon
-                                loading={controls.state === 'loading'}
+                                loading={
+                                    controls.state === SongState.loading ||
+                                    controls.state === SongState.loadingThenPlay
+                                }
                                 playling={controls.state === 'playing'}
                             />
                         </Button>
@@ -99,7 +103,7 @@ export const Player = () => {
                     <Button
                         $width="42px"
                         $height="42px"
-                        disabled={!currentSong?.lyrics.length}
+                        disabled={!currentSong?.hasLyrics}
                         onClick={handleLyrics}
                     >
                         <IconQuote size={20} />

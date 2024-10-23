@@ -12,10 +12,15 @@ import { Database } from '../../../database';
 import { createQueueObject } from '../lib/createQueueObject';
 import { shuffleSongs } from '../lib/shuffleSongs';
 import { LoopMode, SongState, TLoadQueue, TQueue, TSong } from '../model/types';
+import { $user } from '../../user/model';
+import { userIsLoggedIn } from '../../chat/lib/userIsLoggedIn';
 
 type TNextFrom = 'from_next_button' | 'from_end_track';
 
-const addListeningFx = createEffect<TSong, Promise<void>>();
+const addListeningFx = createEffect<
+    { queue: TQueue | null; currentSongIndex: number },
+    Promise<void>
+>();
 const loadSongsFx = createEffect<
     { queue: TLoadQueue; currentSongIndex: number },
     { queue: TQueue; currentSongIndex: number }
@@ -45,8 +50,8 @@ const loaded = createEvent();
 const next = createEvent<TNextFrom>();
 const previous = createEvent();
 
-const $queue = createStore<TQueue | null>(null);
-const $currentSongIndex = createStore<number>(0);
+export const $queue = createStore<TQueue | null>(null);
+export const $currentSongIndex = createStore<number>(0);
 const $shuffleMode = createStore<boolean>(false);
 const $loopMode = createStore<LoopMode>(
     (localStorage.getItem('loopMode') as LoopMode | null) ?? LoopMode.noloop
@@ -57,7 +62,7 @@ const $currentTime = createStore<number>(0);
 // Is needed for changing the audio currentTime in AppAudio
 const $lastTime = createStore<number>(-1);
 
-const $currentSong = combine(
+export const $currentSong = combine(
     $queue,
     $currentSongIndex,
     (queue, currentSongIndex) => queue?.songs[currentSongIndex]
@@ -102,10 +107,15 @@ const { toggleShuffleMode } = createApi($shuffleMode, {
 
 sample({
     clock: addListening,
-    source: { state: $songState, currentSong: $currentSong },
+    source: {
+        state: $songState,
+        currentSong: $currentSong,
+        queue: $queue,
+        currentSongIndex: $currentSongIndex,
+    },
     filter: ({ state, currentSong }) =>
         !!currentSong && state === SongState.playing,
-    fn: ({ currentSong }) => currentSong as TSong,
+    fn: ({ currentSongIndex, queue }) => ({ queue, currentSongIndex }),
     target: addListeningFx,
 });
 
@@ -499,11 +509,61 @@ loadSongsFx.use(async ({ queue, currentSongIndex }) => {
 
 // #endregion
 
-addListeningFx.use(async (song) => {
+addListeningFx.use(async ({ queue, currentSongIndex }) => {
     console.log('addListeningFx');
 
-    Database.Songs.addListening(song);
+    Database.Songs.addListening(queue, currentSongIndex);
 });
+
+// #region Last queue
+
+const loadLastQueueFx = createEffect<
+    string,
+    { queue: TLastQueue | null; songs: TSong[] } | null,
+    Error
+>();
+
+const loadLastQueue = createEvent<string>();
+
+$user.watch((user) => {
+    console.log(user);
+});
+
+console.log('alo nah');
+
+sample({
+    clock: $user,
+    filter: userIsLoggedIn,
+    fn: (user) => {
+        console.log('user initialized');
+
+        return user!.uid;
+    },
+    target: loadLastQueue,
+});
+
+sample({
+    clock: loadLastQueue,
+    target: loadLastQueueFx,
+});
+
+sample({
+    clock: loadLastQueueFx.doneData,
+    fn: (res) => {
+        if (!res) return null;
+
+        const { queue, songs } = res;
+        return createQueueObject({ ...queue, songs });
+    },
+    target: $queue,
+});
+
+loadLastQueueFx.use(async (userId) => {
+    console.log({ userId });
+
+    return await Database.Songs.loadLastQueue(userId);
+});
+// #endregion
 
 // TODO: Разбить на разные unit'ы, а то триггерит ненужный ререндер
 export const songModel = {

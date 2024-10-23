@@ -4,6 +4,10 @@ export type TMessage = {
     attachedAlbums: string[];
     attachedAuthors: string[];
     attachedSongs: string[];
+    playlistInvitation?: {
+        id: string;
+        accepted: boolean;
+    };
     message: string;
     sentTime: number;
     sender: string;

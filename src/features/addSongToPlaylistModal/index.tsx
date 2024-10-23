@@ -1,7 +1,14 @@
-import { playlistModel } from '../../entities/playlist/model';
+import { useUnit } from 'effector-react';
+import {
+    addSongsToPlaylistsFx,
+    playlistModel,
+} from '../../entities/playlist/model';
+import { TPlaylist } from '../../entities/playlist/model/types';
 import { PlaylistItem } from '../../entities/playlist/ui';
 import { TSong } from '../../entities/song/model/types';
 import { userModel } from '../../entities/user/model';
+import { modalModel } from '../../layout/modal/model';
+import { Button } from '../../shared/components/button';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { CheckIcon } from '../../shared/components/checkIcon';
 import { Flex } from '../../shared/components/flex';
@@ -13,19 +20,24 @@ type Props = {
 
 export const AddSongToPlaylistModal = ({ song }: Props) => {
     const [playlists] = userModel.useOwnPlaylists();
-    // const [loading] = playlistModel.useAddingSongToPlaylists()
+    const [loading] = useUnit([addSongsToPlaylistsFx.pending]);
 
-    const handleAdd = (playlistIds: string[]) => {
-        if (!song) return;
+    const handleAdd = (playlists: TPlaylist[]) => {
+        return () => {
+            if (!song) return;
 
-        playlistModel.events.addSongToPlaylists({
-            songId: song.id,
-            playlistIds,
-        });
+            playlistModel.events.addSongsToPlaylists({
+                songs: [song],
+                playlists,
+                onSuccess: () => {
+                    modalModel.events.close();
+                },
+            });
+        };
     };
 
     return (
-        <Flex width="100%" d="column" padding="0 25px">
+        <Flex width="100%" d="column" padding="0 18px">
             <AddEntitiesUI
                 entities={playlists}
                 inputPlaceholder={'Search for playlists...'}
@@ -38,7 +50,9 @@ export const AddSongToPlaylistModal = ({ song }: Props) => {
                             key={playlist.id}
                             orientation="horizontal"
                         >
-                            <CheckIcon checked={checked} />
+                            <Button $width="45px">
+                                <CheckIcon type="plus" checked={checked} />
+                            </Button>
                         </PlaylistItem>
                     );
                 }}
@@ -46,14 +60,14 @@ export const AddSongToPlaylistModal = ({ song }: Props) => {
                     <>
                         <DefaultButton
                             appearance="primary"
-                            onClick={() =>
-                                handleAdd(playlists.map((p) => p.id))
-                            }
+                            onClick={handleAdd(playlists)}
+                            loading={loading}
                         >
                             Save changes
                         </DefaultButton>
                     </>
                 )}
+                initiallyAddedItems={[]}
             />
         </Flex>
     );

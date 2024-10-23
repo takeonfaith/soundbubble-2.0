@@ -6,7 +6,8 @@ import {
     IconVinyl,
 } from '@tabler/icons-react';
 import { Logo } from '../../shared/components/logo';
-import { Blocks, BlockStyled, PARTICLES_QUANTITY, PromoStyled } from './styles';
+import { Blocks, BlockStyled, PromoStyled } from './styles';
+import { Particles } from './Particles';
 
 const Block = ({ icon }: { icon: React.ReactNode }) => {
     return <BlockStyled className="block">{icon}</BlockStyled>;
@@ -22,12 +23,7 @@ export const LeftSide = () => {
                 <Block icon={<IconMicrophone2 />} />
                 <Block icon={<IconBrandSafari />} />
                 <Block icon={<IconMessageCircle />} />
-
-                <div className="particles">
-                    {Array.from(Array(PARTICLES_QUANTITY)).map((_, index) => {
-                        return <div className="particle" key={index} />;
-                    })}
-                </div>
+                <Particles />
             </Blocks>
         </PromoStyled>
     );

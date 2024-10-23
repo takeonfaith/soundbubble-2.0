@@ -29,6 +29,7 @@ export const ChatList = () => {
         modalModel.events.open({
             title: 'Create chat with friends',
             content: <CreateChatModal />,
+            sizeY: 'l',
         });
     };
 

@@ -22,7 +22,7 @@ import { NotificationBadge } from '../../../layout/sidebar/styles';
 import { Flex } from '../../../shared/components/flex';
 import { Loading } from '../../../shared/components/loading';
 import { areDatesEqual } from '../../../shared/funcs/areDatesEqual';
-import { MessageItem } from './MessageItem';
+import { MessageItem } from './messageItem/MessageItem';
 
 export const ChatMessages = () => {
     const {
@@ -72,6 +72,8 @@ export const ChatMessages = () => {
             });
         }
     }, [currentChatMessages.length, shouldScrollToBottom]);
+
+    if (!currentChat) return null;
 
     return (
         <ChatMessagesStyled onScroll={handleScroll}>
@@ -151,6 +153,7 @@ export const ChatMessages = () => {
                                         return (
                                             <React.Fragment key={message.id}>
                                                 <MessageItem
+                                                    chatId={currentChat.id}
                                                     isFirst={i === 0}
                                                     chatData={chatData}
                                                     key={message.id}

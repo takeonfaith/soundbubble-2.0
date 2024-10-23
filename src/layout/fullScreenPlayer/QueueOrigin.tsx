@@ -7,6 +7,7 @@ import { UserItem } from '../../entities/user/ui';
 import { allRoutes } from '../../routing/routes';
 import { SidebarLink } from '../sidebar/styles';
 import { IconText } from '../../shared/components/iconText';
+import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
 
 type Props = { queue: TQueue | null };
 
@@ -50,7 +51,7 @@ export const QueueOrigin = ({ queue }: Props) => {
 
     if (queue.url?.includes('playlist')) {
         const id = queue.url.split('/playlist/').pop();
-        const playlist = createPlaylistObject({
+        const playlist = createPlaylistObject(createAuthorObject({}), {
             id,
             name: queue.name,
             image: queue.imageUrl,
@@ -61,7 +62,7 @@ export const QueueOrigin = ({ queue }: Props) => {
 
     if (queue.url?.includes('album')) {
         const id = queue.url.split('/album/').pop();
-        const playlist = createPlaylistObject({
+        const playlist = createPlaylistObject(createAuthorObject({}), {
             id,
             name: queue.name,
             image: queue.imageUrl,

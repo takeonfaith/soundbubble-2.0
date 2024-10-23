@@ -1,19 +1,23 @@
 import getUID from '../../../shared/funcs/getUID';
-import { TPlaylist } from '../model/types';
+import { TAuthor } from '../../song/model/types';
+import { TPlaylist, TUploadPlaylist } from '../model/types';
 
-export const createPlaylistObject = (props: Partial<TPlaylist>): TPlaylist => {
-    return {
-        id: getUID(),
-        name: '',
-        image: '',
-        songs: [],
-        imageColors: [],
-        authors: [],
-        isAlbum: false,
-        isPrivate: false,
-        listens: 0,
-        subscribers: 0,
-        creationDate: new Date().toString(),
-        ...props,
-    };
-};
+export const createPlaylistObject = (
+    author: TAuthor,
+    props: Partial<TUploadPlaylist>
+): TPlaylist => ({
+    id: getUID(),
+    name: '',
+    image: '',
+    songs: [],
+    imageColors: [],
+    authors: [author],
+    isAlbum: false,
+    isPrivate: false,
+    listens: 0,
+    subscribers: 0,
+    creationDate: new Date().toString(),
+    ownerId: author.uid,
+    lastEditedTime: Date.now(),
+    ...props,
+});

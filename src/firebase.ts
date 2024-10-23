@@ -5,6 +5,7 @@ import {
     createUserWithEmailAndPassword,
     getAuth,
     onAuthStateChanged,
+    sendPasswordResetEmail,
     signInWithEmailAndPassword,
     signOut,
 } from 'firebase/auth';
@@ -15,33 +16,53 @@ import {
     QueryOrderByConstraint,
     QuerySnapshot,
     collection,
+    deleteDoc,
     doc,
     getDoc,
     getDocs,
-    initializeFirestore,
+    getFirestore,
     onSnapshot,
     query,
     setDoc,
     updateDoc,
     where,
 } from 'firebase/firestore';
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import {
+    deleteObject,
+    getDownloadURL,
+    getStorage,
+    ref,
+    uploadBytes,
+} from 'firebase/storage';
 import { getDataFromDoc } from './database/lib/getDataFromDoc';
-import { TChat } from './entities/chat/model/types';
+import { TChat, TMessage } from './entities/chat/model/types';
 import { TPlaylist } from './entities/playlist/model/types';
-import { TSuggestion } from './entities/search/model/types';
-import { TSong } from './entities/song/model/types';
+import { TEntity, TSuggestion } from './entities/search/model/types';
+import { TLastQueue, TLyric, TSong } from './entities/song/model/types';
 import { TSearchHistory, TUser } from './entities/user/model/types';
 import getUID from './shared/funcs/getUID';
+import { getEntityId } from './features/searchWithHints/lib/getDividedEntity';
+import { getEntityType } from './features/searchWithHints/lib/getEntityType';
+import { asyncRequests } from './shared/funcs/asyncRequests';
+
+const {
+    VITE_FIREBASE_API_KEY,
+    VITE_FIREBASE_AUTH_DOMAIN,
+    VITE_FIREBASE_PROJECT_ID,
+    VITE_FIREBASE_STORAGE_BUCKET,
+    VITE_FIREBASE_MESSAGING_SENDER_ID,
+    VITE_FIREBASE_APP_ID,
+    VITE_MEASUREMENT_ID,
+} = import.meta.env;
 
 const config: FirebaseOptions = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID,
-    measurementId: import.meta.env.VITE_MEASUREMENT_ID,
+    apiKey: VITE_FIREBASE_API_KEY,
+    authDomain: VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: VITE_FIREBASE_PROJECT_ID,
+    storageBucket: VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: VITE_FIREBASE_APP_ID,
+    measurementId: VITE_MEASUREMENT_ID,
 };
 
 export type TCollections =
@@ -54,7 +75,12 @@ export type TCollections =
     | 'chats'
     | 'messages'
     | 'chatWallpapers'
-    | 'newChats';
+    | 'newChats'
+    | 'messages'
+    | 'lyrics'
+    | 'lastQueue';
+
+export type TDeepCollections = 'newChats/messages';
 
 type TCollectionType<T extends TCollections> = T extends 'songs'
     ? TSong
@@ -70,7 +96,20 @@ type TCollectionType<T extends TCollections> = T extends 'songs'
     ? TSuggestion
     : T extends 'newChats'
     ? TChat
+    : T extends 'lyrics'
+    ? { id: string; lyrics: TLyric[] }
+    : T extends 'lastQueue'
+    ? TLastQueue
     : never;
+
+type TSubcollection<T extends TCollections> = T extends 'newChats'
+    ? 'messages'
+    : never;
+
+type TSubcollectionDataType<
+    K extends TCollections,
+    T extends TSubcollection<K>
+> = T extends 'messages' ? Partial<TMessage> : never;
 
 type TStorageFolder =
     | 'chatCovers'
@@ -80,20 +119,36 @@ type TStorageFolder =
     | 'usersImages';
 
 type DataType<T extends TCollections> =
-    | Partial<TCollectionType<T>>
+    | DeepPartial<TCollectionType<T>>
     | Partial<{
           [key in keyof TCollectionType<T>]: FieldValue;
       }>;
 
 const MAX_FIRESTORE_IN_QUERY_LIMIT = 30;
 
+function mapOrder<T extends TCollections>(
+    array: TCollectionType<T>[],
+    order: string[]
+) {
+    array.sort(function (a, b) {
+        const A = getEntityId(a);
+        const B = getEntityId(b);
+
+        if (order.indexOf(A) > order.indexOf(B)) {
+            return 1;
+        } else {
+            return -1;
+        }
+    });
+
+    return array;
+}
+
 export class FB {
     static app = initializeApp(config);
-    static auth = getAuth(this.app);
-    static storage = getStorage(this.app);
-    static firestore = initializeFirestore(this.app, {
-        experimentalForceLongPolling: false,
-    });
+    static auth = getAuth();
+    static storage = getStorage();
+    static firestore = getFirestore();
 
     static get(collectionType: TCollections) {
         return collection(this.firestore, collectionType);
@@ -122,22 +177,19 @@ export class FB {
         id: string,
         data: DataType<T>
     ) {
-        const ref = this.get(collectionType);
-        const docRef = doc(ref, id);
+        const docRef = doc(this.get(collectionType), id);
 
         return await updateDoc<DocumentData, DocumentData>(docRef, data);
     }
 
-    static async login(email: string, password: string) {
-        return await signInWithEmailAndPassword(this.auth, email, password);
-    }
+    static async updateDeepByIds<T extends TCollections>(
+        collectionType: T,
+        path: [string, TSubcollection<T>, string],
+        data: TSubcollectionDataType<T, TSubcollection<T>>
+    ): Promise<void> {
+        const ref = doc(this.get(collectionType), ...path);
 
-    static async logout() {
-        return await signOut(this.auth);
-    }
-
-    static onAuthStateChanged(func: NextOrObserver<User>) {
-        return onAuthStateChanged(this.auth, func);
+        await updateDoc(ref, data);
     }
 
     static async getById<T extends TCollections>(
@@ -151,33 +203,51 @@ export class FB {
         return data.data() as TCollectionType<T>;
     }
 
+    static async getAll<T extends TCollections>(collectionType: T) {
+        const querySnapshot = await getDocs(this.get(collectionType));
+
+        return getDataFromDoc<TCollectionType<T>>(querySnapshot);
+    }
+
+    static async getDeepById<T extends TCollections>(
+        collectionType: T,
+        path: [string, TSubcollection<T>, string]
+    ) {
+        const ref = doc(this.get(collectionType), ...path);
+        const data = await getDoc(ref);
+
+        return data.data() as TSubcollectionDataType<T, TSubcollection<T>>;
+    }
+
     static async getByIds<T extends TCollections>(
         collectionType: T,
-        ids: string[],
-        key = 'id'
+        ids: string[]
     ): Promise<TCollectionType<T>[]> {
-        const ref = this.get(collectionType);
-        const uids = [...ids];
-        const batches: Promise<QuerySnapshot<DocumentData, DocumentData>>[] =
-            [];
-
-        while (uids.length) {
-            // firestore limits batches to 30
-            const batch = uids.splice(0, MAX_FIRESTORE_IN_QUERY_LIMIT);
-
-            // add the batch request to to a queue
-            const q = query(ref, where(key, 'in', [...batch]));
-
-            batches.push(getDocs(q));
-        }
-
-        const result = await Promise.all(batches).then((content) => {
-            return content
-                .map((doc) => getDataFromDoc<TCollectionType<T>>(doc))
-                .flat();
+        return await asyncRequests(ids, (id) => {
+            return FB.getById(collectionType, id);
         });
+    }
 
-        return result;
+    static async deleteById<T extends TCollections>(
+        collectionType: T,
+        id: string
+    ) {
+        const ref = this.get(collectionType);
+        const docRef = doc(ref, id);
+
+        return await deleteDoc(docRef);
+    }
+
+    static async login(email: string, password: string) {
+        return await signInWithEmailAndPassword(this.auth, email, password);
+    }
+
+    static async logout() {
+        return await signOut(this.auth);
+    }
+
+    static onAuthStateChanged(func: NextOrObserver<User>) {
+        return onAuthStateChanged(this.auth, func);
     }
 
     static async listenTo<T extends TCollections>(
@@ -199,46 +269,41 @@ export class FB {
         return unsubscribe;
     }
 
-    static async uploadFile(
-        folder: TStorageFolder,
-        file: File
-    ): Promise<string> {
-        const imageRef = ref(this.storage, `${folder}/${file.name + getUID()}`);
+    /**
+     *
+     * @param folder
+     * @param file
+     * @returns Path to new image in DB
+     */
+    static async uploadFile(folder: TStorageFolder, file: File) {
+        const [name, ext] = file.name.split('.');
+
+        const imageRef = ref(
+            this.storage,
+            `${folder}/${name + getUID() + '.' + ext}`
+        );
         await uploadBytes(imageRef, file);
         const downloadURL = await getDownloadURL(imageRef);
 
         return downloadURL;
     }
+
+    /**
+     *
+     * @param folder Папка из предложенных
+     * @param path Путь целиком, какой указан в поле. Внутри происходит логика вычленения реального названия
+     */
+    static async deleteFile(folder: TStorageFolder, path: string) {
+        if (path && path.length > 0) {
+            const name = path.split('songsImages%2F')[1];
+            const [realName] = name.split('?');
+            const fileRef = ref(this.storage, `${folder}/${realName}`);
+
+            await deleteObject(fileRef);
+        }
+    }
+
+    static async resetPassword(email: string) {
+        return await sendPasswordResetEmail(this.auth, email);
+    }
 }
-
-// // add last message field to chats
-// const addLastMessage = async () => {
-//     const snapshot = await getDocs(FB.get('newChats'));
-
-//     const allChats = getDataFromDoc<TChat>(snapshot);
-//     const lastMessagesSnapshots = allChats.map(async (chat) => {
-//         const q = query(
-//             FB.getSubCollection('newChats', `${chat.id}/messages`),
-//             orderBy('sentTime', 'desc'),
-//             limit(1)
-//         );
-//         const docs = await getDocs(q);
-//         return { docs, chatId: chat.id };
-//     });
-
-//     const res = await Promise.all(lastMessagesSnapshots).then((messages) => {
-//         return messages.map((m) => ({
-//             messages: getDataFromDoc<TMessage>(m.docs).flat(),
-//             chatId: m.chatId,
-//         }));
-//     });
-
-//     asyncRequests(allChats, (chat) => {
-//         return FB.updateById('newChats', chat.id, {
-//             lastMessage: res.find(({ chatId }) => chatId === chat.id)
-//                 ?.messages[0],
-//         });
-//     });
-// };
-
-// addLastMessage();

@@ -11,12 +11,12 @@ export type TSong = {
     id: string;
     releaseDate: string;
     songSrc: string;
-    lyrics: TLyric[];
     listens: number;
     cover: string;
     authors: TAuthor[];
     imageColors: string[];
     duration: number;
+    hasLyrics: boolean;
     genres?: string[];
     langs?: string[];
     moods?: string[];
@@ -26,6 +26,8 @@ export enum SongState {
     playing = 'playing',
     pause = 'pause',
     loading = 'loading',
+    loadingThenPlay = 'loading-then-play',
+    loaded = 'loaded',
 }
 
 export type TStore = {
@@ -71,3 +73,8 @@ export type TQueue = {
 };
 
 export type TLoadQueue = Omit<TQueue, 'songs'> & { songIds: string[] };
+
+export type TLastQueue = TLoadQueue & {
+    currentSongIndex: number;
+    userId: string;
+};

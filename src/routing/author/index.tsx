@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { GridSongList } from '../../entities/song/ui/gridList';
 import { userModel } from '../../entities/user/model';
@@ -12,6 +12,7 @@ import { SimilarAuthors } from './SimilarAuthors';
 import { SkeletonLoading } from './Skeleton';
 import { MAX_SONGS } from './constants';
 import { AuthorPageWrapper, SongsStyled } from './styles';
+import { TIME_IN_MS } from '../../shared/constants/time';
 
 type Props = {
     userData?: TUser | null;
@@ -20,6 +21,14 @@ type Props = {
 export const AuthorPage = ({ userData }: Props) => {
     const [{ user: currentPageUser, songs }, loading] = userModel.useUserPage();
     const userPageData = userData ?? currentPageUser;
+    const lastSongs = useMemo(() => {
+        return songs.filter((s) => {
+            return (
+                new Date().getTime() - new Date(s.releaseDate).getTime() <=
+                TIME_IN_MS.month
+            );
+        });
+    }, [songs]);
 
     useUrlParamId({
         page: 'author',
@@ -37,10 +46,19 @@ export const AuthorPage = ({ userData }: Props) => {
     }, []);
 
     const queue = createQueueObject({
+        id: userPageData?.uid,
         name: userPageData?.displayName,
         imageUrl: userPageData?.photoURL,
         url: `/author/${userPageData?.uid}`,
         songs,
+    });
+
+    const lastSongsQueue = createQueueObject({
+        id: userPageData?.uid,
+        name: userPageData?.displayName,
+        imageUrl: userPageData?.photoURL,
+        url: `/author/${userPageData?.uid}`,
+        songs: lastSongs,
     });
 
     return (
@@ -51,6 +69,15 @@ export const AuthorPage = ({ userData }: Props) => {
                 skeleton={<SkeletonLoading />}
             >
                 <AuthorPageTop author={userPageData} queue={queue} />
+                {!!lastSongs.length && (
+                    <SongsStyled>
+                        <div className="title">
+                            <h3>New Songs</h3>
+                        </div>
+
+                        <GridSongList queue={lastSongsQueue} />
+                    </SongsStyled>
+                )}
                 <SongsStyled>
                     <div className="title">
                         <NavigationTitle
@@ -60,6 +87,7 @@ export const AuthorPage = ({ userData }: Props) => {
                             <h3>Top Songs</h3>
                         </NavigationTitle>
                     </div>
+
                     <GridSongList queue={queue} />
                 </SongsStyled>
                 <Playlists uid={userPageData?.uid} title="Top Albums" />

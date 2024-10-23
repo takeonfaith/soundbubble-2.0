@@ -1,10 +1,14 @@
 import { IconError404Off, IconMusicOff } from '@tabler/icons-react';
-import { playlistModel } from '../../entities/playlist/model';
+import { useUnit } from 'effector-react';
+import {
+    deletePlaylistFx,
+    playlistModel,
+    updatePlaylistFx,
+} from '../../entities/playlist/model';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { userModel } from '../../entities/user/model';
-import { ShareModal } from '../../features/shareModal';
-import { modalModel } from '../../layout/modal/model';
+import { LoadingWrapper } from '../../shared/components/loadingWrapper';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
@@ -12,7 +16,6 @@ import { Subtext } from '../../shared/components/subtext';
 import { getTotalSongsDuration } from '../../shared/funcs/getTotalSongsDuration';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
 import { AddSongsButton } from './AddSongsButton';
-import { AddSongsToPlaylistModal } from './AddSongsToPlaylistModal';
 import { PageTop } from './PageTop';
 import { SkeletonLoading } from './Skeleton';
 import {
@@ -27,11 +30,15 @@ export const PlaylistPage = () => {
         playlistModel.usePlaylist();
 
     const [currentUser] = userModel.useUser();
-    const isOwner =
-        currentUser?.isAdmin ||
-        !!currentPlaylist?.authors.find(
-            (author) => author.uid === currentUser?.uid
-        );
+    const [isUpdating, isDeleting] = useUnit([
+        updatePlaylistFx.pending,
+        deletePlaylistFx.pending,
+    ]);
+    const isLoading = isDeleting || isUpdating;
+
+    const isOwner = !!currentPlaylist?.authors.find(
+        (author) => author.uid === currentUser?.uid
+    );
 
     useUrlParamId({
         page: 'playlist',
@@ -42,30 +49,17 @@ export const PlaylistPage = () => {
         },
     });
 
-    const handleClickShare = () => {
-        modalModel.events.open({
-            title: `Share ${currentPlaylist?.name} with friends`,
-            content: <ShareModal entity={currentPlaylist} />,
-        });
-    };
-
-    const handleAddSongsModal = () => {
-        modalModel.events.open({
-            title: 'Add songs to playlist',
-            content: <AddSongsToPlaylistModal playlist={currentPlaylist} />,
-            sizeY: 'l',
-        });
-    };
-
     const queue = createQueueObject({
         name: currentPlaylist?.name,
         songs: currentPlaylistSongs ?? [],
         imageUrl: currentPlaylist?.image,
         url: `/playlist/${currentPlaylist?.id}`,
+        id: currentPlaylist?.id,
     });
 
     return (
         <PageWrapper>
+            {isLoading && <LoadingWrapper />}
             {!error && (
                 <SkeletonPageAnimation
                     color=""
@@ -82,6 +76,7 @@ export const PlaylistPage = () => {
                                 padding:
                                     '60px var(--page-padding) 0 calc(var(--page-padding) + 8px)',
                             }}
+                            isOwner={isOwner}
                         />
 
                         <PlaylistPageSongs>
@@ -123,7 +118,7 @@ export const PlaylistPage = () => {
                 <PageMessage
                     icon={IconError404Off}
                     title="No playlist was found"
-                    description={'Perhaps it was deleted'}
+                    description={'Perhaps it was deleted or made private'}
                 />
             )}
         </PageWrapper>

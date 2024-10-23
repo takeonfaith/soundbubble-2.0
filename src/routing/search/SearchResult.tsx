@@ -2,7 +2,7 @@
 import { IconDiscOff } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
 import { useSearchParams } from 'react-router-dom';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 import { TPlaylist } from '../../entities/playlist/model/types';
 import { PlaylistItem } from '../../entities/playlist/ui';
 import {
@@ -10,6 +10,7 @@ import {
     $searchQuery,
     $searchResult,
 } from '../../entities/search/model';
+import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { TSong } from '../../entities/song/model/types';
 import { PlaneSongList } from '../../entities/song/ui/planeList';
 import { TUser } from '../../entities/user/model/types';
@@ -22,7 +23,6 @@ import { SkeletonPageAnimation } from '../../shared/components/skeleton/Skeleton
 import { ENTITIES_ICONS } from '../../shared/constants/icons';
 import { SearchSkeleton } from './SearchSkeleton';
 import { TopAuthorCard } from './TopAuthorCard';
-import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 
 const SearchPageWrapper = styled.div`
     max-width: 650px;
@@ -58,6 +58,7 @@ const dic: Record<
     album: (playlist: TPlaylist) => (
         <PlaylistItem orientation="horizontal" playlist={playlist} />
     ),
+    deleted: () => <PlaylistItem orientation="horizontal" playlist={null} />,
 };
 
 export const SearchResult = () => {
@@ -138,7 +139,7 @@ export const SearchResult = () => {
                                     style={{
                                         fontWeight: 300,
                                         marginBottom: '10px',
-                                        marginLeft: '7px'
+                                        marginLeft: '7px',
                                     }}
                                 >
                                     Result

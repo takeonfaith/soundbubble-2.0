@@ -1,13 +1,18 @@
-import { useState } from 'react';
-import { GlobalSearch } from '../../features/globalSearch';
-import { SearchWithHints } from '../../features/searchWithHints';
 import styled from 'styled-components';
-import { userModel } from '../../entities/user/model';
-import { Flex } from '../../shared/components/flex';
-import { SongItem } from '../../entities/song/ui';
-import { TSong } from '../../entities/song/model/types';
-import { CheckIcon } from '../../shared/components/checkIcon';
 import { TPlaylist } from '../../entities/playlist/model/types';
+import { SongItem } from '../../entities/song/ui';
+import { userModel } from '../../entities/user/model';
+import { AddEntitiesUI } from '../../features/addEntitiesUI';
+import { Button } from '../../shared/components/button';
+import { DefaultButton } from '../../shared/components/button/DefaultButton';
+import { CheckIcon } from '../../shared/components/checkIcon';
+import { modalModel } from '../../layout/modal/model';
+import {
+    addSongsToPlaylistsFx,
+    playlistModel,
+} from '../../entities/playlist/model';
+import { TSong } from '../../entities/song/model/types';
+import { useUnit } from 'effector-react';
 
 const AddSongsToPlaylistModalStyled = styled.div`
     padding: 10px 20px;
@@ -21,38 +26,54 @@ type Props = {
 };
 
 export const AddSongsToPlaylistModal = ({ playlist }: Props) => {
-    const [value, setValue] = useState('');
     const [library] = userModel.useSongLibrary();
+    const [isAdding] = useUnit([addSongsToPlaylistsFx.pending]);
 
     if (!playlist) return null;
 
+    const handleSave = (songs: TSong[]) => {
+        return () => {
+            playlistModel.events.addSongsToPlaylists({
+                songs,
+                playlists: [playlist],
+                onSuccess: () => {
+                    modalModel.events.close();
+                },
+            });
+        };
+    };
+
     return (
         <AddSongsToPlaylistModalStyled>
-            <GlobalSearch queryValue={value} where={'songs'} showTabs={false} />
-            <Flex d="column" width="100%" gap={2} padding="20px 0">
-                {library.map((song) => {
-                    const isInPlaylist = !!playlist.songs.find(
-                        (s) => s === song.id
-                    );
+            <AddEntitiesUI
+                entities={library}
+                initiallyAddedItems={[]}
+                inputPlaceholder={'Search for songs'}
+                renderItem={(song, checked, onClick) => (
+                    <SongItem
+                        song={song}
+                        playing={false}
+                        loading={false}
+                        index={0}
+                        onClick={onClick}
+                    >
+                        <Button $width="40px">
+                            <CheckIcon checked={checked} type={'plus'} />
+                        </Button>
+                    </SongItem>
+                )}
+                renderButton={(addedSongs) => {
                     return (
-                        <SongItem
-                            song={song}
-                            playing={false}
-                            loading={false}
-                            loaded={false}
-                            index={0}
-                            onClick={function (
-                                song: TSong,
-                                index: number
-                            ): void {
-                                throw new Error('Function not implemented.');
-                            }}
+                        <DefaultButton
+                            appearance="primary"
+                            loading={isAdding}
+                            onClick={handleSave(addedSongs)}
                         >
-                            <CheckIcon checked={isInPlaylist} />
-                        </SongItem>
+                            Save changes
+                        </DefaultButton>
                     );
-                })}
-            </Flex>
+                }}
+            />
         </AddSongsToPlaylistModalStyled>
     );
 };

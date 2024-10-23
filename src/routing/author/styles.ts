@@ -48,7 +48,7 @@ export const UserImageStyled = styled.div`
 export const SongsStyled = styled.div`
     width: 100%;
     padding: 40px 0;
-    padding-bottom: 25px;
+    padding-bottom: 0px;
 
     & .grid-list {
         padding: 0 34px;

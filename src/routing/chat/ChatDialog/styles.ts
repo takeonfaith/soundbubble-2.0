@@ -25,13 +25,12 @@ export const MessageStyled = styled.div`
 `;
 
 export const MessageBubble = styled.div<{
-    $background: string;
     $isFirst: boolean;
 }>`
     padding: 8px 10px;
     padding-bottom: 4px;
     border-radius: 8px 10px 10px 12px;
-    background: ${({ theme }) => theme.colors.input};
+    background-color: ${({ theme }) => theme.colors.input};
     max-width: 500px;
     font-size: 0.9rem;
     font-weight: 200;

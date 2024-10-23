@@ -18,9 +18,11 @@ export const ChatBottom = () => {
     };
 
     const handleSendMessage = () => {
-        if (value.trim().length === 0 || !user?.uid) return;
+        if (value.trim().length === 0 || !currentUser?.uid) return;
         if (currentChatId) {
-            const message = createMessageObject(user?.uid, { message: value });
+            const message = createMessageObject(currentUser?.uid, {
+                message: value,
+            });
 
             chatModel.events.sendMessage({ chatId: currentChatId, message });
         }

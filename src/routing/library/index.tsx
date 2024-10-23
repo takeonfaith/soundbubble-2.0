@@ -8,6 +8,7 @@ import { Tabs } from '../../shared/components/tabs';
 const TABS = [
     { title: 'Songs', url: '' },
     { title: 'Playlists', url: 'playlists' },
+    { title: 'Albums', url: 'albums' },
     { title: 'Authors', url: 'authors' },
 ];
 

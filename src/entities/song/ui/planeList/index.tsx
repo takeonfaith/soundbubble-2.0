@@ -15,7 +15,7 @@ export const PlaneSongList = (props: Props) => {
 
     const { songs } = queue;
 
-    const handlePlay = (_: TSong, currentSongIndex: number) => {
+    const handlePlay = (_: TSong, __: Evt<'div'>, currentSongIndex: number) => {
         songModel.controls.play({
             queue,
             currentSongIndex,
@@ -35,7 +35,11 @@ export const PlaneSongList = (props: Props) => {
                         key={song.id + index}
                         song={song}
                         playing={isCurrent && state === SongState.playing}
-                        loading={isCurrent && state === SongState.loading}
+                        loading={
+                            isCurrent &&
+                            (state === SongState.loading ||
+                                state === SongState.loadingThenPlay)
+                        }
                     />
                 );
             })}

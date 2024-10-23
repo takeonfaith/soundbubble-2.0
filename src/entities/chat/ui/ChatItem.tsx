@@ -1,6 +1,6 @@
 import { NotificationBadge } from '../../../layout/sidebar/styles';
-import { ChatTypingIndicator } from '../../../routing/chat/ChatDialog/ChatTypingIndicator';
-import { MessageSentStatus } from '../../../routing/chat/ChatDialog/MessageSentStatus';
+import { ChatTypingIndicator } from '../../../routing/chat/chatDialog/ChatTypingIndicator';
+import { MessageSentStatus } from '../../../routing/chat/chatDialog/MessageSentStatus';
 import { Flex } from '../../../shared/components/flex';
 import { ENTITIES_ICONS } from '../../../shared/constants/icons';
 import { TPlaylist } from '../../playlist/model/types';

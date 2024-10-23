@@ -8,8 +8,7 @@ export const HeaderStyled = styled.header`
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 0px calc(var(--page-padding) + 6px) 0
-        calc(var(--page-padding) + 6px);
+    padding: 0px var(--page-padding) 0 var(--page-padding);
     top: 0px;
     position: sticky;
     scroll-padding-top: 150px;

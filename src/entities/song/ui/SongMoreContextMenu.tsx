@@ -45,6 +45,7 @@ export const SongMoreContextMenu = ({ song }: Props) => {
         modalModel.events.open({
             title: `Add "${song?.name}" to playlist`,
             content: <AddSongToPlaylistModal song={song} />,
+            sizeY: 'l',
         });
         popupModel.events.close();
     };

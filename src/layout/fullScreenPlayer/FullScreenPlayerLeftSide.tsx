@@ -83,10 +83,10 @@ export const FullScreenPlayerLeftSide = ({
                             <IconPlaylist opacity={0.9} />
                         </SmallControlButton>
                         <SmallControlButton
-                            disabled={!hasLyrics}
                             $color1={currentSong?.imageColors[0]}
                             className={type === 'lyrics' ? 'selected' : ''}
                             onClick={handleClickControlButton('lyrics')}
+                            disabled={!currentSong?.hasLyrics}
                         >
                             <IconQuote opacity={0.9} />
                         </SmallControlButton>

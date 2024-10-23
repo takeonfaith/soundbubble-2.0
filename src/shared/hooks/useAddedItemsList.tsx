@@ -8,12 +8,15 @@ import { GeneralCover } from '../components/cover/GeneralCover';
 import { ENTITIES_ICONS } from '../constants/icons';
 import { TEntity } from '../../entities/search/model/types';
 
-export const useAddedItemsList = <T extends TEntity>(list: T[]) => {
+export const useAddedItemsList = <T extends TEntity>(
+    list: T[],
+    initiallyAddedItems: T[] = []
+) => {
     const [visibleItems, setVisibleItems] = useState(list);
     const [searchValue, setSearchValue] = useState('');
-    const [addedItems, setAddedItems] = useState<T[]>([]);
+    const [addedItems, setAddedItems] = useState<T[]>(initiallyAddedItems);
 
-    const handleClick = (item: T, e: Evt<'a'>) => {
+    const handleClick = (item: T, e: Evt<'a'> | Evt<'div'>) => {
         e.preventDefault();
 
         const isChosen = addedItems.find(

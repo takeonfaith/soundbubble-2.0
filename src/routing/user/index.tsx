@@ -71,7 +71,7 @@ export const UserPage = ({ data }: Props) => {
                         <div className="title">
                             <NavigationTitle
                                 showNavigation={songs.length > MAX_SONGS}
-                                to={`/author/${userPageData?.uid}/songs`}
+                                to={`/user/${userPageData?.uid}/songs`}
                             >
                                 <h3>Added songs</h3>
                             </NavigationTitle>

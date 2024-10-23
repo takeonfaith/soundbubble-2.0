@@ -38,7 +38,7 @@ type Props = {
     playing: boolean;
     loading: boolean;
     index: number;
-    onClick: (song: TSong, index: number) => void;
+    onClick: (song: TSong, e: Evt<'div'>, index: number) => void;
     noImage?: boolean;
     showSerialNumber?: boolean;
     children?: React.ReactNode;
@@ -66,7 +66,7 @@ export const SongItem = ({
         });
     };
 
-    const handleClick = () => onClick(song, index);
+    const handleClick = (e: Evt<'div'>) => onClick(song, e, index);
 
     return (
         <SongStyled

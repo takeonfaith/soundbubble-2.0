@@ -1,4 +1,4 @@
-import { TSong } from '@song/model/types';
+import { TQueue, TSong } from '@song/model/types';
 import {
     arrayUnion,
     getDocs,
@@ -19,6 +19,7 @@ import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import getUID from '../../shared/funcs/getUID';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { createDefaultSuggestion } from '../../entities/search/lib/createDefaultSuggestion';
+import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
 
 export class Songs {
     static ref = FB.get('songs');
@@ -86,9 +87,9 @@ export class Songs {
             return getDataFromDoc<TSong>(snapshot);
         }
 
-        const songs = uids.map((id) => this.getSongByUid(id));
+        console.log({ uids });
 
-        return Promise.all(songs);
+        return await FB.getByIds('songs', uids);
     };
 
     static async uploadSong(form: TUploadSongForm) {
@@ -130,16 +131,12 @@ export class Songs {
                 songSrc,
                 imageColors,
                 duration,
-                lyrics: songLyrics,
-                authors: fullAuthors.map(({ displayName, photoURL, uid }) => ({
-                    displayName,
-                    photoURL,
-                    uid,
-                })),
+                authors: fullAuthors.map(createAuthorObject),
                 moods: moods.map((m) => m.fullName),
                 langs: langs.map((l) => l.fullName),
                 genres: genres.map((g) => g.fullName),
                 releaseDate: releaseDate,
+                hasLyrics: songLyrics !== null,
             });
 
             await FB.setById('songs', id, newSong);
@@ -149,6 +146,13 @@ export class Songs {
                 })
             );
             await FB.setById('search', id, createDefaultSuggestion(newSong));
+
+            if (songLyrics !== null) {
+                await FB.setById('lyrics', newSong.id, {
+                    id: newSong.id,
+                    lyrics: songLyrics,
+                });
+            }
         } catch (error) {
             console.log(error);
 
@@ -158,20 +162,56 @@ export class Songs {
         }
     }
 
-    static async addListening(song: TSong | null) {
+    static async addListening(queue: TQueue | null, currentSongIndex: number) {
         try {
+            const song = queue?.songs[currentSongIndex];
+            const isInPlaylist =
+                queue?.url.includes('playlist') || queue?.url.includes('album');
+
             if (song) {
                 await FB.updateById('songs', song.id, {
                     listens: increment(1),
                 });
+
                 await asyncRequests(song.authors, (author) => {
                     return FB.updateById('users', author.uid, {
                         numberOfListenersPerMonth: increment(1),
                     });
                 });
+
+                if (isInPlaylist) {
+                    await FB.updateById('playlists', queue.id, {
+                        listens: increment(1),
+                    });
+                }
             }
         } catch (error) {
             console.error(error);
+        }
+    }
+
+    static async loadLyrics(songId: string) {
+        try {
+            const lyrics = await FB.getById('lyrics', songId);
+            if (!lyrics) return [];
+
+            return lyrics.lyrics;
+        } catch (error) {
+            console.error(error);
+            throw new Error(ERRORS.operationFailed('Failed to load lyrics'));
+        }
+    }
+
+    static async loadLastQueue(userId: string) {
+        try {
+            const queue = await FB.getById('lastQueue', userId);
+            const songs = await FB.getByIds('songs', queue.songIds);
+            console.log(queue, songs);
+
+            return { queue, songs: songs ?? [] };
+        } catch (error) {
+            console.error(error);
+            return null;
         }
     }
 }

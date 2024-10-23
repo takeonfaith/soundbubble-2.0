@@ -7,7 +7,7 @@ export const createSongObject = (songFields: Partial<TSong>): TSong => {
         id: getUID(),
         releaseDate: new Date().toString(),
         songSrc: '',
-        lyrics: [],
+        hasLyrics: false,
         listens: 0,
         cover: '',
         authors: [],

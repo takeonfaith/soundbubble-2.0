@@ -6,13 +6,22 @@ import { getEntityPlace } from '../../../features/searchWithHints/lib/getEntityP
 import { normalizeString } from '../../../shared/funcs/normalizeString';
 import { TEntity, TSuggestion } from '../model/types';
 
-export const createDefaultSuggestion = (entity: TEntity): TSuggestion => {
+export const getVariantsOfName = (name: string | undefined) => {
     const variantsOfName = [];
-    const fullName = getEntityName(entity);
-    for (let i = 0; i <= fullName.length; i++) {
-        const chars = normalizeString(fullName.substring(0, i));
+
+    if (!name) return [];
+
+    for (let i = 0; i <= name.length; i++) {
+        const chars = normalizeString(name.substring(0, i));
         variantsOfName.push(chars);
     }
+
+    return variantsOfName;
+};
+
+export const createDefaultSuggestion = (entity: TEntity): TSuggestion => {
+    const fullName = getEntityName(entity);
+    const variantsOfName = getVariantsOfName(fullName);
 
     return {
         fullName,

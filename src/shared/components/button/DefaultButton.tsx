@@ -34,6 +34,7 @@ type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     loading?: boolean;
     appearance?: ButtonAppearance;
     width?: string;
+    primaryColor?: string;
 };
 
 export const DefaultButton = ({
@@ -42,6 +43,7 @@ export const DefaultButton = ({
     appearance = 'outline',
     disabled,
     width,
+    primaryColor,
     ...restProps
 }: Props) => {
     return (
@@ -50,6 +52,7 @@ export const DefaultButton = ({
             $width={width}
             color={appearance === 'primary' ? '#fff' : ''}
             className={`${restProps.className} ${appearance}`}
+            $primaryColor={primaryColor}
             {...restProps}
         >
             <AnimationWrapper className={loading ? 'show' : 'hide'}>

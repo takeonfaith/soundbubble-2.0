@@ -1,11 +1,14 @@
-export const getLastSeen = (online: number | undefined) => {
+export const getLastSeen = (
+    online: number | undefined,
+    onlineStatusStr = 'online'
+) => {
     if (!online) return { status: 'offline' };
 
     const fiveMinutesAgo = new Date().getTime() - 300_000;
     const fourHoursAgo = new Date().getTime() - 1_800_000 * 4;
     const isOnline = online > fiveMinutesAgo;
 
-    if (isOnline) return { status: 'online' };
+    if (isOnline) return { status: onlineStatusStr };
 
     const lastOnlineDate = new Date(online);
     const lastOnline = new Date(

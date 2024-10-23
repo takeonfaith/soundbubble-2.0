@@ -1,17 +1,22 @@
+import { IconHeadphones, IconQuote } from '@tabler/icons-react';
 import styled from 'styled-components';
-import { TSong } from '../model/types';
-import { SongCover } from './SongCover';
-import { hexToRgbA } from '../../../shared/funcs/hexToRgba';
-import { Authors } from '../../../shared/components/authors';
-import { Flex } from '../../../shared/components/flex';
-import { Subtext } from '../../../shared/components/subtext';
-import { IconHeadphones } from '@tabler/icons-react';
-import { Button } from '../../../shared/components/button';
-import { userModel } from '../../user/model';
-import { UserCover } from '../../user/ui/UserCover';
-import { modalModel } from '../../../layout/modal/model';
-import { UserItem } from '../../user/ui';
 import { ShareModal } from '../../../features/shareModal';
+import { Lyric } from '../../../layout/fullScreenPlayer/styles';
+import { modalModel } from '../../../layout/modal/model';
+import { Authors } from '../../../shared/components/authors';
+import { Button } from '../../../shared/components/button';
+import { Flex } from '../../../shared/components/flex';
+import { SmallAvatarList } from '../../../shared/components/smallAvatarList';
+import { Subtext } from '../../../shared/components/subtext';
+import { hexToRgbA } from '../../../shared/funcs/hexToRgba';
+import { userModel } from '../../user/model';
+import { UserItem } from '../../user/ui';
+import { UserCover } from '../../user/ui/UserCover';
+import { TLyric, TSong } from '../model/types';
+import { SongCover } from './SongCover';
+import { useEffect, useState } from 'react';
+import { Database } from '../../../database';
+import { LoadingWrapper } from '../../../shared/components/loadingWrapper';
 
 const SongInfoStyled = styled.div<{ shadowColor: string }>`
     width: 100%;
@@ -57,21 +62,6 @@ const Listens = styled.div`
 
 const FriendsListetingButton = styled(Button)`
     gap: 20px;
-    & .general-cover {
-        outline: 2px solid ${({ theme }) => theme.colors.pageBackground};
-    }
-
-    & .general-cover:nth-child(1) {
-        transform: translateX(-10px);
-    }
-
-    & .general-cover:nth-child(2) {
-        transform: translateX(-15px);
-    }
-
-    & .general-cover:nth-child(3) {
-        transform: translateX(-20px);
-    }
 `;
 
 const ShareButton = styled(Button)`
@@ -94,6 +84,40 @@ const Buttons = styled.div`
         flex-direction: column-reverse;
     }
 `;
+
+const Lyrics = ({ song }: { song: TSong }) => {
+    const [lyrics, setLyrics] = useState<TLyric[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setLoading(true);
+        Database.Songs.loadLyrics(song.id)
+            .then((lyrics) => {
+                setLyrics(
+                    lyrics.filter(
+                        (lyric) =>
+                            lyric.text !== '@loading' && lyric.text !== '@end'
+                    )
+                );
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [song.id]);
+
+    return (
+        <Flex padding="20px" d="column" gap={10} ai="flex-start">
+            {loading && <LoadingWrapper />}
+            {lyrics.map((lyric) => {
+                return (
+                    <Lyric className="ordinary" style={{ fontWeight: '300' }}>
+                        {lyric.text}
+                    </Lyric>
+                );
+            })}
+        </Flex>
+    );
+};
 
 type Props = {
     song: TSong | null;
@@ -162,8 +186,25 @@ export const SongInfo = ({ song }: Props) => {
                         authors={authors}
                     />
                 </Flex>
-                <Flex gap={10}>
+                <Flex gap={4} width="100%" d="column">
                     <Subtext>Released: {formattedDate}</Subtext>
+                    {song.hasLyrics && (
+                        <Button
+                            className="ghost"
+                            $width="70px"
+                            $height="30px"
+                            style={{ fontSize: '0.8rem', fontWeight: '300' }}
+                            onClick={() =>
+                                modalModel.events.open({
+                                    title: 'Lyrics',
+                                    content: <Lyrics song={song} />,
+                                })
+                            }
+                        >
+                            <IconQuote size={16} />
+                            Lyrics
+                        </Button>
+                    )}
                 </Flex>
             </Flex>
             <Buttons>
@@ -174,44 +215,37 @@ export const SongInfo = ({ song }: Props) => {
                     >
                         Friends listening{' '}
                         <Flex>
-                            {friendsListening.slice(0, 2).map((friend) => {
-                                return (
+                            <SmallAvatarList users={friendsListening}>
+                                {friendsListening.length > 2 && (
                                     <UserCover
-                                        src={friend.photoURL}
-                                        size={'20px'}
-                                        colors={friend.imageColors}
                                         isAuthor={false}
-                                    />
-                                );
-                            })}
-                            {friendsListening.length > 2 && (
-                                <UserCover
-                                    isAuthor={false}
-                                    size="20px"
-                                    colors={['grey']}
-                                    src={undefined}
-                                >
-                                    <span
-                                        style={{
-                                            background: 'grey',
-                                            position: 'relative',
-                                            borderRadius: '100%',
-                                            fontSize: '0.65rem',
-                                            width: '20px',
-                                            height: '20px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: 'white',
-                                        }}
+                                        size="20px"
+                                        colors={['grey']}
+                                        src={undefined}
                                     >
-                                        +{friendsListening.length - 2}
-                                    </span>
-                                </UserCover>
-                            )}
+                                        <span
+                                            style={{
+                                                background: 'grey',
+                                                position: 'relative',
+                                                borderRadius: '100%',
+                                                fontSize: '0.65rem',
+                                                width: '20px',
+                                                height: '20px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: 'white',
+                                            }}
+                                        >
+                                            +{friendsListening.length - 2}
+                                        </span>
+                                    </UserCover>
+                                )}
+                            </SmallAvatarList>
                         </Flex>
                     </FriendsListetingButton>
                 )}
+
                 <ShareButton
                     className="primary"
                     color={imageColors[0]}

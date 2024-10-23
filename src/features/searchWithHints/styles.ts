@@ -23,14 +23,16 @@ export const HintsStyled = styled.ul`
     border-top: none;
     z-index: 12;
     box-shadow: ${({ theme }) => theme.colors.shadow};
-    animation: appear 0.3s;
+    animation: hintsAppear 0.2s;
 
-    @keyframes appear {
+    @keyframes hintsAppear {
         0% {
             opacity: 0;
+            transform: translateY(10px);
         }
         100% {
             opacity: 1;
+            transform: translateY(4px);
         }
     }
 

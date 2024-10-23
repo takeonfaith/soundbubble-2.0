@@ -96,7 +96,10 @@ export const MusicControls = ({
                         onClick={onPlay}
                     >
                         <PlayPauseIcon
-                            loading={state === 'loading'}
+                            loading={
+                                state === SongState.loading ||
+                                state === SongState.loadingThenPlay
+                            }
                             playling={state === 'playing'}
                         />
                     </ControlButton>

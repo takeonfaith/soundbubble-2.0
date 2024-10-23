@@ -27,6 +27,12 @@ declare global {
           }[keyof T & (string | number)]
         : never;
 
+    type DeepPartial<T> = T extends object
+        ? {
+              [P in keyof T]?: DeepPartial<T[P]>;
+          }
+        : T;
+
     interface Window {
         // for safari compatibility
         webkitAudioContext: typeof AudioContext;

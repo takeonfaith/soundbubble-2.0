@@ -18,7 +18,7 @@ export const Titles = styled.div`
         grid-template-columns: 105px 1fr 1fr 200px 86px;
     }
 
-    @media (max-width: 1080px) {
+    @media (max-width: 810px) {
         display: none;
     }
 `;

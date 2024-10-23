@@ -56,6 +56,8 @@ export const UserItem = memo(
             onClick?.(user, e);
         };
 
+        console.log(isVerified, displayName);
+
         return (
             <UserItemStyled
                 as={as}

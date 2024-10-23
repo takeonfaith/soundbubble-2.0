@@ -67,7 +67,9 @@ const MOODS: TExtendedSuggestion[] = [
 
 const GENRES: TExtendedSuggestion[] = [
     { uid: 'rap', fullName: 'Rap', place: 'users' },
+    { uid: 'hip-hop', fullName: 'Hip hop', place: 'users' },
     { uid: 'instrumental', fullName: 'Instrumental', place: 'users' },
+    { uid: 'alternative', fullName: 'Alternative', place: 'users' },
     { uid: 'pop', fullName: 'Pop', place: 'users' },
     { uid: 'rnb', fullName: 'R&B', place: 'users' },
     { uid: 'rock', fullName: 'Rock', place: 'users' },

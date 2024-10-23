@@ -26,6 +26,7 @@ export const AuthorsModal = ({ authors, isAuthor }: Props) => {
                     displayName: author.displayName,
                     photoURL: author.photoURL,
                     isAuthor,
+                    isVerified: false,
                 });
 
                 return (

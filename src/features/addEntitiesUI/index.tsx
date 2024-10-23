@@ -11,17 +11,20 @@ import { ButtonWrapper } from '../shareModal/styles';
 
 type Props<T extends TEntity> = {
     entities: T[];
+    initiallyAddedItems: T[];
     inputPlaceholder: string;
     renderItem: (
         item: T,
         checked: boolean,
-        onClick: (item: T, e: Evt<'a'>) => void
+        onClick: (item: T, e: Evt<'a'> | Evt<'div'>) => void,
+        initiallyChecked: boolean
     ) => React.ReactNode;
     renderButton: (addedItems: T[]) => React.ReactNode;
 };
 
 export const AddEntitiesUI = <T extends TEntity>({
     entities,
+    initiallyAddedItems,
     inputPlaceholder,
     renderItem,
     renderButton,
@@ -36,7 +39,7 @@ export const AddEntitiesUI = <T extends TEntity>({
         handleDeselectAll,
         setAddedItems,
         getItemImage,
-    } = useAddedItemsList(entities);
+    } = useAddedItemsList(entities, initiallyAddedItems);
 
     return (
         <>
@@ -63,13 +66,21 @@ export const AddEntitiesUI = <T extends TEntity>({
                     </Button>
                 )}
             </Flex>
-            <Flex d="column" width="100%">
+            <Flex d="column" width="100%" padding="0 0 150px 0">
                 {visibleItems.map((item) => {
                     const id = getEntityId(item);
                     const checked = !!addedItems.find(
                         (i) => getEntityId(i) === id
                     );
-                    return renderItem(item, checked, handleClick);
+                    const initiallyChecked = !!initiallyAddedItems.find(
+                        (i) => getEntityId(i) === id
+                    );
+                    return renderItem(
+                        item,
+                        checked,
+                        handleClick,
+                        initiallyChecked
+                    );
                 })}
             </Flex>
             <ButtonWrapper className={addedItems.length > 0 ? 'open' : ''}>

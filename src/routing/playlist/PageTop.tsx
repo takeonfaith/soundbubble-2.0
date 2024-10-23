@@ -1,16 +1,28 @@
-import { IconHeadphones, IconLock, IconUserPlus } from '@tabler/icons-react';
+import {
+    IconHeadphones,
+    IconLock,
+    IconUserPlus,
+    IconWorld,
+} from '@tabler/icons-react';
+import { useEffect, useRef, useState } from 'react';
 import { styled } from 'styled-components';
+import { playlistModel } from '../../entities/playlist/model';
 import { TPlaylist } from '../../entities/playlist/model/types';
 import { PlaylistCover } from '../../entities/playlist/ui/PlaylistCover';
 import { TAuthor, TQueue } from '../../entities/song/model/types';
+import { popupModel } from '../../layout/popup/model';
 import { Authors } from '../../shared/components/authors';
+import { Button } from '../../shared/components/button';
+import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
 import { Flex } from '../../shared/components/flex';
+import { Input } from '../../shared/components/input';
 import { Subtext } from '../../shared/components/subtext';
+import { dateToString } from '../../shared/funcs/dateToString';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
 import { getTotalSongsDuration } from '../../shared/funcs/getTotalSongsDuration';
-import { PlaylistControlButtons } from './PlaylistControlButtons';
 import { hexToRgbA } from '../../shared/funcs/hexToRgba';
-import { dateToString } from '../../shared/funcs/dateToString';
+import { PlaylistControlButtons } from './PlaylistControlButtons';
+import { getLastSeen } from '../../entities/user/lib/getLastSeen';
 
 const PageTopWrapper = styled.div`
     display: flex;
@@ -63,6 +75,89 @@ const PlaylistControlButtonsStyled = styled.div`
     background: ${({ theme }) => theme.colors.pageBackground};
 `;
 
+const PlaylistNameStyled = styled.div`
+    &.hoverable {
+        h1:hover {
+            outline: 1px solid ${({ theme }) => theme.colors.border};
+            border-radius: 4px;
+        }
+    }
+`;
+
+const PlaylistNameInput = styled(Input)`
+    font-size: 2rem;
+    font-weight: 600;
+    border-radius: 4px;
+    max-height: 60px;
+    height: 50px;
+    padding: 6px;
+    background: ${({ theme }) => theme.colors.lightHover};
+    outline: 1px solid ${({ theme }) => theme.colors.border};
+`;
+
+const PlaylistName = ({
+    name,
+    isOwner,
+}: {
+    name: string | undefined;
+    isOwner: boolean;
+}) => {
+    const [newName, setNewName] = useState(name);
+    const [isEditingName, setIsEditingName] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        setNewName(name);
+    }, [name]);
+
+    useEffect(() => {
+        if (isEditingName) {
+            inputRef.current?.focus();
+        }
+    }, [isEditingName]);
+
+    const handleUpdateName = () => {
+        if (newName?.trim() === '') {
+            setNewName(name);
+            return;
+        }
+
+        if (newName !== name) {
+            playlistModel.events.updatePlaylist({
+                update: {
+                    name: newName,
+                    lastEditedTime: Date.now(),
+                },
+            });
+        }
+    };
+
+    return (
+        <PlaylistNameStyled
+            className={isOwner ? 'hoverable' : ''}
+            onClick={() => {
+                if (isOwner) {
+                    setIsEditingName(true);
+                }
+            }}
+        >
+            {!isEditingName ? (
+                <h1>{newName}</h1>
+            ) : (
+                <PlaylistNameInput
+                    ref={inputRef}
+                    value={newName}
+                    onBlur={() => {
+                        setIsEditingName(false);
+                        handleUpdateName();
+                    }}
+                    onChange={(e) => setNewName(e.currentTarget.value)}
+                />
+            )}
+        </PlaylistNameStyled>
+    );
+};
+
 type Props = {
     queue: TQueue;
     name: string | undefined;
@@ -70,6 +165,7 @@ type Props = {
     playlist: TPlaylist | null;
     icon?: React.ReactNode;
     hasHeader?: boolean;
+    isOwner: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export const PageTop = ({
@@ -79,8 +175,33 @@ export const PageTop = ({
     icon,
     playlist,
     hasHeader,
+    isOwner,
     ...props
 }: Props) => {
+    const handleMakePrivate = (e: Evt<'btn'>) => {
+        e.stopPropagation();
+        popupModel.events.open({
+            e,
+            height: 56,
+            content: (
+                <DefaultContextMenuStyled>
+                    <Button
+                        onClick={() => {
+                            playlistModel.events.updatePlaylist({
+                                update: {
+                                    isPrivate: !playlist?.isPrivate,
+                                },
+                            });
+                            popupModel.events.close();
+                        }}
+                    >
+                        <IconWorld /> Make publuc
+                    </Button>
+                </DefaultContextMenuStyled>
+            ),
+        });
+    };
+
     return (
         <>
             <PageTopWrapper
@@ -104,8 +225,15 @@ export const PageTop = ({
                 <Flex gap={20} d="column" ai="flex-start">
                     <Flex d="column" ai="flex-start" gap={6}>
                         <Flex gap={10}>
-                            <h1 style={{ fontWeight: '500' }}>{name}</h1>
-                            {playlist?.isPrivate && <IconLock size={20} />}
+                            <PlaylistName name={name} isOwner={isOwner} />
+                            {playlist?.isPrivate && (
+                                <Button
+                                    $width="40px"
+                                    onClick={handleMakePrivate}
+                                >
+                                    <IconLock size={22} />
+                                </Button>
+                            )}
                         </Flex>
                         <Authors authors={authors} isAuthor={false} />
                     </Flex>
@@ -146,7 +274,14 @@ export const PageTop = ({
                             </Subtext>
                         ) : (
                             <Subtext style={{ fontSize: '0.85rem' }}>
-                                Created: {dateToString(playlist.creationDate)}
+                                {playlist.lastEditedTime !== undefined
+                                    ? `Updated: ${
+                                          getLastSeen(playlist.lastEditedTime, 'less than 5 minutes ago')
+                                              .status
+                                      }`
+                                    : `Created: ${dateToString(
+                                          playlist.creationDate
+                                      )}`}
                             </Subtext>
                         )}
                     </Flex>

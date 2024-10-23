@@ -39,7 +39,11 @@ export const AddSongModal = () => {
             return;
         }
 
-        const [author, name] = file.name.replace('.mp3', '').split('-');
+        const [author, name] = file.name.includes('-')
+            ? file.name.replace('.mp3', '').split('-')
+            : ['', file.name.replace('.mp3', '')];
+        console.log(author, name);
+
         updateField({ id: 'songFile', value: file });
         updateField({
             id: 'name',
@@ -49,9 +53,11 @@ export const AddSongModal = () => {
             id: 'author',
             value: author.includes('feat') ? name.trim() : author.trim(),
         });
-        getSongDuration(URL.createObjectURL(file)).then((res) =>
-            updateField({ id: 'duration', value: res })
-        );
+        getSongDuration(URL.createObjectURL(file)).then((res) => {
+            console.log(res);
+
+            updateField({ id: 'duration', value: res });
+        });
         handleNext(file);
     };
 

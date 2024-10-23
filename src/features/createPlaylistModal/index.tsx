@@ -8,6 +8,9 @@ import { Form } from '../../shared/components/form';
 import { PhotoInput } from '../../shared/components/photoInput';
 import { useForm } from '../../shared/hooks/useForm';
 import { createPlaylistObject } from '../../entities/playlist/lib/createPlaylistObject';
+import { useNavigate } from 'react-router';
+import { modalModel } from '../../layout/modal/model';
+import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
 
 const CreatePlaylistModalStyled = styled.div`
     padding: 20px;
@@ -35,18 +38,25 @@ export const CreatePlaylistModal = () => {
     const [loading] = playlistModel.useCreatePlaylist();
     const [colors, setColors] = useState<string[]>([]);
     const [photo, setPhoto] = useState<File | null>(null);
+    const navigate = useNavigate();
     const { formProps, onSumbit } = useForm({
         fields,
         handleSubmit: (obj) => {
-            const playlist = createPlaylistObject({
-                name: obj.name,
-                image: photo,
-                imageColors: colors,
-                authors: currentUser ? [currentUser] : [],
-            });
+            const playlist = createPlaylistObject(
+                createAuthorObject(currentUser),
+                {
+                    name: obj.name,
+                    image: photo,
+                    imageColors: colors,
+                }
+            );
 
             playlistModel.events.createPlaylist({
                 playlist,
+                onSuccess: () => {
+                    navigate(`/playlist/${playlist.id}`);
+                    modalModel.events.close();
+                },
             });
         },
     });

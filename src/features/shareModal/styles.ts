@@ -18,9 +18,10 @@ export const CompactUser = styled.div`
     background: ${({ theme }) => theme.colors.hover};
     font-size: 0.75rem;
     font-weight: 300;
-    gap: 10px;
+    gap: 12px;
     padding: 4px;
-    border-radius: 15px;
+    padding-left: 5px;
+    border-radius: 8px;
     animation: appear 0.2s forwards;
 
     svg {
@@ -52,10 +53,10 @@ export const CompactUser = styled.div`
 `;
 
 export const ButtonWrapper = styled.div`
-    width: 100%;
-    position: sticky;
+    width: calc(100% - 40px);
+    position: absolute;
+    bottom: 20px;
     background: ${({ theme }) => theme.colors.modal};
-    bottom: 0px;
     outline: 25px solid ${({ theme }) => theme.colors.modal};
     margin-top: 50px;
     transform: translateY(50px);

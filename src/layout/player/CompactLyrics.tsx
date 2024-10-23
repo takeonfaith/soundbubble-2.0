@@ -1,4 +1,4 @@
-import { songModel } from '../../entities/song/model';
+import { songModel } from '../../entities/song/new-model';
 import { Lyrics } from '../fullScreenPlayer/Lyrics';
 import { LyricsWrapper } from './styles';
 

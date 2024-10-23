@@ -9,7 +9,7 @@ export const PageStackWrapper = styled.div`
     height: 100%;
     background: ${({ theme }) => theme.colors.modal};
     box-shadow: ${({ theme }) => theme.colors.shadow};
-    overflow: auto;
+    overflow: hidden;
     z-index: 10;
     transition: ${PAGE_TRANSITION_DURATION / 1000}s scale ease-out,
         ${PAGE_TRANSITION_DURATION / 1000}s opacity;

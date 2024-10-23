@@ -41,7 +41,7 @@ export const ControlButton = styled(Button)<{ $color: string }>`
 `;
 
 export const PlaylistStyled = styled(Link)<{ $color1: string }>`
-    --size: calc((100vw - var(--sidebar-width)) / 6 - 30px);
+    --size: calc((100vw - var(--sidebar-width)) / 6 - 25.4px);
 
     gap: 12px;
     display: flex;
@@ -56,26 +56,6 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
     border-radius: 6px;
     overflow: visible;
 
-    &.horizontal {
-        --size: 34px;
-        overflow: hidden;
-        padding: 6px 8px;
-        width: 100%;
-        flex-direction: row;
-        align-items: center;
-    }
-
-    &.playing {
-        ${ControlButton} {
-            opacity: 1;
-            border: 1px solid ${({ theme }) => theme.colors.border};
-        }
-    }
-
-    .authors {
-        font-size: 0.75rem;
-    }
-
     &::before {
         content: '';
         display: block;
@@ -87,6 +67,30 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
         top: 0%;
         opacity: 0.2;
         border-radius: ${PLAYLIST_RADIUS};
+    }
+
+    &.horizontal {
+        --size: 34px;
+        overflow: hidden;
+        padding: 6px 8px;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+
+        &::before {
+            display: none;
+        }
+    }
+
+    &.playing {
+        ${ControlButton} {
+            opacity: 1;
+            border: 1px solid ${({ theme }) => theme.colors.border};
+        }
+    }
+
+    .authors {
+        font-size: 0.75rem;
     }
 
     @media (hover: hover) {
@@ -111,17 +115,11 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
 
     @media (max-width: 1350px) {
         &.vertical {
-            --size: calc((100vw - var(--sidebar-width)) / 5 - 30px);
+            --size: calc((100vw - var(--sidebar-width)) / 5 - 27.2px);
         }
     }
 
     @media (max-width: 1200px) {
-        &.vertical {
-            --size: calc((100vw - var(--sidebar-width)) / 4 - 36px);
-        }
-    }
-
-    @media (max-width: 1100px) {
         &.vertical {
             --size: calc((100vw - var(--sidebar-width)) / 4 - 30px);
         }
@@ -129,7 +127,7 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
 
     @media (max-width: 1000px) {
         &.vertical {
-            --size: calc(100vw / 4 - 31px);
+            --size: calc(100vw / 4 - 25px);
         }
 
         &.horizontal {

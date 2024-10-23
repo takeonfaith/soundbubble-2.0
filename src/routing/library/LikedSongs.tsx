@@ -39,6 +39,7 @@ export const LikedSongs = () => {
                         icon={<IconHeartFilled />}
                         playlist={null}
                         hasHeader
+                        isOwner={false}
                     />
                 )}
                 <VerticalSongsList queue={queue} />

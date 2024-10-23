@@ -1,7 +1,7 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { createGate, useGate, useUnit } from 'effector-react';
 import { User } from 'firebase/auth';
-import { throttle } from 'patronum';
+import { interval, throttle } from 'patronum';
 import { Database } from '../../../database';
 import { Playlists, Users } from '../../../database/sections';
 import { TExtendedSuggestion } from '../../../features/searchWithHints/types';
@@ -29,6 +29,8 @@ import {
     TPageStore,
     TUser,
 } from './types';
+import { TIME_IN_MS } from '../../../shared/constants/time';
+import { userIsLoggedIn } from '../../chat/lib/userIsLoggedIn';
 
 const loginFx = createEffect(async (credits: LoginCreditsType) => {
     return tryWrapper(async () => {
@@ -207,7 +209,8 @@ loadUserDataFx.failData.watch((err) => {
     });
 });
 
-const updateUserOnlineFx = createEffect(async (user: User | null) => {
+const updateUserOnlineFx = createEffect(async (user: TUser | null) => {
+    console.log('updated online', user);
     if (!user) return;
 
     await Database.Users.updateUserOnline(user.uid, Date.now());
@@ -216,7 +219,7 @@ const updateUserOnlineFx = createEffect(async (user: User | null) => {
 const login = createEvent<LoginCreditsType>();
 export const logout = createEvent();
 const createUser = createEvent<CreateUserCreditsType>();
-const setUser = createEvent<TUser>();
+export const setUser = createEvent<TUser>();
 const getUserPage = createEvent<string>();
 const loadSimilarAuthors = createEvent<TSong[]>();
 const resetUserPage = createEvent();
@@ -238,6 +241,7 @@ const toggleAuthorLiked = createEvent<{
 }>();
 
 export const addOwnPlaylistToLibrary = createEvent<TPlaylist>();
+export const removeOwnPlaylistFromLibrary = createEvent<TPlaylist>();
 export const setSearchHistory = createEvent<SetSearchHistoryProps>();
 const updateSignUpFormData = createEvent<{
     key: keyof typeof DEFAULT_SIGN_UP_DATA;
@@ -279,6 +283,20 @@ $userPage.reset(logout);
 
 const $addedAuthors = createStore<TUser[]>([]);
 
+const { tick } = interval({
+    timeout: 5 * TIME_IN_MS.minute,
+    start: setUser,
+    stop: logout,
+});
+
+sample({
+    clock: [setUser, tick],
+    filter: userIsLoggedIn,
+    source: $user,
+    fn: (user) => user,
+    target: updateUserOnlineFx,
+});
+
 sample({
     clock: updateSignUpFormData,
     source: $userSignUpFormData,
@@ -318,7 +336,6 @@ sample({
     fn: (user) => user,
     target: [
         $user,
-        updateUserOnlineFx,
         loadLibraryFx,
         loadOwnPlaylistsFx,
         loadAddedPlaylistsFx,
@@ -339,11 +356,15 @@ getDataFromEffect(loadUserSearchHistoryFx, $searchHistory);
 sample({
     clock: addOwnPlaylistToLibrary,
     source: $ownPlaylists,
-    fn: (store, playlist) => {
-        console.log(playlist);
+    fn: (store, playlist) => [playlist, ...store],
+    target: $ownPlaylists,
+});
 
-        return [playlist, ...store];
-    },
+sample({
+    clock: removeOwnPlaylistFromLibrary,
+    source: $ownPlaylists,
+    fn: (currentPlaylist, playlist) =>
+        currentPlaylist.filter((p) => p.id !== playlist.id),
     target: $ownPlaylists,
 });
 
@@ -906,6 +927,29 @@ removePlaylistFx.failData.watch((err) => {
     });
 });
 
+// #endregion
+
+// #region Update own playlist
+export const updateOwnPlaylist = createEvent<TPlaylist>();
+
+sample({
+    clock: updateOwnPlaylist,
+    source: $ownPlaylists,
+    fn: (playlists, playlist) => {
+        console.log('updateOwnPlaylist');
+
+        const index = playlists.findIndex((p) => p.id === playlist.id);
+        if (index !== -1) {
+            return [
+                ...playlists.slice(0, index),
+                playlist,
+                ...playlists.slice(index + 1),
+            ];
+        }
+        return playlists;
+    },
+    target: $ownPlaylists,
+});
 // #endregion
 
 export const userModel = {

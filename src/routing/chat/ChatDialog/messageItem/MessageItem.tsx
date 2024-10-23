@@ -1,20 +1,21 @@
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
-import { getSendStatus } from '../../../entities/chat/lib/getSendStatus';
-import { TChatData, TMessage } from '../../../entities/chat/model/types';
-import { TPlaylist } from '../../../entities/playlist/model/types';
-import { PlaylistItem } from '../../../entities/playlist/ui';
-import { TEntity } from '../../../entities/search/model/types';
-import { createQueueObject } from '../../../entities/song/lib/createQueueObject';
-import { PlaneSongList } from '../../../entities/song/ui/planeList';
-import { TUser } from '../../../entities/user/model/types';
-import { UserItem } from '../../../entities/user/ui';
-import { getEntityType } from '../../../features/searchWithHints/lib/getEntityType';
-import { popupModel } from '../../../layout/popup/model';
-import { Flex } from '../../../shared/components/flex';
-import { MessageContextMenu } from './MessageContextMenu';
-import { MessageSentStatus } from './MessageSentStatus';
-import { MessageText } from './MessageText';
+import { getSendStatus } from '../../../../entities/chat/lib/getSendStatus';
+import { TChatData, TMessage } from '../../../../entities/chat/model/types';
+import { TPlaylist } from '../../../../entities/playlist/model/types';
+import { PlaylistItem } from '../../../../entities/playlist/ui';
+import { TEntity, TPlace } from '../../../../entities/search/model/types';
+import { createQueueObject } from '../../../../entities/song/lib/createQueueObject';
+import { TSong } from '../../../../entities/song/model/types';
+import { PlaneSongList } from '../../../../entities/song/ui/planeList';
+import { TUser } from '../../../../entities/user/model/types';
+import { UserItem } from '../../../../entities/user/ui';
+import { getEntityType } from '../../../../features/searchWithHints/lib/getEntityType';
+import { popupModel } from '../../../../layout/popup/model';
+import { Flex } from '../../../../shared/components/flex';
+import { MessageContextMenu } from '../MessageContextMenu';
+import { MessageSentStatus } from '../MessageSentStatus';
+import { MessageText } from '../MessageText';
 import {
     AttachmentStyled,
     DateAndSeenIcon,
@@ -22,9 +23,11 @@ import {
     MessageSender,
     MessageStyled,
     MessageWrapper,
-} from './styles';
+} from '../styles';
+import { PlaylistInvitation } from './PlaylistInvitation';
 
 type Props = {
+    chatId: string;
     message: TMessage;
     isMine: boolean;
     chatData: TChatData;
@@ -36,20 +39,19 @@ type Props = {
 
 const renderAttachments = (
     attachments: string[],
+    place: TPlace,
     chatData: TChatData,
     message: TMessage
 ) => {
-    const queue = createQueueObject({
-        name: (chatData[message.sender] as TUser).displayName,
-        url: `/chat`,
-    });
     return attachments.map((s) => {
         const entity = chatData[s] as TEntity;
 
-        if (!entity) return null;
-
         const type = getEntityType(entity);
-        if (type === 'user' || type === 'author') {
+
+        if (
+            place === 'users' &&
+            (type === 'deleted' || 'user' || type === 'author')
+        ) {
             return (
                 <UserItem
                     user={entity as TUser}
@@ -59,21 +61,36 @@ const renderAttachments = (
             );
         }
 
-        if (type === 'album' || type === 'playlist') {
+        if (
+            place === 'playlists' &&
+            (type === 'deleted' || type === 'album' || type === 'playlist')
+        ) {
             return (
                 <PlaylistItem
                     playlist={entity as TPlaylist}
-                    key={s}
                     orientation="horizontal"
+                    key={s}
                 />
             );
         }
 
-        return <PlaneSongList queue={queue} />;
+        if (entity) {
+            const queue = createQueueObject({
+                name: (chatData[message.sender] as TUser)?.displayName,
+                url: `/chat`,
+                id: message.id,
+                songs: [entity as TSong],
+            });
+
+            return <PlaneSongList queue={queue} />;
+        }
+
+        return null;
     });
 };
 
 export const MessageItem = ({
+    chatId,
     message,
     isNotSeen,
     isMine,
@@ -144,12 +161,6 @@ export const MessageItem = ({
             <Flex width="100%" gap={10}>
                 <MessageBubble
                     $isFirst={isFirst}
-                    $background={
-                        isMine
-                            ? (chatData[message.sender] as TUser)
-                                  ?.imageColors[1]
-                            : ''
-                    }
                     onContextMenu={handleContextMenu}
                     className={
                         (isMine ? 'mine' : '') +
@@ -158,21 +169,32 @@ export const MessageItem = ({
                 >
                     <Flex d="column" ai="flex-start">
                         <MessageWrapper>
+                            {message.playlistInvitation?.id && (
+                                <PlaylistInvitation
+                                    chatId={chatId}
+                                    isMine={isMine}
+                                    message={message}
+                                    chatData={chatData}
+                                />
+                            )}
                             <MessageText message={message.message} />
                             {!!showAttachments && (
                                 <AttachmentStyled>
                                     {renderAttachments(
                                         message.attachedSongs,
+                                        'songs',
                                         chatData,
                                         message
                                     )}
                                     {renderAttachments(
                                         message.attachedAlbums,
+                                        'playlists',
                                         chatData,
                                         message
                                     )}
                                     {renderAttachments(
                                         message.attachedAuthors,
+                                        'users',
                                         chatData,
                                         message
                                     )}
@@ -180,18 +202,20 @@ export const MessageItem = ({
                             )}
                         </MessageWrapper>
                     </Flex>
-                    <DateAndSeenIcon>
-                        <span>
-                            {new Date(message.sentTime).toLocaleTimeString(
-                                'ru-RU',
-                                { hour: '2-digit', minute: '2-digit' }
-                            )}
-                        </span>
-                        <MessageSentStatus
-                            isMine={isMine}
-                            sendStatus={sendStatus}
-                        />
-                    </DateAndSeenIcon>
+                    {!message.playlistInvitation?.id && (
+                        <DateAndSeenIcon>
+                            <span>
+                                {new Date(message.sentTime).toLocaleTimeString(
+                                    'ru-RU',
+                                    { hour: '2-digit', minute: '2-digit' }
+                                )}
+                            </span>
+                            <MessageSentStatus
+                                isMine={isMine}
+                                sendStatus={sendStatus}
+                            />
+                        </DateAndSeenIcon>
+                    )}
                 </MessageBubble>
                 {sendStatus === 'Error' && (
                     <IconExclamationCircle color="red" size={20} />

@@ -18,11 +18,13 @@ import {
 } from './styles';
 
 type Props = {
-    file: File | null;
+    file: File | string | null;
     colors: string[];
     onUpload: (photo: File | null) => void;
     onColors: (colors: string[]) => void;
 };
+
+const EXTENSIONS = '.png, .jpg, .jpeg, .avif';
 
 export const PhotoInput = ({ colors, onColors, onUpload, file }: Props) => {
     const [preview, setPreview] = useState<string | null>(null);
@@ -34,7 +36,9 @@ export const PhotoInput = ({ colors, onColors, onUpload, file }: Props) => {
 
     useEffect(() => {
         if (file) {
-            setPreview(URL.createObjectURL(file));
+            setPreview(
+                typeof file === 'string' ? file : URL.createObjectURL(file)
+            );
         }
     }, [file]);
 
@@ -59,7 +63,7 @@ export const PhotoInput = ({ colors, onColors, onUpload, file }: Props) => {
                 <PhotoInputStyled>
                     <input
                         type="file"
-                        accept=".png, .jpg, .jpeg"
+                        accept={EXTENSIONS}
                         onChange={handleFile}
                     />
                     {preview && (

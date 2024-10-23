@@ -6,6 +6,7 @@ import {
     IconMicrophone,
     IconMicrophone2,
     IconMusic,
+    IconPlaylist,
     IconSearch,
     IconTrendingUp,
     IconUser,
@@ -17,7 +18,7 @@ import { AuthorPage } from './author';
 import { AuthorSongs } from './author/pages/AuthorSongs';
 import { SimilarAuthorsPage } from './author/pages/SimilarAuthorsPage';
 import { ChatPage } from './chat';
-import { ChatDialog } from './chat/ChatDialog/ChatDialog';
+import { ChatDialog } from './chat/chatDialog/ChatDialog';
 import { DiscoverPage } from './discover';
 import { FriendsPage } from './friends';
 import { HistoryPage } from './history';
@@ -36,6 +37,8 @@ import { TrendsPageAlbums } from './trends/TrendsPageAlbums';
 import { TrendsPageSongs } from './trends/TrendsPageSongs';
 import { TrendsPageAuthors } from './trends/TrendsPageAuthors';
 import { NEW_LAYOUT } from '../shared/constants';
+import { LikedAlbums } from './library/LikedAlbums';
+import { UserSongs } from './user/UserSongs';
 
 type Section = 'features' | 'your activities' | 'your music';
 
@@ -121,9 +124,17 @@ export const allRoutes: TRoute[] = [
             },
             {
                 url: 'playlists',
-                title: 'Liked Playlists',
-                icon: <IconVinyl />,
+                title: 'Your Playlists',
+                icon: <IconPlaylist />,
                 component: <LikedPlaylists />,
+                section: 'your music',
+                private: true,
+            },
+            {
+                url: 'albums',
+                title: 'Liked Albums',
+                icon: <IconVinyl />,
+                component: <LikedAlbums />,
                 section: 'your music',
                 private: true,
             },
@@ -215,14 +226,6 @@ export const allRoutes: TRoute[] = [
         private: true,
     },
     {
-        url: 'user/:id',
-        title: 'User',
-        icon: <IconUser />,
-        component: <UserPage />,
-        section: 'your music',
-        private: true,
-    },
-    {
         url: 'author/:id/songs',
         title: 'Author songs',
         icon: <IconMusic />,
@@ -235,6 +238,30 @@ export const allRoutes: TRoute[] = [
         title: 'Similar Authors',
         icon: <IconMicrophone />,
         component: <SimilarAuthorsPage />,
+        section: 'your music',
+        private: true,
+    },
+    {
+        url: 'user/:id',
+        title: 'User',
+        icon: <IconUser />,
+        component: <UserPage />,
+        section: 'your music',
+        private: true,
+    },
+    {
+        url: 'user/:id/songs',
+        title: 'User Songs',
+        icon: <IconMusic />,
+        component: <UserSongs />,
+        section: 'your music',
+        private: true,
+    },
+    {
+        url: 'user/:id',
+        title: 'User',
+        icon: <IconUser />,
+        component: <UserPage />,
         section: 'your music',
         private: true,
     },

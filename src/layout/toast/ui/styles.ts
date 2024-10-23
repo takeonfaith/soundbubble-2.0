@@ -85,4 +85,8 @@ export const ToastButton = styled(Button)`
     opacity: 0.8;
 `;
 
-export const ReasonStyled = styled.div``
+export const ReasonStyled = styled.div`
+    padding: 25px;
+    font-family: monospace;
+    font-size: 1rem;
+`;
