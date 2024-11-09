@@ -74,6 +74,7 @@ export const DARK_THEME = {
         player: '#c4c4c4',
         toast: '#444444',
         disabled: '#000000cf',
+        chatBackground: '#1f1f1f',
     },
     scheme: {
         ...COLOR_SCHEME_DARK,
@@ -158,6 +159,7 @@ export const LIGHT_THEME: TTheme = {
         greyText2: '#6a6a6a',
         toast: '#fff',
         disabled: '#ffffffbf',
+        chatBackground: '#f6f8fa',
     },
     scheme: {
         ...COLOR_SCHEME_LIGHT,

@@ -13,6 +13,7 @@ import { SkeletonLoading } from './Skeleton';
 import { MAX_SONGS } from './constants';
 import { AuthorPageWrapper, SongsStyled } from './styles';
 import { TIME_IN_MS } from '../../shared/constants/time';
+import { Flex } from '../../shared/components/flex';
 
 type Props = {
     userData?: TUser | null;
@@ -34,7 +35,7 @@ export const AuthorPage = ({ userData }: Props) => {
         page: 'author',
         onChangeId: (id) => {
             if (id) {
-                userModel.events.getUserPage(id);
+                userModel.events.getUserPage({ userId: id, sortSongs: true });
             }
         },
     });
@@ -69,34 +70,36 @@ export const AuthorPage = ({ userData }: Props) => {
                 skeleton={<SkeletonLoading />}
             >
                 <AuthorPageTop author={userPageData} queue={queue} />
-                {!!lastSongs.length && (
+                <Flex width="100%" height="100%" gap={40} d="column">
+                    {!!lastSongs.length && (
+                        <SongsStyled>
+                            <div className="title">
+                                <h3>New Songs</h3>
+                            </div>
+
+                            <GridSongList queue={lastSongsQueue} />
+                        </SongsStyled>
+                    )}
                     <SongsStyled>
                         <div className="title">
-                            <h3>New Songs</h3>
+                            <NavigationTitle
+                                showNavigation={songs.length > MAX_SONGS}
+                                to={`/author/${userPageData?.uid}/songs`}
+                            >
+                                <h3>Top Songs</h3>
+                            </NavigationTitle>
                         </div>
 
-                        <GridSongList queue={lastSongsQueue} />
+                        <GridSongList queue={queue} />
                     </SongsStyled>
-                )}
-                <SongsStyled>
-                    <div className="title">
-                        <NavigationTitle
-                            showNavigation={songs.length > MAX_SONGS}
-                            to={`/author/${userPageData?.uid}/songs`}
-                        >
-                            <h3>Top Songs</h3>
-                        </NavigationTitle>
-                    </div>
-
-                    <GridSongList queue={queue} />
-                </SongsStyled>
-                <Playlists uid={userPageData?.uid} title="Top Albums" />
-                {!loading && (
-                    <SimilarAuthors
-                        songs={songs}
-                        currentPageUser={currentPageUser}
-                    />
-                )}
+                    <Playlists uid={userPageData?.uid} title="Top Albums" />
+                    {!loading && (
+                        <SimilarAuthors
+                            songs={songs}
+                            currentPageUser={currentPageUser}
+                        />
+                    )}
+                </Flex>
             </SkeletonPageAnimation>
         </AuthorPageWrapper>
     );

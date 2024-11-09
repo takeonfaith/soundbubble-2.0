@@ -64,4 +64,11 @@ export const GlobalStyles = createGlobalStyle`
 			/* transform: scale(1); */
 		}
 	}
+
+	kbd {
+		display: inline-block;
+		padding: 1px 4px;
+		border-radius: 2px;
+		background: ${({ theme }) => theme.colors.pageBackground4};
+	}
 `;

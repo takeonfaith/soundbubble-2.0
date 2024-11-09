@@ -16,7 +16,7 @@ export const AuthorPageGridStyled = styled(PageGridStyled)`
     gap: 32px;
 
     @media (max-width: 768px) {
-        gap: 20px;
+        gap: 4px;
     }
 `;
 

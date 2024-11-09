@@ -6,9 +6,11 @@ import { Loading } from '../../shared/components/loading';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { AuthorPageGridStyled } from './styles';
+import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 
 export const LikedAuthors = () => {
     const [addedAuthors, loading] = userModel.useAddedAuthors();
+    const { isMobile } = useCurrentDevice();
 
     return (
         <ContentWrapper>
@@ -17,7 +19,7 @@ export const LikedAuthors = () => {
                     <Loading />
                 </Flex>
             )}
-            {!addedAuthors.length && (
+            {!loading && !addedAuthors.length && (
                 <PageMessage
                     icon={IconMicrophone2Off}
                     title={'No authors added'}
@@ -28,7 +30,13 @@ export const LikedAuthors = () => {
             )}
             <AuthorPageGridStyled>
                 {addedAuthors.map((author) => {
-                    return <UserItem user={author} key={author.uid} />;
+                    return (
+                        <UserItem
+                            orientation={isMobile ? 'horizontal' : 'vertical'}
+                            user={author}
+                            key={author.uid}
+                        />
+                    );
                 })}
             </AuthorPageGridStyled>
         </ContentWrapper>

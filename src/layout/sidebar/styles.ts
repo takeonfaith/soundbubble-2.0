@@ -82,6 +82,9 @@ export const SidebarLink = styled(NavLink)`
     padding: 10px 10px;
     border-radius: ${({ theme }) => theme.borderRadius.mild};
     font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
     &:hover {
         background: ${({ theme }) => theme.colors.hover};
@@ -96,7 +99,11 @@ export const SidebarLink = styled(NavLink)`
     }
 
     &.active {
-        & > div > div {
+        background: ${({ theme }) => theme.colors.pageBackground};
+        outline: 1px solid ${({ theme }) => theme.colors.border};
+        border-radius: 8px;
+
+        & > .icon-text {
             opacity: 1;
             color: ${({ theme }) => theme.scheme.blue.main};
         }

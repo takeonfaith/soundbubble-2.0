@@ -18,12 +18,7 @@ export const AuthorsStyled = styled.div<{
     overflow: hidden;
     position: relative;
     border-radius: 4px;
-
-    @media (hover: hover) {
-        &:hover {
-            background-color: ${({ theme }) => theme.colors.darkHover};
-        }
-    }
+    cursor: pointer;
 
     @media (max-width: 1000px) {
         pointer-events: ${({ $disableOnMobile }) =>

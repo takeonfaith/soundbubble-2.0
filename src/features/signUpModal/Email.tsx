@@ -1,8 +1,11 @@
+import { IconMail } from '@tabler/icons-react';
 import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
+import { Input } from '../../shared/components/input';
 import { Passwords } from './Passwords';
 import { SignUpModalStyled } from './styles';
+import { EmailInput } from '../emailInput';
 
 // const fields = [
 //     {
@@ -34,12 +37,14 @@ export const Email = () => {
                 gap={20}
                 ai="flex-start"
             >
-                {/* <Form
-                    fields={fields}
-                    submitErrorMessage={undefined}
-                    submitText={''}
-                    onSumbit={() => null}
-                /> */}
+                <EmailInput
+                    onChange={function (value: string): void {
+                        throw new Error('Function not implemented.');
+                    }}
+                    value={''}
+                    required={false}
+                    error={undefined}
+                />
             </Flex>
             <Flex width="100%" gap={10}>
                 <DefaultButton

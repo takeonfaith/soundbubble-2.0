@@ -9,11 +9,10 @@ import {
 import { useUnit } from 'effector-react';
 import { debounce } from 'patronum';
 import { Database } from '../../../database';
+import { $ownPlaylists, $user } from '../../user/model';
 import { createQueueObject } from '../lib/createQueueObject';
-import { shuffleSongs } from '../lib/shuffleSongs';
+import { shuffleArray } from '../lib/shuffleArray';
 import { LoopMode, SongState, TLoadQueue, TQueue, TSong } from '../model/types';
-import { $user } from '../../user/model';
-import { userIsLoggedIn } from '../../chat/lib/userIsLoggedIn';
 
 type TNextFrom = 'from_next_button' | 'from_end_track';
 
@@ -24,6 +23,21 @@ const addListeningFx = createEffect<
 const loadSongsFx = createEffect<
     { queue: TLoadQueue; currentSongIndex: number },
     { queue: TQueue; currentSongIndex: number }
+>();
+
+const updateLastQueueFx = createEffect<
+    { userId: string; queue: TQueue; currentSongIndex: number },
+    void,
+    Error
+>();
+
+const updateOwnPlaylistsOrderFx = createEffect<
+    {
+        userId: string;
+        playlistIds: string[];
+    },
+    void,
+    Error
 >();
 
 const play = createEvent<{ queue?: TQueue; currentSongIndex?: number }>();
@@ -170,7 +184,7 @@ sample({
 // If song chaged, load
 sample({
     clock: play,
-    source: { currentSong: $currentSong },
+    source: { user: $user, currentSong: $currentSong },
     filter: ({ currentSong }, { queue, currentSongIndex }) => {
         return (
             !currentSong ||
@@ -179,10 +193,11 @@ sample({
                 currentSong.id !== queue.songs[currentSongIndex].id)
         );
     },
-    fn: (_, { queue, currentSongIndex }) => {
+    fn: ({ user }, { queue, currentSongIndex }) => {
         return {
             currentSongIndex: currentSongIndex as number,
             queue: queue as TQueue,
+            userId: user?.uid,
         };
     },
     target: initalize,
@@ -198,11 +213,18 @@ sample({
             currentSongIndex: 0,
             queue: {
                 ...finalQueue,
-                songs: shuffleSongs(finalQueue?.songs as TSong[]),
+                songs: shuffleArray(finalQueue?.songs as TSong[]),
             } as TQueue,
         };
     },
     target: initalize,
+});
+
+sample({
+    clock: shufflePlay,
+    source: $shuffleMode,
+    filter: (shuffleMode) => !shuffleMode,
+    target: toggleShuffleMode,
 });
 
 sample({
@@ -417,17 +439,53 @@ sample({
     target: loadSongsFx,
 });
 
+// sorting own playlists when play clicked
+
+sample({
+    clock: [loadAndPlay, initalize],
+    source: $ownPlaylists,
+    filter: (ownPlaylists, { queue }) =>
+        !!ownPlaylists.find((playlist) => playlist.id === queue.id),
+    fn: (ownPlaylists, { queue }) => {
+        const playlistIndex = ownPlaylists.findIndex(
+            (playlist) => playlist.id === queue.id
+        );
+        const newOwnPlaylists = [...ownPlaylists];
+        newOwnPlaylists.splice(playlistIndex, 1);
+        return [ownPlaylists[playlistIndex], ...newOwnPlaylists];
+    },
+    target: $ownPlaylists,
+});
+
+sample({
+    clock: [loadAndPlay, initalize],
+    source: { ownPlaylists: $ownPlaylists, user: $user },
+    filter: ({ ownPlaylists, user }, { queue }) =>
+        !!user && !!ownPlaylists.find((playlist) => playlist.id === queue.id),
+    fn: ({ ownPlaylists, user }, { queue }) => {
+        const playlistIndex = ownPlaylists.findIndex(
+            (playlist) => playlist.id === queue.id
+        );
+        const newOwnPlaylists = [...ownPlaylists];
+        newOwnPlaylists.splice(playlistIndex, 1);
+        const res = [ownPlaylists[playlistIndex], ...newOwnPlaylists];
+        return {
+            userId: user!.uid,
+            playlistIds: res.map((playlist) => playlist.id).reverse(),
+        };
+    },
+    target: updateOwnPlaylistsOrderFx,
+});
+
+updateOwnPlaylistsOrderFx.use(
+    async ({ userId, playlistIds }) =>
+        await Database.Users.updateOwnPlaylistsOrder(userId, playlistIds)
+);
+
 sample({
     clock: loadAndPlay,
     source: { queue: $queue, state: $songState },
-    filter: ({ queue: currentQueue, state }, { queue }) => {
-        if (
-            !!currentQueue &&
-            currentQueue.id === queue.id &&
-            state === SongState.pause
-        ) {
-            console.log('play');
-        }
+    filter: ({ queue: currentQueue }, { queue }) => {
         return !!currentQueue && currentQueue.id === queue.id;
     },
     fn: ({ queue: currentQueue }, { currentSongIndex }) => ({
@@ -487,7 +545,7 @@ sample({
             currentSongIndex: 0,
             queue: {
                 ...finalQueue,
-                songs: shuffleSongs(finalQueue?.songs as TSong[]),
+                songs: shuffleArray(finalQueue?.songs as TSong[]),
             } as TQueue,
         };
     },
@@ -517,52 +575,54 @@ addListeningFx.use(async ({ queue, currentSongIndex }) => {
 
 // #region Last queue
 
-const loadLastQueueFx = createEffect<
-    string,
-    { queue: TLastQueue | null; songs: TSong[] } | null,
-    Error
->();
+// const loadLastQueueFx = createEffect<
+//     string,
+//     { queue: TLastQueue | null; songs: TSong[] } | null,
+//     Error
+// >();
 
-const loadLastQueue = createEvent<string>();
+// const loadLastQueue = createEvent<string>();
 
-$user.watch((user) => {
-    console.log(user);
-});
+// sample({
+//     clock: $user,
+//     filter: userIsLoggedIn,
+//     fn: (user) => user!.uid,
+//     target: loadLastQueue,
+// });
 
-console.log('alo nah');
+// sample({
+//     clock: loadLastQueue,
+//     target: loadLastQueueFx,
+// });
 
-sample({
-    clock: $user,
-    filter: userIsLoggedIn,
-    fn: (user) => {
-        console.log('user initialized');
+// sample({
+//     clock: loadLastQueueFx.doneData,
+//     filter: (res) => res !== null,
+//     fn: (res) => {
+//         const { queue, songs } = res!;
+//         return {
+//             queue: createQueueObject({ ...queue, songs }),
+//             currentSongIndex: res!.queue?.currentSongIndex ?? 0,
+//         };
+//     },
+//     target: initalize,
+// });
 
-        return user!.uid;
-    },
-    target: loadLastQueue,
-});
+// loadLastQueueFx.use(async (userId) => {
+//     console.log({ userId });
 
-sample({
-    clock: loadLastQueue,
-    target: loadLastQueueFx,
-});
+//     return await Database.Songs.loadLastQueue(userId);
+// });
 
-sample({
-    clock: loadLastQueueFx.doneData,
-    fn: (res) => {
-        if (!res) return null;
+// updateLastQueueFx.use(async ({ userId, queue, currentSongIndex }) => {
+//     await Database.Songs.updateLastQueue(userId, {
+//         ...queue,
+//         songIds: queue.songs.map((s) => s.id),
+//         currentSongIndex,
+//         userId,
+//     });
+// });
 
-        const { queue, songs } = res;
-        return createQueueObject({ ...queue, songs });
-    },
-    target: $queue,
-});
-
-loadLastQueueFx.use(async (userId) => {
-    console.log({ userId });
-
-    return await Database.Songs.loadLastQueue(userId);
-});
 // #endregion
 
 // TODO: Разбить на разные unit'ы, а то триггерит ненужный ререндер

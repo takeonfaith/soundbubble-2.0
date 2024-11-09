@@ -20,6 +20,7 @@ import { Button } from '../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
 import { Divider } from '../../shared/components/divider';
 import { Flex } from '../../shared/components/flex';
+import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 import { confirmModel } from '../confirm/model';
 import { modalModel } from '../modal/model';
 import { popupModel } from '../popup/model';
@@ -30,7 +31,6 @@ import {
     HeaderStyled,
     MobileChildren,
 } from './styles';
-import { NEW_LAYOUT } from '../../shared/constants';
 
 const UserContextMenu = () => {
     const [currentUser] = userModel.useUser();
@@ -162,6 +162,7 @@ type Props = {
 export const Header = ({ children, hide, className }: Props) => {
     const [currentUser] = userModel.useUser();
     const location = useLocation();
+    const { isMobile } = useCurrentDevice();
     const currentRoute = useMemo(
         () => getCurrentRoute(allRoutes, location.pathname),
         [location.pathname]
@@ -191,8 +192,8 @@ export const Header = ({ children, hide, className }: Props) => {
                         : ''}
                 </HeaderPageTitle>
                 <DesktopChildren>{children}</DesktopChildren>
-                <Flex width="300px" gap={20} jc="flex-end">
-                    {!NEW_LAYOUT && (
+                <Flex width="350px" gap={20} jc="flex-end">
+                    {isMobile && (
                         <>
                             {currentUser && (
                                 <Button

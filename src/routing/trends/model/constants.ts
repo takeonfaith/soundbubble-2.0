@@ -1,0 +1,1 @@
+export const TRENDING_ITEMS_QUANTITY = 30;

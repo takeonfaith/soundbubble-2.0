@@ -120,7 +120,7 @@ const Lyrics = ({ song }: { song: TSong }) => {
 };
 
 type Props = {
-    song: TSong | null;
+    song: TSong | null | undefined;
 };
 
 export const SongInfo = ({ song }: Props) => {

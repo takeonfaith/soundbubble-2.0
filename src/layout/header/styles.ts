@@ -57,7 +57,7 @@ export const MobileChildren = styled.div`
 `;
 
 export const HeaderPageTitle = styled.h2`
-    width: 300px;
+    width: 350px;
     display: flex;
     align-items: center;
     gap: 8px;

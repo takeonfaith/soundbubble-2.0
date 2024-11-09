@@ -12,8 +12,10 @@ export type TPlaylist = {
     id: string;
     creationDate: string;
     authors: TAuthor[];
-    ownerId?: string;
+    authorIds: string[];
+    ownerId: string;
     lastEditedTime?: number;
+    description?: string;
 };
 
 export type TUploadPlaylist = Omit<TPlaylist, 'image'> & {

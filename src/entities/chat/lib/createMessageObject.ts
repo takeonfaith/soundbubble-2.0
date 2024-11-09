@@ -1,5 +1,5 @@
 import getUID from '../../../shared/funcs/getUID';
-import { TMessage } from '../model/types';
+import { SendStatus, TMessage } from '../model/types';
 
 export const createMessageObject = (
     userId: string,
@@ -15,7 +15,7 @@ export const createMessageObject = (
         attachedSongs: [],
         attachedAuthors: [],
         inResponseToMessage: '',
-        status: 'pending',
+        status: SendStatus.pending,
         ...props,
     };
 };

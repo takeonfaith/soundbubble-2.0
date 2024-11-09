@@ -24,6 +24,8 @@ import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { uniqueArrayObjectsByField } from '../../shared/funcs/uniqueArrayObjectsByFields';
 import { TExtendedSuggestion } from '../../features/searchWithHints/types';
 
+const MAX_AUTHOR_SONGS = 3;
+
 export class SearchSuggestions {
     private static ref = FB.get('search');
 
@@ -40,7 +42,7 @@ export class SearchSuggestions {
 
     private static getEntitiesReqs(suggestions: TSuggestion[]) {
         const requests: Record<TPlace, (uid: string) => Promise<TEntity>> = {
-            users: Database.Users.getUserByUid,
+            users: Database.Users.getUserById,
             playlists: Database.Playlists.getPlaylistByUid,
             songs: Database.Songs.getSongByUid,
         };
@@ -96,8 +98,6 @@ export class SearchSuggestions {
                 placeRestrictions.push(where('place', '==', place));
             }
 
-            console.log();
-
             const q = query(
                 this.ref,
                 and(
@@ -128,7 +128,10 @@ export class SearchSuggestions {
                 place !== 'users'
             ) {
                 const topAuthorSongs = await this.getTopAuthorSongs(
-                    (cleanSuggestions[0] as TUser).ownSongs?.slice(0, 6)
+                    (cleanSuggestions[0] as TUser).ownSongs?.slice(
+                        0,
+                        MAX_AUTHOR_SONGS
+                    )
                 );
 
                 cleanSuggestions = [

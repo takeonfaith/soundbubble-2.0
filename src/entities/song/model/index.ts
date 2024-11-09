@@ -102,16 +102,6 @@ sample({
     target: addListeningFx,
 });
 
-createWatch({
-    unit: $songStore,
-    fn: ({ currentSong, state }) => {
-        if (currentSong && currentSong.lyrics && state === 'loading') {
-            setLyrics(currentSong.lyrics);
-            setCurrentLyricIndex(0);
-        }
-    },
-});
-
 sample({
     clock: load,
     source: $songStore,

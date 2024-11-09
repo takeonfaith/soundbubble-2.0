@@ -34,12 +34,12 @@ const calculatePosition = (
     let posX,
         posY = 0;
 
-    if (x - menuWidth < 0) {
-        posX = x - width;
-        X = 'left';
-    } else {
+    if (x + menuWidth > window.innerWidth) {
         X = 'right';
         posX = x - menuWidth;
+    } else {
+        posX = x - width;
+        X = 'left';
     }
 
     if (y + menuHeight > window.innerHeight - 100) {

@@ -1,4 +1,10 @@
-import { createEffect, createEvent, createStore, sample } from 'effector';
+import {
+    createApi,
+    createEffect,
+    createEvent,
+    createStore,
+    sample,
+} from 'effector';
 import { useUnit } from 'effector-react';
 import { Database } from '../../../database';
 import { toastModel } from '../../../layout/toast/model';
@@ -70,9 +76,11 @@ export const addSongsToPlaylistsFx = createEffect(
     }
 );
 
-addSongsToPlaylistsFx.done.watch(() => {
+addSongsToPlaylistsFx.done.watch(({ result: { songs, playlists } }) => {
     toastModel.events.show({
-        message: 'Song added to playlist',
+        message: `Song${songs.length > 1 ? 's' : ''} added to playlist${
+            playlists.length > 1 ? 's' : ''
+        }`,
         type: 'success',
     });
 });
@@ -126,6 +134,24 @@ const createPlaylist = createEvent<{
 }>();
 
 const $store = createStore<TStore>(DEFAULT_STORE);
+const $isEditing = createStore(false);
+const $search = createStore<{ isSearching: boolean; value: string }>({
+    isSearching: false,
+    value: '',
+});
+
+const isEditingApi = createApi($isEditing, {
+    updateIsEditing: (_, val: boolean) => val,
+});
+
+const isSearchingApi = createApi($search, {
+    updateIsSearching: (store, val: boolean) => {
+        console.log(val);
+
+        return { ...store, isSearching: val };
+    },
+    updateSearchValue: (store, val: string) => ({ ...store, value: val }),
+});
 
 sample({
     clock: loadPlaylist,
@@ -282,7 +308,10 @@ const updatePlaylist = createEvent<{
     update: Partial<TUploadPlaylist>;
     onSuccess?: (updated: TPlaylist) => void;
 }>();
-const updateLocalPlaylist = createEvent<TPlaylist>();
+const updateLocalPlaylist = createEvent<{
+    playlist: TPlaylist;
+    songs?: TSong[];
+}>();
 
 const $currentPlaylist = $store.map((store) => store.currentPlaylist);
 
@@ -301,23 +330,46 @@ sample({
     target: updatePlaylistFx,
 });
 
+const getSongs = (
+    currentPlaylistSongs: TSong[] | null,
+    currentSongIds?: string[],
+    newSongIds?: string[]
+) => {
+    if (currentSongIds?.length === newSongIds?.length) {
+        return currentPlaylistSongs ?? [];
+    }
+
+    return currentPlaylistSongs?.filter((s) => newSongIds?.includes(s.id));
+};
+
 sample({
     clock: updatePlaylistFx.doneData,
+    source: $store,
+    fn: ({ currentPlaylist, currentPlaylistSongs }, newPlaylist) => ({
+        playlist: newPlaylist,
+        songs: getSongs(
+            currentPlaylistSongs,
+            currentPlaylist?.songs,
+            newPlaylist.songs
+        ),
+    }),
     target: updateLocalPlaylist,
 });
 
 sample({
     clock: updateLocalPlaylist,
     source: $store,
-    fn: (store, updated) => ({
+    fn: (store, { playlist, songs }) => ({
         ...store,
-        currentPlaylist: updated,
+        currentPlaylist: playlist,
+        currentPlaylistSongs: songs ?? store.currentPlaylistSongs,
     }),
     target: $store,
 });
 
 sample({
     clock: updateLocalPlaylist,
+    fn: ({ playlist }) => playlist,
     target: updateOwnPlaylist,
 });
 
@@ -447,7 +499,7 @@ acceptInvitationFx.failData.watch((err) => {
 // #endregion
 
 export const playlistModel = {
-    usePlaylist: () => useUnit($store),
+    usePlaylist: () => useUnit([$store, $isEditing, $search]),
     useCreatePlaylist: () => useUnit([createPlaylistsFx.pending]),
     events: {
         loadPlaylist,
@@ -457,5 +509,7 @@ export const playlistModel = {
         updatePlaylist,
         sendPlaylistInvitation,
         acceptInvitation,
+        ...isEditingApi,
+        ...isSearchingApi,
     },
 };

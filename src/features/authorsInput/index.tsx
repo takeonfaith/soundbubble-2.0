@@ -12,7 +12,7 @@ type Props = {
     value: string;
     required: boolean;
     error: string | undefined;
-    addedAuthors: TSuggestion[];
+    addedAuthors: TExtendedSuggestion[];
     loadingItems: boolean;
     onSumbit: (addedAuthors: TExtendedSuggestion[]) => void;
 };

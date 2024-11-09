@@ -15,7 +15,7 @@ import { Flex } from '../../shared/components/flex';
 import { AddEntitiesUI } from '../addEntitiesUI';
 
 type Props = {
-    song: TSong | null;
+    song: TSong | null | undefined;
 };
 
 export const AddSongToPlaylistModal = ({ song }: Props) => {

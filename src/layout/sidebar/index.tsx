@@ -30,10 +30,12 @@ export const Sidebar = () => {
     const { loggedIn } = usePrivateAction();
     const [ownPlaylists] = userModel.useOwnPlaylists();
     const chatUnreadCount = chatModel.useChatUnreadCount();
+    const [, friendRequests] = userModel.useFriends();
     const [currentUser] = userModel.useUser();
 
     const notificationsDic: Record<string, number> = {
         chat: chatUnreadCount,
+        friends: friendRequests.length,
     };
 
     const handleAddPlaylist = loggedIn(() => {

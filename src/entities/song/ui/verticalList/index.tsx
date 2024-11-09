@@ -1,23 +1,28 @@
-import { TQueue } from '@song/model/types';
+import { TQueue, TSong } from '@song/model/types';
 import { PlaneSongList } from '../planeList';
 import { SongsVerticalListStyled, Title, Titles } from './styles';
 
 type Props = {
     queue: TQueue;
-    showSerialNumber?: boolean;
+    showSerialNumber?: number;
+    isEditing?: boolean;
+    onRemove?: (song: TSong) => void;
 };
 
 export const VerticalSongsList = (props: Props) => {
     const {
         queue: { songs },
         showSerialNumber,
+        isEditing,
     } = props;
 
     return (
         <SongsVerticalListStyled>
             {!!songs.length && (
                 <Titles
-                    className={props.showSerialNumber ? 'showSerialNumber' : ''}
+                    className={
+                        showSerialNumber || isEditing ? 'showSerialNumber' : ''
+                    }
                 >
                     <Title
                         style={{

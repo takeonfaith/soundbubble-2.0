@@ -6,6 +6,7 @@ import { UserListSkeleton } from '../../entities/user/ui/UserListSkeleton';
 import { Header } from '../../layout/header';
 import { Button } from '../../shared/components/button';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
+import { Divider } from '../../shared/components/divider';
 import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
 import { PageMessage } from '../../shared/components/pageMessage';
@@ -14,6 +15,7 @@ import {
     PageWrapper,
 } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
+import { FriendRequests } from './FriendRequests';
 
 const FriendsWrapper = styled.div`
     width: 100%;
@@ -27,7 +29,7 @@ const FriendsWrapper = styled.div`
 
 export const FriendsPage = () => {
     const [currentUser] = userModel.useUser();
-    const [friends, loading] = userModel.useFriends();
+    const [friends, , loading] = userModel.useFriends();
 
     return (
         <PageWrapper>
@@ -51,14 +53,28 @@ export const FriendsPage = () => {
                         skeleton={<UserListSkeleton orientation="horizontal" />}
                     >
                         {!currentUser && (
-                            <PageMessage
-                                icon={IconUserOff}
-                                title={'No friends'}
-                                description={'We are sorry to say that...'}
-                            />
+                            <Flex
+                                height="100%"
+                                width="100%"
+                                jc="center"
+                                padding="20vh 0"
+                            >
+                                <PageMessage
+                                    icon={IconUserOff}
+                                    title={'No friends'}
+                                    description={'We are sorry to say that...'}
+                                />
+                            </Flex>
                         )}
                         {friends.length > 0 && (
-                            <Flex d="column" gap={4} width="100%">
+                            <Flex
+                                d="column"
+                                gap={4}
+                                width="100%"
+                                ai="flex-start"
+                            >
+                                <FriendRequests />
+                                <Divider />
                                 {friends.map((friend) => {
                                     return (
                                         <UserItem
@@ -67,7 +83,10 @@ export const FriendsPage = () => {
                                             key={friend.uid}
                                             orientation="horizontal"
                                         >
-                                            <Button $width="45px">
+                                            <Button
+                                                $width="40px"
+                                                $height="35px"
+                                            >
                                                 <IconMessage2 size={20} />
                                             </Button>
                                         </UserItem>

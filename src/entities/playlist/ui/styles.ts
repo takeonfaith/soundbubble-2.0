@@ -69,6 +69,22 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
         border-radius: ${PLAYLIST_RADIUS};
     }
 
+    & .like-button {
+        position: absolute;
+        bottom: -4px;
+        right: 0px;
+        z-index: 1;
+        border-radius: 20px;
+        color: ${({ $color1 }) => $color1 ?? 'darkgrey'};
+        filter: brightness(${({ theme }) => theme.colors.brightness});
+
+        &:hover {
+            color: ${({ $color1 }) => $color1 ?? 'darkgrey'};
+            background: ${({ theme }) => theme.colors.pageBackground};
+            filter: brightness(1);
+        }
+    }
+
     &.horizontal {
         --size: 34px;
         overflow: hidden;

@@ -24,15 +24,13 @@ import { AddSongsButton } from './AddSongsButton';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 
 export const AlbumPage = () => {
-    const { currentPlaylist, currentPlaylistSongs, loading, error } =
+    const [{ currentPlaylist, currentPlaylistSongs, loading, error }] =
         playlistModel.usePlaylist();
 
     const [currentUser] = userModel.useUser();
-    const isOwner =
-        currentUser?.isAdmin ||
-        !!currentPlaylist?.authors.find(
-            (author) => author.uid === currentUser?.uid
-        );
+    const isOwner = !!currentPlaylist?.authors.find(
+        (author) => author.uid === currentUser?.uid
+    );
     const url = `/album/${currentPlaylist?.id}`;
 
     useUrlParamId({
@@ -83,12 +81,8 @@ export const AlbumPage = () => {
                     <PlaylistPageStyled>
                         <PageTop
                             handleClickShare={handleClickShare}
-                            name={currentPlaylist?.name}
-                            numberOfListenersPerMonth={currentPlaylist?.listens}
-                            subscribers={currentPlaylist?.subscribers}
-                            isPrivate={currentPlaylist?.isPrivate}
+                            album={currentPlaylist}
                             isOwner={isOwner}
-                            colors={currentPlaylist?.imageColors}
                             queue={queue}
                         />
 

@@ -76,13 +76,23 @@ export const GlobalSearch = ({ queryValue, where, showTabs = true }: Props) => {
     const searchHistory = userModel.useSearchHistory();
     const suggestions = useUnit($searchSuggestions);
 
-    const handleChange = (val: string) => {
-        clearTimeout(debounceTimer.current);
+    const handleGetResult = useCallback(
+        (tab?: TTab) => {
+            if (queryValue.length > 0) {
+                const place = tab
+                    ? (tab.title.toLocaleLowerCase() as TPlace)
+                    : where === ''
+                    ? undefined
+                    : (where as TPlace);
 
-        debounceTimer.current = setTimeout(() => {
-            setQuery(val);
-        }, 100);
-    };
+                getResult({
+                    query: normalizeString(queryValue),
+                    place,
+                });
+            }
+        },
+        [getResult, queryValue, where]
+    );
 
     const onSumbit = (
         value: string,
@@ -100,31 +110,35 @@ export const GlobalSearch = ({ queryValue, where, showTabs = true }: Props) => {
             place: where === '' ? undefined : (where as TPlace),
             suggestion,
         });
+        setSearchQuery(value);
     };
 
-    const handleGetResult = useCallback(
-        (tab?: TTab) => {
-            if (queryValue.length > 0) {
-                getResult({
-                    query: normalizeString(queryValue),
-                    place: tab
-                        ? (tab.title.toLocaleLowerCase() as TPlace)
-                        : where === ''
-                        ? undefined
-                        : (where as TPlace),
-                });
-            }
-        },
-        [getResult, queryValue, where]
-    );
+    const handleChange = (val: string) => {
+        clearTimeout(debounceTimer.current);
 
-    useEffect(() => {
-        if (queryValue.length > 0 && result.length === 0) {
-            // если в поисковой строке есть что-то, но результатов нет,
-            // то запросить результаты по введенному значению
-            handleGetResult();
-        }
-    }, [handleGetResult, queryValue.length, result.length]);
+        debounceTimer.current = setTimeout(() => {
+            setQuery(val);
+        }, 100);
+    };
+
+    // useEffect(() => {
+    //     console.log(searchQuery, queryValue);
+
+    //     if (
+    //         searchQuery !== queryValue ||
+    //         (queryValue.length > 0 && result.length === 0)
+    //     ) {
+    //         // если в поисковой строке есть что-то, но результатов нет,
+    //         // то запросить результаты по введенному значению
+    //         handleGetResult();
+    //     }
+    // }, [
+    //     handleGetResult,
+    //     queryValue.length,
+    //     searchQuery,
+    //     result.length,
+    //     queryValue,
+    // ]);
 
     return (
         <>

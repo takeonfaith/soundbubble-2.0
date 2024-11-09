@@ -29,6 +29,10 @@ export const useSearchWithHints = ({
             : inputValue;
 
     useEffect(() => {
+        setInputValue(initialValue);
+    }, [initialValue]);
+
+    useEffect(() => {
         if (inputValue === '') {
             setVisibleSearchHistory(historySuggestions);
 

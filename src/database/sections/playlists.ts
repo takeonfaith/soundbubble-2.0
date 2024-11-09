@@ -1,7 +1,16 @@
 import { FB } from '../../firebase';
 
 import { TPlaylist, TUploadPlaylist } from '@playlist/model/types';
-import { arrayRemove, arrayUnion } from 'firebase/firestore';
+import {
+    and,
+    arrayRemove,
+    arrayUnion,
+    getDocs,
+    limit,
+    orderBy,
+    query,
+    where,
+} from 'firebase/firestore';
 import { createMessageObject } from '../../entities/chat/lib/createMessageObject';
 import {
     createDefaultSuggestion,
@@ -12,7 +21,9 @@ import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
 import { TUser } from '../../entities/user/model/types';
 import { ERRORS } from '../../shared/constants';
 import { asyncRequests } from '../../shared/funcs/asyncRequests';
+import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { Chats } from './chats';
+import { shuffleArray } from '../../entities/song/lib/shuffleArray';
 
 export class Playlists {
     static ref = FB.get('playlists');
@@ -30,9 +41,14 @@ export class Playlists {
     };
 
     static getPlaylistsByUids = async (uids: string[]) => {
-        if (uids.length === 0) return [];
+        try {
+            if (uids.length === 0) return [];
 
-        return (await FB.getByIds('playlists', uids)).reverse();
+            return (await FB.getByIds('playlists', uids)).reverse();
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
     };
 
     static async addSongsToPlaylists(songs: TSong[], playlists: TPlaylist[]) {
@@ -241,6 +257,69 @@ export class Playlists {
         } catch (error) {
             throw new Error(
                 `Failed to accept playlist invitation, error: ${error}`
+            );
+        }
+    }
+
+    static async getTopAlbums(quantity = 20, by?: keyof TPlaylist) {
+        try {
+            const snapshot = await getDocs(
+                query(
+                    this.ref,
+                    and(where('isAlbum', '==', true)),
+                    orderBy(by ?? 'listens', 'desc'),
+                    limit(quantity)
+                )
+            );
+
+            const res = getDataFromDoc<TPlaylist>(snapshot);
+
+            return res;
+        } catch (error) {
+            console.log('Failed to get top playlists, error:' + error);
+
+            throw new Error('Failed to get top playlists, error:' + error);
+        }
+    }
+
+    static async getPlaylistSongsSuggestions(playlistSongs: TSong[]) {
+        try {
+            const users = await FB.getByIds(
+                'users',
+                playlistSongs.flatMap((song) => song.authors.map((a) => a.uid))
+            );
+
+            console.log(users);
+
+            const authorSongs = Array.from(
+                new Set(
+                    users.reduce((acc, val) => {
+                        if (val.ownSongs?.length) {
+                            acc.push(...val.ownSongs);
+                        }
+                        return acc;
+                    }, [] as string[])
+                )
+            ).slice(0, 30);
+
+            if (authorSongs.length === 0) return [];
+
+            const snapshot = await getDocs(
+                query(
+                    FB.get('songs'),
+                    where('id', 'in', authorSongs),
+                    orderBy('listens', 'desc'),
+                    limit(10)
+                )
+            );
+            const finalSongs = getDataFromDoc<TSong>(snapshot).filter(
+                (song) => !playlistSongs.map((s) => s.id).includes(song.id)
+            );
+
+            return shuffleArray(finalSongs).slice(0, 5);
+        } catch (error) {
+            throw new Error(
+                'Failed to get playlist song suggestions, error:' + error
             );
         }
     }

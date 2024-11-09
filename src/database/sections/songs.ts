@@ -1,4 +1,4 @@
-import { TQueue, TSong } from '@song/model/types';
+import { TLastQueue, TQueue, TSong } from '@song/model/types';
 import {
     arrayUnion,
     getDocs,
@@ -10,16 +10,16 @@ import {
 } from 'firebase/firestore';
 import { Users } from '.';
 import { Database } from '..';
+import { createDefaultSuggestion } from '../../entities/search/lib/createDefaultSuggestion';
 import { createLyricsObject } from '../../entities/song/lib/createLyricsObject';
 import { createSongObject } from '../../entities/song/lib/createSongObject';
+import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
 import { TUploadSongForm } from '../../features/addSongModal/model';
 import { FB } from '../../firebase';
 import { ERRORS } from '../../shared/constants';
 import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import getUID from '../../shared/funcs/getUID';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
-import { createDefaultSuggestion } from '../../entities/search/lib/createDefaultSuggestion';
-import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
 
 export class Songs {
     static ref = FB.get('songs');
@@ -48,7 +48,7 @@ export class Songs {
 
     static async getSongsByUserId(userId: string) {
         try {
-            const user = await Users.getUserByUid(userId);
+            const user = await Users.getUserById(userId);
             return this.getSongsByUids(user?.addedSongs ?? []);
         } catch (error) {
             console.error(error);
@@ -87,8 +87,6 @@ export class Songs {
             return getDataFromDoc<TSong>(snapshot);
         }
 
-        console.log({ uids });
-
         return await FB.getByIds('songs', uids);
     };
 
@@ -121,7 +119,7 @@ export class Songs {
             const songLyrics = createLyricsObject(lyrics);
 
             const fullAuthors = await asyncRequests(authors, (a) => {
-                return Database.Users.getUserByUid(a.uid);
+                return Database.Users.getUserById(a.uid);
             });
 
             const newSong = createSongObject({
@@ -206,12 +204,22 @@ export class Songs {
         try {
             const queue = await FB.getById('lastQueue', userId);
             const songs = await FB.getByIds('songs', queue.songIds);
-            console.log(queue, songs);
 
             return { queue, songs: songs ?? [] };
         } catch (error) {
             console.error(error);
             return null;
+        }
+    }
+
+    static async updateLastQueue(userId: string, newQueue: TLastQueue) {
+        try {
+            await FB.updateById('lastQueue', userId, newQueue);
+            await FB.updateById('users', userId, {
+                lastSongPlayed: newQueue.songIds[newQueue.currentSongIndex],
+            });
+        } catch (error) {
+            console.error(error);
         }
     }
 }

@@ -1,14 +1,13 @@
 import {
     and,
-    doc,
     getDocs,
     limit,
     or,
     orderBy,
     query,
-    setDoc,
     where,
 } from 'firebase/firestore';
+import { createChatObject } from '../../entities/chat/lib/createChatObject';
 import { TChat, TChatData, TMessage } from '../../entities/chat/model/types';
 import { TEntity } from '../../entities/search/model/types';
 import { FB } from '../../firebase';
@@ -17,7 +16,6 @@ import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { Playlists } from './playlists';
 import { Songs } from './songs';
 import { Users } from './users';
-import { createChatObject } from '../../entities/chat/lib/createChatObject';
 
 export class Chats {
     static ref = FB.get('newChats');
@@ -52,8 +50,8 @@ export class Chats {
             return {
                 chats: chats.sort(
                     (a, b) =>
-                        lastMessages[b.id]?.sentTime -
-                        lastMessages[a.id]?.sentTime
+                        (b?.lastMessage?.sentTime ?? 0) -
+                        (a?.lastMessage?.sentTime ?? 0)
                 ),
                 chatDataObject,
                 lastMessages,
@@ -80,6 +78,7 @@ export class Chats {
             );
             const docs = await getDocs(q);
             const messages = getDataFromDoc<TMessage>(docs);
+            console.log(messages);
 
             const attachments = await asyncRequests(messages, (message) => {
                 const playlistIds = [...message.attachedAlbums];
@@ -112,11 +111,14 @@ export class Chats {
 
             const res = attachments.reduce((acc, r) => {
                 r?.forEach((el) => {
-                    acc['id' in el ? el.id : el.uid] = el;
+                    if (el) {
+                        acc['id' in el ? el.id : el.uid] = el;
+                    }
                 });
 
                 return acc;
             }, {} as Record<string, TEntity>);
+
             console.log(res);
 
             return { messages, chatData: res };
@@ -125,19 +127,31 @@ export class Chats {
         }
     }
 
-    static async sendMessage(chatId: string, message: TMessage) {
+    static async sendMessage(chatIds: string[], message: TMessage) {
         try {
-            const ref = doc(
-                FB.firestore,
-                `newChats/${chatId}/messages/${message.id}`
-            );
+            const send = async (chatId: string) => {
+                console.log('start sending message');
 
-            await setDoc(ref, message);
+                await FB.setDeepByIds(
+                    'newChats',
+                    [chatId, 'messages', message.id],
+                    message
+                );
 
-            FB.updateById('newChats', chatId, {
-                lastMessage: message,
+                await FB.updateById('newChats', chatId, {
+                    lastMessage: message,
+                });
+
+                console.log('successfully sent message', message);
+            };
+            console.log(chatIds);
+
+            await asyncRequests(chatIds, (id) => {
+                return send(id);
             });
         } catch (error) {
+            console.log(error);
+
             throw new Error(
                 'Failed to send message' + (error as Error).toString()
             );
@@ -193,7 +207,7 @@ export class Chats {
         try {
             const chat = await this.getChatByUserIds(senderId, receiverId);
 
-            await this.sendMessage(chat.id, message);
+            await this.sendMessage([chat.id], message);
         } catch (error) {
             throw new Error(
                 'Failed to send message by user id' +

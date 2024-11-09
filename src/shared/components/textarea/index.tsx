@@ -1,5 +1,5 @@
 import { forwardRef, RefObject, useState } from 'react';
-import { InputError, Label, Required } from '../input/styles';
+import { InputError, Label, MaxLenWrapper, Required } from '../input/styles';
 import { TextareaStyled, TextareaWrapper } from './styles';
 
 type Props = Omit<
@@ -47,13 +47,18 @@ export const Textarea = forwardRef(
                 )}
 
                 <TextareaStyled
-                    {...props}
                     ref={ref as RefObject<HTMLTextAreaElement>}
                     style={{ height }}
                     onKeyDown={handleResize}
                     onKeyUp={handleResize}
                     onChange={handleChange}
+                    {...props}
                 />
+                {props.maxLength && (
+                    <MaxLenWrapper style={{ bottom: 'auto', top: '-16px' }}>
+                        {props.value?.toString().length} / {props.maxLength}
+                    </MaxLenWrapper>
+                )}
             </TextareaWrapper>
         );
     }

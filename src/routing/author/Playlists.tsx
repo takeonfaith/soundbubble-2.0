@@ -12,6 +12,7 @@ type Props = {
 
 export const Playlists = ({ title, uid }: Props) => {
     const [{ playlists }] = userModel.useUserPage();
+    const [currentUser] = userModel.useUser();
 
     if (playlists.length === 0) {
         return null;
@@ -28,9 +29,21 @@ export const Playlists = ({ title, uid }: Props) => {
                 </NavigationTitle>
             </div>
             <HorizontalList>
-                {playlists.slice(0, MAX_PLAYLISTS).map((playlist) => (
-                    <PlaylistItem playlist={playlist} key={playlist.id} />
-                ))}
+                {playlists.slice(0, MAX_PLAYLISTS).map((playlist) => {
+                    const isAuthor =
+                        !!currentUser &&
+                        !!playlist.authors.find(
+                            (a) => a.uid === currentUser.uid
+                        );
+
+                    return (
+                        <PlaylistItem
+                            isAuthor={isAuthor}
+                            playlist={playlist}
+                            key={playlist.id}
+                        />
+                    );
+                })}
                 {/* {playlists.map((playlist) => (
                     <PlaylistItem playlist={playlist} key={playlist.id} />
                 ))}

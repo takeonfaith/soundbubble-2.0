@@ -13,9 +13,15 @@ type Props<T extends { id?: string; uid?: string }> = {
     setVisibleItems: React.Dispatch<React.SetStateAction<T[]>>;
     added: T[];
     loading?: boolean;
+    visibleItems: T[];
     itemImage?: (item: T) => React.ReactNode;
     itemName: (item: T) => string;
     setAdded: (items: T[]) => void;
+    onSearchValueChange?: (
+        value: string,
+        visibleItems: T[],
+        setVisibleItems: React.Dispatch<React.SetStateAction<T[]>>
+    ) => void;
 };
 
 export const AddedItemsList = <T extends { id?: string; uid?: string }>(
@@ -29,22 +35,21 @@ export const AddedItemsList = <T extends { id?: string; uid?: string }>(
         setVisibleItems,
         itemName,
         setSearchValue,
+        onSearchValueChange,
     } = props;
 
     const handleChange = (e: Evt<'input'>) => {
-        console.log({ e: e.target.value });
         setSearchValue(e.target.value);
+        const vItems = allItems.filter((item) => {
+            if (!item) return false;
 
-        if (e.target.value !== undefined && e.target.value.length !== 0) {
-            setVisibleItems(() =>
-                allItems.filter((item) => {
-                    if (!item) return false;
-
-                    return normalizeString(itemName(item)).includes(
-                        normalizeString(e?.target?.value)
-                    );
-                })
+            return normalizeString(itemName(item)).includes(
+                normalizeString(e?.target?.value)
             );
+        });
+        onSearchValueChange?.(e.target.value, vItems, setVisibleItems);
+        if (e.target.value !== undefined && e.target.value.length !== 0) {
+            setVisibleItems(vItems);
         } else {
             setVisibleItems(allItems);
         }

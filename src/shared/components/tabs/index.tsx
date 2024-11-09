@@ -38,8 +38,8 @@ export const Tabs = ({
     return (
         <TabsStyled className={chips ? 'chips' : ''}>
             <CurrentTabItem
-                $width={`${100 / tabs.length}%`}
-                $shift={current}
+                $width={`calc(${(100 / tabs.length).toFixed(0)}% - 2px)`}
+                $shift={`calc(100% * ${current})`}
                 $height={`${height}px`}
                 className={chips ? 'chips' : ''}
             />

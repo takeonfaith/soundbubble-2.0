@@ -71,12 +71,13 @@ export const Button = styled.button<{
     }
 
     &:disabled {
-        filter: grayscale(0.8);
+        filter: grayscale(0.5);
         color: ${({ theme }) => theme.colors.greyText};
         pointer-events: none;
 
-        & .show {
-            opacity: 0.4;
+        &.primary {
+            color: #ffffff66;
+            box-shadow: none;
         }
 
         &.plane,

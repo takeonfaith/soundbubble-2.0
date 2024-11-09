@@ -6,6 +6,7 @@ import {
     InputWrapper,
     Label,
     LeftIcon,
+    MaxLenWrapper,
     Required,
     RightIcon,
 } from './styles';
@@ -55,6 +56,11 @@ export const Input = forwardRef(
                         </RightIcon>
                     )}
                 </InputFieldWrapper>
+                {props.maxLength && (
+                    <MaxLenWrapper>
+                        {props.value?.toString().length} / {props.maxLength}
+                    </MaxLenWrapper>
+                )}
             </InputWrapper>
         );
     }

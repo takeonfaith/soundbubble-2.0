@@ -31,7 +31,7 @@ export const UserPage = ({ data }: Props) => {
             if (id) {
                 console.log(id);
 
-                userModel.events.getUserPage(id);
+                userModel.events.getUserPage({ userId: id, sortSongs: false });
             }
         },
     });

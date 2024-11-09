@@ -21,9 +21,10 @@ import { useToggleLike } from '../hooks/useToggleLike';
 import { TSong } from '../model/types';
 import { SongInfo } from './SongInfo';
 import { AuthorsModal } from './AuthorsModal';
+import { EditSongModal } from './EditSongModal';
 
 type Props = {
-    song: TSong | null;
+    song: TSong | null | undefined;
 };
 
 export const SongMoreContextMenu = ({ song }: Props) => {
@@ -37,6 +38,7 @@ export const SongMoreContextMenu = ({ song }: Props) => {
         modalModel.events.open({
             title: `Share "${song?.name}" with friends`,
             content: <ShareModal entity={song} />,
+            sizeY: 'm',
         });
         popupModel.events.close();
     };
@@ -64,9 +66,9 @@ export const SongMoreContextMenu = ({ song }: Props) => {
         popupModel.events.close();
     };
 
-    const handleLike = () => {
+    const handleLike = (e: Evt<'btn'>) => {
         if (song) {
-            handleToggleLike();
+            handleToggleLike(e);
             popupModel.events.close();
         }
     };
@@ -77,6 +79,17 @@ export const SongMoreContextMenu = ({ song }: Props) => {
             content: <SongInfo song={song} />,
         });
         popupModel.events.close();
+    };
+
+    const handleEditModal = () => {
+        if (song) {
+            modalModel.events.open({
+                title: `Edit "${song?.name}"`,
+                content: <EditSongModal song={song} />,
+                sizeY: 'l',
+            });
+            popupModel.events.close();
+        }
     };
 
     return (
@@ -116,7 +129,7 @@ export const SongMoreContextMenu = ({ song }: Props) => {
             {currentUser?.isAdmin && (
                 <>
                     <Divider />
-                    <Button>
+                    <Button onClick={handleEditModal}>
                         <IconEditCircle />
                         Edit song
                         <span className="admin">Admin</span>

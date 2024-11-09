@@ -4,15 +4,17 @@ import { getAuthorsToString } from '../../../entities/song/lib/getAuthorsToStrin
 import { AuthorsModal } from '../../../entities/song/ui/AuthorsModal';
 import { modalModel } from '../../../layout/modal/model';
 import { AuthorsStyled } from './styles';
+import React from 'react';
 
 type Props = {
     authors: TAuthor[] | undefined;
-    onAuthorsClick?: () => void;
     width?: string;
     disableOnDesktop?: boolean;
     disableOnMobile?: boolean;
     authorsQuantity?: number;
     isAuthor?: boolean;
+    onAuthorsClick?: () => void;
+    renderAuthor?: (author: TAuthor) => React.ReactNode;
 };
 
 export const Authors = ({

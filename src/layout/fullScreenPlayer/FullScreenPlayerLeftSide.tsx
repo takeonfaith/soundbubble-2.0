@@ -23,13 +23,11 @@ import { TRightSideType } from './types';
 type Props = {
     type: TRightSideType;
     hasQueue: boolean;
-    hasLyrics: boolean;
     handleClickControlButton: (type: TRightSideType) => () => void;
 };
 
 export const FullScreenPlayerLeftSide = ({
     type,
-    hasLyrics,
     hasQueue,
     handleClickControlButton,
 }: Props) => {

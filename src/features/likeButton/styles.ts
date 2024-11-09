@@ -5,7 +5,7 @@ export const LikeButtonStyled = styled(Button)<{
     $likeColor: string;
 }>`
     color: ${({ theme }) => theme.colors.textColor};
-    filter: brightness(1.2);
+    /* filter: brightness(1.2); */
 
     &.liked {
         color: ${({ $likeColor }) => $likeColor};

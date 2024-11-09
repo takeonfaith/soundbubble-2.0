@@ -13,6 +13,7 @@ import { toastModel } from '../../layout/toast/model';
 
 const CreateChatModalStyled = styled.div`
     padding: 10px 20px;
+    height: 100%;
 `;
 
 export const CreateChatModal = () => {
@@ -45,6 +46,7 @@ export const CreateChatModal = () => {
                             user={user}
                             key={user.uid}
                             onClick={onClick}
+                            showLastSeen
                         >
                             <Button $width="50px">
                                 <CheckIcon type="checkbox" checked={checked} />

@@ -8,6 +8,7 @@ import { allRoutes } from '../../routing/routes';
 import { SidebarLink } from '../sidebar/styles';
 import { IconText } from '../../shared/components/iconText';
 import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
+import { IconMusic } from '@tabler/icons-react';
 
 type Props = { queue: TQueue | null };
 
@@ -70,6 +71,14 @@ export const QueueOrigin = ({ queue }: Props) => {
         });
 
         return <PlaylistItem orientation="horizontal" playlist={playlist} />;
+    }
+
+    if (queue.url?.includes('song')) {
+        return (
+            <SidebarLink to={queue.url}>
+                <IconText icon={<IconMusic />} text={queue.name} />
+            </SidebarLink>
+        );
     }
 
     const route = allRoutes.find((route) => {

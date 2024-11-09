@@ -1,5 +1,17 @@
 import { TEntity } from '../../search/model/types';
 
+export enum LocalSendStatus {
+    error,
+    pending,
+    sent,
+    received,
+}
+
+export enum SendStatus {
+    error,
+    pending,
+}
+
 export type TMessage = {
     attachedAlbums: string[];
     attachedAuthors: string[];
@@ -14,7 +26,7 @@ export type TMessage = {
     inResponseToMessage: string;
     seenBy: string[];
     id: string;
-    status?: 'pending' | 'error';
+    status?: SendStatus;
 };
 
 export type TChat = {

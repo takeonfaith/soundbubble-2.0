@@ -13,13 +13,21 @@ type Props<T extends TEntity> = {
     entities: T[];
     initiallyAddedItems: T[];
     inputPlaceholder: string;
+    children?: React.ReactNode;
     renderItem: (
         item: T,
         checked: boolean,
         onClick: (item: T, e: Evt<'a'> | Evt<'div'>) => void,
-        initiallyChecked: boolean
+        initiallyChecked: boolean,
+        index: number,
+        value: string
     ) => React.ReactNode;
     renderButton: (addedItems: T[]) => React.ReactNode;
+    onSearchValueChange?: (
+        value: string,
+        visibleItems: T[],
+        setVisibleItems: React.Dispatch<React.SetStateAction<T[]>>
+    ) => void;
 };
 
 export const AddEntitiesUI = <T extends TEntity>({
@@ -28,6 +36,8 @@ export const AddEntitiesUI = <T extends TEntity>({
     inputPlaceholder,
     renderItem,
     renderButton,
+    onSearchValueChange,
+    children,
 }: Props<T>) => {
     const {
         visibleItems,
@@ -52,7 +62,9 @@ export const AddEntitiesUI = <T extends TEntity>({
                 itemImage={getItemImage}
                 itemName={(item) => getEntityName(item)}
                 setAdded={(added) => setAddedItems(added)}
+                visibleItems={visibleItems}
                 setVisibleItems={setVisibleItems}
+                onSearchValueChange={onSearchValueChange}
             />
             <Flex jc="flex-end" width="100%">
                 {addedItems.length > 0 && (
@@ -66,8 +78,14 @@ export const AddEntitiesUI = <T extends TEntity>({
                     </Button>
                 )}
             </Flex>
-            <Flex d="column" width="100%" padding="0 0 150px 0">
-                {visibleItems.map((item) => {
+            {children}
+            <Flex
+                d="column"
+                width="100%"
+                height="calc(100% - 230px)"
+                padding="0 0 150px 0"
+            >
+                {visibleItems.map((item, index) => {
                     const id = getEntityId(item);
                     const checked = !!addedItems.find(
                         (i) => getEntityId(i) === id
@@ -79,7 +97,9 @@ export const AddEntitiesUI = <T extends TEntity>({
                         item,
                         checked,
                         handleClick,
-                        initiallyChecked
+                        initiallyChecked,
+                        index,
+                        searchValue
                     );
                 })}
             </Flex>

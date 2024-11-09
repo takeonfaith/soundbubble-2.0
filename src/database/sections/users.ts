@@ -49,7 +49,7 @@ export class Users {
         }
     }
 
-    static async getUserByUid(uid: string | undefined) {
+    static async getUserById(uid: string | undefined) {
         try {
             if (!uid)
                 throw new Error(ERRORS.loginFailed('UID must be provided'));
@@ -74,7 +74,7 @@ export class Users {
                     orderBy('numberOfListenersPerMonth', 'desc')
                 );
             }
-            const res = await FB.getByIds('users', uids, 'uid');
+            const res = await FB.getByIds('users', uids);
 
             return res;
         } catch (error) {
@@ -150,13 +150,13 @@ export class Users {
         }
     }
 
-    static async getTopAuthorsByListenings(topQuantity = 10) {
+    static async getTopAuthors(topQuantity = 10, by?: keyof TUser) {
         try {
             const snapshot = await getDocs(
                 query(
                     this.ref,
                     where('isAuthor', '==', true),
-                    orderBy('numberOfListenersPerMonth', 'desc'),
+                    orderBy(by ?? 'numberOfListenersPerMonth', 'desc'),
                     limit(topQuantity)
                 )
             );
@@ -277,6 +277,50 @@ export class Users {
         }
     }
 
+    static async acceptFriendRequest(userId: string, friendId: string) {
+        try {
+            await FB.updateById('users', userId, {
+                friends: arrayUnion({
+                    uid: friendId,
+                    status: FriendStatus.added,
+                }),
+            });
+
+            await FB.updateById('users', friendId, {
+                friends: arrayUnion({
+                    uid: userId,
+                    status: FriendStatus.added,
+                }),
+            });
+        } catch (error) {
+            throw new Error(
+                `Failed to accept friend request, ${(error as Error).message}`
+            );
+        }
+    }
+
+    static async rejectFriendRequest(userId: string, friendId: string) {
+        try {
+            await FB.updateById('users', userId, {
+                friends: arrayRemove({
+                    uid: friendId,
+                    status: FriendStatus.requested,
+                }),
+            });
+
+            await FB.updateById('users', friendId, {
+                friends: arrayRemove({
+                    uid: userId,
+                    status: FriendStatus.awaiting,
+                }),
+            });
+        } catch (error) {
+            throw new Error(
+                `Failed to accept friend request, ${(error as Error).message}`
+            );
+        }
+    }
+
     static async updateUserOnline(userId: string, online: number) {
         try {
             await FB.updateById('users', userId, { online });
@@ -304,12 +348,68 @@ export class Users {
             await FB.updateById('users', userId, {
                 addedPlaylists: arrayRemove(playlistId),
             });
-            
+
             await FB.updateById('playlists', playlistId, {
                 subscribers: increment(-1),
             });
         } catch (error) {
             throw new Error('Failed to remove playlist from library');
+        }
+    }
+
+    static async updateOwnPlaylistsOrder(
+        userId: string,
+        playlistIds: string[]
+    ) {
+        try {
+            await FB.updateById('users', userId, {
+                ownPlaylists: playlistIds,
+            });
+        } catch (error) {
+            throw new Error('Failed to update own playlists order');
+        }
+    }
+
+    static async getUserPageById(userId: string, sortSongs = false) {
+        try {
+            const user = await this.getUserById(userId);
+
+            const userSongs = user?.ownSongs?.length
+                ? user?.ownSongs
+                : user?.addedSongs ?? [];
+            const userPlaylists = user?.ownPlaylists?.length
+                ? user?.ownPlaylists
+                : user?.addedPlaylists ?? [];
+
+            const songs = await Songs.getSongsByUids(
+                userSongs.reverse(),
+                sortSongs
+            );
+
+            const playlists = await Playlists.getPlaylistsByUids(userPlaylists);
+
+            const lastQueue = !user.isAuthor
+                ? await Songs.loadLastQueue(user.uid)
+                : null;
+
+            const friends = await this.getUsersByUids(
+                user.friends
+                    ?.filter((u) => u.status === 'added')
+                    .map((u) => u.uid)
+            );
+
+            return {
+                user,
+                songs,
+                playlists,
+                lastSongPlayed:
+                    lastQueue?.songs[lastQueue.queue.currentSongIndex],
+                friends,
+            };
+        } catch (error) {
+            console.log('Failed to get user page', error);
+
+            throw new Error('Failed to get user page');
         }
     }
 }

@@ -25,6 +25,7 @@ import {
 } from './constants';
 import {
     CreateUserCreditsType,
+    FriendStatus,
     LoginCreditsType,
     TPageStore,
     TUser,
@@ -85,35 +86,13 @@ const loadAddedPlaylistsFx = createEffect(async (store: TUser) => {
     }
 });
 
-const loadUserPageFx = createEffect(async (userId: string) => {
-    try {
-        const user = await Database.Users.getUserByUid(userId);
+const loadUserPageFx = createEffect(
+    async ({ userId, sortSongs }: { userId: string; sortSongs: boolean }) => {
+        const props = await Database.Users.getUserPageById(userId, sortSongs);
 
-        const userSongs = user?.ownSongs?.length
-            ? user?.ownSongs
-            : user?.addedSongs ?? [];
-        const userPlaylists = user?.ownPlaylists?.length
-            ? user?.ownPlaylists
-            : user?.addedPlaylists ?? [];
-
-        const songs = await Database.Songs.getSongsByUids(userSongs, true);
-        const playlists = await Database.Playlists.getPlaylistsByUids(
-            userPlaylists
-        );
-        const lastSongPlayed =
-            !user.isAuthor && user.lastSongPlayed
-                ? await Database.Songs.getSongByUid(user.lastSongPlayed)
-                : null;
-
-        const friends = await Database.Users.getUsersByUids(
-            user.friends?.filter((u) => u.status === 'added').map((u) => u.uid)
-        );
-
-        return { user, songs, playlists, lastSongPlayed, friends };
-    } catch (error) {
-        throw new Error("Failed to get user's page info");
+        return props;
     }
-});
+);
 
 const loadSimilarAuthorsFx = createEffect(async (songs: TSong[]) => {
     try {
@@ -124,15 +103,47 @@ const loadSimilarAuthorsFx = createEffect(async (songs: TSong[]) => {
     }
 });
 
+const updateFriendsFn = (
+    users: TUser[],
+    friendStatuses: { uid: string; status: FriendStatus }[]
+) => {
+    const addedFriends = filterOneArrayWithAnother(
+        users,
+        friendStatuses,
+        (user) => user.uid,
+        (requests) =>
+            requests
+                .filter((r) => r.status !== FriendStatus.added)
+                .map((r) => r.uid)
+    );
+
+    updateFriends(addedFriends);
+
+    const friendRequests = filterOneArrayWithAnother(
+        users,
+        friendStatuses,
+        (user) => user.uid,
+        (requests) => {
+            const res = requests
+                .filter((r) => r.status !== FriendStatus.awaiting)
+                .map((r) => r.uid);
+
+            return res;
+        }
+    );
+
+    updateFriendRequests(friendRequests);
+};
+
 // TODO: отписка на logout
 const loadFriendsFx = createEffect(async (store: TUser) => {
     try {
-        const friends =
-            store?.friends
-                ?.filter((friend) => friend.status === 'added')
-                .map((friend) => friend.uid) ?? [];
+        const friendStatuses = store?.friends ?? [];
+        const friends = friendStatuses.map((friend) => friend.uid) ?? [];
 
-        await Database.Users.listenToUsersChanges(friends, updateFriends);
+        await Database.Users.listenToUsersChanges(friends, (users) =>
+            updateFriendsFn(users, friendStatuses)
+        );
     } catch (error) {
         throw new Error('Failed to load user friends');
     }
@@ -197,7 +208,7 @@ const setSearchHistoryFx = createEffect(
 const loadUserDataFx = createEffect(async (user: User | null) => {
     if (!user) return null;
 
-    return await Database.Users.getUserByUid(user.uid);
+    return await Database.Users.getUserById(user.uid);
 });
 
 loadUserDataFx.failData.watch((err) => {
@@ -216,14 +227,36 @@ const updateUserOnlineFx = createEffect(async (user: TUser | null) => {
     await Database.Users.updateUserOnline(user.uid, Date.now());
 });
 
+const acceptFriendRequestFx = createEffect<
+    {
+        userId: string;
+        friendId: string;
+    },
+    void,
+    Error
+>();
+
+const rejectFriendRequestFx = createEffect<
+    {
+        userId: string;
+        friendId: string;
+    },
+    void,
+    Error
+>();
+
+const acceptFriendRequest = createEvent<string>();
+const rejectFriendRequest = createEvent<string>();
+
 const login = createEvent<LoginCreditsType>();
 export const logout = createEvent();
 const createUser = createEvent<CreateUserCreditsType>();
 export const setUser = createEvent<TUser>();
-const getUserPage = createEvent<string>();
+const getUserPage = createEvent<{ userId: string; sortSongs: boolean }>();
 const loadSimilarAuthors = createEvent<TSong[]>();
 const resetUserPage = createEvent();
 const updateFriends = createEvent<TUser[]>();
+const updateFriendRequests = createEvent<TUser[]>();
 const loadUserData = createEvent<User | null>();
 
 const addAuthorsToLibrary = createEvent<{
@@ -265,14 +298,16 @@ $lastSongPlayed.reset(logout);
 const $lastQueue = createStore<TSong[]>([]);
 $lastQueue.reset(logout);
 
-const $ownPlaylists = createStore<TPlaylist[]>([]);
+export const $ownPlaylists = createStore<TPlaylist[]>([]);
 $ownPlaylists.reset(logout);
 
 const $addedPlaylists = createStore<TPlaylist[]>([]);
 $addedPlaylists.reset(logout);
 
 const $friends = createStore<TUser[]>([]);
+const $friendRequests = createStore<TUser[]>([]);
 $friends.reset(logout);
+$friendRequests.reset(logout);
 
 export const $searchHistory = createStore<TExtendedSuggestion[]>([]);
 $searchHistory.reset(logout);
@@ -329,6 +364,46 @@ sample({
     clock: updateFriends,
     fn: (friends) => friends,
     target: $friends,
+});
+
+sample({
+    clock: updateFriendRequests,
+    fn: (friends) => friends,
+    target: $friendRequests,
+});
+
+sample({
+    clock: acceptFriendRequest,
+    source: $user,
+    filter: userIsLoggedIn,
+    fn: (user, friendId) => ({ userId: user!.uid, friendId }),
+    target: acceptFriendRequestFx,
+});
+
+sample({
+    clock: rejectFriendRequest,
+    source: $user,
+    filter: userIsLoggedIn,
+    fn: (user, friendId) => ({ userId: user!.uid, friendId }),
+    target: rejectFriendRequestFx,
+});
+
+acceptFriendRequestFx.failData.watch((err) => {
+    toastModel.events.show({
+        type: 'error',
+        message: 'Failed to accept friend request',
+        duration: 5000,
+        reason: err.message,
+    });
+});
+
+rejectFriendRequestFx.failData.watch((err) => {
+    toastModel.events.show({
+        type: 'error',
+        message: 'Failed to reject friend request',
+        duration: 5000,
+        reason: err.message,
+    });
 });
 
 sample({
@@ -889,20 +964,24 @@ sample({
     target: $addedPlaylists,
 });
 
-removePlaylistFx.done.watch(({ params: { showToast } }) => {
+removePlaylistFx.done.watch(({ params: { playlist, showToast } }) => {
     if (showToast) {
         toastModel.events.show({
-            message: 'Playlist removed from library',
+            message: `${
+                playlist.isAlbum ? 'Album' : 'Playlist'
+            } removed from library`,
             type: 'info',
             duration: 5000,
         });
     }
 });
 
-addPlaylistFx.done.watch(({ params: { showToast } }) => {
+addPlaylistFx.done.watch(({ params: { showToast, playlist } }) => {
     if (showToast) {
         toastModel.events.show({
-            message: 'Playlist added to library',
+            message: `${
+                playlist.isAlbum ? 'Album' : 'Playlist'
+            } added to library`,
             type: 'success',
             duration: 3000,
         });
@@ -961,7 +1040,8 @@ export const userModel = {
     useAddedAuthors: () => useUnit([$addedAuthors, loadAddedAuthorsFx.pending]),
     useSearchHistory: () => useUnit($searchHistory),
     useUserPage: () => useUnit([$userPage, loadUserPageFx.pending]),
-    useFriends: () => useUnit([$friends, loadFriendsFx.pending]),
+    useFriends: () =>
+        useUnit([$friends, $friendRequests, loadFriendsFx.pending]),
     events: {
         login,
         logout,
@@ -977,6 +1057,8 @@ export const userModel = {
         toggleOtherPlaylistLiked,
         friendRequest,
         loadUserData,
+        acceptFriendRequest,
+        rejectFriendRequest,
     },
     gates: {
         useLoadUser: () => useGate(userGate),

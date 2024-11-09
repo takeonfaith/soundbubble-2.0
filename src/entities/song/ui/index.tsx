@@ -4,10 +4,13 @@ import { LikeButton } from '@features/likeButton';
 import {
     IconDots,
     IconHeadphones,
+    IconMenu2,
     IconPlayerPauseFilled,
     IconPlayerPlayFilled,
+    IconSquareRoundedMinusFilled,
 } from '@tabler/icons-react';
 import { popupModel } from '../../../layout/popup/model';
+import { Button } from '../../../shared/components/button';
 import { PlayingAnimation } from '../../../shared/components/playingAnimation';
 import { Subtext } from '../../../shared/components/subtext';
 import { formatBigNumber } from '../../../shared/funcs/formatBigNumber';
@@ -17,6 +20,7 @@ import { TSong } from '../model/types';
 import { SongCover } from './SongCover';
 import { SongMoreContextMenu } from './SongMoreContextMenu';
 import {
+    DeleteButton,
     Listens,
     LoadingOverlay,
     MoreInfoButton,
@@ -38,10 +42,12 @@ type Props = {
     playing: boolean;
     loading: boolean;
     index: number;
-    onClick: (song: TSong, e: Evt<'div'>, index: number) => void;
     noImage?: boolean;
-    showSerialNumber?: boolean;
+    showSerialNumber?: number;
     children?: React.ReactNode;
+    isEditing?: boolean;
+    onClick: (song: TSong, e: Evt<'div'>, index: number) => void;
+    onRemove?: (song: TSong) => void;
 };
 
 export const SongItem = ({
@@ -49,9 +55,11 @@ export const SongItem = ({
     playing,
     loading,
     index,
-    onClick,
     showSerialNumber,
     children,
+    isEditing,
+    onClick,
+    onRemove,
 }: Props) => {
     const { name, authors, imageColors, cover, listens, duration } = song;
     const { handleToggleLike, performingAction, isLiked } = useToggleLike(song);
@@ -66,7 +74,11 @@ export const SongItem = ({
         });
     };
 
-    const handleClick = (e: Evt<'div'>) => onClick(song, e, index);
+    const handleClick = (e: Evt<'div'>) => {
+        if (!isEditing) {
+            onClick(song, e, index);
+        }
+    };
 
     return (
         <SongStyled
@@ -78,8 +90,21 @@ export const SongItem = ({
                 performingAction ? 'disabled' : ''
             }`}
         >
-            {showSerialNumber && (
-                <SerialNumberStyled>#{index + 1}</SerialNumberStyled>
+            {showSerialNumber !== undefined && (
+                <SerialNumberStyled>
+                    #{showSerialNumber + index + 1}
+                </SerialNumberStyled>
+            )}
+            {isEditing && onRemove && (
+                <SerialNumberStyled>
+                    <DeleteButton
+                        onClick={() => onRemove(song)}
+                        $height="35px"
+                        $width="35px"
+                    >
+                        <IconSquareRoundedMinusFilled />
+                    </DeleteButton>
+                </SerialNumberStyled>
             )}
             <SongLeft $color1={imageColors[0]}>
                 <SongCover size="35px" src={cover} colors={imageColors}>
@@ -136,10 +161,20 @@ export const SongItem = ({
                 <Subtext className="duration">
                     {getHumanDuration(duration)}
                 </Subtext>
-                {children ?? (
-                    <MoreInfoButton onClick={handleMore}>
-                        <IconDots />
-                    </MoreInfoButton>
+                {children ??
+                    (!isEditing && (
+                        <MoreInfoButton onClick={handleMore}>
+                            <IconDots />
+                        </MoreInfoButton>
+                    ))}
+                {isEditing && (
+                    <Button
+                        $width="45px"
+                        $height="35px"
+                        style={{ cursor: '-webkit-grab' }}
+                    >
+                        <IconMenu2 opacity={0.5} size={18} />
+                    </Button>
                 )}
             </SongButtons>
         </SongStyled>

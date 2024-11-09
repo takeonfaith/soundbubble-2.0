@@ -1,69 +1,121 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { chatModel } from '../../entities/chat/model';
+import { useState } from 'react';
+import { createMessageObject } from '../../entities/chat/lib/createMessageObject';
+import { chatModel, sendMessageFx } from '../../entities/chat/model';
+import { TChat } from '../../entities/chat/model/types';
 import { ChatItem } from '../../entities/chat/ui/ChatItem';
 import { TEntity } from '../../entities/search/model/types';
-import { ChatsSkeleton } from '../../routing/chat/ChatsSkeleton';
+import { userModel } from '../../entities/user/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { CheckIcon } from '../../shared/components/checkIcon';
-import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
-import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { AddEntitiesUI } from '../addEntitiesUI';
-import { BadgeStyled } from './styles';
+import { getEntityId } from '../searchWithHints/lib/getDividedEntity';
+import { getEntityType } from '../searchWithHints/lib/getEntityType';
+import { BadgeStyled, ShareModalStyled } from './styles';
+import { TUser } from '../../entities/user/model/types';
+import { useUnit } from 'effector-react';
+import { modalModel } from '../../layout/modal/model';
+import { Loading } from '../../shared/components/loading';
+import { Flex } from '../../shared/components/flex';
 
 type Props = {
-    entity: TEntity | null;
+    entity: TEntity | null | undefined;
 };
 
-// eslint-disable-next-line no-empty-pattern
-export const ShareModal = ({}: Props) => {
-    const { chats, chatData, loadingChats } = chatModel.useChats();
+export const ShareModal = ({ entity }: Props) => {
+    const [messageValue, setMessageValue] = useState('');
+    const [sending] = useUnit([sendMessageFx.pending]);
+    const { chats, chatData, loadingChats, loadingChatData } =
+        chatModel.useChats();
+    const [currentUser] = userModel.useUser();
+    const chatsWithNames: TChat[] = chats.map((ch) => {
+        const notYou = ch.participants.filter((p) => p !== currentUser?.uid)[0];
+        const otherUser = chatData[notYou] as TUser;
+        return {
+            ...ch,
+            chatName: (ch.chatName || otherUser?.displayName) ?? '',
+            chatImage: (ch.chatImage || otherUser?.photoURL) ?? '',
+        };
+    });
 
-    const handleShare = (_addedChats: string[]) => {
-        // chatModel.events.sendMessage({})
+    const handleShare = (addedChats: TChat[]) => {
+        if (currentUser && entity) {
+            const type = getEntityType(entity);
+            const attachedAlbums =
+                type === 'album' || type === 'playlist'
+                    ? [getEntityId(entity)]
+                    : [];
+            const attachedAuthors =
+                type === 'author' || type === 'user'
+                    ? [getEntityId(entity)]
+                    : [];
+            const attachedSongs = type === 'song' ? [getEntityId(entity)] : [];
+            chatModel.events.sendMessage({
+                chatIds: addedChats.map((c) => c.id),
+                message: createMessageObject(currentUser?.uid, {
+                    message: messageValue,
+                    attachedAlbums,
+                    attachedAuthors,
+                    attachedSongs,
+                }),
+                showToast: true,
+                onSuccess: () => {
+                    modalModel.events.close();
+                },
+            });
+        }
     };
 
     chatModel.useLoadChats();
 
     return (
-        <Flex d="column" width="100%" height="100%" padding="0 25px">
-            <SkeletonPageAnimation
-                loading={loadingChats}
-                skeleton={<ChatsSkeleton />}
-            >
-                <AddEntitiesUI
-                    inputPlaceholder="Search for friends..."
-                    entities={chats}
-                    renderItem={(chat, checked, onClick) => {
-                        return (
-                            <ChatItem
-                                size="s"
-                                chat={chat}
-                                key={chat.id}
-                                chatData={chatData}
-                                onClick={onClick}
-                                lastMessage={undefined}
-                                unreadCount={0}
-                                isSelected={false}
-                            >
-                                <CheckIcon checked={checked} />
-                            </ChatItem>
-                        );
-                    }}
-                    renderButton={(addedChats) => (
-                        <>
-                            <Input placeholder="Your Message" />
-                            <DefaultButton
-                                appearance="primary"
-                                onClick={() => handleShare(addedChats)}
-                            >
-                                Send
-                                <BadgeStyled>{addedChats.length}</BadgeStyled>
-                            </DefaultButton>
-                        </>
-                    )}
-                />
-            </SkeletonPageAnimation>
-        </Flex>
+        <ShareModalStyled>
+            <AddEntitiesUI
+                initiallyAddedItems={[]}
+                inputPlaceholder="Search for friends..."
+                entities={chatsWithNames}
+                renderItem={(chat, checked, onClick) => {
+                    return (
+                        <ChatItem
+                            size="s"
+                            chat={chat}
+                            key={chat.id}
+                            chatData={chatData}
+                            onClick={onClick}
+                            lastMessage={undefined}
+                            unreadCount={0}
+                            isSelected={false}
+                        >
+                            <CheckIcon type="checkbox" checked={checked} />
+                        </ChatItem>
+                    );
+                }}
+                renderButton={(addedChats) => (
+                    <>
+                        <Input
+                            placeholder="Your Message"
+                            value={messageValue}
+                            onChange={(e) =>
+                                setMessageValue(e.currentTarget.value)
+                            }
+                        />
+                        <DefaultButton
+                            appearance="primary"
+                            onClick={() => handleShare(addedChats)}
+                            loading={sending}
+                        >
+                            Send
+                            <BadgeStyled>{addedChats.length}</BadgeStyled>
+                        </DefaultButton>
+                    </>
+                )}
+            />
+            {(loadingChats || loadingChatData) && (
+                <Flex jc="center" width="100%" height="100%">
+                    <Loading />
+                </Flex>
+            )}
+        </ShareModalStyled>
     );
 };

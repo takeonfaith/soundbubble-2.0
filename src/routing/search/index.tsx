@@ -5,8 +5,8 @@ import { GlobalSearch } from '../../features/globalSearch';
 import { Header } from '../../layout/header';
 import { Divider } from '../../shared/components/divider';
 import { PageWrapper } from '../../shared/components/pageWrapper';
-import { SearchResult } from './SearchResult';
 import { NEW_LAYOUT } from '../../shared/constants';
+import { SearchResult } from './SearchResult';
 
 const SearchBarStyled = styled.div`
     max-width: 650px;

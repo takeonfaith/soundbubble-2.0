@@ -4,12 +4,14 @@ import { songModel } from '../../new-model';
 
 type Props = {
     queue: TQueue | null;
-    showSerialNumber?: boolean;
+    showSerialNumber?: number;
+    isEditing?: boolean;
+    onRemove?: (song: TSong) => void;
 };
 
 export const PlaneSongList = (props: Props) => {
     const { currentSong, state } = songModel.useSong();
-    const { queue, showSerialNumber } = props;
+    const { queue, showSerialNumber, isEditing, onRemove } = props;
 
     if (!queue) return null;
 
@@ -34,6 +36,8 @@ export const PlaneSongList = (props: Props) => {
                         index={index}
                         key={song.id + index}
                         song={song}
+                        isEditing={isEditing}
+                        onRemove={onRemove}
                         playing={isCurrent && state === SongState.playing}
                         loading={
                             isCurrent &&

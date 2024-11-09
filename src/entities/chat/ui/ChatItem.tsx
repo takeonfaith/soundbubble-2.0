@@ -1,6 +1,6 @@
 import { NotificationBadge } from '../../../layout/sidebar/styles';
-import { ChatTypingIndicator } from '../../../routing/chat/chatDialog/ChatTypingIndicator';
-import { MessageSentStatus } from '../../../routing/chat/chatDialog/MessageSentStatus';
+import { ChatTypingIndicator } from '../../../routing/chat/ui/layout/ChatTypingIndicator';
+import { MessageSentStatus } from '../../../routing/chat/ui/message/MessageSentStatus';
 import { Flex } from '../../../shared/components/flex';
 import { ENTITIES_ICONS } from '../../../shared/constants/icons';
 import { TPlaylist } from '../../playlist/model/types';
@@ -38,7 +38,7 @@ type Props = {
 
 const coverSizes = {
     s: '35px',
-    m: '50px',
+    m: '45px',
 };
 
 export const ChatItem = ({
@@ -89,7 +89,7 @@ export const ChatItem = ({
         <ChatItemStyled
             onClick={handleClick}
             to={`/chat/${chat.id}`}
-            className={isSelected ? 'selected' : ''}
+            className={`chat-item ${isSelected ? 'selected' : ''}`}
         >
             <UserCover
                 fallbackIcon={

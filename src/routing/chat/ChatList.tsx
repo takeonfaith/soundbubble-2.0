@@ -1,19 +1,19 @@
-import { IconMessagePlus, IconSearch } from '@tabler/icons-react';
+import { IconPencilPlus, IconSearch } from '@tabler/icons-react';
+import { chatModel } from '../../entities/chat/model';
 import { ChatItem } from '../../entities/chat/ui/ChatItem';
-import { Button } from '../../shared/components/button';
+import { CreateChatModal } from '../../features/createChatModal';
+import { modalModel } from '../../layout/modal/model';
+import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
+import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
+import { ChatsSkeleton } from './ChatsSkeleton';
 import {
     ChatListStyled,
     ChatSearchStyled,
     DesktopWrapperStyled,
     ListOfChats,
 } from './styles';
-import { CreateChatModal } from '../../features/createChatModal';
-import { modalModel } from '../../layout/modal/model';
-import { chatModel } from '../../entities/chat/model';
-import { Flex } from '../../shared/components/flex';
-import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { ChatsSkeleton } from './ChatsSkeleton';
+import { Button } from '../../shared/components/button';
 
 export const ChatList = () => {
     const {
@@ -36,17 +36,28 @@ export const ChatList = () => {
     return (
         <ListOfChats className={!currentChatId ? 'no-chat' : ''}>
             <DesktopWrapperStyled>
-                <Flex padding="0 0 10px 20px">
+                <Flex
+                    width="100%"
+                    jc="space-between"
+                    padding="0 20px 10px 20px"
+                >
                     <h2>Chats</h2>
+                    <Button
+                        className="primary"
+                        $width="35px"
+                        $height='35px'
+                        onClick={handleCreateChatModal}
+                        style={{ borderRadius: '100%' }}
+                    >
+                        <IconPencilPlus size={18} color="#fff" />
+                    </Button>
                 </Flex>
                 <ChatSearchStyled>
                     <Input
                         icon={<IconSearch />}
                         placeholder="Search for chats..."
+                        style={{ borderRadius: '20px' }}
                     />
-                    <Button onClick={handleCreateChatModal} $width="48px">
-                        <IconMessagePlus size={20} />
-                    </Button>
                 </ChatSearchStyled>
             </DesktopWrapperStyled>
             <ChatListStyled>

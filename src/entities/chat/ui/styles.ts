@@ -5,7 +5,8 @@ export const ChatItemStyled = styled(Link)`
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 10px 25px;
+    padding: 12px 12px;
+    border-radius: 10px;
     gap: 12px;
     background: ${({ theme }) => theme.colors.pageBackground};
 
@@ -75,7 +76,7 @@ export const LastMessageSentTimeStyled = styled.div`
     font-weight: 300;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
 
     span {
         opacity: 0.4;

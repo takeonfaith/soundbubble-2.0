@@ -13,6 +13,10 @@ import { confirmModel } from '../../layout/confirm/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Subtext } from '../../shared/components/subtext';
 import { UserButtons, UserInfo, UserInfoName, UserTopStyled } from './styles';
+import { Database } from '../../database';
+import { useState } from 'react';
+import { Loading } from '../../shared/components/loading';
+import { useNavigate } from 'react-router';
 
 type Props = {
     user: TUser | null;
@@ -23,6 +27,8 @@ export const UserTop = ({ user }: Props) => {
     const friends = currentUser?.friends ?? [];
     const friend = friends.find((friend) => friend.uid === user?.uid);
     const isOwner = user?.uid === currentUser?.uid;
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const getFriendButtonContent = () => {
         if (friend?.status === FriendStatus.added)
@@ -89,6 +95,18 @@ export const UserTop = ({ user }: Props) => {
         };
     };
 
+    const handleMessage = async () => {
+        setLoading(true);
+        if (currentUser && user) {
+            Database.Chats.getChatByUserIds(currentUser.uid, user.uid).then(
+                (chat) => {
+                    setLoading(false);
+                    navigate(`/chat/${chat.id}`);
+                }
+            );
+        }
+    };
+
     const friendButton = getFriendButtonContent();
 
     return (
@@ -115,9 +133,9 @@ export const UserTop = ({ user }: Props) => {
                             {friendButton.text}
                         </DefaultButton>
                     )}
-                    {friend?.status === 'added' && (
-                        <DefaultButton width="100%">
-                            <IconMessage2 size={18} />
+                    {currentUser && friend?.status === 'added' && (
+                        <DefaultButton width="100%" onClick={handleMessage}>
+                            {loading ? <Loading /> : <IconMessage2 size={18} />}
                             Message
                         </DefaultButton>
                     )}

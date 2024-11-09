@@ -26,7 +26,7 @@ export const GeneralCoverStyled = styled(BeautifulBackground)<{
     align-items: center;
     justify-content: center;
     animation: none;
-    background-size: 200% 200%;
+    background-size: 300% 300%;
     /* overflow: hidden; */
 
     img {

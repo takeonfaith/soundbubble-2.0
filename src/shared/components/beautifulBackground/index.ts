@@ -35,7 +35,7 @@ export const BeautifulBackground = styled.div<{ $colors: string[] | undefined }>
 
 
 
-  @keyframes bg {
+  /* @keyframes bg {
     0% {
 		  background-position: 0 0;
       background-size: 150% 150%;
@@ -48,5 +48,5 @@ export const BeautifulBackground = styled.div<{ $colors: string[] | undefined }>
 		  background-position: 0 0;
       background-size: 150% 150%;
     }
-  }
+  } */
 `

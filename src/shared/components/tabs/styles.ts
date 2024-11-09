@@ -20,6 +20,7 @@ export const TabsStyled = styled.div`
 
     @media (max-width: 768px) {
         width: 100%;
+        background: transparent;
     }
 `;
 
@@ -68,26 +69,30 @@ export const TabItemStyled = styled(Link)<{ $width?: string; $height: string }>`
         font-size: 0.9rem;
         height: 32px;
         padding: 4px 12px;
+
+        &.selected {
+            color: ${({ theme }) => theme.scheme.blue.action};
+        }
     }
 `;
 
 export const CurrentTabItem = styled.div<{
     $width: string;
     $height: string;
-    $shift: number;
+    $shift: string;
 }>`
-    width: calc(${({ $width }) => $width} - 3px);
+    width: ${({ $width }) => $width};
     padding: 10px 16px;
     height: ${({ $height }) => $height};
     border-radius: 16px;
     background: ${({ theme }) => theme.colors.context};
     position: absolute;
     transition: 0.2s;
-    transform: translateX(calc(${({ $shift }) => `${$shift} * 100%`}));
+    transform: translateX(${({ $shift }) => $shift});
     left: 4px;
     top: 4px;
     z-index: 0;
-    border: 1px solid ${({ theme }) => theme.colors.border};
+    outline: 1px solid ${({ theme }) => theme.colors.border};
 
     &.chips {
         transform: translateX(

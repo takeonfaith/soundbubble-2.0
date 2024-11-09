@@ -1,11 +1,9 @@
 import {
     IconArrowLeft,
-    IconDiscountCheckFilled,
     IconDotsVertical,
     IconEdit,
     IconHeadphones,
     IconInfoCircle,
-    IconLock,
     IconMusicPlus,
     IconShare3,
     IconTrash,
@@ -13,7 +11,8 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { useTheme } from 'styled-components';
-import { playlistModel } from '../../entities/playlist/model';
+import { useTogglePlaylistLike } from '../../entities/playlist/hooks/useTogglePlaylistLike';
+import { TPlaylist } from '../../entities/playlist/model/types';
 import { PlaylistCover } from '../../entities/playlist/ui/PlaylistCover';
 import { PlaylistInfo } from '../../entities/playlist/ui/PlaylistInfo';
 import { TQueue } from '../../entities/song/model/types';
@@ -39,37 +38,27 @@ import { ButtonsStyled } from '../author/styles';
 import { AddSongsToPlaylistModal } from './AddSongsToPlaylistModal';
 
 type Props = {
-    name: string | undefined;
-    numberOfListenersPerMonth: number | undefined;
-    subscribers: number | undefined;
-    colors: string[] | undefined;
-    isVerified?: boolean;
-    isPrivate?: boolean;
+    album: TPlaylist | null;
     isOwner: boolean;
     handleClickShare: () => void;
     queue: TQueue;
 };
 
-export const PageTop = ({
-    name,
-    isPrivate,
-    numberOfListenersPerMonth,
-    subscribers,
-    colors,
-    isVerified,
-    isOwner,
-    handleClickShare,
-    queue,
-}: Props) => {
+export const PageTop = ({ album, isOwner, handleClickShare, queue }: Props) => {
     const navigate = useNavigate();
     const theme = useTheme();
-    const { currentPlaylist } = playlistModel.usePlaylist();
+    const { isLiked, handleToggleLike, performingAction } =
+        useTogglePlaylistLike(album);
+
+    if (!album) return null;
+
+    const { name, subscribers, imageColors, listens } = album;
 
     const handleDeletePlaylist = () => {
         confirmModel.events.open({
             text: 'Are you sure you want to delete this playlist?',
             onAccept: () => {
-                // playlistModel.events.deletePlaylist(currentPlaylist?.id);
+                // playlistModel.events.deletePlaylist(album?.id);
                 navigate(-1);
             },
             subtext: 'This action cannot be undone',
@@ -81,14 +70,14 @@ export const PageTop = ({
     const handleInfo = () => {
         modalModel.events.open({
             title: 'Playlist Information',
-            content: <PlaylistInfo playlist={currentPlaylist} />,
+            content: <PlaylistInfo playlist={album} />,
         });
     };
 
     const handleAddSongs = () => {
         modalModel.events.open({
             title: 'Add songs to playlist',
-            content: <AddSongsToPlaylistModal playlist={currentPlaylist} />,
+            content: <AddSongsToPlaylistModal playlist={album} />,
             sizeY: 'l',
         });
     };
@@ -151,21 +140,17 @@ export const PageTop = ({
     };
 
     return (
-        <PageTopStyled $colors={colors}>
+        <PageTopStyled $colors={imageColors}>
             <PlaylistCover
                 size="200px"
-                isAlbum={currentPlaylist?.isAlbum ?? false}
-                src={currentPlaylist?.image}
-                colors={currentPlaylist?.imageColors}
+                isAlbum={album?.isAlbum ?? false}
+                src={album?.image}
+                colors={album?.imageColors}
             />
             <Flex gap={8} d="column" ai="center">
                 <Flex gap={4} d="column">
                     <Flex gap={6}>
                         <h2>{name}</h2>
-                        {isVerified && (
-                            <IconDiscountCheckFilled color={colors?.[1]} />
-                        )}
-                        {isPrivate && <IconLock size={20} />}
                     </Flex>
                     <div className="subtitle">
                         <Flex gap={3}>
@@ -177,16 +162,13 @@ export const PageTop = ({
                                         opacity: '0.6',
                                     }}
                                 >
-                                    {currentPlaylist?.isAlbum
-                                        ? 'Album'
-                                        : 'Playlist'}{' '}
-                                    ·{' '}
+                                    {album?.isAlbum ? 'Album' : 'Playlist'} ·{' '}
                                 </span>
                             }
                             <Authors
                                 width="fit-content"
-                                authors={currentPlaylist?.authors}
-                                isAuthor={currentPlaylist?.isAlbum}
+                                authors={album?.authors}
+                                isAuthor={album?.isAlbum}
                             />
                         </Flex>
                     </div>
@@ -197,7 +179,7 @@ export const PageTop = ({
                     className="stats"
                 >
                     <Flex gap={4}>
-                        {formatBigNumber(numberOfListenersPerMonth)}
+                        {formatBigNumber(listens)}
                         <IconHeadphones size={16} />
                     </Flex>
                     <Flex gap={4}>
@@ -217,11 +199,13 @@ export const PageTop = ({
             </TopLeftCorner>
             <TopRightCorner>
                 <LikeButton
-                    entity={null}
-                    isLiked={false}
-                    likeColor={undefined}
+                    entity={album}
+                    isLiked={isLiked}
+                    likeColor={'#fff'}
                     height="40px"
+                    loading={performingAction}
                     width="40px"
+                    onClick={handleToggleLike}
                 />
                 <Button $height="40px" $width="40px" onClick={handleOpenMore}>
                     <IconDotsVertical size={20} />
@@ -233,7 +217,7 @@ export const PageTop = ({
             <ButtonsStyled>
                 <ControlButtons
                     queue={queue}
-                    buttonColor={colors?.[0] ?? 'grey'}
+                    buttonColor={imageColors?.[0] ?? 'grey'}
                 />
             </ButtonsStyled>
         </PageTopStyled>

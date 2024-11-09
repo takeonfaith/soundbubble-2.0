@@ -95,3 +95,11 @@ export const InputStyled = styled.input<{
         font-size: 0.97rem;
     }
 `;
+
+export const MaxLenWrapper = styled.div`
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    font-size: 0.7rem;
+    color: ${({ theme }) => theme.scheme.grey.text};
+`;

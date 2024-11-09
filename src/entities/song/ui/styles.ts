@@ -1,6 +1,7 @@
 import { Button } from '@components/button';
 import styled from 'styled-components';
 import { SONG_RADIUS } from '../constants';
+import { motion } from 'framer-motion';
 
 export const PlayButton = styled.div`
     border: none;
@@ -122,6 +123,7 @@ export const SongStyled = styled.div`
     border: none;
     container-type: size;
     transition: 0.1s background;
+    user-select: none;
     --icon-size: 18px;
 
     &.disabled {
@@ -354,7 +356,7 @@ export const VerticalSongStyled = styled.div`
 `;
 
 export const SerialNumberStyled = styled.span`
-    opacity: 0.5;
+    color: ${({ theme }) => theme.colors.greyText};
     font-weight: 300;
     min-width: 50px;
     font-size: 0.9rem;
@@ -362,5 +364,22 @@ export const SerialNumberStyled = styled.span`
     @container (max-width: 699px) {
         min-width: 35px;
         font-size: 0.8rem;
+    }
+`;
+
+export const DeleteButton = styled(Button)`
+    &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 20px;
+        height: 5px;
+        background: #fff;
+        z-index: 0;
+    }
+
+    svg {
+        color: ${({ theme }) => theme.scheme.red.action};
+        z-index: 1;
     }
 `;

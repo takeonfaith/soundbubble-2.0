@@ -14,7 +14,6 @@ import {
     FieldValue,
     QueryFieldFilterConstraint,
     QueryOrderByConstraint,
-    QuerySnapshot,
     collection,
     deleteDoc,
     doc,
@@ -25,7 +24,6 @@ import {
     query,
     setDoc,
     updateDoc,
-    where,
 } from 'firebase/firestore';
 import {
     deleteObject,
@@ -37,13 +35,11 @@ import {
 import { getDataFromDoc } from './database/lib/getDataFromDoc';
 import { TChat, TMessage } from './entities/chat/model/types';
 import { TPlaylist } from './entities/playlist/model/types';
-import { TEntity, TSuggestion } from './entities/search/model/types';
+import { TSuggestion } from './entities/search/model/types';
 import { TLastQueue, TLyric, TSong } from './entities/song/model/types';
 import { TSearchHistory, TUser } from './entities/user/model/types';
-import getUID from './shared/funcs/getUID';
-import { getEntityId } from './features/searchWithHints/lib/getDividedEntity';
-import { getEntityType } from './features/searchWithHints/lib/getEntityType';
 import { asyncRequests } from './shared/funcs/asyncRequests';
+import getUID from './shared/funcs/getUID';
 
 const {
     VITE_FIREBASE_API_KEY,
@@ -124,26 +120,6 @@ type DataType<T extends TCollections> =
           [key in keyof TCollectionType<T>]: FieldValue;
       }>;
 
-const MAX_FIRESTORE_IN_QUERY_LIMIT = 30;
-
-function mapOrder<T extends TCollections>(
-    array: TCollectionType<T>[],
-    order: string[]
-) {
-    array.sort(function (a, b) {
-        const A = getEntityId(a);
-        const B = getEntityId(b);
-
-        if (order.indexOf(A) > order.indexOf(B)) {
-            return 1;
-        } else {
-            return -1;
-        }
-    });
-
-    return array;
-}
-
 export class FB {
     static app = initializeApp(config);
     static auth = getAuth();
@@ -192,15 +168,36 @@ export class FB {
         await updateDoc(ref, data);
     }
 
+    static async setDeepByIds<T extends TCollections>(
+        collectionType: T,
+        path: [string, TSubcollection<T>, string],
+        data: TSubcollectionDataType<T, TSubcollection<T>>
+    ): Promise<void> {
+        const ref = doc(this.get(collectionType), ...path);
+
+        await setDoc(ref, data);
+    }
+
     static async getById<T extends TCollections>(
         collectionType: T,
-        id: string
-    ) {
-        const ref = this.get(collectionType);
-        const docRef = doc(ref, id);
-        const data = await getDoc(docRef);
+        id: string,
+        onError?: (err: Error) => void
+    ): Promise<TCollectionType<T> | null> {
+        try {
+            const ref = this.get(collectionType);
+            const docRef = doc(ref, id);
+            const data = await getDoc(docRef);
 
-        return data.data() as TCollectionType<T>;
+            return data.data() as TCollectionType<T>;
+        } catch (error) {
+            if (onError) {
+                onError(error as Error);
+            }
+
+            return null;
+
+            console.error(error);
+        }
     }
 
     static async getAll<T extends TCollections>(collectionType: T) {
@@ -223,9 +220,11 @@ export class FB {
         collectionType: T,
         ids: string[]
     ): Promise<TCollectionType<T>[]> {
-        return await asyncRequests(ids, (id) => {
+        const res = await asyncRequests(ids, (id) => {
             return FB.getById(collectionType, id);
         });
+
+        return res.filter((r) => r !== null);
     }
 
     static async deleteById<T extends TCollections>(

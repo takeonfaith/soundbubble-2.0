@@ -39,7 +39,7 @@ export const CreatePlaylistModal = () => {
     const [colors, setColors] = useState<string[]>([]);
     const [photo, setPhoto] = useState<File | null>(null);
     const navigate = useNavigate();
-    const { formProps, onSumbit } = useForm({
+    const { formProps, onSumbit, areAllRequiredFieldFilled } = useForm({
         fields,
         handleSubmit: (obj) => {
             const playlist = createPlaylistObject(
@@ -80,6 +80,7 @@ export const CreatePlaylistModal = () => {
             >
                 <Form {...formProps} />
                 <DefaultButton
+                    disabled={!areAllRequiredFieldFilled}
                     onClick={onSumbit}
                     appearance="primary"
                     loading={loading}

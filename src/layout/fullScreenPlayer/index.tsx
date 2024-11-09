@@ -16,9 +16,6 @@ export const FullScreenFullScreenPlayer = ({ open }: Props) => {
     const { currentSong, queue } = songModelNew.useSong();
     const [animatedOpen, setAnimatedOpen] = useState(open);
     const [rightSideType, setRightSideType] = useState<TRightSideType>(null);
-    const hasLyrics =
-        currentSong?.lyrics !== undefined &&
-        (currentSong?.lyrics.length ?? 0) > 0;
     const { style, onTouchEnd } = useMobileSheetSwipe(
         songModel.fullscreen.close,
         '100dvh'
@@ -46,10 +43,10 @@ export const FullScreenFullScreenPlayer = ({ open }: Props) => {
     };
 
     useEffect(() => {
-        if (!hasLyrics && rightSideType === 'lyrics') {
+        if (!currentSong?.hasLyrics && rightSideType === 'lyrics') {
             setRightSideType(null);
         }
-    }, [hasLyrics, rightSideType]);
+    }, [currentSong?.hasLyrics, rightSideType]);
 
     return (
         <FullScreenPlayerStyled
@@ -65,7 +62,6 @@ export const FullScreenFullScreenPlayer = ({ open }: Props) => {
                         type={rightSideType}
                         handleClickControlButton={handleClickControlButton}
                         hasQueue={(queue?.songs.length ?? 0) > 0}
-                        hasLyrics={hasLyrics}
                     />
                     <FullScreenPlayerRightSide type={rightSideType} />
                 </>

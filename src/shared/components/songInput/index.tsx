@@ -48,7 +48,8 @@ const UploadedSong = ({
                         {author.includes('feat') ? author : name ?? 'Song'}
                     </UploadedSongName>
                     <UploadedSongAuthor>
-                        {(author.includes('feat') ? name : author) ?? 'Unknown authors'}
+                        {(author.includes('feat') ? name : author) ??
+                            'Unknown authors'}
                     </UploadedSongAuthor>
                 </Flex>
             </Flex>
@@ -159,7 +160,10 @@ export const SongInput = ({ file, onChange, error }: Props) => {
                     </SongInputIcon>
                     <Flex d="column" gap={8}>
                         <h3>Drag and drop audio files</h3>
-                        <Subtext>Your file should either .mp3 or .wav</Subtext>
+                        <Subtext>
+                            Your file should either be <kbd>.mp3</kbd> or{' '}
+                            <kbd>.wav</kbd>
+                        </Subtext>
                     </Flex>
                     <Button
                         type="reset"

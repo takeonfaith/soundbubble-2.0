@@ -45,4 +45,7 @@ export const ChatListStyled = styled.div`
     display: flex;
     flex-direction: column;
     position: relative;
+    padding: 0 20px;
+    padding-bottom: 20px;
+    gap: 4px;
 `;

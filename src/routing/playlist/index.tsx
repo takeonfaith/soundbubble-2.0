@@ -1,40 +1,57 @@
-import { IconError404Off, IconMusicOff } from '@tabler/icons-react';
+import { IconMusicMinus } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
+import { useEffect, useState } from 'react';
 import {
     deletePlaylistFx,
     playlistModel,
     updatePlaylistFx,
 } from '../../entities/playlist/model';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
-import { VerticalSongsList } from '../../entities/song/ui/verticalList';
+import { TSong } from '../../entities/song/model/types';
 import { userModel } from '../../entities/user/model';
-import { LoadingWrapper } from '../../shared/components/loadingWrapper';
-import { PageMessage } from '../../shared/components/pageMessage';
-import { PageWrapper } from '../../shared/components/pageWrapper';
-import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { Subtext } from '../../shared/components/subtext';
-import { getTotalSongsDuration } from '../../shared/funcs/getTotalSongsDuration';
+import { confirmModel } from '../../layout/confirm/model';
+import { normalizeString } from '../../shared/funcs/normalizeString';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
-import { AddSongsButton } from './AddSongsButton';
-import { PageTop } from './PageTop';
-import { SkeletonLoading } from './Skeleton';
-import {
-    BottomPlaylist,
-    PlaylistPageSongs,
-    PlaylistPageStyled,
-    PlaylistSimilar,
-} from './styles';
+import { PlaylistPageContent } from './PlaylistPageContent';
+import { useTogglePlaylistLike } from '../../entities/playlist/hooks/useTogglePlaylistLike';
 
 export const PlaylistPage = () => {
-    const { currentPlaylist, currentPlaylistSongs, loading, error } =
-        playlistModel.usePlaylist();
-
+    const [
+        { currentPlaylist, currentPlaylistSongs, loading, error },
+        isEditing,
+        searching,
+    ] = playlistModel.usePlaylist();
     const [currentUser] = userModel.useUser();
     const [isUpdating, isDeleting] = useUnit([
         updatePlaylistFx.pending,
         deletePlaylistFx.pending,
     ]);
-    const isLoading = isDeleting || isUpdating;
+    const isLoadingEditing = isDeleting || isUpdating;
+    const [playlistSongs, setPlaylistSongs] = useState(
+        currentPlaylistSongs ?? []
+    );
+
+    const queue = createQueueObject({
+        name: currentPlaylist?.name,
+        songs: playlistSongs,
+        imageUrl: currentPlaylist?.image,
+        url: `/playlist/${currentPlaylist?.id}`,
+        id: currentPlaylist?.id,
+    });
+
+    useEffect(() => {
+        if (searching.value.length > 0) {
+            setPlaylistSongs(
+                (currentPlaylistSongs ?? []).filter((s) =>
+                    normalizeString(s.name).includes(
+                        normalizeString(searching.value)
+                    )
+                )
+            );
+        } else {
+            setPlaylistSongs(currentPlaylistSongs ?? []);
+        }
+    }, [currentPlaylistSongs, searching.value]);
 
     const isOwner = !!currentPlaylist?.authors.find(
         (author) => author.uid === currentUser?.uid
@@ -44,83 +61,54 @@ export const PlaylistPage = () => {
         page: 'playlist',
         onChangeId: (id) => {
             if (id) {
+                playlistModel.events.updateIsEditing(false);
+                playlistModel.events.updateIsSearching(false);
+                playlistModel.events.updateSearchValue('');
                 playlistModel.events.loadPlaylist(id);
             }
         },
     });
 
-    const queue = createQueueObject({
-        name: currentPlaylist?.name,
-        songs: currentPlaylistSongs ?? [],
-        imageUrl: currentPlaylist?.image,
-        url: `/playlist/${currentPlaylist?.id}`,
-        id: currentPlaylist?.id,
-    });
+    const handleRemove = (song: TSong) => {
+        if (currentPlaylistSongs) {
+            confirmModel.events.open({
+                text: `Are you sure you want to remove song from the playlist`,
+                icon: <IconMusicMinus />,
+                iconColor: 'red',
+                onAccept: () => {
+                    playlistModel.events.updatePlaylist({
+                        update: {
+                            songs: currentPlaylistSongs
+                                .filter((s) => s.id !== song.id)
+                                .map((s) => s.id),
+                            lastEditedTime: Date.now(),
+                        },
+                    });
+                },
+            });
+        }
+    };
+
+    useEffect(() => {
+        return () => {
+            playlistModel.events.updateIsEditing(false);
+            playlistModel.events.updateIsSearching(false);
+        };
+    }, []);
 
     return (
-        <PageWrapper>
-            {isLoading && <LoadingWrapper />}
-            {!error && (
-                <SkeletonPageAnimation
-                    color=""
-                    loading={!error && loading}
-                    skeleton={<SkeletonLoading />}
-                >
-                    <PlaylistPageStyled>
-                        <PageTop
-                            name={currentPlaylist?.name}
-                            playlist={currentPlaylist}
-                            queue={queue}
-                            authors={currentPlaylist?.authors}
-                            style={{
-                                padding:
-                                    '60px var(--page-padding) 0 calc(var(--page-padding) + 8px)',
-                            }}
-                            isOwner={isOwner}
-                        />
-
-                        <PlaylistPageSongs>
-                            {currentPlaylist?.songs.length === 0 && (
-                                <PageMessage
-                                    icon={IconMusicOff}
-                                    title="Playlist is empty"
-                                    description=""
-                                />
-                            )}
-                            <VerticalSongsList queue={queue} />
-                            {(currentPlaylistSongs?.length ?? 0) > 0 &&
-                                isOwner && (
-                                    <AddSongsButton
-                                        playlist={currentPlaylist}
-                                    />
-                                )}
-                        </PlaylistPageSongs>
-                        <BottomPlaylist>
-                            {(currentPlaylistSongs?.length ?? 0) > 0 && (
-                                <Subtext
-                                    style={{
-                                        fontSize: '0.85rem',
-                                        opacity: '0.4',
-                                    }}
-                                >
-                                    {currentPlaylistSongs?.length ?? 0} songs,
-                                    {getTotalSongsDuration(
-                                        currentPlaylistSongs
-                                    )}
-                                </Subtext>
-                            )}
-                        </BottomPlaylist>
-                        <PlaylistSimilar></PlaylistSimilar>
-                    </PlaylistPageStyled>
-                </SkeletonPageAnimation>
-            )}
-            {error && (
-                <PageMessage
-                    icon={IconError404Off}
-                    title="No playlist was found"
-                    description={'Perhaps it was deleted or made private'}
-                />
-            )}
-        </PageWrapper>
+        <PlaylistPageContent
+            playlist={currentPlaylist}
+            isLoadingEditing={isLoadingEditing}
+            loading={loading}
+            error={error}
+            queue={queue}
+            isOwner={isOwner}
+            currentPlaylistSongs={playlistSongs}
+            isEditing={isEditing}
+            handleRemoveSong={handleRemove}
+            searching={searching}
+            likeModel={useTogglePlaylistLike}
+        />
     );
 };

@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import { Flex } from '../../shared/components/flex';
+import { Input } from '../../shared/components/input';
+import { Textarea } from '../../shared/components/textarea';
 
 export const PlaylistPageStyled = styled.div`
     width: 100%;
@@ -71,6 +73,59 @@ export const DesktopGridHeaderStyled = styled(Flex)`
 
 export const LikeButtonWrapper = styled.div`
     button {
-        filter: brightness(${({ theme }) => theme.colors.brightness});
+        /* filter: brightness(${({ theme }) => theme.colors.brightness}); */
+    }
+`;
+
+export const PlaylistNameStyled = styled.div`
+    &.hoverable:hover > * {
+        outline: 1px solid ${({ theme }) => theme.colors.border};
+        border-radius: 4px;
+    }
+`;
+
+export const PlaylistNameInput = styled(Input)`
+    font-size: 2rem;
+    font-weight: 600;
+    border-radius: 4px;
+    max-height: 60px;
+    height: 50px;
+    padding: 6px;
+    background: ${({ theme }) => theme.colors.lightHover};
+    outline: 1px solid ${({ theme }) => theme.colors.border};
+`;
+
+export const DescriptionStyled = styled.div`
+    font-size: 0.85rem;
+    font-weight: 200;
+    max-width: 400px;
+    white-space: wrap;
+    display: inline-block;
+    color: ${({ theme }) => theme.colors.greyText2};
+`;
+
+export const PlaylistDescriptionInput = styled(Textarea)`
+    font-size: 0.85rem;
+    font-weight: 200;
+    width: 300px;
+    border-radius: 4px;
+    background: ${({ theme }) => theme.colors.lightHover};
+    outline: 1px solid ${({ theme }) => theme.colors.border};
+`;
+
+export const IconWrapper = styled.div`
+    width: 200px;
+    height: 200px;
+    background: ${({ theme }) => theme.scheme.blue.mild};
+    border-radius: 20px;
+    color: ${({ theme }) => theme.scheme.blue.action};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+        width: 60%;
+        height: 60%;
+        filter: drop-shadow(0 0 35px);
     }
 `;

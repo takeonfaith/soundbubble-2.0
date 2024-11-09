@@ -1,4 +1,3 @@
-import { songModel } from '@song/model';
 import { Outlet } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { styled } from 'styled-components';
@@ -78,6 +77,10 @@ const LayoutHeader = styled.div`
             display: none;
         }
     }
+
+    @media (max-width: 768px) {
+        display: none;
+    }
 `;
 
 const GlobalSearchWrapper = styled.div`
@@ -91,10 +94,12 @@ const GlobalSearchWrapper = styled.div`
 
 export const Layout = () => {
     const [currentUser] = userModel.useUser();
-    const fullScreen = songModel.fullscreen.useFullScreen();
+    const fullScreen = false;
     const { currentChatId } = chatModel.useChats();
     const [params] = useSearchParams();
     const queryValue = params.get('query') ?? '';
+    console.log(queryValue);
+
     const where = (params.get('where') ?? '') as TPlace | '';
     useMediaMetadata();
 

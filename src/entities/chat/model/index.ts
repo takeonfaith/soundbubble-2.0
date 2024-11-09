@@ -1,10 +1,11 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { createGate, useGate, useUnit } from 'effector-react';
 import { Database } from '../../../database';
+import { toastModel } from '../../../layout/toast/model';
 import { TEntity } from '../../search/model/types';
 import { $user, logout } from '../../user/model';
-import { TChat, TChatData, TMessage } from './types';
-import { toastModel } from '../../../layout/toast/model';
+import { SendStatus, TChat, TChatData, TMessage } from './types';
+import { asyncRequests } from '../../../shared/funcs/asyncRequests';
 
 const getChatsFx = createEffect(
     async ({ userId, chatIds }: { userId: string; chatIds: string[] }) => {
@@ -34,12 +35,10 @@ const getChatDataFx = createEffect(
                 .flatMap((chat) => chat.participants)
                 .filter((user) => !chatDataObject[user]);
 
-            const participants = allParticipants.map((userId) => {
-                return Database.Users.getUserByUid(userId);
-            });
-
             const res: TEntity[] = (
-                await Promise.all([...participants])
+                await asyncRequests(allParticipants, (userId) => {
+                    return Database.Users.getUserById(userId);
+                })
             ).flatMap((s) => s);
 
             return res.reduce(
@@ -67,17 +66,21 @@ const getCurrentChatMessagesFx = createEffect(
     }
 );
 
-const sendMessageFx = createEffect(
+export const sendMessageFx = createEffect(
     async ({
-        chatId,
+        chatIds,
         message,
+        onSuccess,
     }: {
-        chatId: string;
+        chatIds: string[];
         message: TMessage;
         showToast?: boolean;
+        onSuccess?: (message: TMessage) => void;
     }) => {
         try {
-            await Database.Chats.sendMessage(chatId, message);
+            await Database.Chats.sendMessage(chatIds, message);
+            onSuccess?.(message);
+            return { chatIds, message };
         } catch (error) {
             throw new Error((error as Error).message);
         }
@@ -106,13 +109,14 @@ const setCurrentChatId = createEvent<string | undefined | null>();
 const setChatData = createEvent<TChatData>();
 const loadPreviousMessages = createEvent();
 const sendMessage = createEvent<{
-    chatId: string;
+    chatIds: string[];
     message: TMessage;
     showToast?: boolean;
+    onSuccess?: (message: TMessage) => void;
 }>();
 const updateLastMessage = createEvent<{
     message: TMessage | undefined;
-    chatId: string | undefined | null;
+    chatIds: string[] | undefined | null;
 }>();
 const sortChats = createEvent();
 const seenMessage = createEvent<string>();
@@ -225,9 +229,14 @@ sample({
 
 sample({
     clock: sendMessage,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    fn: ({ chatId, message: { status, ...message }, showToast }) => {
-        return { chatId, message, showToast };
+    fn: ({
+        chatIds,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        message: { status, ...message },
+        showToast,
+        onSuccess,
+    }) => {
+        return { chatIds, message, showToast, onSuccess };
     },
     target: [sendMessageFx],
 });
@@ -246,8 +255,8 @@ sample({
         console.log('sending failed message');
 
         return store.map((message) => {
-            if (message.status === 'pending') {
-                return { ...message, status: 'error' };
+            if (message.status === SendStatus.pending) {
+                return { ...message, status: SendStatus.error };
             }
 
             return message;
@@ -275,35 +284,51 @@ sample({
 });
 
 sample({
-    clock: $currentChatMessages.updates,
-    source: $currentChatId,
-    fn: (chatId, messages) => ({ chatId, message: messages.at(-1) }),
+    clock: sendMessage,
+    fn: (res) => res,
     target: updateLastMessage,
 });
 
 sample({
-    clock: updateLastMessage,
-    source: $lastMessage,
-    filter: (_, { chatId, message }) => !!message && !!chatId,
-    fn: (lastMessage, { chatId, message }) => ({
-        ...lastMessage,
-        [chatId!]: message!,
-    }),
-    target: $lastMessage,
+    clock: sendMessageFx.doneData,
+    fn: (res) => res,
+    target: updateLastMessage,
 });
 
+// sample({
+//     clock: $currentChatMessages.updates,
+//     source: $currentChatId,
+//     fn: (chatId, messages) => ({
+//         chatIds: chatId ? [chatId] : [],
+//         message: messages.at(-1),
+//     }),
+//     target: updateLastMessage,
+// });
+
 sample({
-    clock: $lastMessage,
-    target: sortChats,
+    clock: updateLastMessage,
+    source: $chats,
+    fn: (chats, { chatIds, message }) => {
+        return chats.map((chat) => {
+            console.log(chat, chatIds);
+            if (chatIds?.includes(chat.id)) {
+                return { ...chat, lastMessage: message };
+            }
+
+            return chat;
+        });
+    },
+    target: [$chats, sortChats],
 });
 
 sample({
     clock: sortChats,
-    source: { chats: $chats, lastMessages: $lastMessage },
-    fn: ({ chats, lastMessages }) => {
+    source: $chats,
+    fn: (chats) => {
         return chats.sort(
             (a, b) =>
-                lastMessages[b.id]?.sentTime - lastMessages[a.id]?.sentTime
+                (b?.lastMessage?.sentTime ?? 0) -
+                (a?.lastMessage?.sentTime ?? 0)
         );
     },
     target: $chats,

@@ -4,6 +4,12 @@ import { addPlaylistFx, removePlaylistFx, userModel } from '../../user/model';
 import { TPlaylist } from '../model/types';
 import { useEffect, useState } from 'react';
 
+export type ToggleLike = {
+    isLiked: boolean;
+    performingAction: boolean;
+    handleToggleLike: (e: Evt<'btn'>) => void;
+};
+
 export const useTogglePlaylistLike = (playlist: TPlaylist | null) => {
     const isLiked = useIsPlaylistLiked(playlist);
     const [isAddingPlaylisst, isRemovingPlaylist] = useUnit([

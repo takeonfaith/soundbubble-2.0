@@ -1,5 +1,18 @@
 import { styled } from 'styled-components';
 
+export const ShareModalStyled = styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: 2px 18px;
+    gap: 4px;
+    min-height: 100%;
+
+    .chat-item {
+        padding: 10px 8px;
+        border-radius: 10px;
+    }
+`;
+
 export const BadgeStyled = styled.div`
     padding: 2px 5px;
     display: inline-block;
@@ -66,6 +79,7 @@ export const ButtonWrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 8px;
+    z-index: 10;
 
     &.open {
         transform: translateY(0);

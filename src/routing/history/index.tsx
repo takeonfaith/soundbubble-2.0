@@ -10,6 +10,7 @@ import {
 } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
+import { Flex } from '../../shared/components/flex';
 
 export const HistoryPage = () => {
     const [history, loading] = historyModel.useHistory();
@@ -35,11 +36,20 @@ export const HistoryPage = () => {
                 >
                     <VerticalSongsList queue={queue} />
                     {history.length === 0 && (
-                        <PageMessage
-                            icon={IconHistoryOff}
-                            title={'No History Found'}
-                            description={'But at some point it will appear...'}
-                        />
+                        <Flex
+                            height="100%"
+                            width="100%"
+                            jc="center"
+                            padding="20vh 0"
+                        >
+                            <PageMessage
+                                icon={IconHistoryOff}
+                                title={'No History Found'}
+                                description={
+                                    'But at some point it will appear...'
+                                }
+                            />
+                        </Flex>
                     )}
                 </SkeletonPageAnimation>
             </ContentWrapper>

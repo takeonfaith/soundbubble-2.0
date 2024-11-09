@@ -2,6 +2,7 @@ import { Authors } from '@components/authors';
 import { Flex } from '@components/flex';
 import { IconLock } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
+import { LikeButton } from '../../../features/likeButton';
 import { toastModel } from '../../../layout/toast/model';
 import { PlayPauseIcon } from '../../../shared/components/playPauseIcon';
 import { PlayingAnimation } from '../../../shared/components/playingAnimation';
@@ -9,18 +10,20 @@ import { Subtext } from '../../../shared/components/subtext';
 import { createLoadQueueObject } from '../../song/lib/createQueueObject';
 import { SongState } from '../../song/model/types';
 import { songModel } from '../../song/new-model';
+import { createAuthorObject } from '../../user/lib/createAuthorObject';
 import { TOrientation } from '../../user/types';
+import { useTogglePlaylistLike } from '../hooks/useTogglePlaylistLike';
 import { createPlaylistObject } from '../lib/createPlaylistObject';
 import { TPlaylist } from '../model/types';
 import { PlaylistCover } from './PlaylistCover';
 import { ControlButton, PalylistTitle, PlaylistStyled } from './styles';
-import { createAuthorObject } from '../../user/lib/createAuthorObject';
 
 type Props = {
     playlist: TPlaylist | null;
     orientation?: TOrientation;
     children?: React.ReactNode;
     as?: string;
+    isAuthor: boolean;
     onClick?: (playlist: TPlaylist, e: Evt<'a'>) => void;
 };
 
@@ -29,11 +32,15 @@ export const PlaylistItem = ({
     children,
     onClick,
     as,
+    isAuthor,
     orientation = 'vertical',
 }: Props) => {
     const p =
         playlist ??
-        createPlaylistObject(createAuthorObject({}), { name: 'Deleted' });
+        createPlaylistObject(createAuthorObject({}), {
+            name: 'Deleted or private',
+            authors: [],
+        });
     const { image, name, imageColors, authors, id, songs, isAlbum, isPrivate } =
         p;
 
@@ -41,6 +48,8 @@ export const PlaylistItem = ({
     const url = `/${isAlbum ? 'album' : 'playlist'}/${id}`;
     const isCurrentPlaying = state === 'playing' && queue?.id === id;
     const [loadingSongs, setLoadingSongs] = useState(false);
+    const { isLiked, handleToggleLike, performingAction } =
+        useTogglePlaylistLike(playlist);
 
     const handleClick = (e: Evt<'a'>) => {
         onClick?.(p, e);
@@ -76,7 +85,9 @@ export const PlaylistItem = ({
         <PlaylistStyled
             as={as}
             onClick={handleClick}
-            className={`${orientation} ${isCurrentPlaying ? 'playing' : ''}`}
+            className={`${orientation} ${
+                isCurrentPlaying || loadingSongs ? 'playing' : ''
+            }`}
             to={url}
             $color1={imageColors?.[0]}
         >
@@ -96,6 +107,17 @@ export const PlaylistItem = ({
                         />
                     )}
                 </ControlButton>
+            )}
+            {orientation === 'vertical' && !isAuthor && (
+                <LikeButton
+                    entity={playlist}
+                    likeColor={imageColors?.[0] ?? 'grey'}
+                    isLiked={isLiked}
+                    onClick={handleToggleLike}
+                    className="plane"
+                    width="40px"
+                    loading={performingAction}
+                />
             )}
             <PlaylistCover
                 size={undefined}

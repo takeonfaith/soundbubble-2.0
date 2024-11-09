@@ -1,4 +1,6 @@
 import { IconHeartFilled, IconMusicOff } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+import { playlistModel } from '../../entities/playlist/model';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { SongListSkeleton } from '../../entities/song/ui/SongListSkeleton';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
@@ -8,18 +10,37 @@ import { Flex } from '../../shared/components/flex';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { PageTop } from '../playlist/PageTop';
+import { normalizeString } from '../../shared/funcs/normalizeString';
+import { PageTop } from '../playlist/ui/layout/PageTop';
+import { useTheme } from 'styled-components';
 
 export const LikedSongs = () => {
+    const [, , searching] = playlistModel.usePlaylist();
     const [library, loading] = userModel.useSongLibrary();
     const [currentUser] = userModel.useUser();
+    const [librarySongs, setLibrarySongs] = useState(library);
+    const theme = useTheme();
 
     const queue = createQueueObject({
         name: 'Library',
-        songs: library,
+        songs: librarySongs,
         url: '',
         id: 'library',
     });
+
+    useEffect(() => {
+        if (searching.value.length > 0) {
+            setLibrarySongs(
+                (library ?? []).filter((s) =>
+                    normalizeString(s.name).includes(
+                        normalizeString(searching.value)
+                    )
+                )
+            );
+        } else {
+            setLibrarySongs(library ?? []);
+        }
+    }, [library, searching.value]);
 
     return (
         <ContentWrapper>
@@ -34,23 +55,32 @@ export const LikedSongs = () => {
                 {currentUser && (
                     <PageTop
                         authors={[currentUser]}
-                        queue={queue}
+                        queue={{ ...queue, songs: library }}
                         name="Liked Songs"
                         icon={<IconHeartFilled />}
                         playlist={null}
                         hasHeader
                         isOwner={false}
+                        searching={searching}
+                        imageColors={[theme.scheme.blue.action]}
                     />
                 )}
                 <VerticalSongsList queue={queue} />
                 {!currentUser && (
-                    <PageMessage
-                        icon={IconMusicOff}
-                        title={'Need to log in'}
-                        description={'To listen to your favorite songs'}
+                    <Flex
+                        height="100%"
+                        width="100%"
+                        jc="center"
+                        padding="20vh 0"
                     >
-                        <LoginButton />
-                    </PageMessage>
+                        <PageMessage
+                            icon={IconMusicOff}
+                            title={'Need to log in'}
+                            description={'To listen to your favorite songs'}
+                        >
+                            <LoginButton />
+                        </PageMessage>
+                    </Flex>
                 )}
                 {currentUser && !library.length && (
                     <PageMessage

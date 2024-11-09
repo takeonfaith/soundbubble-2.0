@@ -1,4 +1,5 @@
 import { TMessage } from '../../../entities/chat/model/types';
+import { TIME_IN_MS } from '../../../shared/constants/time';
 
 export const prepareMessages = (messages: TMessage[] | undefined) => {
     let currentIndex = 0;
@@ -10,7 +11,7 @@ export const prepareMessages = (messages: TMessage[] | undefined) => {
         const timeDifferenceLessThenTenMinutes =
             new Date(message?.sentTime ?? '').getTime() -
                 new Date(prev?.sentTime ?? '').getTime() <
-            600_000;
+            10 * TIME_IN_MS.minute;
 
         if (isPrevByTheSameSender && timeDifferenceLessThenTenMinutes) {
             if (acc[currentIndex]) {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     getEntityId,
     getEntityImage,
@@ -42,8 +42,6 @@ export const useAddedItemsList = <T extends TEntity>(
     };
 
     const getItemImage = (item: TEntity) => {
-        console.log(item);
-
         const type = getEntityType(item);
         const image = getEntityImage(item);
         return (
@@ -56,6 +54,10 @@ export const useAddedItemsList = <T extends TEntity>(
             />
         );
     };
+
+    useEffect(() => {
+        setVisibleItems(list);
+    }, [list]);
 
     return {
         visibleItems,
