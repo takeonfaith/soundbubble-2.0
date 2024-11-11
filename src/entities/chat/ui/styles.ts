@@ -15,7 +15,7 @@ export const ChatItemStyled = styled(Link)`
     }
 
     &:hover {
-        filter: brightness(0.95);
+        background: ${({ theme }) => theme.colors.hover};
     }
 
     @media (max-width: 768px) {

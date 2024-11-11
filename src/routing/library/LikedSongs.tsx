@@ -1,5 +1,6 @@
 import { IconHeartFilled, IconMusicOff } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
+import { useTheme } from 'styled-components';
 import { playlistModel } from '../../entities/playlist/model';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { SongListSkeleton } from '../../entities/song/ui/SongListSkeleton';
@@ -12,7 +13,6 @@ import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { normalizeString } from '../../shared/funcs/normalizeString';
 import { PageTop } from '../playlist/ui/layout/PageTop';
-import { useTheme } from 'styled-components';
 
 export const LikedSongs = () => {
     const [, , searching] = playlistModel.usePlaylist();

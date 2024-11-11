@@ -13,5 +13,7 @@ export const getEntityType = (entity: TEntity): keyof typeof ENTITIES_ICONS => {
     if ('subscribers' in entity && entity?.subscribers !== undefined)
         return 'playlist';
 
+    if ('chatName' in entity) return 'chat';
+
     return 'song';
 };

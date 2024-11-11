@@ -8,6 +8,7 @@ import { useTheme } from './app/theme';
 import { userModel } from './entities/user/model';
 import { FB } from './firebase';
 import { GlobalStyles } from './globalStyles';
+import { CustomRouter } from './routing/CustomRouter';
 
 const AppStyled = styled.div`
     height: 100dvh;
@@ -35,12 +36,14 @@ function App() {
         <ThemeProvider theme={themeParams}>
             <GlobalStyles />
             <HashRouter>
-                <AppStyled>
-                    <ErrorBoundary>
-                        <AppAudio />
-                        <AppRouter />
-                    </ErrorBoundary>
-                </AppStyled>
+                <CustomRouter>
+                    <AppStyled>
+                        <ErrorBoundary>
+                            <AppAudio />
+                            <AppRouter />
+                        </ErrorBoundary>
+                    </AppStyled>
+                </CustomRouter>
             </HashRouter>
         </ThemeProvider>
     );

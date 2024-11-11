@@ -7,12 +7,13 @@ import { Playlists, Users } from '../../../database/sections';
 import { TExtendedSuggestion } from '../../../features/searchWithHints/types';
 import { confirmModel } from '../../../layout/confirm/model';
 import { toastModel } from '../../../layout/toast/model';
-import { ERRORS } from '../../../shared/constants';
+import { TIME_IN_MS } from '../../../shared/constants/time';
 import { errorEffect } from '../../../shared/effector/errorEffect';
 import { getDataFromEffect } from '../../../shared/effector/getDataFromEffect';
 import { loadingEffect } from '../../../shared/effector/loadingEffect';
 import { filterOneArrayWithAnother } from '../../../shared/funcs/filterOneArrayWithAnother';
 import { tryWrapper } from '../../../shared/funcs/trywrapper';
+import { userIsLoggedIn } from '../../chat/lib/userIsLoggedIn';
 import { TPlaylist } from '../../playlist/model/types';
 import { getAuthorsToString } from '../../song/lib/getAuthorsToString';
 import { TSong } from '../../song/model/types';
@@ -30,17 +31,17 @@ import {
     TPageStore,
     TUser,
 } from './types';
-import { TIME_IN_MS } from '../../../shared/constants/time';
-import { userIsLoggedIn } from '../../chat/lib/userIsLoggedIn';
 
 const loginFx = createEffect(async (credits: LoginCreditsType) => {
-    return tryWrapper(async () => {
-        const { email, password } = credits;
-        if (!email || !password)
-            throw new Error(ERRORS.loginFailed('Не указана почта или пароль'));
+    await Database.Users.login(credits);
+});
 
-        await Database.Users.login(credits);
-    }, 'operationFailed');
+loginFx.failData.watch((err) => {
+    toastModel.events.add({
+        message: 'Failed to log in into your account',
+        reason: err.message,
+        type: 'error',
+    });
 });
 
 const logoutFx = createEffect(() => {
@@ -212,7 +213,7 @@ const loadUserDataFx = createEffect(async (user: User | null) => {
 });
 
 loadUserDataFx.failData.watch((err) => {
-    toastModel.events.show({
+    toastModel.events.add({
         type: 'error',
         message: 'Failed to load your data',
         reason: err.message,
@@ -221,7 +222,6 @@ loadUserDataFx.failData.watch((err) => {
 });
 
 const updateUserOnlineFx = createEffect(async (user: TUser | null) => {
-    console.log('updated online', user);
     if (!user) return;
 
     await Database.Users.updateUserOnline(user.uid, Date.now());
@@ -389,7 +389,7 @@ sample({
 });
 
 acceptFriendRequestFx.failData.watch((err) => {
-    toastModel.events.show({
+    toastModel.events.add({
         type: 'error',
         message: 'Failed to accept friend request',
         duration: 5000,
@@ -398,7 +398,7 @@ acceptFriendRequestFx.failData.watch((err) => {
 });
 
 rejectFriendRequestFx.failData.watch((err) => {
-    toastModel.events.show({
+    toastModel.events.add({
         type: 'error',
         message: 'Failed to reject friend request',
         duration: 5000,
@@ -529,7 +529,7 @@ const updateLibraryFx = createEffect(
 );
 
 removeSongFromLibraryFx.doneData.watch(() => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Removed from Liked',
         type: 'info',
         action: {
@@ -544,7 +544,7 @@ removeSongFromLibraryFx.doneData.watch(() => {
 });
 
 removeSongFromLibraryFx.failData.watch((err) => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: `Failed to remove song from Liked. Reason: ${err.message}`,
         type: 'error',
         duration: 8000,
@@ -552,7 +552,7 @@ removeSongFromLibraryFx.failData.watch((err) => {
 });
 
 addSongToLibraryFx.doneData.watch(() => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Song added to Liked',
         type: 'success',
         duration: 5000,
@@ -560,7 +560,7 @@ addSongToLibraryFx.doneData.watch(() => {
 });
 
 addSongToLibraryFx.failData.watch((err) => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: `Failed to add song to Liked. Reason: ${err.message}`,
         type: 'error',
         duration: 8000,
@@ -769,7 +769,7 @@ addAuthorsToLibraryFx.use(async ({ userId, authors }) => {
 
 addAuthorsToLibraryFx.done.watch(({ params: { showToast } }) => {
     if (showToast) {
-        toastModel.events.show({
+        toastModel.events.add({
             message: 'Author added to Liked',
             type: 'success',
             duration: 3000,
@@ -779,7 +779,7 @@ addAuthorsToLibraryFx.done.watch(({ params: { showToast } }) => {
 
 addAuthorsToLibraryFx.fail.watch(({ params: { showToast }, error }) => {
     if (showToast) {
-        toastModel.events.show({
+        toastModel.events.add({
             message: `Failed to add author to Liked`,
             reason: error.message,
             type: 'error',
@@ -801,7 +801,7 @@ removeAuthorsFromLibraryFx.use(async ({ userId, authors }) => {
 
 removeAuthorsFromLibraryFx.done.watch(({ params: { showToast } }) => {
     if (showToast) {
-        toastModel.events.show({
+        toastModel.events.add({
             message: 'Author removed from Liked',
             type: 'info',
             duration: 5000,
@@ -811,7 +811,7 @@ removeAuthorsFromLibraryFx.done.watch(({ params: { showToast } }) => {
 
 removeAuthorsFromLibraryFx.fail.watch(({ params: { showToast }, error }) => {
     if (showToast) {
-        toastModel.events.show({
+        toastModel.events.add({
             message: `Failed to remove author from Liked`,
             reason: error.message,
             type: 'error',
@@ -860,14 +860,14 @@ friendRequestFx.use(async ({ userId, friendId }) => {
 });
 
 friendRequestFx.done.watch(() => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Friendship request sent',
         type: 'success',
     });
 });
 
 friendRequestFx.failData.watch((err) => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Failed to send friend request',
         type: 'error',
         reason: err.message,
@@ -966,7 +966,7 @@ sample({
 
 removePlaylistFx.done.watch(({ params: { playlist, showToast } }) => {
     if (showToast) {
-        toastModel.events.show({
+        toastModel.events.add({
             message: `${
                 playlist.isAlbum ? 'Album' : 'Playlist'
             } removed from library`,
@@ -978,7 +978,7 @@ removePlaylistFx.done.watch(({ params: { playlist, showToast } }) => {
 
 addPlaylistFx.done.watch(({ params: { showToast, playlist } }) => {
     if (showToast) {
-        toastModel.events.show({
+        toastModel.events.add({
             message: `${
                 playlist.isAlbum ? 'Album' : 'Playlist'
             } added to library`,
@@ -989,7 +989,7 @@ addPlaylistFx.done.watch(({ params: { showToast, playlist } }) => {
 });
 
 addPlaylistFx.failData.watch((err) => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Failed to add playlist to library',
         type: 'error',
         reason: err.message,
@@ -998,7 +998,7 @@ addPlaylistFx.failData.watch((err) => {
 });
 
 removePlaylistFx.failData.watch((err) => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Failed to remove playlist from library',
         type: 'error',
         reason: err.message,

@@ -10,6 +10,12 @@ import { Button } from '../../shared/components/button';
 import { useState } from 'react';
 import { TUser } from '../../entities/user/model/types';
 import { toastModel } from '../../layout/toast/model';
+import { chatModel } from '../../entities/chat/model';
+import { createChatObject } from '../../entities/chat/lib/createChatObject';
+import { useNavigate } from 'react-router';
+import { useUnit } from 'effector-react';
+import { createChatFx } from '../../entities/chat/model/create-chat';
+import { modalModel } from '../../layout/modal/model';
 
 const CreateChatModalStyled = styled.div`
     padding: 10px 20px;
@@ -18,17 +24,40 @@ const CreateChatModalStyled = styled.div`
 
 export const CreateChatModal = () => {
     const [friends] = userModel.useFriends();
+    const [currentUser] = userModel.useUser();
     const [groupTitle, setGroupTitle] = useState('');
+    const navigate = useNavigate();
+    const [isCreatingChat] = useUnit([createChatFx.pending]);
 
     const handleCreateChat = (selectedFriends: TUser[]) => {
         return () => {
-            if (selectedFriends.length > 1) {
-                if (groupTitle.trim().length === 0) {
-                    toastModel.events.show({
-                        message: 'Please enter a group title',
-                        type: 'error',
-                    });
+            if (currentUser) {
+                if (selectedFriends.length > 1) {
+                    if (groupTitle.trim().length === 0) {
+                        toastModel.events.add({
+                            message: 'Please enter a group title',
+                            type: 'error',
+                        });
+                        return;
+                    }
                 }
+
+                const participants = [
+                    currentUser.uid,
+                    ...selectedFriends.map((s) => s.uid),
+                ];
+
+                const chat = createChatObject(participants, {
+                    chatName: groupTitle.trim(),
+                });
+
+                chatModel.events.createChat({
+                    chat,
+                    onSuccess: (chat) => {
+                        navigate(`/chat/${chat.id}`);
+                        modalModel.events.close();
+                    },
+                });
             }
         };
     };
@@ -38,6 +67,7 @@ export const CreateChatModal = () => {
             <AddEntitiesUI
                 inputPlaceholder="Search for friends..."
                 entities={friends}
+                gap={4}
                 renderItem={(user, checked, onClick) => {
                     return (
                         <UserItem
@@ -68,6 +98,7 @@ export const CreateChatModal = () => {
                         <DefaultButton
                             appearance="primary"
                             onClick={handleCreateChat(addedFriends)}
+                            loading={isCreatingChat}
                         >
                             Create {addedFriends.length > 1 ? 'group' : 'chat'}
                             {addedFriends.length > 1 && (

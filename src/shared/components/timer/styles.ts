@@ -43,7 +43,7 @@ export const ProgressCircle = styled.circle<{
 
 export const TimeLabel = styled.div<{ size: number }>`
     position: absolute;
-    font-size: ${({ size }) => `${size * 1.3}px`};
+    font-size: ${({ size }) => `${size * 1.2}px`};
     color: inherit;
     font-weight: 500;
 `;

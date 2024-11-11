@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { TChatData, TMessage } from '../../../../entities/chat/model/types';
+import { TCache, TMessage } from '../../../../entities/chat/model/types';
 import { playlistModel } from '../../../../entities/playlist/model';
 import { TPlaylist } from '../../../../entities/playlist/model/types';
 import { PlaylistItem } from '../../../../entities/playlist/ui';
@@ -13,7 +13,7 @@ import { PlaylistInvitationStyled } from './styles';
 type Props = {
     message: TMessage;
     isMine: boolean;
-    chatData: TChatData;
+    cache: TCache;
     chatId: string;
 };
 
@@ -44,7 +44,7 @@ export const PlaylistInvitation = ({
     chatId,
     message,
     isMine,
-    chatData,
+    cache,
 }: Props) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -54,7 +54,7 @@ export const PlaylistInvitation = ({
 
     const showButton =
         !isMine && !hasExpired && !message.playlistInvitation.accepted;
-    const playlist = chatData[message.playlistInvitation.id] as TPlaylist;
+    const playlist = cache[message.playlistInvitation.id] as TPlaylist;
 
     const handleAccept = () => {
         confirmModel.events.open({

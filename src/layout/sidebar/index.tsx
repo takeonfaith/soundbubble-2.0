@@ -1,21 +1,17 @@
 import { Flex } from '@components/flex';
 import { IconText } from '@components/iconText';
-import { Logo } from '@components/logo';
 import { groupByField } from '@shared/funcs/groupByField';
 import { usePrivateAction } from '@shared/hooks/usePrivateAction';
 import { IconPlus } from '@tabler/icons-react';
 import { modalModel } from 'layout/modal/model';
 import { menuRoutes } from 'routing/routes';
-import { chatModel } from '../../entities/chat/model';
 import { PlaylistItem } from '../../entities/playlist/ui';
 import { userModel } from '../../entities/user/model';
 import { CreatePlaylistModal } from '../../features/createPlaylistModal';
-import { ThemeButton } from '../../features/themeButton';
 import { Button } from '../../shared/components/button';
 import { NavigationTitle } from '../../shared/components/navigationTitle';
 import { Subtext } from '../../shared/components/subtext';
 import {
-    LogoWrapper,
     NotificationBadge,
     PlaylistsStyled,
     SidebarLink,
@@ -23,18 +19,16 @@ import {
     SidebarSectionTitle,
     SidebarStyled,
 } from './styles';
-import { NEW_LAYOUT } from '../../shared/constants';
 
 export const Sidebar = () => {
     const preparedRoutes = groupByField(menuRoutes, 'section');
     const { loggedIn } = usePrivateAction();
     const [ownPlaylists] = userModel.useOwnPlaylists();
-    const chatUnreadCount = chatModel.useChatUnreadCount();
     const [, friendRequests] = userModel.useFriends();
     const [currentUser] = userModel.useUser();
 
     const notificationsDic: Record<string, number> = {
-        chat: chatUnreadCount,
+        chat: 0,
         friends: friendRequests.length,
     };
 
@@ -47,12 +41,6 @@ export const Sidebar = () => {
 
     return (
         <SidebarStyled>
-            {!NEW_LAYOUT && (
-                <LogoWrapper>
-                    <Logo />
-                    <ThemeButton />
-                </LogoWrapper>
-            )}
             {Object.keys(preparedRoutes).map((route, index) => {
                 return (
                     <SidebarSection key={index}>
@@ -104,6 +92,7 @@ export const Sidebar = () => {
                     )}
                     {ownPlaylists?.slice(0, 4)?.map((playlist) => (
                         <PlaylistItem
+                            isAuthor={true}
                             orientation="horizontal"
                             playlist={playlist}
                             key={playlist.id}

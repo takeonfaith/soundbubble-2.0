@@ -5,8 +5,8 @@ import { GlobalSearch } from '../../features/globalSearch';
 import { Header } from '../../layout/header';
 import { Divider } from '../../shared/components/divider';
 import { PageWrapper } from '../../shared/components/pageWrapper';
-import { NEW_LAYOUT } from '../../shared/constants';
 import { SearchResult } from './SearchResult';
+import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 
 const SearchBarStyled = styled.div`
     max-width: 650px;
@@ -33,12 +33,13 @@ const SearchBarStyled = styled.div`
 
 export const SearchPage = () => {
     const [params] = useSearchParams();
+    const { isMobile } = useCurrentDevice();
     const queryValue = params.get('query') ?? '';
     const where = (params.get('where') ?? '') as TPlace | '';
 
     return (
         <PageWrapper>
-            {!NEW_LAYOUT && (
+            {isMobile && (
                 <Header>
                     <SearchBarStyled>
                         <GlobalSearch queryValue={queryValue} where={where} />

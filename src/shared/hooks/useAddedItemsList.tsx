@@ -44,6 +44,8 @@ export const useAddedItemsList = <T extends TEntity>(
     const getItemImage = (item: TEntity) => {
         const type = getEntityType(item);
         const image = getEntityImage(item);
+        console.log(type);
+        
         return (
             <GeneralCover
                 fallbackIcon={ENTITIES_ICONS[type]}

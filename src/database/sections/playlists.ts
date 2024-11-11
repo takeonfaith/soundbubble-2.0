@@ -234,6 +234,7 @@ export class Playlists {
 
             await FB.updateById('playlists', playlist.id, {
                 authors: arrayUnion(createAuthorObject(user)),
+                authorIds: arrayUnion(user.uid),
             });
 
             const playlistInvitation = {

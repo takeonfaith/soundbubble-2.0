@@ -1,12 +1,12 @@
 import { TUser } from '../../user/model/types';
-import { TChatData, TMessage } from '../model/types';
+import { TCache, TMessage } from '../model/types';
 
 export const SYSTEM_MESSAGE_SENDER = 'soundbubble';
 
 export const getLastMessageSender = (
     lastMessage: TMessage | undefined,
     isGroupChat: boolean,
-    chatData: TChatData,
+    cache: TCache,
     currentUser: TUser | null
 ) => {
     if (!lastMessage)
@@ -19,7 +19,7 @@ export const getLastMessageSender = (
             sender: '',
         };
 
-    const sender = chatData[lastMessage?.sender ?? ''] as TUser;
+    const sender = cache[lastMessage?.sender ?? ''] as TUser;
     const s =
         sender?.uid === currentUser?.uid
             ? 'You'

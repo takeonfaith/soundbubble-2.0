@@ -36,7 +36,6 @@ import { AlbumPage } from './album';
 import { TrendsPageAlbums } from './trends/ui/TrendsPageAlbums';
 import { TrendsPageSongs } from './trends/ui/TrendsPageSongs';
 import { TrendsPageAuthors } from './trends/ui/TrendsPageAuthors';
-import { NEW_LAYOUT } from '../shared/constants';
 import { LikedAlbums } from './library/LikedAlbums';
 import { UserSongs } from './user/UserSongs';
 
@@ -294,7 +293,6 @@ const getRoutes = <T extends (typeof allRoutes)[number]['title'][]>(
 
 export const menuRoutes = getRoutes([
     'Wave',
-    NEW_LAYOUT ? '' : 'Search',
     'Trends',
     'Liked',
     'History',

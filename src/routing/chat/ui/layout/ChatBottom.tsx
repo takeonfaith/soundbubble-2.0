@@ -1,5 +1,5 @@
 import { IconPaperclip } from '@tabler/icons-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { ChatButtons, ChatInputArea, ChatTextArea, SendButton } from './styles';
 import { createMessageObject } from '../../../../entities/chat/lib/createMessageObject';
@@ -50,7 +50,8 @@ const AttachmentContextMenuStyled = styled(DefaultContextMenuStyled)`
 `;
 
 export const ChatBottom = () => {
-    const { currentChatId } = chatModel.useChats();
+    const [currentChat] = chatModel.useCurrentChat();
+    const [, loading] = chatModel.useMessages();
     const [currentUser] = userModel.useUser();
 
     const [value, setValue] = useState('');
@@ -58,16 +59,36 @@ export const ChatBottom = () => {
 
     const handleChangeValue = (value: string) => {
         setValue(value);
+        const isTyping = value.length > 0;
+        if (currentUser) {
+            const wasAlreadyTyping =
+                currentChat?.typing.includes(currentUser.uid) ?? false;
+            if (isTyping && !wasAlreadyTyping) {
+                chatModel.events.updateIsTyping(true);
+            } else if (!isTyping && wasAlreadyTyping) {
+                chatModel.events.updateIsTyping(false);
+            }
+        }
     };
+
+    useEffect(() => {
+        if (!loading) {
+            inputRef.current?.focus();
+        }
+    }, [currentChat?.id, loading]);
 
     const handleSendMessage = () => {
         if (value.trim().length === 0 || !currentUser?.uid) return;
-        if (currentChatId) {
+        if (currentChat?.id) {
             const message = createMessageObject(currentUser?.uid, {
                 message: value,
             });
 
-            chatModel.events.sendMessage({ chatIds: [currentChatId], message });
+            chatModel.events.sendMessage({
+                chatIds: [currentChat.id],
+                message,
+            });
+            chatModel.events.updateIsTyping(false);
         }
         setValue('');
         inputRef.current?.focus();
@@ -115,6 +136,7 @@ export const ChatBottom = () => {
                 </Button>
             </Flex>
             <ChatTextArea
+                disabled={loading}
                 ref={inputRef}
                 onKeyDown={handleKeyDown}
                 placeholder="Type something..."

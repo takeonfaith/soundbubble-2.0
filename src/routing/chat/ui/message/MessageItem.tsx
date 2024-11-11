@@ -1,11 +1,13 @@
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { getSendStatus } from '../../../../entities/chat/lib/getSendStatus';
 import {
     LocalSendStatus,
-    TChatData,
+    TCache,
     TMessage,
 } from '../../../../entities/chat/model/types';
+import { TPlaylist } from '../../../../entities/playlist/model/types';
+import { PlaylistItem } from '../../../../entities/playlist/ui';
 import { TEntity, TPlace } from '../../../../entities/search/model/types';
 import { createQueueObject } from '../../../../entities/song/lib/createQueueObject';
 import { TSong } from '../../../../entities/song/model/types';
@@ -15,9 +17,7 @@ import { UserItem } from '../../../../entities/user/ui';
 import { getEntityType } from '../../../../features/searchWithHints/lib/getEntityType';
 import { popupModel } from '../../../../layout/popup/model';
 import { Flex } from '../../../../shared/components/flex';
-import { MessageContextMenu } from './MessageContextMenu';
-import { MessageSentStatus } from './MessageSentStatus';
-import { MessageText } from './MessageText';
+import { useIsOnScreen } from '../../../../shared/hooks/useIsOnScreen';
 import {
     AttachmentStyled,
     DateAndSeenIcon,
@@ -26,15 +26,17 @@ import {
     MessageStyled,
     MessageWrapper,
 } from '../layout/styles';
+import { MessageContextMenu } from './MessageContextMenu';
+import { MessageSentStatus } from './MessageSentStatus';
+import { MessageText } from './MessageText';
 import { PlaylistInvitation } from './PlaylistInvitation';
-import { PlaylistItem } from '../../../../entities/playlist/ui';
-import { TPlaylist } from '../../../../entities/playlist/model/types';
+import { SongSkeleton } from '../../../../entities/song/ui/Skeleton';
 
 type Props = {
     chatId: string;
     message: TMessage;
     isMine: boolean;
-    chatData: TChatData;
+    cache: TCache;
     isPrevByTheSameSender: boolean;
     isFirst: boolean;
     isNotSeen: boolean;
@@ -44,14 +46,16 @@ type Props = {
 const renderAttachments = (
     attachments: string[],
     place: TPlace,
-    chatData: TChatData,
+    cache: TCache,
     message: TMessage,
     chatId: string
 ) => {
     return attachments.map((s) => {
-        const entity = chatData[s] as TEntity;
+        const entity = cache[s] as TEntity;
 
         const type = getEntityType(entity);
+
+        if (!entity) return <SongSkeleton />;
 
         if (
             place === 'users' &&
@@ -81,7 +85,7 @@ const renderAttachments = (
 
         if (entity) {
             const queue = createQueueObject({
-                name: (chatData[message.sender] as TUser)?.displayName,
+                name: (cache[message.sender] as TUser)?.displayName,
                 url: `/chat/${chatId}#${message.id}`,
                 id: chatId,
                 songs: [entity as TSong],
@@ -99,7 +103,7 @@ export const MessageItem = ({
     message,
     isNotSeen,
     isMine,
-    chatData,
+    cache,
     isPrevByTheSameSender,
     isFirst,
     onSeen,
@@ -109,40 +113,13 @@ export const MessageItem = ({
         message.attachedSongs.length ||
         message.attachedAlbums.length ||
         message.attachedAuthors.length;
-    const [isVisible, setIsVisible] = useState(false);
     const targetRef = useRef(null);
 
-    useEffect(() => {
-        const el = targetRef.current;
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                setIsVisible(entry.isIntersecting);
-            },
-            {
-                root: null, // viewport
-                rootMargin: '0px', // no margin
-                threshold: 0.5, // 50% of target visible
-            }
-        );
-
-        if (el) {
-            observer.observe(el);
-        }
-
-        // Clean up the observer
-        return () => {
-            if (el) {
-                observer.unobserve(el);
-            }
-        };
-    }, []);
-
-    useEffect(() => {
-        if (isVisible && isNotSeen) {
+    useIsOnScreen(targetRef, () => {
+        if (!isNotSeen) {
             onSeen(message.id);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isVisible, isNotSeen]);
+    });
 
     const handleContextMenu = (
         e: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -160,7 +137,7 @@ export const MessageItem = ({
         <MessageStyled ref={targetRef}>
             {!isMine && isFirst && (
                 <MessageSender>
-                    {(chatData[message.sender] as TUser)?.displayName}
+                    {(cache[message.sender] as TUser)?.displayName}
                 </MessageSender>
             )}
             <Flex width="100%" gap={10}>
@@ -179,7 +156,7 @@ export const MessageItem = ({
                                     chatId={chatId}
                                     isMine={isMine}
                                     message={message}
-                                    chatData={chatData}
+                                    cache={cache}
                                 />
                             )}
                             <MessageText message={message.message} />
@@ -188,21 +165,21 @@ export const MessageItem = ({
                                     {renderAttachments(
                                         message.attachedSongs,
                                         'songs',
-                                        chatData,
+                                        cache,
                                         message,
                                         chatId
                                     )}
                                     {renderAttachments(
                                         message.attachedAlbums,
                                         'playlists',
-                                        chatData,
+                                        cache,
                                         message,
                                         chatId
                                     )}
                                     {renderAttachments(
                                         message.attachedAuthors,
                                         'users',
-                                        chatData,
+                                        cache,
                                         message,
                                         chatId
                                     )}

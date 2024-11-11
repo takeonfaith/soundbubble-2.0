@@ -15,7 +15,7 @@ import { useChatInfo } from '../hooks/useChatInfo';
 import { getLastMessageDate } from '../lib/getLastMessageDate';
 import { getLastMessageSender } from '../lib/getLastMessageSender';
 import { getSendStatus } from '../lib/getSendStatus';
-import { TChat, TChatData, TMessage } from '../model/types';
+import { TCache, TChat } from '../model/types';
 import {
     ChatItemStyled,
     ChatTitle,
@@ -27,8 +27,7 @@ import {
 
 type Props = {
     chat: TChat;
-    chatData: TChatData;
-    lastMessage?: TMessage;
+    cache: TCache;
     unreadCount: number;
     isSelected: boolean;
     children?: React.ReactNode;
@@ -45,7 +44,7 @@ export const ChatItem = ({
     chat,
     isSelected,
     unreadCount,
-    chatData,
+    cache,
     children,
     onClick,
     size = 'm',
@@ -53,7 +52,7 @@ export const ChatItem = ({
     const [currentUser] = userModel.useUser();
     const { chatTitle, chatImage, isGroupChat, typing, statuses } = useChatInfo(
         chat,
-        chatData,
+        cache,
         currentUser
     );
     const lastMessage = chat.lastMessage;
@@ -62,23 +61,22 @@ export const ChatItem = ({
     const { sender } = getLastMessageSender(
         lastMessage,
         isGroupChat,
-        chatData,
+        cache,
         currentUser
     );
     const lastMessageDate = getLastMessageDate(lastMessage);
     const song =
         lastMessage?.attachedSongs.length !== 0
-            ? (chatData[lastMessage?.attachedSongs[0] ?? ''] as TSong)?.name
+            ? (cache[lastMessage?.attachedSongs[0] ?? ''] as TSong)?.name
             : null;
     const author =
         lastMessage?.attachedAuthors.length !== 0
-            ? (chatData[lastMessage?.attachedAuthors[0] ?? ''] as TUser)
+            ? (cache[lastMessage?.attachedAuthors[0] ?? ''] as TUser)
                   ?.displayName
             : null;
     const album =
         lastMessage?.attachedAlbums.length !== 0
-            ? (chatData[lastMessage?.attachedAlbums[0] ?? ''] as TPlaylist)
-                  ?.name
+            ? (cache[lastMessage?.attachedAlbums[0] ?? ''] as TPlaylist)?.name
             : null;
 
     const handleClick = (e: Evt<'a'>) => {

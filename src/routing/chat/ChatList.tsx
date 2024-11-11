@@ -3,6 +3,7 @@ import { chatModel } from '../../entities/chat/model';
 import { ChatItem } from '../../entities/chat/ui/ChatItem';
 import { CreateChatModal } from '../../features/createChatModal';
 import { modalModel } from '../../layout/modal/model';
+import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
@@ -13,17 +14,11 @@ import {
     DesktopWrapperStyled,
     ListOfChats,
 } from './styles';
-import { Button } from '../../shared/components/button';
 
 export const ChatList = () => {
-    const {
-        chats,
-        chatData,
-        lastMessage,
-        unreadCounts,
-        currentChatId,
-        loadingChats,
-    } = chatModel.useChats();
+    const [chats, loadingChats] = chatModel.useChats();
+    const [currentChat] = chatModel.useCurrentChat();
+    const [cache] = chatModel.useCache();
 
     const handleCreateChatModal = () => {
         modalModel.events.open({
@@ -34,7 +29,7 @@ export const ChatList = () => {
     };
 
     return (
-        <ListOfChats className={!currentChatId ? 'no-chat' : ''}>
+        <ListOfChats className={!currentChat ? 'no-chat' : ''}>
             <DesktopWrapperStyled>
                 <Flex
                     width="100%"
@@ -45,7 +40,7 @@ export const ChatList = () => {
                     <Button
                         className="primary"
                         $width="35px"
-                        $height='35px'
+                        $height="35px"
                         onClick={handleCreateChatModal}
                         style={{ borderRadius: '100%' }}
                     >
@@ -62,16 +57,15 @@ export const ChatList = () => {
             </DesktopWrapperStyled>
             <ChatListStyled>
                 <SkeletonPageAnimation
-                    loading={loadingChats || !chatData}
+                    loading={loadingChats || !cache}
                     skeleton={<ChatsSkeleton />}
                 >
                     {chats.map((chat) => {
                         return (
                             <ChatItem
-                                isSelected={currentChatId === chat.id}
-                                unreadCount={unreadCounts[chat.id]}
-                                lastMessage={lastMessage[chat.id]}
-                                chatData={chatData}
+                                isSelected={currentChat?.id === chat.id}
+                                unreadCount={0}
+                                cache={cache}
                                 chat={chat}
                                 key={chat.id}
                             />

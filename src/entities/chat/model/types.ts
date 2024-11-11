@@ -40,11 +40,17 @@ export type TChat = {
     lastMessage?: TMessage;
 };
 
-export type TChatData = Record<string, TEntity>;
+export type TCache = Record<string, TEntity>;
 
 export type TGeneralChatData = {
     [chatId: string]: {
         lastMessage: TMessage;
         unreadCount: number;
     };
+};
+
+export type THeavyMedia = {
+    songIds: string[];
+    playlistIds: string[];
+    userIds: string[];
 };

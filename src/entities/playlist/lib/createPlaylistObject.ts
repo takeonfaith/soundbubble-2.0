@@ -12,6 +12,7 @@ export const createPlaylistObject = (
     songs: [],
     imageColors: [],
     authors: [author],
+    authorIds: [author.uid],
     isAlbum: false,
     isPrivate: false,
     listens: 0,

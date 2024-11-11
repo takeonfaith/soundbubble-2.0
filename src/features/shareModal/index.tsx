@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from 'react';
 import { createMessageObject } from '../../entities/chat/lib/createMessageObject';
-import { chatModel, sendMessageFx } from '../../entities/chat/model';
+import { chatModel } from '../../entities/chat/model';
 import { TChat } from '../../entities/chat/model/types';
 import { ChatItem } from '../../entities/chat/ui/ChatItem';
 import { TEntity } from '../../entities/search/model/types';
@@ -18,6 +18,7 @@ import { useUnit } from 'effector-react';
 import { modalModel } from '../../layout/modal/model';
 import { Loading } from '../../shared/components/loading';
 import { Flex } from '../../shared/components/flex';
+import { sendMessageFx } from '../../entities/chat/model/send-message';
 
 type Props = {
     entity: TEntity | null | undefined;
@@ -26,16 +27,19 @@ type Props = {
 export const ShareModal = ({ entity }: Props) => {
     const [messageValue, setMessageValue] = useState('');
     const [sending] = useUnit([sendMessageFx.pending]);
-    const { chats, chatData, loadingChats, loadingChatData } =
-        chatModel.useChats();
+    const [chats, loadingChats] = chatModel.useChats();
+    const [cache, loadingChatData] = chatModel.useCache();
     const [currentUser] = userModel.useUser();
     const chatsWithNames: TChat[] = chats.map((ch) => {
         const notYou = ch.participants.filter((p) => p !== currentUser?.uid)[0];
-        const otherUser = chatData[notYou] as TUser;
+        const otherUser = cache[notYou] as TUser;
         return {
             ...ch,
             chatName: (ch.chatName || otherUser?.displayName) ?? '',
-            chatImage: (ch.chatImage || otherUser?.photoURL) ?? '',
+            chatImage:
+                (ch.chatName.length !== 0
+                    ? ch.chatImage
+                    : otherUser?.photoURL) ?? '',
         };
     });
 
@@ -67,8 +71,6 @@ export const ShareModal = ({ entity }: Props) => {
         }
     };
 
-    chatModel.useLoadChats();
-
     return (
         <ShareModalStyled>
             <AddEntitiesUI
@@ -81,9 +83,8 @@ export const ShareModal = ({ entity }: Props) => {
                             size="s"
                             chat={chat}
                             key={chat.id}
-                            chatData={chatData}
+                            cache={cache}
                             onClick={onClick}
-                            lastMessage={undefined}
                             unreadCount={0}
                             isSelected={false}
                         >

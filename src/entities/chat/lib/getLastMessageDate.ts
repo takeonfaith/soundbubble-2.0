@@ -8,9 +8,13 @@ export const getLastMessageDate = (lastMessage: TMessage | undefined) => {
 
     const isBiggerThanWeek = timeDiff > TIME_IN_MS.hour * 24 * 7;
 
+    const isLastYear =
+        new Date(lastMessage?.sentTime ?? '').getFullYear() !==
+        new Date().getFullYear();
+
     if (!isBiggerThanDay) {
         return new Date(lastMessage?.sentTime ?? '').toLocaleTimeString(
-            'ru-RU',
+            'en-US',
             {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -20,12 +24,22 @@ export const getLastMessageDate = (lastMessage: TMessage | undefined) => {
 
     if (!isBiggerThanWeek) {
         return new Date(lastMessage?.sentTime ?? '').toLocaleDateString(
-            'ru-RU',
+            'en-US',
             {
                 weekday: 'short',
             }
         );
     }
 
-    return new Date(lastMessage?.sentTime ?? '').toLocaleDateString('ru-RU');
+    if (!isLastYear) {
+        return new Date(lastMessage?.sentTime ?? '').toLocaleDateString(
+            'en-US',
+            {
+                day: '2-digit',
+                month: 'short',
+            }
+        );
+    }
+
+    return new Date(lastMessage?.sentTime ?? '').toLocaleDateString('en-US');
 };

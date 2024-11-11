@@ -14,6 +14,7 @@ type Props<T extends TEntity> = {
     initiallyAddedItems: T[];
     inputPlaceholder: string;
     children?: React.ReactNode;
+    gap?: number;
     renderItem: (
         item: T,
         checked: boolean,
@@ -38,6 +39,7 @@ export const AddEntitiesUI = <T extends TEntity>({
     renderButton,
     onSearchValueChange,
     children,
+    gap,
 }: Props<T>) => {
     const {
         visibleItems,
@@ -79,12 +81,7 @@ export const AddEntitiesUI = <T extends TEntity>({
                 )}
             </Flex>
             {children}
-            <Flex
-                d="column"
-                width="100%"
-                height="calc(100% - 230px)"
-                padding="0 0 150px 0"
-            >
+            <Flex d="column" width="100%" padding="0 0 150px 0" gap={gap}>
                 {visibleItems.map((item, index) => {
                     const id = getEntityId(item);
                     const checked = !!addedItems.find(

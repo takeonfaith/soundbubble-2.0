@@ -76,6 +76,7 @@ export const Button = styled.button<{
         pointer-events: none;
 
         &.primary {
+            filter: grayscale(1);
             color: #ffffff66;
             box-shadow: none;
         }

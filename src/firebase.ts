@@ -72,7 +72,6 @@ export type TCollections =
     | 'messages'
     | 'chatWallpapers'
     | 'newChats'
-    | 'messages'
     | 'lyrics'
     | 'lastQueue';
 

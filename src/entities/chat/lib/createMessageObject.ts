@@ -8,7 +8,7 @@ export const createMessageObject = (
     return {
         id: getUID(),
         sender: userId,
-        message: props.message ?? '',
+        message: '',
         sentTime: new Date().getTime(),
         seenBy: [userId],
         attachedAlbums: [],

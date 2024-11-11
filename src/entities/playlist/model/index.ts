@@ -46,7 +46,9 @@ const loadPlaylistFx = createEffect(async (store: TStore) => {
         const playlist = await Database.Playlists.getPlaylistByUid(
             store.loadingPlaylistId
         );
-        const songs = await Database.Songs.getSongsByUids(playlist.songs);
+        const songs = playlist
+            ? await Database.Songs.getSongsByUids(playlist.songs)
+            : [];
 
         return { playlist, songs };
     } catch (error) {
@@ -77,7 +79,7 @@ export const addSongsToPlaylistsFx = createEffect(
 );
 
 addSongsToPlaylistsFx.done.watch(({ result: { songs, playlists } }) => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: `Song${songs.length > 1 ? 's' : ''} added to playlist${
             playlists.length > 1 ? 's' : ''
         }`,
@@ -86,7 +88,7 @@ addSongsToPlaylistsFx.done.watch(({ result: { songs, playlists } }) => {
 });
 
 addSongsToPlaylistsFx.failData.watch((error) => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Failed to add song to playlist',
         reason: error.message,
         type: 'error',
@@ -108,14 +110,14 @@ const createPlaylistsFx = createEffect(
 );
 
 createPlaylistsFx.doneData.watch(() => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: `Playlist created`,
         type: 'success',
     });
 });
 
 createPlaylistsFx.fail.watch(({ error }) => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Failed to create playlist',
         reason: error.message,
         type: 'error',
@@ -269,14 +271,14 @@ sample({
 });
 
 deletePlaylistFx.doneData.watch(() => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Playlist deleted',
         type: 'success',
     });
 });
 
 deletePlaylistFx.failData.watch((err) => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Failed to delete playlist',
         reason: err.message,
         type: 'error',
@@ -374,14 +376,14 @@ sample({
 });
 
 updatePlaylistFx.doneData.watch(() => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Playlist updated',
         type: 'success',
     });
 });
 
 updatePlaylistFx.failData.watch((err) => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Failed to update playlist',
         reason: err.message,
         type: 'error',
@@ -461,7 +463,7 @@ sendPlaylistInvitationFx.use(async ({ senderId, playlist, participants }) => {
 });
 
 sendPlaylistInvitationFx.doneData.watch(() => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Participant requests sent',
         type: 'success',
     });
@@ -481,14 +483,14 @@ acceptInvitationFx.use(
 );
 
 acceptInvitationFx.doneData.watch(() => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Invitation accepted',
         type: 'success',
     });
 });
 
 acceptInvitationFx.failData.watch((err) => {
-    toastModel.events.show({
+    toastModel.events.add({
         message: 'Failed to accept invitation',
         type: 'error',
         reason: err.message,

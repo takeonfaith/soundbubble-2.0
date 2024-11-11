@@ -2,13 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import { TUser } from '../../../../entities/user/model/types';
 import { Flex } from '../../../../shared/components/flex';
-import { Subtext } from '../../../../shared/components/subtext';
 import { TypingIndicator } from '../../../../shared/components/typingIndicator';
 
 const TypingTextStyled = styled(Flex)``;
 
 const TypingText = styled.div`
     font-size: 0.75rem;
+    font-weight: 300;
     color: ${({ theme }) => theme.scheme.blue.action};
 `;
 
@@ -23,21 +23,21 @@ export const ChatTypingIndicator = ({
     isGroupChat,
     children,
 }: Props) => {
-    if (isGroupChat && typing.length > 0) {
-        return (
-            <Flex gap={8}>
-                <Subtext>
-                    {typing.map(
-                        (u, i) => (i !== 0 ? ', ' : '') + u?.displayName
-                    )}{' '}
-                    typing
-                </Subtext>
-                <TypingIndicator isTyping />
-            </Flex>
-        );
-    }
-
     if (typing.length > 0) {
+        if (isGroupChat) {
+            return (
+                <Flex gap={8}>
+                    <TypingText>
+                        {typing.map(
+                            (u, i) => (i !== 0 ? ', ' : '') + u?.displayName
+                        )}{' '}
+                        typing
+                    </TypingText>
+                    <TypingIndicator isTyping />
+                </Flex>
+            );
+        }
+
         return (
             <TypingTextStyled gap={8}>
                 <TypingText>Typing</TypingText>

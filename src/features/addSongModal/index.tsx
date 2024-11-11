@@ -22,7 +22,7 @@ export const AddSongModal = () => {
                 sizeY: 's',
             });
         } else {
-            toastModel.events.show({
+            toastModel.events.add({
                 type: 'error',
                 message: 'Song file is required',
             });

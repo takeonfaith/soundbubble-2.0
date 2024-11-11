@@ -1,24 +1,34 @@
 import {
     and,
+    arrayRemove,
+    arrayUnion,
+    collection,
+    DocumentData,
     getDocs,
     limit,
+    onSnapshot,
     or,
     orderBy,
     query,
+    QueryDocumentSnapshot,
+    startAfter,
     where,
 } from 'firebase/firestore';
 import { createChatObject } from '../../entities/chat/lib/createChatObject';
-import { TChat, TChatData, TMessage } from '../../entities/chat/model/types';
-import { TEntity } from '../../entities/search/model/types';
+import { createMessageObject } from '../../entities/chat/lib/createMessageObject';
+import { SYSTEM_MESSAGE_SENDER } from '../../entities/chat/lib/getLastMessageSender';
+import { TChat, TCache, TMessage } from '../../entities/chat/model/types';
 import { FB } from '../../firebase';
 import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
-import { Playlists } from './playlists';
-import { Songs } from './songs';
-import { Users } from './users';
+import { convertToMap } from '../../shared/funcs/convertToMap';
 
 export class Chats {
     static ref = FB.get('newChats');
+    static lastVisible: QueryDocumentSnapshot<
+        DocumentData,
+        DocumentData
+    > | null;
     static ownChatsQuery(userId: string) {
         return query(this.ref, where('participants', 'array-contains', userId));
     }
@@ -26,17 +36,15 @@ export class Chats {
     static async getChatsByIds(userId: string, chatIds: string[]) {
         try {
             const chats = await FB.getByIds('newChats', chatIds);
-            console.log(chats);
-
             const lastMessages: Record<string, TMessage> = {};
-            const chatDataObject: TChatData = {};
+            const chatDataObject: TCache = {};
 
             const unreadCount: Record<string, number> = {};
 
             // const reqs = chats.map(async (chat) => {
-            //     const { messages, chatData } =
+            //     const { messages, cache } =
             //         await this.getChatMessagesByChatId(chat.id, 'desc', 1);
-            //     chatDataObject = Object.assign(chatDataObject, chatData);
+            //     chatDataObject = Object.assign(chatDataObject, cache);
             //     lastMessages[chat.id] = messages[0];
             //     unreadCount[chat.id] = (messages[0]?.seenBy ?? [])?.includes(
             //         userId
@@ -65,10 +73,15 @@ export class Chats {
     static async getChatMessagesByChatId(
         chatId: string,
         order?: 'asc' | 'desc',
-        limitNumber?: number
+        limitNumber?: number,
+        paginate = false
     ) {
         try {
             const c = [];
+            if (paginate && this.lastVisible) {
+                c.push(startAfter(this.lastVisible));
+            }
+
             if (limitNumber !== undefined) c.push(limit(limitNumber));
 
             const q = query(
@@ -76,62 +89,41 @@ export class Chats {
                 orderBy('sentTime', order ?? 'asc'),
                 ...c
             );
+
             const docs = await getDocs(q);
             const messages = getDataFromDoc<TMessage>(docs);
-            console.log(messages);
 
-            const attachments = await asyncRequests(messages, (message) => {
-                const playlistIds = [...message.attachedAlbums];
+            this.lastVisible = docs.docs[docs.docs.length - 1];
 
-                if (message.playlistInvitation?.id) {
-                    playlistIds.push(message.playlistInvitation?.id);
-                }
-
-                const shouldRequest =
-                    playlistIds.length > 0 ||
-                    message.attachedSongs.length > 0 ||
-                    message.attachedAuthors.length > 0;
-
-                const getAttachments = async (): Promise<TEntity[]> => {
-                    const songs = await Songs.getSongsByUids(
-                        message.attachedSongs
-                    );
-                    const playlists = await Playlists.getPlaylistsByUids(
-                        playlistIds
-                    );
-                    const authors = await Users.getUsersByUids(
-                        message.attachedAuthors
-                    );
-
-                    return [...songs, ...playlists, ...authors];
-                };
-
-                return shouldRequest ? getAttachments() : Promise.resolve(null);
-            });
-
-            const res = attachments.reduce((acc, r) => {
-                r?.forEach((el) => {
-                    if (el) {
-                        acc['id' in el ? el.id : el.uid] = el;
-                    }
-                });
-
-                return acc;
-            }, {} as Record<string, TEntity>);
-
-            console.log(res);
-
-            return { messages, chatData: res };
+            return messages.reverse();
         } catch (error) {
             throw new Error('Failed to get messages by chatId id: ' + chatId);
+        }
+    }
+
+    static async getHeavyMedia(
+        songIds: string[],
+        playlistIds: string[],
+        userIds: string[]
+    ): Promise<TCache> {
+        try {
+            const songs = await FB.getByIds('songs', songIds);
+            const playlists = await FB.getByIds('playlists', playlistIds);
+            const users = await FB.getByIds('users', userIds);
+
+            return {
+                ...convertToMap(songs),
+                ...convertToMap(playlists),
+                ...convertToMap(users),
+            };
+        } catch (error) {
+            throw new Error('Failed to get heavy media');
         }
     }
 
     static async sendMessage(chatIds: string[], message: TMessage) {
         try {
             const send = async (chatId: string) => {
-                console.log('start sending message');
-
                 await FB.setDeepByIds(
                     'newChats',
                     [chatId, 'messages', message.id],
@@ -141,10 +133,7 @@ export class Chats {
                 await FB.updateById('newChats', chatId, {
                     lastMessage: message,
                 });
-
-                console.log('successfully sent message', message);
             };
-            console.log(chatIds);
 
             await asyncRequests(chatIds, (id) => {
                 return send(id);
@@ -158,9 +147,36 @@ export class Chats {
         }
     }
 
-    static async createChat(chat: TChat) {
+    static async createChat(chat: TChat): Promise<TChat> {
         try {
+            if (chat.participants.length === 2) {
+                const [senderId, receiverId] = chat.participants;
+
+                const probableChat = await this.getChatByUserIds(
+                    senderId,
+                    receiverId
+                );
+
+                if (probableChat) return probableChat;
+            }
+
             await FB.setById('newChats', chat.id, chat);
+            // If chat is group chat, first message should be about creation
+            if (chat.chatName.length !== 0) {
+                await this.sendMessage(
+                    [chat.id],
+                    createMessageObject(SYSTEM_MESSAGE_SENDER, {
+                        message: `Group ${chat.chatName} was created`,
+                    })
+                );
+            }
+
+            await asyncRequests(chat.participants, (userId) => {
+                return FB.updateById('users', userId, {
+                    chats: arrayUnion(chat.id),
+                });
+            });
+
             return chat;
         } catch (error) {
             throw new Error(
@@ -183,13 +199,7 @@ export class Chats {
                 limit(1)
             );
             const docs = await getDocs(q);
-            let chat = getDataFromDoc<TChat>(docs)[0];
-
-            if (!chat) {
-                chat = await this.createChat(
-                    createChatObject([senderId, receiverId], {})
-                );
-            }
+            const chat = getDataFromDoc<TChat | null>(docs)[0];
 
             return chat;
         } catch (error) {
@@ -205,12 +215,83 @@ export class Chats {
         message: TMessage
     ) {
         try {
-            const chat = await this.getChatByUserIds(senderId, receiverId);
+            let chat = await this.getChatByUserIds(senderId, receiverId);
+
+            if (!chat) {
+                chat = await this.createChat(
+                    createChatObject([senderId, receiverId], {})
+                );
+            }
 
             await this.sendMessage([chat.id], message);
         } catch (error) {
             throw new Error(
                 'Failed to send message by user id' +
+                    (error as Error).toString()
+            );
+        }
+    }
+
+    static async subscribeToChatsWithUserId(
+        userId: string,
+        callback: (chats: TChat[]) => void
+    ) {
+        try {
+            return await FB.listenTo(
+                'newChats',
+                callback,
+                where('participants', 'array-contains', userId),
+                orderBy('lastMessage.sentTime', 'desc')
+            );
+        } catch (error) {
+            console.log('ERROROROROROR', error);
+
+            throw new Error(
+                'Failed to subscribe to chats with user id' +
+                    (error as Error).toString()
+            );
+        }
+    }
+
+    static async updateIsTyping(
+        userId: string,
+        chatId: string,
+        isTyping: boolean
+    ) {
+        try {
+            await FB.updateById('newChats', chatId, {
+                typing: isTyping ? arrayUnion(userId) : arrayRemove(userId),
+            });
+        } catch (error) {
+            throw new Error(
+                'Failed to update is typing status for chat' +
+                    (error as Error).toString()
+            );
+        }
+    }
+
+    static async subscribeToChatMessagesWithChatId(
+        chatId: string,
+        userId: string,
+        callback: (messages: TMessage[]) => void
+    ) {
+        try {
+            const q = query(
+                collection(FB.firestore, `newChats/${chatId}/messages`),
+                where('sender', '!=', userId),
+                orderBy('sentTime', 'desc'),
+                limit(1)
+            );
+
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                const messages = getDataFromDoc<TMessage>(querySnapshot);
+                callback(messages);
+            });
+
+            return unsubscribe;
+        } catch (error) {
+            throw new Error(
+                'Failed to subscribe to chat messages with chat id' +
                     (error as Error).toString()
             );
         }

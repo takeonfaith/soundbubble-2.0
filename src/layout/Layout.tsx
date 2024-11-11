@@ -11,7 +11,6 @@ import { ThemeButton } from '../features/themeButton';
 import { Button } from '../shared/components/button';
 import { Flex } from '../shared/components/flex';
 import { Logo } from '../shared/components/logo';
-import { NEW_LAYOUT } from '../shared/constants';
 import { useMediaMetadata } from '../shared/hooks/useMediaMetadata';
 import { Confirm } from './confirm/ui';
 import { FullScreenFullScreenPlayer } from './fullScreenPlayer';
@@ -27,10 +26,7 @@ import { Sidebar } from './sidebar';
 import { Toast } from './toast/ui';
 
 export const LayoutStyled = styled.div`
-    height: calc(
-        100dvh - var(--player-size) - var(--page-gap) * 2 -
-            ${NEW_LAYOUT ? '56px' : '0px'}
-    );
+    height: calc(100dvh - var(--player-size) - var(--page-gap) * 2 - 56px);
     display: flex;
     padding-top: var(--page-gap);
     padding-right: var(--page-gap);
@@ -98,8 +94,6 @@ export const Layout = () => {
     const { currentChatId } = chatModel.useChats();
     const [params] = useSearchParams();
     const queryValue = params.get('query') ?? '';
-    console.log(queryValue);
-
     const where = (params.get('where') ?? '') as TPlace | '';
     useMediaMetadata();
 
@@ -118,37 +112,36 @@ export const Layout = () => {
             <FullScreenFullScreenPlayer open={fullScreen} />
             <Modal />
             <Popup />
-            {NEW_LAYOUT && (
-                <LayoutHeader>
-                    <Flex gap={42}>
-                        <Flex gap={20}>
-                            <Logo />
-                            <ThemeButton />
-                        </Flex>
-                        <GlobalSearchWrapper>
-                            <GlobalSearch
-                                showTabs={false}
-                                queryValue={queryValue}
-                                where={where}
-                            />
-                        </GlobalSearchWrapper>
+
+            <LayoutHeader>
+                <Flex gap={22}>
+                    <Flex gap={40}>
+                        <Logo />
+                        <ThemeButton />
                     </Flex>
-                    <>
-                        {currentUser && (
-                            <Button $width="40px" onClick={handleOpenUserPopup}>
-                                {currentUser.isAdmin && <AdminCircle />}
-                                <UserCover
-                                    colors={currentUser?.imageColors}
-                                    src={currentUser?.photoURL}
-                                    size={'30px'}
-                                    isAuthor={currentUser?.isAuthor}
-                                />
-                            </Button>
-                        )}
-                        <LoginButton />
-                    </>
-                </LayoutHeader>
-            )}
+                    <GlobalSearchWrapper>
+                        <GlobalSearch
+                            showTabs={false}
+                            queryValue={queryValue}
+                            where={where}
+                        />
+                    </GlobalSearchWrapper>
+                </Flex>
+                <>
+                    {currentUser && (
+                        <Button $width="40px" onClick={handleOpenUserPopup}>
+                            {currentUser.isAdmin && <AdminCircle />}
+                            <UserCover
+                                colors={currentUser?.imageColors}
+                                src={currentUser?.photoURL}
+                                size={'30px'}
+                                isAuthor={currentUser?.isAuthor}
+                            />
+                        </Button>
+                    )}
+                    <LoginButton />
+                </>
+            </LayoutHeader>
             <LayoutStyled className={currentChatId ? 'chat-page' : ''}>
                 <Sidebar />
                 <RightSide>

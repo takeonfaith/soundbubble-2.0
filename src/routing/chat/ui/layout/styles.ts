@@ -2,6 +2,7 @@ import { styled } from 'styled-components';
 import { LastMessageSentTimeStyled } from '../../../../entities/chat/ui/styles';
 import { Button } from '../../../../shared/components/button';
 import { Textarea } from '../../../../shared/components/textarea';
+import { MAX_CHAT_WIDTH } from '../../constants';
 
 export const MessageWrapper = styled.div`
     height: 100%;
@@ -163,7 +164,7 @@ export const ChatInputArea = styled.div`
     gap: 10px;
     width: 90%;
     min-height: 60px;
-    max-width: 650px;
+    max-width: ${MAX_CHAT_WIDTH};
     max-height: 100px;
     position: absolute;
     bottom: 0;
@@ -235,9 +236,9 @@ export const MessageSecton = styled.div`
     display: flex;
     align-items: flex-end;
     gap: 10px;
-    padding: 6px 0px;
+    padding: 6px 28px;
     width: 100%;
-    max-width: 650px;
+    max-width: calc(${MAX_CHAT_WIDTH} + 56px);
 
     &.mine {
         flex-direction: row-reverse;
@@ -266,6 +267,10 @@ export const MessagesSection = styled.div`
     flex-direction: column;
     gap: 2px;
     width: fit-content;
+
+    &.system {
+        width: 100%;
+    }
 
     &.mine {
         align-items: flex-end;

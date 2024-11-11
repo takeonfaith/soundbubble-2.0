@@ -1,16 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-    AvatarSection,
-    ChatMessagesStyled,
-    MessagesDate,
-    MessageSecton,
-    MessagesSection,
-    ScrollToChatBottomButton,
-    SystemMessageItemStyled,
-    UserAvatarStyled,
-} from './styles';
-import { MessageItem } from '../message/MessageItem';
 import { IconArrowDown } from '@tabler/icons-react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useChatInfo } from '../../../../entities/chat/hooks/useChatInfo';
 import { SYSTEM_MESSAGE_SENDER } from '../../../../entities/chat/lib/getLastMessageSender';
 import { chatModel } from '../../../../entities/chat/model';
@@ -21,182 +10,218 @@ import { UserCoverBackground } from '../../../../entities/user/ui/UserCoverBackg
 import { NotificationBadge } from '../../../../layout/sidebar/styles';
 import { Flex } from '../../../../shared/components/flex';
 import { Loading } from '../../../../shared/components/loading';
+import { SkeletonPageAnimation } from '../../../../shared/components/skeleton/SkeletonPageAnimation';
 import { areDatesEqual } from '../../../../shared/funcs/areDatesEqual';
 import { prepareMessages } from '../../lib/prepareMessages';
+import { MessageItem } from '../message/MessageItem';
+import { LoadingMoreMessages } from './LoadingMoreMessages';
+import {
+    AvatarSection,
+    ChatMessagesStyled,
+    MessagesDate,
+    MessageSecton,
+    MessagesSection,
+    ScrollToChatBottomButton,
+    SystemMessageItemStyled,
+    UserAvatarStyled,
+} from './styles';
 
 export const ChatMessages = () => {
-    const {
-        chats,
-        currentChatId,
-        currentChatMessages,
-        currentChatMessagesLoading,
-        chatData,
-    } = chatModel.useChats();
+    const [cache] = chatModel.useCache();
+    const [currentChat] = chatModel.useCurrentChat();
+    const [messages, loading, loadingPrevious, canMoreBeLoaded] =
+        chatModel.useMessages();
     const [currentUser] = userModel.useUser();
     const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
-    const currentChat = chats.find((chat) => chat.id === currentChatId);
+    const scrollRef = useRef<HTMLDivElement>(null);
     const anchorRef = useRef<HTMLDivElement>(null);
 
     const { chatImage, chatTitle } = useChatInfo(
         currentChat,
-        chatData,
+        cache,
         currentUser
     );
-    const preparedMessages = prepareMessages(currentChatMessages);
+    const preparedMessages = prepareMessages(messages);
 
     const unreadMessages =
-        currentChatMessages.filter(
-            (message) => !message.seenBy?.includes(currentUser?.uid ?? '')
+        messages.filter(
+            (message) => !message?.seenBy?.includes(currentUser?.uid ?? '')
         ) ?? 0;
 
-    const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-        if (e.currentTarget.scrollTop >= e.currentTarget.scrollHeight - 800) {
-            setShouldScrollToBottom(true);
-        } else {
-            setShouldScrollToBottom(false);
-        }
+    const handleSeenMessage = (messageId: string) => {
+        // chatModel.events.seenMessage(messageId);
     };
 
-    const handleSeenMessage = (messageId: string) => {
-        chatModel.events.seenMessage(messageId);
+    const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+        // const should =
+        //     e.currentTarget.scrollTop + window.innerHeight - 218.5 >=
+        //     e.currentTarget.scrollHeight;
+        // setShouldScrollToBottom(should);
     };
 
     useEffect(() => {
         setShouldScrollToBottom(true);
-    }, [currentChatId]);
+    }, [currentChat?.id]);
 
     useEffect(() => {
-        if (anchorRef.current && shouldScrollToBottom) {
-            anchorRef.current.scrollIntoView({
+        if (shouldScrollToBottom && !loading) {
+            anchorRef.current?.scrollIntoView({
+                behavior: 'instant',
                 block: 'end',
             });
         }
-    }, [currentChatMessages.length, shouldScrollToBottom]);
+    }, [messages.length, loading, shouldScrollToBottom]);
 
     if (!currentChat) return null;
 
     return (
-        <ChatMessagesStyled onScroll={handleScroll}>
-            {currentChatMessagesLoading && (
-                <Flex jc="center" height="100%" width="100%">
-                    <Loading />
-                </Flex>
-            )}
-            {!currentChatMessagesLoading &&
-                preparedMessages.map((m, i, arr) => {
-                    const sender = chatData[m[0].sender] as TUser;
-                    const isMine = m[0].sender === currentUser?.uid;
+        <ChatMessagesStyled ref={scrollRef} onScroll={handleScroll}>
+            <SkeletonPageAnimation
+                loading={loading}
+                skeleton={
+                    <Flex height="100%" width="100%" jc="center">
+                        <Loading />
+                    </Flex>
+                }
+                style={{ height: '100%' }}
+            >
+                <LoadingMoreMessages
+                    messages={messages}
+                    canMoreBeLoaded={canMoreBeLoaded}
+                    loadingPrevious={loadingPrevious}
+                    scrollRef={scrollRef}
+                    setShouldScrollToBottom={setShouldScrollToBottom}
+                />
 
-                    const showDate = !areDatesEqual(
-                        new Date(arr[i][0]?.sentTime ?? ''),
-                        new Date(arr[i - 1]?.[0]?.sentTime ?? '')
-                    );
-                    const isSystemMessage =
-                        m[0].sender === SYSTEM_MESSAGE_SENDER;
-                    const date = new Date(
-                        arr[i][0]?.sentTime ?? ''
-                    ).toLocaleDateString('ru-RU', {
-                        day: '2-digit',
-                        month: 'long',
-                        year: 'numeric',
-                    });
-                    // const isNotSeenFirst = m.find(
-                    //     (message) => message.id === firstUnreadMessageId
-                    // );
+                {!loading &&
+                    preparedMessages.map((m, i, arr) => {
+                        const sender = cache[m[0].sender] as TUser;
+                        const isMine = m[0].sender === currentUser?.uid;
 
-                    return (
-                        <React.Fragment key={i}>
-                            {showDate && <MessagesDate>{date}</MessagesDate>}
-                            {/* {isNotSeenFirst && <SystemMessageItem message={createNewMessage('soundbubble', "Unread Messages")} />} */}
-                            <MessageSecton className={isMine ? 'mine' : ''}>
-                                {!isSystemMessage && (
-                                    <AvatarSection>
-                                        <UserAvatarStyled>
-                                            <UserCover
-                                                fallbackIcon={
-                                                    <UserCover
-                                                        fallbackIcon={
-                                                            <UserCoverBackground
-                                                                width="35px"
-                                                                name={
-                                                                    chatTitle ??
-                                                                    'Undefined'
-                                                                }
-                                                            />
-                                                        }
-                                                        size="35px"
-                                                        src={chatImage}
-                                                        colors={['grey']}
-                                                        isAuthor={false}
-                                                    />
-                                                }
-                                                colors={['grey']}
-                                                size={'35px'}
-                                                src={sender?.photoURL}
-                                                isAuthor={false}
-                                            />
-                                        </UserAvatarStyled>
-                                    </AvatarSection>
+                        const showDate = !areDatesEqual(
+                            new Date(arr[i][0]?.sentTime ?? ''),
+                            new Date(arr[i - 1]?.[0]?.sentTime ?? '')
+                        );
+                        const isSystemMessage =
+                            m[0].sender === SYSTEM_MESSAGE_SENDER;
+                        const date = new Date(
+                            arr[i][0]?.sentTime ?? ''
+                        ).toLocaleDateString('ru-RU', {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric',
+                        });
+                        // const isNotSeenFirst = m.find(
+                        //     (message) => message.id === firstUnreadMessageId
+                        // );
+
+                        return (
+                            <React.Fragment key={i}>
+                                {showDate && (
+                                    <MessagesDate>{date}</MessagesDate>
                                 )}
-                                <MessagesSection
-                                    className={isMine ? 'mine' : ''}
-                                >
-                                    {m.map((message, i) => {
-                                        const isMine =
-                                            message.sender === currentUser?.uid;
+                                {/* {isNotSeenFirst && <SystemMessageItem message={createNewMessage('soundbubble', "Unread Messages")} />} */}
+                                <MessageSecton className={isMine ? 'mine' : ''}>
+                                    {!isSystemMessage && (
+                                        <AvatarSection>
+                                            <UserAvatarStyled>
+                                                <UserCover
+                                                    fallbackIcon={
+                                                        <UserCover
+                                                            fallbackIcon={
+                                                                <UserCoverBackground
+                                                                    width="35px"
+                                                                    name={
+                                                                        chatTitle ??
+                                                                        'Undefined'
+                                                                    }
+                                                                />
+                                                            }
+                                                            size="35px"
+                                                            src={chatImage}
+                                                            colors={['grey']}
+                                                            isAuthor={false}
+                                                        />
+                                                    }
+                                                    colors={['grey']}
+                                                    size={'35px'}
+                                                    src={sender?.photoURL}
+                                                    isAuthor={false}
+                                                />
+                                            </UserAvatarStyled>
+                                        </AvatarSection>
+                                    )}
+                                    <MessagesSection
+                                        className={
+                                            isSystemMessage
+                                                ? 'system'
+                                                : isMine
+                                                ? 'mine'
+                                                : ''
+                                        }
+                                    >
+                                        {m.map((message, i) => {
+                                            const isMine =
+                                                message.sender ===
+                                                currentUser?.uid;
 
-                                        const isNotSeen =
-                                            !message.seenBy?.includes(
-                                                currentUser?.uid ?? ''
-                                            );
-                                        if (isSystemMessage)
+                                            const isNotSeen =
+                                                !message.seenBy?.includes(
+                                                    currentUser?.uid ?? ''
+                                                );
+                                            if (isSystemMessage)
+                                                return (
+                                                    <SystemMessageItemStyled
+                                                        key={message.id}
+                                                    >
+                                                        {message.message}
+                                                    </SystemMessageItemStyled>
+                                                );
                                             return (
-                                                <SystemMessageItemStyled
+                                                <React.Fragment
                                                     key={message.id}
                                                 >
-                                                    {message.message}
-                                                </SystemMessageItemStyled>
+                                                    <MessageItem
+                                                        chatId={currentChat.id}
+                                                        isFirst={i === 0}
+                                                        cache={cache}
+                                                        key={message.id}
+                                                        isPrevByTheSameSender={
+                                                            i !== m.length - 1
+                                                        }
+                                                        message={message}
+                                                        isMine={isMine}
+                                                        isNotSeen={!!isNotSeen}
+                                                        onSeen={
+                                                            handleSeenMessage
+                                                        }
+                                                    />
+                                                </React.Fragment>
                                             );
-                                        return (
-                                            <React.Fragment key={message.id}>
-                                                <MessageItem
-                                                    chatId={currentChat.id}
-                                                    isFirst={i === 0}
-                                                    chatData={chatData}
-                                                    key={message.id}
-                                                    isPrevByTheSameSender={
-                                                        i !== m.length - 1
-                                                    }
-                                                    message={message}
-                                                    isMine={isMine}
-                                                    isNotSeen={!!isNotSeen}
-                                                    onSeen={handleSeenMessage}
-                                                />
-                                            </React.Fragment>
-                                        );
-                                    })}
-                                </MessagesSection>
-                            </MessageSecton>
-                            {/* {isNotSeenFirst && <div ref={anchorRef} style={{ width: '100%', minHeight: '20px' }} />} */}
-                        </React.Fragment>
-                    );
-                })}
-            {
-                <div
-                    ref={anchorRef}
-                    style={{ width: '100%', minHeight: '80px' }}
-                />
-            }
-            {!shouldScrollToBottom && (
-                <ScrollToChatBottomButton>
-                    <IconArrowDown size={20} />
-                    {unreadMessages.length !== 0 && (
-                        <NotificationBadge>
-                            {unreadMessages.length}
-                        </NotificationBadge>
-                    )}
-                </ScrollToChatBottomButton>
-            )}
+                                        })}
+                                    </MessagesSection>
+                                </MessageSecton>
+                                {/* {isNotSeenFirst && <div ref={anchorRef} style={{ width: '100%', minHeight: '20px' }} />} */}
+                            </React.Fragment>
+                        );
+                    })}
+                {
+                    <div
+                        ref={anchorRef}
+                        style={{ width: '100%', minHeight: '80px' }}
+                    />
+                }
+                {!shouldScrollToBottom && (
+                    <ScrollToChatBottomButton>
+                        <IconArrowDown size={20} />
+                        {unreadMessages.length !== 0 && (
+                            <NotificationBadge>
+                                {unreadMessages.length}
+                            </NotificationBadge>
+                        )}
+                    </ScrollToChatBottomButton>
+                )}
+            </SkeletonPageAnimation>
         </ChatMessagesStyled>
     );
 };

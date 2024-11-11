@@ -12,10 +12,11 @@ import { modalModel } from '../../layout/modal/model';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
-import { PageWrapper } from '../../shared/components/pageWrapper';
-import { ChatList } from './ChatList';
 import { PageMessage } from '../../shared/components/pageMessage';
+import { PageWrapper } from '../../shared/components/pageWrapper';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
+import { ChatList } from './ChatList';
+import { useEffect } from 'react';
 
 const ChatPageStyled = styled.div`
     width: 100%;
@@ -49,8 +50,7 @@ const ChatContent = styled.div`
 `;
 
 export const ChatPage = () => {
-    const { currentChatId } = chatModel.useChats();
-    chatModel.useLoadChats();
+    const [currentChat] = chatModel.useCurrentChat();
 
     const handleCreateChatModal = () => {
         modalModel.events.open({
@@ -66,9 +66,16 @@ export const ChatPage = () => {
         },
     });
 
+    useEffect(() => {
+        return () => {
+            chatModel.events.setCurrentChatId(null);
+            chatModel.events.canMoreBeLoaded(true);
+        };
+    }, []);
+
     return (
         <PageWrapper>
-            {!currentChatId && (
+            {!currentChat && (
                 <Header className="hide-on-desktop">
                     <MobileChatSearchStyled>
                         <Flex gap={10} width="100%">
@@ -88,8 +95,8 @@ export const ChatPage = () => {
             )}
             <ChatPageStyled>
                 <ChatList />
-                <ChatContent className={!currentChatId ? 'no-chat' : ''}>
-                    {!currentChatId ? (
+                <ChatContent className={!currentChat ? 'no-chat' : ''}>
+                    {!currentChat ? (
                         <PageMessage
                             icon={IconMessageOff}
                             title="No chat choosen"

@@ -8,6 +8,7 @@ import { OnlineIndicator } from '../../../../../entities/user/ui/styles';
 import { UserCover } from '../../../../../entities/user/ui/UserCover';
 import { UserCoverBackground } from '../../../../../entities/user/ui/UserCoverBackground';
 import { UserStatus } from '../../../../../entities/user/ui/UserStatus';
+import { modalModel } from '../../../../../layout/modal/model';
 import { popupModel } from '../../../../../layout/popup/model';
 import { Button } from '../../../../../shared/components/button';
 import { Flex } from '../../../../../shared/components/flex';
@@ -16,10 +17,12 @@ import { Subtext } from '../../../../../shared/components/subtext';
 import { ChatTypingIndicator } from '../ChatTypingIndicator';
 import { ChatHeaderStyled } from '../styles';
 import { ChatDialogContextMenu } from './ChatDialogContextMenu';
+import { ChatInfo } from './ChatInfo';
+import { ChatStatus } from './ChatStatus';
 export const ChatHeader = () => {
-    const { chats, currentChatId, chatData } = chatModel.useChats();
+    const [currentChat] = chatModel.useCurrentChat();
+    const [cache] = chatModel.useCache();
     const [currentUser] = userModel.useUser();
-    const currentChat = chats.find((chat) => chat.id === currentChatId);
 
     const {
         chatImage,
@@ -28,21 +31,35 @@ export const ChatHeader = () => {
         typing,
         membersOnline,
         statuses,
-    } = useChatInfo(currentChat, chatData, currentUser);
+    } = useChatInfo(currentChat, cache, currentUser);
 
     const navigate = useNavigate();
 
     const handleContextMenu = (e: Evt<'btn'>) => {
-        e.stopPropagation();
-        popupModel.events.open({
-            content: <ChatDialogContextMenu />,
-            e,
-            height: 136,
-        });
+        if (currentChat) {
+            e.stopPropagation();
+            popupModel.events.open({
+                content: (
+                    <ChatDialogContextMenu chat={currentChat} cache={cache} />
+                ),
+                e,
+                height: 96,
+            });
+        }
+    };
+
+    const handleOpenInfo = () => {
+        if (currentChat) {
+            modalModel.events.open({
+                title: 'Chat Information',
+                content: <ChatInfo chat={currentChat} cache={cache} />,
+                sizeY: 'm',
+            });
+        }
     };
 
     return (
-        <ChatHeaderStyled>
+        <ChatHeaderStyled onClick={handleOpenInfo}>
             <Flex gap={8}>
                 <Button
                     $width="35px"
@@ -55,7 +72,7 @@ export const ChatHeader = () => {
                     />
                 </Button>
                 <Flex gap={10}>
-                    {!!Object.keys(chatData).length && (
+                    {!!Object.keys(cache).length && (
                         <>
                             <UserCover
                                 fallbackIcon={
@@ -75,30 +92,17 @@ export const ChatHeader = () => {
                             </UserCover>
                             <Flex d="column" ai="flex-start" gap={1}>
                                 <ChatTitle>{chatTitle ?? 'Untitled'}</ChatTitle>
-                                <ChatTypingIndicator
-                                    typing={typing}
+                                <ChatStatus
                                     isGroupChat={isGroupChat}
-                                >
-                                    {isGroupChat ? (
-                                        <Subtext>
-                                            {currentChat?.participants.length
-                                                ? `${currentChat?.participants.length} members`
-                                                : null}
-                                            {membersOnline !== 0 &&
-                                                `, ${membersOnline} online`}
-                                        </Subtext>
-                                    ) : (
-                                        <UserStatus
-                                            isAuthor={false}
-                                            showLastSeen
-                                            status={statuses[0]}
-                                        />
-                                    )}
-                                </ChatTypingIndicator>
+                                    typing={typing}
+                                    membersOnline={membersOnline}
+                                    participants={currentChat?.participants}
+                                    statuses={statuses}
+                                />
                             </Flex>
                         </>
                     )}
-                    {!Object.keys(chatData).length && (
+                    {!Object.keys(cache).length && (
                         <Flex gap={16}>
                             <SkeletonShape
                                 width="35px"

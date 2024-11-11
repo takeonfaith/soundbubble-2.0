@@ -26,7 +26,7 @@ sample({
 });
 
 loadLyricsFx.failData.watch((err) => {
-    toastModel.events.show({
+    toastModel.events.add({
         type: 'error',
         message: 'Failed to load lyrics',
         duration: 5000,

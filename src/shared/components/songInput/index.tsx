@@ -125,7 +125,7 @@ export const SongInput = ({ file, onChange, error }: Props) => {
         if (file && file.type.includes('audio')) {
             onChange(file);
         } else {
-            toastModel.events.show({
+            toastModel.events.add({
                 message: 'Please select a valid audio file',
                 type: 'error',
             });

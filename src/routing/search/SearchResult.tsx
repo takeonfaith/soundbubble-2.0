@@ -126,11 +126,18 @@ export const SearchResult = () => {
                     skeleton={<SearchSkeleton />}
                 >
                     {noResult && searchQuery.length !== 0 && (
-                        <PageMessage
-                            icon={IconDiscOff}
-                            title={'Not Found'}
-                            description={'Try to change search query'}
-                        />
+                        <Flex
+                            height="100%"
+                            width="100%"
+                            jc="center"
+                            padding="20vh 0"
+                        >
+                            <PageMessage
+                                icon={IconDiscOff}
+                                title={'Not Found'}
+                                description={'Try to change search query'}
+                            />
+                        </Flex>
                     )}
                     {result.length > 0 && (
                         <>

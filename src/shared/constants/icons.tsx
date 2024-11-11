@@ -1,4 +1,5 @@
 import {
+    IconMessage,
     IconMicrophone2,
     IconMusic,
     IconPlaylist,
@@ -13,5 +14,6 @@ export const ENTITIES_ICONS = {
     playlist: <IconPlaylist />,
     album: <IconVinyl />,
     song: <IconMusic />,
+    chat: <IconMessage />,
     deleted: <IconTrashFilled />,
 };

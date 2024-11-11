@@ -68,7 +68,7 @@ export const PlaylistItem = ({
             });
             songModel.controls.loadAndPlay({ queue, currentSongIndex: 0 });
         } else {
-            toastModel.events.show({
+            toastModel.events.add({
                 type: 'info',
                 message: 'This playlist has no songs',
             });

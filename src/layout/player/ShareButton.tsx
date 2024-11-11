@@ -12,7 +12,8 @@ import { useState } from 'react';
 import { ANIMATION_DURATION } from './constants';
 
 export const ShareButton = () => {
-    const { chats, chatData } = chatModel.useChats();
+    const [chats] = chatModel.useChats();
+    const [cache] = chatModel.useCache();
     const [currentUser] = userModel.useUser();
     const { currentSong } = songModel.useSong();
     const [animation, setAnimation] = useState<number | null>(null);
@@ -26,7 +27,7 @@ export const ShareButton = () => {
                 });
                 setAnimation(index);
                 chatModel.events.sendMessage({
-                    chatId,
+                    chatIds: [chatId],
                     message,
                     showToast: true,
                 });
@@ -58,11 +59,7 @@ export const ShareButton = () => {
                                 key={chat.id}
                             >
                                 <UserCover
-                                    src={getChatImage(
-                                        chat,
-                                        chatData,
-                                        currentUser
-                                    )}
+                                    src={getChatImage(chat, cache, currentUser)}
                                     size={'30px'}
                                     colors={undefined}
                                     isAuthor={false}
