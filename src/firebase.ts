@@ -119,6 +119,12 @@ type DataType<T extends TCollections> =
           [key in keyof TCollectionType<T>]: FieldValue;
       }>;
 
+type DeepDataType<K extends TCollections, T extends TSubcollection<K>> =
+    | DeepPartial<TSubcollectionDataType<K, T>>
+    | Partial<{
+          [key in keyof TCollectionType<T>]: FieldValue;
+      }>;
+
 export class FB {
     static app = initializeApp(config);
     static auth = getAuth();
@@ -160,11 +166,11 @@ export class FB {
     static async updateDeepByIds<T extends TCollections>(
         collectionType: T,
         path: [string, TSubcollection<T>, string],
-        data: TSubcollectionDataType<T, TSubcollection<T>>
+        data: DeepDataType<T, TSubcollection<T>>
     ): Promise<void> {
         const ref = doc(this.get(collectionType), ...path);
 
-        await updateDoc(ref, data);
+        await updateDoc<DocumentData, DocumentData>(ref, data);
     }
 
     static async setDeepByIds<T extends TCollections>(

@@ -1,18 +1,31 @@
-import { IconVolume } from '@tabler/icons-react';
+import { IconVolume, IconVolumeOff } from '@tabler/icons-react';
 import { SmallControlButton } from '../../shared/components/musicControls/styles';
 import { Slider } from '../../shared/components/slider';
 import { VolumeButtonStyled } from './styles';
+import { songModel } from '../../entities/song/new-model';
 
 export const VolumeButton = () => {
+    const [volume, isMuted] = songModel.useVolume();
+    const handleChange = (e: Evt<'input'>) => {
+        if (isMuted) {
+            songModel.volume.toggle();
+        }
+        songModel.volume.update(+e.currentTarget.value / 100);
+    };
+
+    const handleMute = () => {
+        songModel.volume.toggle();
+    };
+
     return (
         <VolumeButtonStyled>
-            <SmallControlButton>
-                <IconVolume opacity={0.9} />
+            <SmallControlButton onClick={handleMute}>
+                {isMuted ? <IconVolumeOff /> : <IconVolume opacity={0.9} />}
             </SmallControlButton>
             <Slider
-                value={100}
-                duration={200}
-                onChangeTime={() => null}
+                value={isMuted ? 0 : volume * 100}
+                duration={100}
+                onChangeTime={handleChange}
                 onMouseUp={() => null}
                 color="#fff"
             />

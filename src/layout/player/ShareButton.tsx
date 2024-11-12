@@ -10,6 +10,7 @@ import { songModel } from '../../entities/song/model';
 import { SongCover } from '../../entities/song/ui/SongCover';
 import { useState } from 'react';
 import { ANIMATION_DURATION } from './constants';
+import { TChat } from '../../entities/chat/model/types';
 
 export const ShareButton = () => {
     const [chats] = chatModel.useChats();
@@ -18,17 +19,19 @@ export const ShareButton = () => {
     const { currentSong } = songModel.useSong();
     const [animation, setAnimation] = useState<number | null>(null);
 
-    const handleShare = (chatId: string, index: number) => {
+    const handleShare = (chat: TChat, index: number) => {
         return () => {
             if (currentUser && currentSong) {
-                const message = createMessageObject(currentUser?.uid, {
-                    message: '',
-                    attachedSongs: [currentSong.id],
-                });
                 setAnimation(index);
                 chatModel.events.sendMessage({
-                    chatIds: [chatId],
-                    message,
+                    chats: [chat],
+                    message: (chat) =>
+                        createMessageObject({
+                            sender: currentUser?.uid,
+                            participants: chat.participants,
+                            message: '',
+                            attachedSongs: [currentSong.id],
+                        }),
                     showToast: true,
                 });
                 setTimeout(() => {
@@ -55,7 +58,7 @@ export const ShareButton = () => {
                     .map((chat, index) => {
                         return (
                             <Button
-                                onClick={handleShare(chat.id, index)}
+                                onClick={handleShare(chat, index)}
                                 key={chat.id}
                             >
                                 <UserCover

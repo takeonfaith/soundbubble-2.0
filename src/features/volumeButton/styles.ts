@@ -10,7 +10,7 @@ export const VolumeButtonStyled = styled.div`
         width: 150px;
         left: 110%;
         position: absolute;
-		  transition: 0.2s;
+        transition: 0.2s;
     }
 
     &:hover {

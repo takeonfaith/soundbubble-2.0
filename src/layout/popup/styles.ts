@@ -18,7 +18,7 @@ export const PopupStyled = styled.div<{
     box-shadow: 0 0 40px #0000002e;
     visibility: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
     opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
-    z-index: 1000;
+    z-index: 2000;
     transform: ${({ $isOpen }) => ($isOpen ? 'scale(1)' : 'scale(0.8)')};
     transition: 0.15s opacity, 0.15s visibility, 0.15s transform;
     transform-origin: ${({ $transformOrigin }) => $transformOrigin};

@@ -63,6 +63,7 @@ export const ChatPage = () => {
         page: 'chat',
         onChangeId: (id) => {
             chatModel.events.setCurrentChatId(id === undefined ? null : id);
+            chatModel.events.canMoreBeLoaded(true);
         },
     });
 

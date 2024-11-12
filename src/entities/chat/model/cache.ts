@@ -1,6 +1,7 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
-import { $user } from '../../user/model';
+import { $friends, $library, $user } from '../../user/model';
 import { TCache, THeavyMedia } from './types';
+import { convertToMap } from '../../../shared/funcs/convertToMap';
 
 export const getNotInCacheFx = createEffect<
     THeavyMedia & { cache: TCache },
@@ -13,9 +14,14 @@ export const saveInCache = createEvent<TCache>();
 export const $cache = createStore<TCache>({});
 
 sample({
-    clock: $user,
-    filter: Boolean,
-    fn: (user) => ({ [user.uid]: user }),
+    clock: [$user, $friends, $library],
+    source: { user: $user, friends: $friends, library: $library },
+    filter: ({ user }) => !!user,
+    fn: ({ user, friends, library }) => ({
+        [user!.uid]: user!,
+        ...convertToMap(friends),
+        ...convertToMap(library),
+    }),
     target: saveInCache,
 });
 

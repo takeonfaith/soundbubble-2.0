@@ -2,20 +2,22 @@ import getUID from '../../../shared/funcs/getUID';
 import { SendStatus, TMessage } from '../model/types';
 
 export const createMessageObject = (
-    userId: string,
-    props: Partial<TMessage>
+    props: Partial<TMessage> & {
+        sender: string;
+        participants: string[];
+    }
 ): TMessage => {
+    const { participants, ...message } = props;
     return {
         id: getUID(),
-        sender: userId,
         message: '',
         sentTime: new Date().getTime(),
-        seenBy: [userId],
         attachedAlbums: [],
         attachedSongs: [],
         attachedAuthors: [],
-        inResponseToMessage: '',
+        inResponseToMessage: null,
         status: SendStatus.pending,
-        ...props,
+        unreadBy: participants.filter((p) => p !== props.sender),
+        ...message,
     };
 };

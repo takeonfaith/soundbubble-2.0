@@ -197,8 +197,10 @@ export class Playlists {
                 throw new Error('Participants not specified');
 
             await asyncRequests(participants, async (participant) => {
-                const message = createMessageObject(senderId, {
+                const message = createMessageObject({
+                    sender: senderId,
                     message: 'Invitation to playlist',
+                    participants: participants.map((p) => p.uid),
                     playlistInvitation: {
                         id: playlist.id,
                         accepted: false,

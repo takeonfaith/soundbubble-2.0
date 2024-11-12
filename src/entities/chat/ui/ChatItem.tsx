@@ -56,7 +56,7 @@ export const ChatItem = ({
         currentUser
     );
     const lastMessage = chat.lastMessage;
-    const sendStatus = getSendStatus(lastMessage);
+    const sendStatus = getSendStatus(lastMessage, chat.participants);
 
     const { sender } = getLastMessageSender(
         lastMessage,
@@ -169,7 +169,9 @@ export const ChatItem = ({
                         </LastMessageStyled>
                     </ChatTypingIndicator>
                     {!!unreadCount && (
-                        <NotificationBadge>{unreadCount}</NotificationBadge>
+                        <NotificationBadge background="blue">
+                            {unreadCount}
+                        </NotificationBadge>
                     )}
                 </Flex>
             </Flex>

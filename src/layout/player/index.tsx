@@ -32,19 +32,19 @@ export const Player = () => {
         performingAction,
         handleShowQueue,
         handleMore,
-        handleOpenFullScreenPlayer,
+        handleopen,
     } = usePlayer();
     const theme = useTheme();
 
     const { isMobile } = useCurrentDevice();
 
-    const { currentChatId } = chatModel.useChats();
+    const [currentChat] = chatModel.useCurrentChat();
 
-    if (currentChatId && isMobile) return null;
+    if (isMobile && currentChat) return null;
 
     return (
         <PlayerStyled
-            onClick={handleOpenFullScreenPlayer}
+            onClick={handleopen}
             $background={currentSong?.imageColors[0] ?? theme.colors.player}
         >
             <SongStyled>

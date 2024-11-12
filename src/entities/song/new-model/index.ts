@@ -13,6 +13,8 @@ import { $ownPlaylists, $user } from '../../user/model';
 import { createQueueObject } from '../lib/createQueueObject';
 import { shuffleArray } from '../lib/shuffleArray';
 import { LoopMode, SongState, TLoadQueue, TQueue, TSong } from '../model/types';
+import { $fullscreenPlayer, fullscreenPlayerApi } from './fullscreen-player';
+import { $isMuted, $volume, isMutedApi, volumeApi } from './volume';
 
 type TNextFrom = 'from_next_button' | 'from_end_track';
 
@@ -638,6 +640,8 @@ export const songModel = {
             shuffleMode: $shuffleMode,
         }),
     useCurrentTime: () => useUnit($currentTime),
+    useFullScreenPlayer: () => useUnit($fullscreenPlayer),
+    useVolume: () => useUnit([$volume, $isMuted]),
     controls: {
         play,
         shufflePlay,
@@ -658,5 +662,12 @@ export const songModel = {
     },
     playback: {
         setCurrentTime: currentTimeApi.set,
+    },
+    fullscreenPlayer: {
+        ...fullscreenPlayerApi,
+    },
+    volume: {
+        ...volumeApi,
+        ...isMutedApi,
     },
 };

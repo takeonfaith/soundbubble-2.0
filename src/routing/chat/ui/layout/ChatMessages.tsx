@@ -13,8 +13,8 @@ import { Loading } from '../../../../shared/components/loading';
 import { SkeletonPageAnimation } from '../../../../shared/components/skeleton/SkeletonPageAnimation';
 import { areDatesEqual } from '../../../../shared/funcs/areDatesEqual';
 import { prepareMessages } from '../../lib/prepareMessages';
-import { MessageItem } from '../message/MessageItem';
 import { LoadingMoreMessages } from './LoadingMoreMessages';
+import { MessageList } from './MessageList';
 import {
     AvatarSection,
     ChatMessagesStyled,
@@ -22,7 +22,6 @@ import {
     MessageSecton,
     MessagesSection,
     ScrollToChatBottomButton,
-    SystemMessageItemStyled,
     UserAvatarStyled,
 } from './styles';
 
@@ -49,7 +48,7 @@ export const ChatMessages = () => {
         ) ?? 0;
 
     const handleSeenMessage = (messageId: string) => {
-        // chatModel.events.seenMessage(messageId);
+        chatModel.events.updateUnread(messageId);
     };
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -64,6 +63,8 @@ export const ChatMessages = () => {
     }, [currentChat?.id]);
 
     useEffect(() => {
+        console.log(shouldScrollToBottom && !loading);
+
         if (shouldScrollToBottom && !loading) {
             anchorRef.current?.scrollIntoView({
                 behavior: 'instant',
@@ -91,6 +92,7 @@ export const ChatMessages = () => {
                     loadingPrevious={loadingPrevious}
                     scrollRef={scrollRef}
                     setShouldScrollToBottom={setShouldScrollToBottom}
+                    loading={loading}
                 />
 
                 {!loading &&
@@ -160,45 +162,19 @@ export const ChatMessages = () => {
                                                 : ''
                                         }
                                     >
-                                        {m.map((message, i) => {
-                                            const isMine =
-                                                message.sender ===
-                                                currentUser?.uid;
-
-                                            const isNotSeen =
-                                                !message.seenBy?.includes(
-                                                    currentUser?.uid ?? ''
-                                                );
-                                            if (isSystemMessage)
-                                                return (
-                                                    <SystemMessageItemStyled
-                                                        key={message.id}
-                                                    >
-                                                        {message.message}
-                                                    </SystemMessageItemStyled>
-                                                );
-                                            return (
-                                                <React.Fragment
-                                                    key={message.id}
-                                                >
-                                                    <MessageItem
-                                                        chatId={currentChat.id}
-                                                        isFirst={i === 0}
-                                                        cache={cache}
-                                                        key={message.id}
-                                                        isPrevByTheSameSender={
-                                                            i !== m.length - 1
-                                                        }
-                                                        message={message}
-                                                        isMine={isMine}
-                                                        isNotSeen={!!isNotSeen}
-                                                        onSeen={
-                                                            handleSeenMessage
-                                                        }
-                                                    />
-                                                </React.Fragment>
-                                            );
-                                        })}
+                                        <MessageList
+                                            messages={m}
+                                            chatId={currentChat.id}
+                                            participants={
+                                                currentChat.participants
+                                            }
+                                            currentUser={currentUser}
+                                            cache={cache}
+                                            handleSeenMessage={
+                                                handleSeenMessage
+                                            }
+                                            isSystemMessage={isSystemMessage}
+                                        />
                                     </MessagesSection>
                                 </MessageSecton>
                                 {/* {isNotSeenFirst && <div ref={anchorRef} style={{ width: '100%', minHeight: '20px' }} />} */}
@@ -208,7 +184,7 @@ export const ChatMessages = () => {
                 {
                     <div
                         ref={anchorRef}
-                        style={{ width: '100%', minHeight: '80px' }}
+                        style={{ width: '100%', minHeight: '90px' }}
                     />
                 }
                 {!shouldScrollToBottom && (

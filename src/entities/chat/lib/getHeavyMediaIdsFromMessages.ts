@@ -7,6 +7,9 @@ export const getHeavyMediaIdsFromMessages = (
         (acc, message) => {
             acc.songIds.push(...message.attachedSongs);
             acc.playlistIds.push(...message.attachedAlbums);
+            if (message.playlistInvitation) {
+                acc.playlistIds.push(message.playlistInvitation.id);
+            }
             acc.userIds.push(...message.attachedAuthors);
             return acc;
         },

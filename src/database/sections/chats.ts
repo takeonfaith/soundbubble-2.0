@@ -4,6 +4,7 @@ import {
     arrayUnion,
     collection,
     DocumentData,
+    getCountFromServer,
     getDocs,
     limit,
     onSnapshot,
@@ -17,11 +18,17 @@ import {
 import { createChatObject } from '../../entities/chat/lib/createChatObject';
 import { createMessageObject } from '../../entities/chat/lib/createMessageObject';
 import { SYSTEM_MESSAGE_SENDER } from '../../entities/chat/lib/getLastMessageSender';
-import { TChat, TCache, TMessage } from '../../entities/chat/model/types';
+import {
+    TChat,
+    TCache,
+    TMessage,
+    TUnreadCount,
+} from '../../entities/chat/model/types';
 import { FB } from '../../firebase';
 import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { convertToMap } from '../../shared/funcs/convertToMap';
+import { TUser } from '../../entities/user/model/types';
 
 export class Chats {
     static ref = FB.get('newChats');
@@ -36,35 +43,7 @@ export class Chats {
     static async getChatsByIds(userId: string, chatIds: string[]) {
         try {
             const chats = await FB.getByIds('newChats', chatIds);
-            const lastMessages: Record<string, TMessage> = {};
-            const chatDataObject: TCache = {};
-
-            const unreadCount: Record<string, number> = {};
-
-            // const reqs = chats.map(async (chat) => {
-            //     const { messages, cache } =
-            //         await this.getChatMessagesByChatId(chat.id, 'desc', 1);
-            //     chatDataObject = Object.assign(chatDataObject, cache);
-            //     lastMessages[chat.id] = messages[0];
-            //     unreadCount[chat.id] = (messages[0]?.seenBy ?? [])?.includes(
-            //         userId
-            //     )
-            //         ? 0
-            //         : 1;
-            // });
-
-            // await Promise.all(reqs);
-
-            return {
-                chats: chats.sort(
-                    (a, b) =>
-                        (b?.lastMessage?.sentTime ?? 0) -
-                        (a?.lastMessage?.sentTime ?? 0)
-                ),
-                chatDataObject,
-                lastMessages,
-                unreadCount,
-            };
+            return chats;
         } catch (error) {
             throw new Error('Failed to get chats by user id: ' + userId);
         }
@@ -121,22 +100,28 @@ export class Chats {
         }
     }
 
-    static async sendMessage(chatIds: string[], message: TMessage) {
+    static async sendMessage(
+        chats: TChat[],
+        getMessage: (chat: TChat) => TMessage
+    ) {
         try {
-            const send = async (chatId: string) => {
+            const send = async (chat: TChat) => {
+                const message = getMessage(chat);
+                delete message.status;
+
                 await FB.setDeepByIds(
                     'newChats',
-                    [chatId, 'messages', message.id],
+                    [chat.id, 'messages', message.id],
                     message
                 );
 
-                await FB.updateById('newChats', chatId, {
+                await FB.updateById('newChats', chat.id, {
                     lastMessage: message,
                 });
             };
 
-            await asyncRequests(chatIds, (id) => {
-                return send(id);
+            await asyncRequests(chats, (chat) => {
+                return send(chat);
             });
         } catch (error) {
             console.log(error);
@@ -163,9 +148,10 @@ export class Chats {
             await FB.setById('newChats', chat.id, chat);
             // If chat is group chat, first message should be about creation
             if (chat.chatName.length !== 0) {
-                await this.sendMessage(
-                    [chat.id],
-                    createMessageObject(SYSTEM_MESSAGE_SENDER, {
+                await this.sendMessage([chat], () =>
+                    createMessageObject({
+                        sender: SYSTEM_MESSAGE_SENDER,
+                        participants: chat.participants,
                         message: `Group ${chat.chatName} was created`,
                     })
                 );
@@ -219,11 +205,13 @@ export class Chats {
 
             if (!chat) {
                 chat = await this.createChat(
-                    createChatObject([senderId, receiverId], {})
+                    createChatObject({
+                        participants: [senderId, receiverId],
+                    })
                 );
             }
 
-            await this.sendMessage([chat.id], message);
+            await this.sendMessage([chat], () => message);
         } catch (error) {
             throw new Error(
                 'Failed to send message by user id' +
@@ -293,6 +281,62 @@ export class Chats {
             throw new Error(
                 'Failed to subscribe to chat messages with chat id' +
                     (error as Error).toString()
+            );
+        }
+    }
+
+    static async loadInitialUnreadCount(chats: TChat[], user: TUser) {
+        try {
+            const getUnreadCount = async (chat: TChat) => {
+                const q = query(
+                    FB.getSubCollection('newChats', `${chat.id}/messages`),
+                    where('unreadBy', 'array-contains', user.uid)
+                );
+                const snapshot = await getCountFromServer(q);
+
+                return { count: snapshot.data().count, id: chat.id };
+            };
+
+            const arr = await asyncRequests(chats, (chat) => {
+                return getUnreadCount(chat);
+            });
+
+            return arr.reduce((acc, { id, count }) => {
+                if (count !== 0) {
+                    acc[id] = count;
+                }
+                return acc;
+            }, {} as TUnreadCount);
+        } catch (error) {
+            throw new Error(
+                'Failed to load initial unread count for chat' +
+                    (error as Error).toString()
+            );
+        }
+    }
+
+    static async readMessages(
+        chatId: string,
+        messageIds: string[],
+        userId: string
+    ) {
+        try {
+            const read = async (messageId: string) => {
+                await FB.updateDeepByIds(
+                    'newChats',
+                    [chatId, 'messages', messageId],
+                    {
+                        unreadBy: arrayRemove(userId),
+                    }
+                );
+            };
+
+            await asyncRequests(messageIds, (messageId) => {
+                return read(messageId);
+            });
+        } catch (error) {
+            throw new Error(
+                'Failed to mark messages as read' + (error as Error).toString()
             );
         }
     }

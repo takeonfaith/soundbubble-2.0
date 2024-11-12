@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
+import { TTheme } from '../../shared/constants/theme';
 
 export const SidebarStyled = styled.aside`
     min-width: var(--sidebar-width);
@@ -150,7 +151,9 @@ export const PlaylistsStyled = styled.div`
     padding: 0 2px;
 `;
 
-export const NotificationBadge = styled.span`
+export const NotificationBadge = styled.span<{
+    background?: keyof TTheme['scheme'];
+}>`
     min-width: 20px;
     width: fit-content;
     height: 20px;
@@ -159,7 +162,8 @@ export const NotificationBadge = styled.span`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: ${({ theme }) => theme.scheme.red.main};
+    background: ${({ theme, background }) =>
+        theme.scheme[background ?? 'red'].main};
     border-radius: 10px;
     color: #fff;
     font-weight: 400;

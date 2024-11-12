@@ -7,7 +7,14 @@ import { LoopMode } from './entities/song/model/types';
 const useAppAudio = () => {
     const { state, lastTime } = songModelNew.useSong();
     const { isSliding } = songModel.playblack.usePlayback();
+    const [volume] = songModelNew.useVolume();
     const audioRef = useRef<HTMLAudioElement>(null);
+
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.volume = volume;
+        }
+    }, [volume]);
 
     const handleOnCanPlay: React.ReactEventHandler<HTMLAudioElement> = () => {
         songModelNew.state.loaded();

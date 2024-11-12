@@ -1,6 +1,5 @@
 import React from 'react';
 import { useToggleLike } from '../../entities/song/hooks/useToggleLike';
-import { songModel } from '../../entities/song/model';
 import { songModel as songModelNew } from '../../entities/song/new-model';
 import { SongMoreContextMenu } from '../../entities/song/ui/SongMoreContextMenu';
 import { userModel } from '../../entities/user/model';
@@ -20,8 +19,8 @@ export const usePlayer = () => {
     const { loggedIn } = usePrivateAction();
     const { handleToggleLike, performingAction } = useToggleLike(currentSong);
 
-    const handleOpenFullScreenPlayer = () => {
-        songModel.fullscreen.open();
+    const handleopen = () => {
+        songModelNew.fullscreenPlayer.open();
     };
 
     const handleMore: React.MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -70,6 +69,6 @@ export const usePlayer = () => {
         handleAddToPlaylist,
         handleMore,
         handleShowQueue,
-        handleOpenFullScreenPlayer,
+        handleopen,
     };
 };

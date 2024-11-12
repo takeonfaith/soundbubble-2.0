@@ -30,7 +30,9 @@ export const Slider = ({
     const { getBackgroundSize } = useMemo(
         () => ({
             getBackgroundSize: {
-                backgroundSize: `calc(${(value * 100) / duration}%) 100%`,
+                backgroundSize: `calc(${Math.floor(
+                    (value * 100) / duration
+                )}%) 100%`,
             },
         }),
         [duration, value]
@@ -69,9 +71,13 @@ export const Slider = ({
                 type="range"
                 value={value}
                 max={duration}
-                step={0.5}
+                step={1}
                 min={0}
-                onChange={onChangeTime}
+                onChange={(e) => {
+                    console.log(e.currentTarget.value);
+
+                    onChangeTime(e);
+                }}
                 onMouseMove={handleMouse}
                 onMouseUp={onMouseUp}
                 onMouseLeave={() => setSliderValuePos(0)}

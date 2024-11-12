@@ -104,8 +104,6 @@ export const PageTop = ({
             : imageColors ?? ['#3f3f3f']
     )[0];
 
-    console.log(playlist);
-
     const handleMakePrivate = (e: Evt<'btn'>) => {
         if (isOwner) {
             e.stopPropagation();

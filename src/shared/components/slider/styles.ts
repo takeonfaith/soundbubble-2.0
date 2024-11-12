@@ -68,7 +68,6 @@ export const SliderStyled = styled.input<{ color: string | undefined }>`
     }
 
     &::-webkit-slider-thumb {
-        -webkit-appearance: none;
         height: 16px;
         width: 16px;
         border-radius: 50%;

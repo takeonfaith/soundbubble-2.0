@@ -7,6 +7,7 @@ import { TMessage } from '../../../../entities/chat/model/types';
 
 type Props = {
     messages: TMessage[];
+    loading: boolean;
     canMoreBeLoaded: boolean;
     loadingPrevious: boolean;
     scrollRef: React.RefObject<HTMLDivElement>;
@@ -16,6 +17,7 @@ type Props = {
 export const LoadingMoreMessages = ({
     canMoreBeLoaded,
     messages,
+    loading,
     loadingPrevious,
     scrollRef,
     setShouldScrollToBottom,
@@ -57,7 +59,9 @@ export const LoadingMoreMessages = ({
         }
     }, [loadingPrevious, previousScrollHeight, previousScrollTop, scrollRef]);
 
-    if (!canMoreBeLoaded || messages.length === 0) return null;
+    console.log(!canMoreBeLoaded, messages.length === 0);
+
+    if (!canMoreBeLoaded || messages.length === 0 || loading) return null;
 
     return (
         <Flex width="100%" jc="center" padding="30px 0" ref={loadingRef}>

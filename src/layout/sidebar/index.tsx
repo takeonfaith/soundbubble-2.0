@@ -19,6 +19,7 @@ import {
     SidebarSectionTitle,
     SidebarStyled,
 } from './styles';
+import { chatModel } from '../../entities/chat/model';
 
 export const Sidebar = () => {
     const preparedRoutes = groupByField(menuRoutes, 'section');
@@ -26,9 +27,10 @@ export const Sidebar = () => {
     const [ownPlaylists] = userModel.useOwnPlaylists();
     const [, friendRequests] = userModel.useFriends();
     const [currentUser] = userModel.useUser();
+    const [unreadMap] = chatModel.useUnread();
 
     const notificationsDic: Record<string, number> = {
-        chat: 0,
+        chat: Object.keys(unreadMap).length,
         friends: friendRequests.length,
     };
 

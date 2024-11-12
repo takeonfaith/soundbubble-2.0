@@ -304,7 +304,7 @@ $ownPlaylists.reset(logout);
 const $addedPlaylists = createStore<TPlaylist[]>([]);
 $addedPlaylists.reset(logout);
 
-const $friends = createStore<TUser[]>([]);
+export const $friends = createStore<TUser[]>([]);
 const $friendRequests = createStore<TUser[]>([]);
 $friends.reset(logout);
 $friendRequests.reset(logout);

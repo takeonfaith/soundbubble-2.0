@@ -1,4 +1,13 @@
-import { IconDots, IconMessage2, IconPencil } from '@tabler/icons-react';
+import {
+    IconDots,
+    IconLogout,
+    IconMessage2,
+    IconPencil,
+    IconSearch,
+    IconTrash,
+    IconUser,
+    IconUserCircle,
+} from '@tabler/icons-react';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { useChatInfo } from '../../../../../entities/chat/hooks/useChatInfo';
@@ -15,6 +24,8 @@ import { Subtext } from '../../../../../shared/components/subtext';
 import { Tabs } from '../../../../../shared/components/tabs';
 import { AddUserButton } from './AddUserButton';
 import { ChatStatus } from './ChatStatus';
+import { popupModel } from '../../../../../layout/popup/model';
+import { DefaultContextMenuStyled } from '../../../../../shared/components/defaultContextMenu';
 
 const ChatInfoStyled = styled.div`
     display: flex;
@@ -32,7 +43,7 @@ const UserList = styled.div`
     border-radius: 10px;
     width: calc(100% - 40px);
     margin: 0 20px;
-    padding: 12px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -66,9 +77,27 @@ export const ChatInfo = ({ chat, cache }: Props) => {
     const queue = createQueueObject({ songs: [] });
     const [currentTab, setCurrentTab] = useState(0);
 
-    const currentAttachments = [<VerticalSongsList queue={queue} />];
+    const handleOpenContextMenu = (e: Evt<'btn'>) => {
+        e.stopPropagation();
 
-    console.log(statuses);
+        popupModel.events.open({
+            e,
+            height: 96,
+            content: (
+                <DefaultContextMenuStyled>
+                    <Button onClick={() => null}>
+                        <IconLogout />
+                        Leave chat
+                    </Button>
+                    <Button onClick={() => null}>
+                        <IconTrash />
+                        Delete chat
+                    </Button>
+                </DefaultContextMenuStyled>
+            ),
+        });
+    };
+    const currentAttachments = [<VerticalSongsList queue={queue} />];
 
     return (
         <ChatInfoStyled>
@@ -91,6 +120,20 @@ export const ChatInfo = ({ chat, cache }: Props) => {
                     />
                 </Flex>
                 <Flex gap={10}>
+                    <Button
+                        $width="80px"
+                        $height="60px"
+                        className="outline"
+                        style={{
+                            flexDirection: 'column',
+                            gap: '6px',
+                            fontWeight: '300',
+                            fontSize: '0.8rem',
+                        }}
+                    >
+                        <IconSearch size={20} />
+                        Search
+                    </Button>
                     {isGroupChat && (
                         <>
                             <Button
@@ -117,6 +160,7 @@ export const ChatInfo = ({ chat, cache }: Props) => {
                                     fontWeight: '300',
                                     fontSize: '0.8rem',
                                 }}
+                                onClick={handleOpenContextMenu}
                             >
                                 <IconDots size={20} />
                                 More
@@ -124,8 +168,19 @@ export const ChatInfo = ({ chat, cache }: Props) => {
                         </>
                     )}
                     {!isGroupChat && (
-                        <Button className="outline" $width="120px">
-                            Go to Profile
+                        <Button
+                            className="outline"
+                            $width="80px"
+                            $height="60px"
+                            style={{
+                                flexDirection: 'column',
+                                gap: '6px',
+                                fontWeight: '300',
+                                fontSize: '0.8rem',
+                            }}
+                        >
+                            <IconUserCircle size={20} />
+                            Profile
                         </Button>
                     )}
                 </Flex>

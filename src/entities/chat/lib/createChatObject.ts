@@ -4,14 +4,18 @@ import { createMessageObject } from './createMessageObject';
 import { SYSTEM_MESSAGE_SENDER } from './getLastMessageSender';
 
 export const createChatObject = (
-    participants: string[],
-    props: Partial<TChat>
+    props: Partial<TChat> & {
+        participants: string[];
+    }
 ): TChat => {
     const isGroup = props.chatName?.length !== 0;
+    const { participants } = props;
     const lastMessage =
         props.lastMessage ??
         (isGroup
-            ? createMessageObject(SYSTEM_MESSAGE_SENDER, {
+            ? createMessageObject({
+                  sender: SYSTEM_MESSAGE_SENDER,
+                  participants,
                   message: `Group ${props.chatName} was created`,
               })
             : undefined);
@@ -19,7 +23,6 @@ export const createChatObject = (
     const admins = props.admins ?? isGroup ? [participants[0]] : [];
 
     return {
-        participants,
         id: props.id ?? getUID(),
         typing: [],
         wallpaper: props.wallpaper ?? '',

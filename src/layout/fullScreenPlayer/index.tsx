@@ -22,7 +22,7 @@ export const FullScreenFullScreenPlayer = ({ open }: Props) => {
     );
 
     const handleClose = () => {
-        songModel.fullscreen.close();
+        songModelNew.fullscreenPlayer.close();
     };
 
     useEffect(() => {

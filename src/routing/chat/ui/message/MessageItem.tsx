@@ -1,6 +1,5 @@
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useRef } from 'react';
-import { getSendStatus } from '../../../../entities/chat/lib/getSendStatus';
 import {
     LocalSendStatus,
     TCache,
@@ -12,6 +11,7 @@ import { TEntity, TPlace } from '../../../../entities/search/model/types';
 import { createQueueObject } from '../../../../entities/song/lib/createQueueObject';
 import { TSong } from '../../../../entities/song/model/types';
 import { PlaneSongList } from '../../../../entities/song/ui/planeList';
+import { SongSkeleton } from '../../../../entities/song/ui/Skeleton';
 import { TUser } from '../../../../entities/user/model/types';
 import { UserItem } from '../../../../entities/user/ui';
 import { getEntityType } from '../../../../features/searchWithHints/lib/getEntityType';
@@ -30,7 +30,6 @@ import { MessageContextMenu } from './MessageContextMenu';
 import { MessageSentStatus } from './MessageSentStatus';
 import { MessageText } from './MessageText';
 import { PlaylistInvitation } from './PlaylistInvitation';
-import { SongSkeleton } from '../../../../entities/song/ui/Skeleton';
 
 type Props = {
     chatId: string;
@@ -40,6 +39,7 @@ type Props = {
     isPrevByTheSameSender: boolean;
     isFirst: boolean;
     isNotSeen: boolean;
+    sendStatus: LocalSendStatus;
     onSeen: (messageId: string) => void;
 };
 
@@ -107,8 +107,8 @@ export const MessageItem = ({
     isPrevByTheSameSender,
     isFirst,
     onSeen,
+    sendStatus,
 }: Props) => {
-    const sendStatus = getSendStatus(message);
     const showAttachments =
         message.attachedSongs.length ||
         message.attachedAlbums.length ||

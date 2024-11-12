@@ -1,24 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { useUnit } from 'effector-react';
 import { useState } from 'react';
 import { createMessageObject } from '../../entities/chat/lib/createMessageObject';
 import { chatModel } from '../../entities/chat/model';
+import { sendMessageFx } from '../../entities/chat/model/send-message';
 import { TChat } from '../../entities/chat/model/types';
 import { ChatItem } from '../../entities/chat/ui/ChatItem';
 import { TEntity } from '../../entities/search/model/types';
 import { userModel } from '../../entities/user/model';
+import { TUser } from '../../entities/user/model/types';
+import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { CheckIcon } from '../../shared/components/checkIcon';
+import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
+import { Loading } from '../../shared/components/loading';
 import { AddEntitiesUI } from '../addEntitiesUI';
 import { getEntityId } from '../searchWithHints/lib/getDividedEntity';
 import { getEntityType } from '../searchWithHints/lib/getEntityType';
 import { BadgeStyled, ShareModalStyled } from './styles';
-import { TUser } from '../../entities/user/model/types';
-import { useUnit } from 'effector-react';
-import { modalModel } from '../../layout/modal/model';
-import { Loading } from '../../shared/components/loading';
-import { Flex } from '../../shared/components/flex';
-import { sendMessageFx } from '../../entities/chat/model/send-message';
+import getUID from '../../shared/funcs/getUID';
 
 type Props = {
     entity: TEntity | null | undefined;
@@ -55,14 +56,19 @@ export const ShareModal = ({ entity }: Props) => {
                     ? [getEntityId(entity)]
                     : [];
             const attachedSongs = type === 'song' ? [getEntityId(entity)] : [];
+            const id = getUID();
             chatModel.events.sendMessage({
-                chatIds: addedChats.map((c) => c.id),
-                message: createMessageObject(currentUser?.uid, {
-                    message: messageValue,
-                    attachedAlbums,
-                    attachedAuthors,
-                    attachedSongs,
-                }),
+                chats: addedChats,
+                message: (chat) =>
+                    createMessageObject({
+                        id,
+                        sender: currentUser?.uid,
+                        participants: chat.participants,
+                        message: messageValue,
+                        attachedAlbums,
+                        attachedAuthors,
+                        attachedSongs,
+                    }),
                 showToast: true,
                 onSuccess: () => {
                     modalModel.events.close();

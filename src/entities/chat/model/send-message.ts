@@ -1,67 +1,67 @@
 import { createEffect, createEvent, sample } from 'effector';
-import { toastModel } from '../../../layout/toast/model';
-import { SendStatus, TMessage } from './types';
 import { Database } from '../../../database';
+import { toastModel } from '../../../layout/toast/model';
+import { $currentChat } from './chats';
 import { $currentChatMessages } from './messages';
+import { SendStatus, TChat, TMessage } from './types';
 
 type SendMessageProps = {
-    chatIds: string[];
-    message: TMessage;
+    chats: TChat[];
+    message: (chat: TChat) => TMessage;
     showToast?: boolean;
-    onSuccess?: (message: TMessage) => void;
+    onSuccess?: (message: (chat: TChat) => TMessage) => void;
 };
 
 export const sendMessageFx = createEffect<
     SendMessageProps,
-    { chatIds: string[]; message: TMessage },
+    Pick<SendMessageProps, 'chats' | 'message'>,
     Error
 >();
 
-export const sendMessage = createEvent<{
-    chatIds: string[];
-    message: TMessage;
-    showToast?: boolean;
-    onSuccess?: (message: TMessage) => void;
-}>();
+export const sendMessage = createEvent<SendMessageProps>();
 
 sample({
     clock: sendMessage,
-    fn: ({
-        chatIds,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        message: { status, ...message },
-        showToast,
-        onSuccess,
-    }) => {
-        return { chatIds, message, showToast, onSuccess };
+    fn: ({ chats, message, showToast, onSuccess }) => {
+        return { chats, message, showToast, onSuccess };
     },
     target: [sendMessageFx],
 });
 
 sample({
     clock: sendMessage,
-    source: $currentChatMessages,
-    fn: (store, { message }) => [...store, message],
+    source: {
+        currentChatMessages: $currentChatMessages,
+        currentChat: $currentChat,
+    },
+    filter: ({ currentChat }) => !!currentChat,
+    fn: ({ currentChatMessages, currentChat }, { message }) => [
+        ...currentChatMessages,
+        message(currentChat!),
+    ],
     target: $currentChatMessages,
 });
 
 sample({
     clock: sendMessageFx.done,
-    source: $currentChatMessages,
-    fn: (messages, { params }) => {
-        const newMessages = [...messages];
-        for (let index = messages.length - 1; index > 0; index--) {
-            const message = messages[index];
-            console.log(message, params.message);
+    source: {
+        currentChatMessages: $currentChatMessages,
+        currentChat: $currentChat,
+    },
+    filter: ({ currentChat }) => !!currentChat,
+    fn: ({ currentChatMessages, currentChat }, { params }) => {
+        const newMessages = [...currentChatMessages];
+        for (let index = currentChatMessages.length - 1; index > 0; index--) {
+            const message = currentChatMessages[index];
 
-            if (message.id === params.message.id) {
+            console.log('mi tut', message, params.message(currentChat!));
+            if (message.id === params.message(currentChat!).id) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { status, ...messageWithoutPendingStatus } = message;
                 newMessages[index] = messageWithoutPendingStatus;
                 break;
             }
         }
-        console.log(newMessages);
 
         return newMessages;
     },
@@ -102,11 +102,11 @@ sendMessageFx.failData.watch((err) => {
     });
 });
 
-sendMessageFx.use(async ({ chatIds, message, onSuccess }) => {
+sendMessageFx.use(async ({ chats, message, onSuccess }) => {
     try {
-        await Database.Chats.sendMessage(chatIds, message);
+        await Database.Chats.sendMessage(chats, message);
         onSuccess?.(message);
-        return { chatIds, message };
+        return { chats, message };
     } catch (error) {
         throw new Error((error as Error).message);
     }

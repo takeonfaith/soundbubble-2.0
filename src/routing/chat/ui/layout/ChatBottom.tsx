@@ -10,6 +10,7 @@ import { Button } from '../../../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../../../shared/components/defaultContextMenu';
 import { Flex } from '../../../../shared/components/flex';
 import { ENTITIES_ICONS } from '../../../../shared/constants/icons';
+import getUID from '../../../../shared/funcs/getUID';
 
 const AttachmentContextMenuStyled = styled(DefaultContextMenuStyled)`
     padding: 4px;
@@ -80,13 +81,16 @@ export const ChatBottom = () => {
     const handleSendMessage = () => {
         if (value.trim().length === 0 || !currentUser?.uid) return;
         if (currentChat?.id) {
-            const message = createMessageObject(currentUser?.uid, {
-                message: value,
-            });
-
+            const id = getUID();
             chatModel.events.sendMessage({
-                chatIds: [currentChat.id],
-                message,
+                chats: [currentChat],
+                message: () =>
+                    createMessageObject({
+                        id,
+                        sender: currentUser?.uid,
+                        participants: currentChat.participants,
+                        message: value,
+                    }),
             });
             chatModel.events.updateIsTyping(false);
         }

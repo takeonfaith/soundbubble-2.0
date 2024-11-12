@@ -19,9 +19,11 @@ import {
 } from './messages';
 import { sendMessage } from './send-message';
 import { loadHeavyMediaFx } from './heavy-media';
+import { $chatTotalUnreadCountMap, updateUnread } from './unread';
 
 export const chatModel = {
     useChats: () => useUnit([$chats, subscribeToChatsFx.pending]),
+    useUnread: () => useUnit([$chatTotalUnreadCountMap]),
     useCurrentChat: () => useUnit([$currentChat, addingUsersToChatFx.pending]),
     useMessages: () =>
         useUnit([
@@ -36,6 +38,7 @@ export const chatModel = {
         createChat,
         updateIsTyping,
         loadNextMessages,
+        updateUnread,
         ...currentChatIdApi,
         ...canMoreBeLoadedApi,
     },

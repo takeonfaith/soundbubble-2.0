@@ -24,6 +24,7 @@ import { Popup } from './popup';
 import { popupModel } from './popup/model';
 import { Sidebar } from './sidebar';
 import { Toast } from './toast/ui';
+import { songModel } from '../entities/song/new-model';
 
 export const LayoutStyled = styled.div`
     height: calc(100dvh - var(--player-size) - var(--page-gap) * 2 - 56px);
@@ -90,8 +91,8 @@ const GlobalSearchWrapper = styled.div`
 
 export const Layout = () => {
     const [currentUser] = userModel.useUser();
-    const fullScreen = false;
-    const { currentChatId } = chatModel.useChats();
+    const fullScreen = songModel.useFullScreenPlayer();
+    const [currentChat] = chatModel.useCurrentChat();
     const [params] = useSearchParams();
     const queryValue = params.get('query') ?? '';
     const where = (params.get('where') ?? '') as TPlace | '';
@@ -142,7 +143,7 @@ export const Layout = () => {
                     <LoginButton />
                 </>
             </LayoutHeader>
-            <LayoutStyled className={currentChatId ? 'chat-page' : ''}>
+            <LayoutStyled className={currentChat ? 'chat-page' : ''}>
                 <Sidebar />
                 <RightSide>
                     <Outlet />

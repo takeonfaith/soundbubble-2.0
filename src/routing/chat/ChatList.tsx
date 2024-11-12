@@ -14,11 +14,20 @@ import {
     DesktopWrapperStyled,
     ListOfChats,
 } from './styles';
+import { useEffect, useState } from 'react';
+import { TChat } from '../../entities/chat/model/types';
+import { normalizeString } from '../../shared/funcs/normalizeString';
+import { userModel } from '../../entities/user/model';
+import { TUser } from '../../entities/user/model/types';
 
 export const ChatList = () => {
     const [chats, loadingChats] = chatModel.useChats();
+    const [chatUnreadCount] = chatModel.useUnread();
     const [currentChat] = chatModel.useCurrentChat();
+    const [currentUser] = userModel.useUser();
     const [cache] = chatModel.useCache();
+    const [searchValue, setSearchValue] = useState('');
+    const [visibleChats, setVisibleChats] = useState<TChat[]>([]);
 
     const handleCreateChatModal = () => {
         modalModel.events.open({
@@ -26,6 +35,41 @@ export const ChatList = () => {
             content: <CreateChatModal />,
             sizeY: 'l',
         });
+    };
+
+    useEffect(() => {
+        if (searchValue.length === 0) {
+            setVisibleChats(chats);
+        }
+    }, [chats, searchValue.length]);
+
+    const handleChange = (e: Evt<'input'>) => {
+        if (e.currentTarget) {
+            setSearchValue(e.currentTarget.value);
+
+            if (e.currentTarget.value.length === 0) {
+                return setVisibleChats(chats);
+            }
+
+            const filteredChats = chats.filter((ch) => {
+                const isGroupChat = ch.chatName.length !== 0;
+                const chatName = isGroupChat
+                    ? ch.chatName
+                    : (
+                          cache[
+                              ch.participants.filter(
+                                  (p) => p !== currentUser?.uid
+                              )[0]
+                          ] as TUser
+                      ).displayName;
+
+                return normalizeString(chatName).includes(
+                    normalizeString(e.currentTarget.value)
+                );
+            });
+
+            setVisibleChats(filteredChats);
+        }
     };
 
     return (
@@ -52,6 +96,8 @@ export const ChatList = () => {
                         icon={<IconSearch />}
                         placeholder="Search for chats..."
                         style={{ borderRadius: '20px' }}
+                        onChange={handleChange}
+                        value={searchValue}
                     />
                 </ChatSearchStyled>
             </DesktopWrapperStyled>
@@ -60,11 +106,12 @@ export const ChatList = () => {
                     loading={loadingChats || !cache}
                     skeleton={<ChatsSkeleton />}
                 >
-                    {chats.map((chat) => {
+                    {visibleChats.map((chat) => {
+                        const unreadCount = chatUnreadCount[chat.id];
                         return (
                             <ChatItem
                                 isSelected={currentChat?.id === chat.id}
-                                unreadCount={0}
+                                unreadCount={unreadCount}
                                 cache={cache}
                                 chat={chat}
                                 key={chat.id}

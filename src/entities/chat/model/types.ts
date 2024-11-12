@@ -23,10 +23,11 @@ export type TMessage = {
     message: string;
     sentTime: number;
     sender: string;
-    inResponseToMessage: string;
-    seenBy: string[];
+    inResponseToMessage: string | null;
+    seenBy?: string[];
     id: string;
     status?: SendStatus;
+    unreadBy: string[];
 };
 
 export type TChat = {
@@ -54,3 +55,5 @@ export type THeavyMedia = {
     playlistIds: string[];
     userIds: string[];
 };
+
+export type TUnreadCount = Record<string, number>;
