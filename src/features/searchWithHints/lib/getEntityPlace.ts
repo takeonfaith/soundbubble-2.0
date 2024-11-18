@@ -10,7 +10,9 @@ export const getEntityPlace = (entity: TEntity): TPlace => {
     const dic: Record<string, TPlace> = {
         song: 'songs',
         playlist: 'playlists',
+        album: 'playlists',
         user: 'users',
+        author: 'users',
     };
 
     return dic[type];

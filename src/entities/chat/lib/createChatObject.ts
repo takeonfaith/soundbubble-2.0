@@ -14,6 +14,7 @@ export const createChatObject = (
         props.lastMessage ??
         (isGroup
             ? createMessageObject({
+                  id: getUID(),
                   sender: SYSTEM_MESSAGE_SENDER,
                   participants,
                   message: `Group ${props.chatName} was created`,
@@ -30,6 +31,7 @@ export const createChatObject = (
         chatImage: props.chatImage ?? '',
         admins,
         lastMessage,
+        updateTime: Date.now(),
         ...props,
     };
 };

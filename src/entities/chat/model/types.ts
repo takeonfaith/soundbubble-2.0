@@ -1,15 +1,15 @@
 import { TEntity } from '../../search/model/types';
 
 export enum LocalSendStatus {
-    error,
-    pending,
-    sent,
-    received,
+    error = 'error',
+    pending = 'pending',
+    sent = 'sent',
+    received = 'received',
 }
 
 export enum SendStatus {
-    error,
-    pending,
+    error = 'error',
+    pending = 'pending',
 }
 
 export type TMessage = {
@@ -28,6 +28,7 @@ export type TMessage = {
     id: string;
     status?: SendStatus;
     unreadBy: string[];
+    isRead?: boolean;
 };
 
 export type TChat = {
@@ -39,6 +40,11 @@ export type TChat = {
     chatImage: string;
     admins?: string[];
     lastMessage?: TMessage;
+    updateTime?: number;
+};
+
+export type TUploadChat = Omit<Partial<TChat>, 'chatImage'> & {
+    chatImage?: File | null;
 };
 
 export type TCache = Record<string, TEntity>;
@@ -57,3 +63,5 @@ export type THeavyMedia = {
 };
 
 export type TUnreadCount = Record<string, number>;
+
+export type TWallpaper = { id: string; image: string };

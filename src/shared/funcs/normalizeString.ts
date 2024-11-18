@@ -1,13 +1,14 @@
 export const normalizeString = (str: string, removeComma?: boolean) => {
-  if (!str.length) return "";
+    if (!str.length) return '';
 
-  const shouldRemoveComma = removeComma ?? true;
+    const shouldRemoveComma = removeComma ?? true;
 
-  const result = str
-    .replace(/\s/g, "")
-    .replace(/\$/g, "s")
+    const result = str
+        .replace(/\s/g, '')
+        .replace(/\$/g, 's')
 
-    .replace(/-/g, "")
-    .toLowerCase();
-  return shouldRemoveComma ? result.replace(/[,'._/]/g, "") : result;
+        .replace(/-/g, '')
+        .replace('ć', 'c')
+        .toLowerCase();
+    return shouldRemoveComma ? result.replace(/[,'._/]/g, '') : result;
 };

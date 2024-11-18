@@ -1,15 +1,14 @@
-import getUID from '../../../shared/funcs/getUID';
 import { SendStatus, TMessage } from '../model/types';
 
 export const createMessageObject = (
     props: Partial<TMessage> & {
+        id: string;
         sender: string;
         participants: string[];
     }
 ): TMessage => {
     const { participants, ...message } = props;
     return {
-        id: getUID(),
         message: '',
         sentTime: new Date().getTime(),
         attachedAlbums: [],
@@ -18,6 +17,7 @@ export const createMessageObject = (
         inResponseToMessage: null,
         status: SendStatus.pending,
         unreadBy: participants.filter((p) => p !== props.sender),
+        isRead: false,
         ...message,
     };
 };

@@ -9,7 +9,6 @@ import { PageWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { Subtext } from '../../shared/components/subtext';
 import { getTotalSongsDuration } from '../../shared/funcs/getTotalSongsDuration';
-import { AddSongsButton } from '../album/AddSongsButton';
 import { SkeletonLoading } from './Skeleton';
 import {
     BottomPlaylist,
@@ -19,6 +18,7 @@ import {
 } from './styles';
 import { PageTop } from './ui/layout/PageTop';
 import { SearchNotFoundError } from './ui/layout/SearchNotFoundError';
+import { AddSongsButton } from './ui/editing/AddSongsButton';
 
 type Props = {
     playlist: TPlaylist | null;

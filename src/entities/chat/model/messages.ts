@@ -23,13 +23,13 @@ export const subscribeToCurrentChatMessagesFx = createEffect<
 >();
 
 export const initiallyLoadChatMessagesFx = createEffect<
-    { chatId: string },
-    TMessage[],
+    { chatId: string; userId: string },
+    { messages: TMessage[]; firstUnreadMessage: TMessage | null },
     Error
 >();
 
 export const paginationLoadMessagesFx = createEffect<
-    { chatId: string; pagination: number },
+    { chatId: string; pagination: number; userId: string },
     TMessage[],
     Error
 >();
@@ -39,6 +39,7 @@ const prependChatMessages = createEvent<TMessage[]>();
 const addMessage = createEvent<TMessage>();
 
 export const $currentChatMessages = createStore<TMessage[]>([]);
+export const $firstUnreadMessage = createStore<TMessage | null>(null);
 
 const $initialLoad = createStore(true);
 const $pagination = createStore(0);
@@ -73,15 +74,22 @@ sample({
     clock: [$currentChatId, $user],
     source: { chatId: $currentChatId, user: $user },
     filter: ({ chatId, user }) => !!chatId && !!user,
-    fn: ({ chatId }) => {
-        return { chatId: chatId! };
+    fn: ({ chatId, user }) => {
+        return { chatId: chatId!, userId: user!.uid };
     },
     target: [initiallyLoadChatMessagesFx],
 });
 
 sample({
     clock: initiallyLoadChatMessagesFx.doneData,
+    fn: ({ messages }) => messages,
     target: [setCurrentChatMessages],
+});
+
+sample({
+    clock: initiallyLoadChatMessagesFx.doneData,
+    fn: ({ firstUnreadMessage }) => firstUnreadMessage,
+    target: $firstUnreadMessage,
 });
 
 sample({
@@ -90,14 +98,14 @@ sample({
     filter: (user) => {
         return !!user;
     },
-    fn: (user, { params }) => ({ userId: user!.uid, ...params }),
+    fn: (_, { params }) => ({ ...params }),
     target: subscribeToCurrentChatMessagesFx,
 });
 
 // Loading music, users etc ...
 sample({
     clock: initiallyLoadChatMessagesFx.doneData,
-    fn: getHeavyMediaIdsFromMessages,
+    fn: ({ messages }) => getHeavyMediaIdsFromMessages(messages),
     target: loadHeavyMedia,
 });
 
@@ -108,10 +116,22 @@ sample({
         initial: $initialLoad,
         user: $user,
     },
-    filter: ({ initial, user }, message) => {
-        return !initial && user?.uid !== message.sender;
+    filter: ({ initial, user, messages }, message) => {
+        const lastMessage = messages[messages.length - 1];
+        return (
+            (!initial &&
+                user?.uid !== message.sender &&
+                lastMessage.sentTime < message.sentTime) ||
+            lastMessage.isRead !== message.isRead
+        );
     },
     fn: ({ messages }, message) => {
+        const lastMessage = messages[messages.length - 1];
+
+        if (message.id === lastMessage.id) {
+            return [...messages.slice(0, messages.length - 1), message];
+        }
+
         return [...messages, message];
     },
     target: $currentChatMessages,
@@ -133,9 +153,13 @@ sample({
 
 sample({
     clock: loadNextMessages,
-    source: { chatId: $currentChatId, pagination: $pagination },
-    filter: ({ chatId }) => !!chatId,
-    fn: ({ chatId, pagination }) => ({ pagination, chatId: chatId! }),
+    source: { chatId: $currentChatId, pagination: $pagination, user: $user },
+    filter: ({ chatId, user }) => !!chatId && !!user,
+    fn: ({ chatId, pagination, user }) => ({
+        pagination,
+        chatId: chatId!,
+        userId: user!.uid,
+    }),
     target: paginationLoadMessagesFx,
 });
 
@@ -154,9 +178,7 @@ sample({
 sample({
     clock: paginationLoadMessagesFx.doneData,
     filter: (messages) => {
-        console.log('prepending', messages);
-
-        return messages.length === 0;
+        return messages.length < MAX_MESSAGES_PER_LOAD;
     },
     fn: () => false,
     target: $canMoreBeLoaded,
@@ -175,33 +197,35 @@ $currentChatId.watch((id) => {
     }
 });
 
-initiallyLoadChatMessagesFx.use(async ({ chatId }) => {
+initiallyLoadChatMessagesFx.use(async ({ chatId, userId }) => {
     const res = await Database.Chats.getChatMessagesByChatId(
         chatId,
+        userId,
         'desc',
         MAX_MESSAGES_PER_LOAD
     );
     return res;
 });
 
-paginationLoadMessagesFx.use(async ({ chatId }) => {
+paginationLoadMessagesFx.use(async ({ chatId, userId }) => {
     const res = await Database.Chats.getChatMessagesByChatId(
         chatId,
+        userId,
         'desc',
         MAX_MESSAGES_PER_LOAD,
         true
     );
-    return res;
+
+    return res.messages;
 });
 
-subscribeToCurrentChatMessagesFx.use(async ({ chatId, userId }) => {
+subscribeToCurrentChatMessagesFx.use(async ({ chatId }) => {
     unsubscribe?.();
 
     unsubscribe = await Database.Chats.subscribeToChatMessagesWithChatId(
         chatId,
-        userId,
         (messages) => {
-            console.log('messages received', messages[0]);
+            console.log('subscrube', messages);
 
             addMessage(messages[0]);
         }

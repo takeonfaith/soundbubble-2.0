@@ -81,7 +81,8 @@ const $lastTime = createStore<number>(-1);
 export const $currentSong = combine(
     $queue,
     $currentSongIndex,
-    (queue, currentSongIndex) => queue?.songs[currentSongIndex]
+    (queue, currentSongIndex) => queue?.songs[currentSongIndex],
+    { skipVoid: false }
 );
 
 const $currentSongDuration = $currentSong.map((song) => {

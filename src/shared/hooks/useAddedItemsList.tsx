@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import {
     getEntityId,
     getEntityImage,
+    getEntityName,
 } from '../../features/searchWithHints/lib/getDividedEntity';
 import { getEntityType } from '../../features/searchWithHints/lib/getEntityType';
 import { GeneralCover } from '../components/cover/GeneralCover';
 import { ENTITIES_ICONS } from '../constants/icons';
 import { TEntity } from '../../entities/search/model/types';
+import { UserCoverBackground } from '../../entities/user/ui/UserCoverBackground';
 
 export const useAddedItemsList = <T extends TEntity>(
     list: T[],
@@ -44,16 +46,25 @@ export const useAddedItemsList = <T extends TEntity>(
     const getItemImage = (item: TEntity) => {
         const type = getEntityType(item);
         const image = getEntityImage(item);
-        console.log(type);
-        
+        const name = getEntityName(item);
+
+        const children =
+            type === 'chat' ? (
+                <UserCoverBackground name={name} width="18px" />
+            ) : undefined;
+
         return (
             <GeneralCover
-                fallbackIcon={ENTITIES_ICONS[type]}
+                fallbackIcon={
+                    type === 'chat' ? undefined : ENTITIES_ICONS[type]
+                }
                 borderRadius={'100%'}
                 src={image}
                 colors={['grey']}
                 size={'18px'}
-            />
+            >
+                {children}
+            </GeneralCover>
         );
     };
 

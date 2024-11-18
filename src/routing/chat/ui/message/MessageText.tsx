@@ -22,32 +22,34 @@ export const MessageText = ({ message }: Props) => {
 
     return (
         <>
-            {splittedMessage.map((word, i) => {
-                if (isValidHttpUrl(word)) {
-                    return (
-                        <MessageLinkStyled
-                            href={word}
-                            target="_blank"
-                            rel="noreferrer"
-                            key={word + i}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                confirmModel.events.open({
-                                    text: `Are you sure you want to visit ${word}`,
-                                    onAccept: () => {
-                                        window.open(word, '_blank');
-                                    },
-                                });
-                            }}
-                        >
-                            <IconLink size={18} />
-                            {word.slice(8, word.length)}
-                        </MessageLinkStyled>
-                    );
-                }
+            {splittedMessage
+                .map((word, i) => {
+                    if (isValidHttpUrl(word)) {
+                        return (
+                            <MessageLinkStyled
+                                href={word}
+                                target="_blank"
+                                rel="noreferrer"
+                                key={word + i}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    confirmModel.events.open({
+                                        text: `Are you sure you want to visit ${word}`,
+                                        onAccept: () => {
+                                            window.open(word, '_blank');
+                                        },
+                                    });
+                                }}
+                            >
+                                <IconLink size={18} />
+                                {word.slice(8, word.length)}
+                            </MessageLinkStyled>
+                        );
+                    }
 
-                return word + ' ';
-            })}
+                    return word;
+                })
+                .join(' ')}
         </>
     );
 };

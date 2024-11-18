@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-export const UserItemStyled = styled(Link)`
+export const UserItemStyled = styled(Link)<{ disabled?: boolean }>`
     --size: calc((100vw - var(--sidebar-width)) / 8 - 37px);
 
     display: flex;
@@ -13,6 +13,8 @@ export const UserItemStyled = styled(Link)`
     padding: 0;
     border-radius: ${({ theme }) => theme.borderRadius.big};
     position: relative;
+    opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+    pointer-events: ${({ disabled }) => (disabled ? 'none' : 'all')};
 
     .verified-icon {
         min-width: 16px;

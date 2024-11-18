@@ -9,6 +9,7 @@ export const ChatItemStyled = styled(Link)`
     border-radius: 10px;
     gap: 12px;
     background: ${({ theme }) => theme.colors.pageBackground};
+    overflow: hidden;
 
     &.selected {
         background: ${({ theme }) => theme.scheme.blue.transparent};

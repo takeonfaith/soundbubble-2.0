@@ -12,6 +12,8 @@ export const GeneralCover = ({
     size,
     fallbackIcon,
     borderRadius,
+    onClick,
+    style,
 }: GeneralCoverProps) => {
     return (
         <GeneralCoverStyled
@@ -20,6 +22,8 @@ export const GeneralCover = ({
             $borderRadius={borderRadius}
             $size={size}
             $color1={colors?.[0]}
+            onClick={onClick}
+            style={style}
         >
             {src && src !== DEFAULT_IMAGE ? (
                 <Cover src={src} />

@@ -19,16 +19,18 @@ import { createChatObject } from '../../entities/chat/lib/createChatObject';
 import { createMessageObject } from '../../entities/chat/lib/createMessageObject';
 import { SYSTEM_MESSAGE_SENDER } from '../../entities/chat/lib/getLastMessageSender';
 import {
-    TChat,
     TCache,
+    TChat,
     TMessage,
     TUnreadCount,
+    TUploadChat,
 } from '../../entities/chat/model/types';
+import { TUser } from '../../entities/user/model/types';
 import { FB } from '../../firebase';
 import { asyncRequests } from '../../shared/funcs/asyncRequests';
-import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { convertToMap } from '../../shared/funcs/convertToMap';
-import { TUser } from '../../entities/user/model/types';
+import getUID from '../../shared/funcs/getUID';
+import { getDataFromDoc } from '../lib/getDataFromDoc';
 
 export class Chats {
     static ref = FB.get('newChats');
@@ -37,45 +39,128 @@ export class Chats {
         DocumentData
     > | null;
     static ownChatsQuery(userId: string) {
-        return query(this.ref, where('participants', 'array-contains', userId));
+        return [
+            where('participants', 'array-contains', userId),
+            orderBy('lastMessage.sentTime', 'desc'),
+        ];
     }
 
-    static async getChatsByIds(userId: string, chatIds: string[]) {
+    static async getChatsByIds(userId: string) {
         try {
-            const chats = await FB.getByIds('newChats', chatIds);
-            return chats;
+            const q = query(this.ref, ...this.ownChatsQuery(userId));
+            const snapshot = await getDocs(q);
+            return getDataFromDoc<TChat>(snapshot);
         } catch (error) {
             throw new Error('Failed to get chats by user id: ' + userId);
         }
     }
 
+    static async getFirstUnreadDocument(chatId: string, userId: string) {
+        try {
+            const q = query(
+                FB.getSubCollection('newChats', `${chatId}/messages`),
+                where('unreadBy', 'array-contains', userId),
+                orderBy('sentTime', 'asc'),
+                limit(1)
+            );
+
+            return await getDocs(q);
+        } catch (error) {
+            console.log(error);
+            throw new Error('Failed to get first unread message: ' + chatId);
+        }
+    }
+
     static async getChatMessagesByChatId(
         chatId: string,
+        userId: string,
         order?: 'asc' | 'desc',
         limitNumber?: number,
         paginate = false
     ) {
         try {
             const c = [];
-            if (paginate && this.lastVisible) {
-                c.push(startAfter(this.lastVisible));
-            }
 
             if (limitNumber !== undefined) c.push(limit(limitNumber));
 
-            const q = query(
+            const firstUnreadDocument = !paginate
+                ? await this.getFirstUnreadDocument(chatId, userId)
+                : undefined;
+
+            // if no unread messages load as normal
+            if (!firstUnreadDocument?.docs[0]?.data()) {
+                console.log(paginate && !!this.lastVisible?.data());
+
+                if (paginate && !!this.lastVisible?.data()) {
+                    c.push(startAfter(this.lastVisible));
+                }
+
+                if (paginate && !this.lastVisible?.data())
+                    return { messages: [], firstUnreadMessage: null };
+
+                const q = query(
+                    FB.getSubCollection('newChats', `${chatId}/messages`),
+                    orderBy('sentTime', order ?? 'asc'),
+                    ...c
+                );
+
+                const docs = await getDocs(q);
+                const messages = getDataFromDoc<TMessage>(docs);
+
+                this.lastVisible = docs.docs[docs.docs.length - 1];
+
+                return {
+                    messages: messages.reverse(),
+                    firstUnreadMessage: null,
+                };
+            }
+
+            const prevQuery = query(
                 FB.getSubCollection('newChats', `${chatId}/messages`),
-                orderBy('sentTime', order ?? 'asc'),
-                ...c
+                orderBy('sentTime', 'desc'),
+                startAfter(
+                    firstUnreadDocument.docs[
+                        firstUnreadDocument.docs.length - 1
+                    ]
+                ),
+                limit(10)
+            );
+            const prevDocs = await getDocs(prevQuery);
+            this.lastVisible = prevDocs.docs[prevDocs.docs.length - 1];
+
+            const previousMessages =
+                getDataFromDoc<TMessage>(prevDocs).reverse();
+
+            const nextQuery = query(
+                FB.getSubCollection('newChats', `${chatId}/messages`),
+                orderBy('sentTime', 'asc'),
+                startAfter(
+                    firstUnreadDocument.docs[
+                        firstUnreadDocument.docs.length - 1
+                    ]
+                )
             );
 
-            const docs = await getDocs(q);
-            const messages = getDataFromDoc<TMessage>(docs);
+            const nextMessages = getDataFromDoc<TMessage>(
+                await getDocs(nextQuery)
+            );
 
-            this.lastVisible = docs.docs[docs.docs.length - 1];
+            const firstUnreadMessage =
+                firstUnreadDocument.docs[0].data() as TMessage;
 
-            return messages.reverse();
+            const messages = [
+                ...previousMessages,
+                firstUnreadMessage,
+                ...nextMessages,
+            ];
+
+            return {
+                messages,
+                firstUnreadMessage,
+            };
         } catch (error) {
+            console.log('some error', error);
+
             throw new Error('Failed to get messages by chatId id: ' + chatId);
         }
     }
@@ -117,6 +202,7 @@ export class Chats {
 
                 await FB.updateById('newChats', chat.id, {
                     lastMessage: message,
+                    updateTime: Date.now(),
                 });
             };
 
@@ -148,8 +234,10 @@ export class Chats {
             await FB.setById('newChats', chat.id, chat);
             // If chat is group chat, first message should be about creation
             if (chat.chatName.length !== 0) {
+                const messageId = getUID();
                 await this.sendMessage([chat], () =>
                     createMessageObject({
+                        id: messageId,
                         sender: SYSTEM_MESSAGE_SENDER,
                         participants: chat.participants,
                         message: `Group ${chat.chatName} was created`,
@@ -228,8 +316,12 @@ export class Chats {
             return await FB.listenTo(
                 'newChats',
                 callback,
-                where('participants', 'array-contains', userId),
-                orderBy('lastMessage.sentTime', 'desc')
+                and(
+                    where('participants', 'array-contains', userId),
+                    where('lastMessage.sender', '!=', userId)
+                ),
+                orderBy('updateTime', 'desc'),
+                1
             );
         } catch (error) {
             console.log('ERROROROROROR', error);
@@ -249,6 +341,7 @@ export class Chats {
         try {
             await FB.updateById('newChats', chatId, {
                 typing: isTyping ? arrayUnion(userId) : arrayRemove(userId),
+                updateTime: Date.now(),
             });
         } catch (error) {
             throw new Error(
@@ -260,13 +353,11 @@ export class Chats {
 
     static async subscribeToChatMessagesWithChatId(
         chatId: string,
-        userId: string,
         callback: (messages: TMessage[]) => void
     ) {
         try {
             const q = query(
                 collection(FB.firestore, `newChats/${chatId}/messages`),
-                where('sender', '!=', userId),
                 orderBy('sentTime', 'desc'),
                 limit(1)
             );
@@ -316,28 +407,133 @@ export class Chats {
     }
 
     static async readMessages(
-        chatId: string,
+        chat: TChat,
         messageIds: string[],
         userId: string
     ) {
         try {
-            const read = async (messageId: string) => {
-                await FB.updateDeepByIds(
-                    'newChats',
-                    [chatId, 'messages', messageId],
-                    {
+            if (chat?.lastMessage?.id === messageIds[messageIds.length - 1]) {
+                await FB.updateById('newChats', chat.id, {
+                    lastMessage: {
+                        ...chat.lastMessage,
+                        isRead: true,
                         unreadBy: arrayRemove(userId),
-                    }
-                );
-            };
+                    },
+                });
+            }
 
-            await asyncRequests(messageIds, (messageId) => {
-                return read(messageId);
-            });
+            await FB.updateByIdsWithBatches(
+                'newChats',
+                [chat.id, 'messages'],
+                messageIds,
+                {
+                    isRead: true,
+                    unreadBy: arrayRemove(userId),
+                }
+            );
         } catch (error) {
             throw new Error(
                 'Failed to mark messages as read' + (error as Error).toString()
             );
+        }
+    }
+
+    static async editChat(
+        oldChat: TChat,
+        newChat: TUploadChat,
+        cache: TCache
+    ): Promise<TChat> {
+        try {
+            let newImageUrl: string | undefined = oldChat.chatImage;
+            let message;
+
+            if ('chatImage' in newChat && newChat.chatImage) {
+                newImageUrl =
+                    (await FB.uploadFile('chatCovers', newChat.chatImage)) ??
+                    oldChat.chatImage;
+
+                if (oldChat.chatImage) {
+                    await FB.deleteFile('chatCovers', oldChat.chatImage);
+                }
+
+                message = 'Group image was changed';
+            }
+
+            if ('chatImage' in newChat && !newChat.chatImage) {
+                await FB.deleteFile('chatCovers', oldChat.chatImage);
+                newImageUrl = '';
+                message = 'Group image was removed';
+            }
+
+            const finalChat: Partial<TChat> = {
+                ...newChat,
+                chatImage: newImageUrl,
+            };
+
+            if (newImageUrl === oldChat.chatImage) {
+                delete finalChat.chatImage;
+            }
+
+            await FB.updateById('newChats', oldChat.id, finalChat);
+
+            if (
+                'chatName' in newChat &&
+                oldChat.chatName !== newChat.chatName
+            ) {
+                message = `Chat name changed from "${oldChat.chatName}" to "${newChat.chatName}"`;
+            }
+
+            if ('participants' in newChat && newChat.participants) {
+                if (oldChat.participants.length < newChat.participants.length) {
+                    const newPeoplesNames = newChat.participants
+                        .filter((nP) => !oldChat.participants.includes(nP))
+                        .map((id) => (cache[id] as TUser).displayName)
+                        .join(', ');
+
+                    message = `${newPeoplesNames} entered the chat`;
+                } else {
+                    const removedPeoplesNames = oldChat.participants
+                        .filter((nP) => !newChat.participants?.includes(nP))
+                        .map((id) => (cache[id] as TUser).displayName)
+                        .join(', ');
+
+                    message = `${removedPeoplesNames} left the chat`;
+                }
+            }
+
+            if (message) {
+                const id = getUID();
+                console.log(message);
+
+                await this.sendMessage([oldChat], () => {
+                    return createMessageObject({
+                        id,
+                        sender: SYSTEM_MESSAGE_SENDER,
+                        participants:
+                            'participants' in newChat
+                                ? newChat.participants ?? []
+                                : oldChat.participants,
+                        message,
+                    });
+                });
+            }
+
+            return { ...oldChat, ...finalChat };
+        } catch (error) {
+            console.log(error);
+            throw new Error(
+                'Failed to edit chat' + (error as Error).toString()
+            );
+        }
+    }
+
+    static async loadWallpapers() {
+        try {
+            const wallpapers = await FB.getAll('chatWallpapers');
+            return wallpapers;
+        } catch (error) {
+            console.error(error);
+            throw new Error('Failed to load wallpapers');
         }
     }
 }

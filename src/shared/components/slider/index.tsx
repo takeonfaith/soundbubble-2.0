@@ -71,7 +71,7 @@ export const Slider = ({
                 type="range"
                 value={value}
                 max={duration}
-                step={1}
+                step={0.1}
                 min={0}
                 onChange={(e) => {
                     console.log(e.currentTarget.value);

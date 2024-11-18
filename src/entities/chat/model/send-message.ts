@@ -1,8 +1,8 @@
 import { createEffect, createEvent, sample } from 'effector';
 import { Database } from '../../../database';
 import { toastModel } from '../../../layout/toast/model';
-import { $currentChat } from './chats';
-import { $currentChatMessages } from './messages';
+import { $currentChat, insertChats } from './chats';
+import { $currentChatMessages, $firstUnreadMessage } from './messages';
 import { SendStatus, TChat, TMessage } from './types';
 
 type SendMessageProps = {
@@ -42,6 +42,53 @@ sample({
     target: $currentChatMessages,
 });
 
+// sort chats locally when message is sending
+sample({
+    clock: sendMessage,
+    fn: ({ message, chats }) => {
+        const newChats = chats.map((ch) => {
+            const lastMessage = message(ch!);
+
+            return { ...ch, lastMessage };
+        }) as TChat[];
+
+        return newChats;
+    },
+    target: insertChats,
+});
+
+sample({
+    clock: sendMessage,
+    source: {
+        firstUnreadMessage: $firstUnreadMessage,
+        currentChat: $currentChat,
+    },
+    filter: ({ currentChat, firstUnreadMessage }) =>
+        !!firstUnreadMessage && !!currentChat,
+    fn: () => null,
+    target: $firstUnreadMessage,
+});
+
+// sort chats locally when message is sent
+sample({
+    clock: sendMessageFx.done,
+    source: {
+        currentChatMessages: $currentChatMessages,
+        currentChat: $currentChat,
+    },
+    fn: (_, { params: { message, chats } }) => {
+        const newChats = chats.map((ch) => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { status, ...lastMessage } = message(ch!);
+
+            return { ...ch, lastMessage };
+        }) as TChat[];
+
+        return newChats;
+    },
+    target: insertChats,
+});
+
 sample({
     clock: sendMessageFx.done,
     source: {
@@ -53,8 +100,6 @@ sample({
         const newMessages = [...currentChatMessages];
         for (let index = currentChatMessages.length - 1; index > 0; index--) {
             const message = currentChatMessages[index];
-
-            console.log('mi tut', message, params.message(currentChat!));
             if (message.id === params.message(currentChat!).id) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { status, ...messageWithoutPendingStatus } = message;

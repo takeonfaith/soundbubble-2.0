@@ -103,11 +103,12 @@ export const ChatList = () => {
             </DesktopWrapperStyled>
             <ChatListStyled>
                 <SkeletonPageAnimation
-                    loading={loadingChats || !cache}
+                    loading={loadingChats}
                     skeleton={<ChatsSkeleton />}
                 >
                     {visibleChats.map((chat) => {
                         const unreadCount = chatUnreadCount[chat.id];
+
                         return (
                             <ChatItem
                                 isSelected={currentChat?.id === chat.id}

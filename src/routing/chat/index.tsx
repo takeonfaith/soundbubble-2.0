@@ -51,6 +51,7 @@ const ChatContent = styled.div`
 
 export const ChatPage = () => {
     const [currentChat] = chatModel.useCurrentChat();
+    const [amITyping] = chatModel.useTyping();
 
     const handleCreateChatModal = () => {
         modalModel.events.open({
@@ -64,6 +65,9 @@ export const ChatPage = () => {
         onChangeId: (id) => {
             chatModel.events.setCurrentChatId(id === undefined ? null : id);
             chatModel.events.canMoreBeLoaded(true);
+            if (amITyping) {
+                chatModel.events.updateIsTyping(false);
+            }
         },
     });
 

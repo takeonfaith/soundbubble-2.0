@@ -1,20 +1,21 @@
-import { IconInfoCircle, IconPhoto } from '@tabler/icons-react';
-import { TChat, TCache } from '../../../../../entities/chat/model/types';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { TCache } from '../../../../../entities/chat/model/types';
 import { modalModel } from '../../../../../layout/modal/model';
+import { popupModel } from '../../../../../layout/popup/model';
 import { Button } from '../../../../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../../../../shared/components/defaultContextMenu';
 import { ChatInfo } from './ChatInfo';
 
 type Props = {
-    chat: TChat;
     cache: TCache;
 };
 
-export const ChatDialogContextMenu = ({ cache, chat }: Props) => {
+export const ChatDialogContextMenu = ({ cache }: Props) => {
     const handleOpenInfo = () => {
+        popupModel.events.close();
         modalModel.events.open({
             title: 'Chat Information',
-            content: <ChatInfo chat={chat} cache={cache} />,
+            content: <ChatInfo cache={cache} />,
             sizeY: 'm',
         });
     };
@@ -24,10 +25,6 @@ export const ChatDialogContextMenu = ({ cache, chat }: Props) => {
             <Button onClick={handleOpenInfo}>
                 <IconInfoCircle />
                 Info
-            </Button>
-            <Button>
-                <IconPhoto />
-                Change wallpaper
             </Button>
         </DefaultContextMenuStyled>
     );

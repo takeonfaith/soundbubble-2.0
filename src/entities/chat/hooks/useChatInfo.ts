@@ -22,7 +22,7 @@ export const useChatInfo = (
     const chatTitle = isGroupChat
         ? chat?.chatName ?? ''
         : chatPartner?.displayName ?? 'Unknown';
-    const membersOnline = statuses.filter((el) => el === 'online').length;
+    const membersOnline = statuses.filter((el) => el === 'online').length + 1;
 
     return {
         chatTitle,

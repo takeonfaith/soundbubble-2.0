@@ -1,5 +1,11 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
-import { $friends, $library, $user } from '../../user/model';
+import {
+    $addedAuthors,
+    $friends,
+    $library,
+    $ownPlaylists,
+    $user,
+} from '../../user/model';
 import { TCache, THeavyMedia } from './types';
 import { convertToMap } from '../../../shared/funcs/convertToMap';
 
@@ -14,13 +20,21 @@ export const saveInCache = createEvent<TCache>();
 export const $cache = createStore<TCache>({});
 
 sample({
-    clock: [$user, $friends, $library],
-    source: { user: $user, friends: $friends, library: $library },
+    clock: [$user, $friends, $library, $addedAuthors, $ownPlaylists],
+    source: {
+        user: $user,
+        friends: $friends,
+        library: $library,
+        addedAuthors: $addedAuthors,
+        ownPlaylists: $ownPlaylists,
+    },
     filter: ({ user }) => !!user,
-    fn: ({ user, friends, library }) => ({
+    fn: ({ user, friends, library, ownPlaylists, addedAuthors }) => ({
         [user!.uid]: user!,
         ...convertToMap(friends),
         ...convertToMap(library),
+        ...convertToMap(ownPlaylists),
+        ...convertToMap(addedAuthors),
     }),
     target: saveInCache,
 });

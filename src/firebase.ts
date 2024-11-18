@@ -11,19 +11,21 @@ import {
 } from 'firebase/auth';
 import {
     DocumentData,
-    FieldValue,
-    QueryFieldFilterConstraint,
+    QueryCompositeFilterConstraint,
     QueryOrderByConstraint,
+    UpdateData,
     collection,
     deleteDoc,
     doc,
     getDoc,
     getDocs,
     getFirestore,
+    limit,
     onSnapshot,
     query,
     setDoc,
     updateDoc,
+    writeBatch,
 } from 'firebase/firestore';
 import {
     deleteObject,
@@ -33,7 +35,7 @@ import {
     uploadBytes,
 } from 'firebase/storage';
 import { getDataFromDoc } from './database/lib/getDataFromDoc';
-import { TChat, TMessage } from './entities/chat/model/types';
+import { TChat, TMessage, TWallpaper } from './entities/chat/model/types';
 import { TPlaylist } from './entities/playlist/model/types';
 import { TSuggestion } from './entities/search/model/types';
 import { TLastQueue, TLyric, TSong } from './entities/song/model/types';
@@ -95,6 +97,8 @@ type TCollectionType<T extends TCollections> = T extends 'songs'
     ? { id: string; lyrics: TLyric[] }
     : T extends 'lastQueue'
     ? TLastQueue
+    : T extends 'chatWallpapers'
+    ? TWallpaper
     : never;
 
 type TSubcollection<T extends TCollections> = T extends 'newChats'
@@ -113,17 +117,12 @@ type TStorageFolder =
     | 'songsImages'
     | 'usersImages';
 
-type DataType<T extends TCollections> =
-    | DeepPartial<TCollectionType<T>>
-    | Partial<{
-          [key in keyof TCollectionType<T>]: FieldValue;
-      }>;
+type DataType<T extends TCollections> = UpdateData<TCollectionType<T>>;
 
-type DeepDataType<K extends TCollections, T extends TSubcollection<K>> =
-    | DeepPartial<TSubcollectionDataType<K, T>>
-    | Partial<{
-          [key in keyof TCollectionType<T>]: FieldValue;
-      }>;
+type DeepDataType<
+    K extends TCollections,
+    T extends TSubcollection<K>
+> = UpdateData<TSubcollectionDataType<K, T>>;
 
 export class FB {
     static app = initializeApp(config);
@@ -199,9 +198,8 @@ export class FB {
                 onError(error as Error);
             }
 
-            return null;
-
             console.error(error);
+            return null;
         }
     }
 
@@ -257,11 +255,14 @@ export class FB {
     static async listenTo<T extends TCollections>(
         collectionType: T,
         callback: (elements: TCollectionType<T>[]) => void,
-        constraint: QueryFieldFilterConstraint,
-        orderBy?: QueryOrderByConstraint
+        constraint: QueryCompositeFilterConstraint,
+        orderBy?: QueryOrderByConstraint,
+        limitNumber?: number
     ) {
         const c = [];
         if (orderBy) c.push(orderBy);
+        if (limitNumber) c.push(limit(limitNumber));
+
         const q = query(this.get(collectionType), constraint, ...c);
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const data = getDataFromDoc<TCollectionType<T>>(querySnapshot);
@@ -299,7 +300,7 @@ export class FB {
      */
     static async deleteFile(folder: TStorageFolder, path: string) {
         if (path && path.length > 0) {
-            const name = path.split('songsImages%2F')[1];
+            const name = path.split(folder + '%2F')[1];
             const [realName] = name.split('?');
             const fileRef = ref(this.storage, `${folder}/${realName}`);
 
@@ -309,5 +310,23 @@ export class FB {
 
     static async resetPassword(email: string) {
         return await sendPasswordResetEmail(this.auth, email);
+    }
+
+    static async updateByIdsWithBatches<T extends TCollections>(
+        collectionType: T,
+        path: [string, TSubcollection<T>],
+        ids: string[],
+        data: DeepDataType<T, TSubcollection<T>>
+    ) {
+        const batch = writeBatch(this.firestore);
+
+        for (let i = 0; i < ids.length; i++) {
+            const id = ids[i];
+            const ref = doc(this.firestore, collectionType, ...path, id);
+
+            batch.update(ref, data);
+        }
+
+        await batch.commit();
     }
 }

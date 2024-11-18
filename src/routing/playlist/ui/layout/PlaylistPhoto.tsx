@@ -1,10 +1,11 @@
 import { IconPencil } from '@tabler/icons-react';
 import React from 'react';
+import { playlistModel } from '../../../../entities/playlist/model';
 import { TPlaylist } from '../../../../entities/playlist/model/types';
 import { PlaylistCover } from '../../../../entities/playlist/ui/PlaylistCover';
 import { LoadingOverlay } from '../../../../entities/song/ui/styles';
+import { EditPhotoModal } from '../../../../features/editPhotoModal';
 import { modalModel } from '../../../../layout/modal/model';
-import { EditPlaylistPhotoModal } from '../editing/EditPlaylistPhotoModal';
 import { IconWrapper } from '../../styles';
 
 type Props = {
@@ -20,9 +21,31 @@ export const PlaylistPhoto = ({
     isEditing,
     imageUrl,
 }: Props) => {
+    const [{ currentPlaylist }] = playlistModel.usePlaylist();
+
     if (!playlist && !imageUrl) {
         return <IconWrapper>{icon}</IconWrapper>;
     }
+
+    const handleUpdatePlaylistPhoto = (
+        newPhoto: File | null,
+        imageColors: string[],
+        setLoading: React.Dispatch<React.SetStateAction<boolean>>
+    ) => {
+        playlistModel.events.updatePlaylist({
+            update: {
+                image: newPhoto,
+                imageColors,
+                lastEditedTime: Date.now(),
+            },
+            onSuccess: () => {
+                modalModel.events.close();
+                setLoading(false);
+            },
+        });
+    };
+
+    if (!currentPlaylist) return null;
 
     return (
         <PlaylistCover
@@ -37,7 +60,13 @@ export const PlaylistPhoto = ({
                     onClick={() =>
                         modalModel.events.open({
                             title: 'Edit playlist cover',
-                            content: <EditPlaylistPhotoModal />,
+                            content: (
+                                <EditPhotoModal
+                                    onSave={handleUpdatePlaylistPhoto}
+                                    imageColors={currentPlaylist.imageColors}
+                                    photo={currentPlaylist.image}
+                                />
+                            ),
                         })
                     }
                 >

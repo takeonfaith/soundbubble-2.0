@@ -3,17 +3,13 @@ import { IconDiscOff } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
 import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { TPlaylist } from '../../entities/playlist/model/types';
 import { PlaylistItem } from '../../entities/playlist/ui';
 import {
     $isLoadingResult,
     $searchQuery,
     $searchResult,
 } from '../../entities/search/model';
-import { createQueueObject } from '../../entities/song/lib/createQueueObject';
-import { TSong } from '../../entities/song/model/types';
-import { PlaneSongList } from '../../entities/song/ui/planeList';
-import { TUser } from '../../entities/user/model/types';
+import { SongItem } from '../../entities/song/ui';
 import { UserItem } from '../../entities/user/ui';
 import { getEntityType } from '../../features/searchWithHints/lib/getEntityType';
 import { Flex } from '../../shared/components/flex';
@@ -37,28 +33,14 @@ const SearchPageWrapper = styled.div`
     }
 `;
 
-const dic: Record<
-    keyof typeof ENTITIES_ICONS,
-    (...props: any[]) => React.ReactNode
-> = {
-    song: (song: TSong) => (
-        <PlaneSongList
-            queue={createQueueObject({
-                songs: [song],
-                name: 'Search',
-                url: `/search/?query=${song.name}`,
-            })}
-        />
-    ),
-    author: (user: TUser) => <UserItem user={user} orientation="horizontal" />,
-    user: (user: TUser) => <UserItem user={user} orientation="horizontal" />,
-    playlist: (playlist: TPlaylist) => (
-        <PlaylistItem orientation="horizontal" playlist={playlist} />
-    ),
-    album: (playlist: TPlaylist) => (
-        <PlaylistItem orientation="horizontal" playlist={playlist} />
-    ),
-    deleted: () => <PlaylistItem orientation="horizontal" playlist={null} />,
+export const EntityTypeMap = {
+    song: SongItem,
+    author: UserItem,
+    user: UserItem,
+    playlist: PlaylistItem,
+    album: PlaylistItem,
+    deleted: PlaylistItem,
+    chat: () => null,
 };
 
 export const SearchResult = () => {
@@ -162,7 +144,19 @@ export const SearchResult = () => {
                                         return null;
 
                                     if (type) {
-                                        return dic[type](item);
+                                        const Component = EntityTypeMap[type];
+                                        return (
+                                            <Component
+                                                song={item}
+                                                playing={false}
+                                                loading={false}
+                                                index={0}
+                                                onClick={undefined}
+                                                user={item}
+                                                playlist={item}
+                                                isAuthor={false}
+                                            />
+                                        );
                                     }
                                 })}
                             </Flex>

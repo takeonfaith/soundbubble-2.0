@@ -316,7 +316,7 @@ const $userPage =
     createStore<TPageStore>(DEFAULT_PAGE_STORE).reset(resetUserPage);
 $userPage.reset(logout);
 
-const $addedAuthors = createStore<TUser[]>([]);
+export const $addedAuthors = createStore<TUser[]>([]);
 
 const { tick } = interval({
     timeout: 5 * TIME_IN_MS.minute,
@@ -330,6 +330,12 @@ sample({
     source: $user,
     fn: (user) => user,
     target: updateUserOnlineFx,
+});
+
+sample({
+    clock: updateUserOnlineFx.done,
+    fn: ({ params: user }) => ({ ...user! }),
+    target: $user,
 });
 
 sample({

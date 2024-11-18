@@ -1,4 +1,4 @@
-import { IconArrowLeft, IconDots } from '@tabler/icons-react';
+import { IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { useChatInfo } from '../../../../../entities/chat/hooks/useChatInfo';
 import { chatModel } from '../../../../../entities/chat/model';
@@ -7,16 +7,11 @@ import { userModel } from '../../../../../entities/user/model';
 import { OnlineIndicator } from '../../../../../entities/user/ui/styles';
 import { UserCover } from '../../../../../entities/user/ui/UserCover';
 import { UserCoverBackground } from '../../../../../entities/user/ui/UserCoverBackground';
-import { UserStatus } from '../../../../../entities/user/ui/UserStatus';
 import { modalModel } from '../../../../../layout/modal/model';
-import { popupModel } from '../../../../../layout/popup/model';
 import { Button } from '../../../../../shared/components/button';
 import { Flex } from '../../../../../shared/components/flex';
 import { SkeletonShape } from '../../../../../shared/components/skeleton';
-import { Subtext } from '../../../../../shared/components/subtext';
-import { ChatTypingIndicator } from '../ChatTypingIndicator';
 import { ChatHeaderStyled } from '../styles';
-import { ChatDialogContextMenu } from './ChatDialogContextMenu';
 import { ChatInfo } from './ChatInfo';
 import { ChatStatus } from './ChatStatus';
 export const ChatHeader = () => {
@@ -35,24 +30,11 @@ export const ChatHeader = () => {
 
     const navigate = useNavigate();
 
-    const handleContextMenu = (e: Evt<'btn'>) => {
-        if (currentChat) {
-            e.stopPropagation();
-            popupModel.events.open({
-                content: (
-                    <ChatDialogContextMenu chat={currentChat} cache={cache} />
-                ),
-                e,
-                height: 96,
-            });
-        }
-    };
-
     const handleOpenInfo = () => {
         if (currentChat) {
             modalModel.events.open({
                 title: 'Chat Information',
-                content: <ChatInfo chat={currentChat} cache={cache} />,
+                content: <ChatInfo cache={cache} />,
                 sizeY: 'm',
             });
         }
@@ -60,7 +42,7 @@ export const ChatHeader = () => {
 
     return (
         <ChatHeaderStyled onClick={handleOpenInfo}>
-            <Flex gap={8}>
+            <Flex gap={8} width="100%" jc="space-between">
                 <Button
                     $width="35px"
                     $height="35px"
@@ -68,39 +50,24 @@ export const ChatHeader = () => {
                 >
                     <IconArrowLeft
                         size={20}
-                        onClick={() => navigate('/chat')}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            navigate('/chat');
+                        }}
                     />
                 </Button>
                 <Flex gap={10}>
                     {!!Object.keys(cache).length && (
-                        <>
-                            <UserCover
-                                fallbackIcon={
-                                    <UserCoverBackground
-                                        name={chatTitle ?? 'Undefined'}
-                                        width="35px"
-                                    />
-                                }
-                                size="35px"
-                                src={chatImage}
-                                colors={['grey']}
-                                isAuthor={false}
-                            >
-                                {statuses[0] === 'online' && !isGroupChat && (
-                                    <OnlineIndicator />
-                                )}
-                            </UserCover>
-                            <Flex d="column" ai="flex-start" gap={1}>
-                                <ChatTitle>{chatTitle ?? 'Untitled'}</ChatTitle>
-                                <ChatStatus
-                                    isGroupChat={isGroupChat}
-                                    typing={typing}
-                                    membersOnline={membersOnline}
-                                    participants={currentChat?.participants}
-                                    statuses={statuses}
-                                />
-                            </Flex>
-                        </>
+                        <Flex d="column" gap={1}>
+                            <ChatTitle>{chatTitle ?? 'Untitled'}</ChatTitle>
+                            <ChatStatus
+                                isGroupChat={isGroupChat}
+                                typing={typing}
+                                membersOnline={membersOnline}
+                                participants={currentChat?.participants}
+                                statuses={statuses}
+                            />
+                        </Flex>
                     )}
                     {!Object.keys(cache).length && (
                         <Flex gap={16}>
@@ -116,11 +83,22 @@ export const ChatHeader = () => {
                         </Flex>
                     )}
                 </Flex>
-            </Flex>
-            <Flex width="fit-content">
-                <Button $width="40px" onClick={handleContextMenu}>
-                    <IconDots size={20} />
-                </Button>
+                <UserCover
+                    fallbackIcon={
+                        <UserCoverBackground
+                            name={chatTitle ?? 'Undefined'}
+                            width="35px"
+                        />
+                    }
+                    size="35px"
+                    src={chatImage}
+                    colors={['grey']}
+                    isAuthor={false}
+                >
+                    {!isGroupChat && statuses[0] === 'online' && (
+                        <OnlineIndicator />
+                    )}
+                </UserCover>
             </Flex>
         </ChatHeaderStyled>
     );

@@ -9,12 +9,12 @@ import {
 import { Unsubscribe } from 'firebase/firestore';
 import { Database } from '../../../database';
 import { $user, logout, setUser } from '../../user/model';
-import { TChat } from './types';
-import { getHeavyMediaIdsFromChats } from '../lib/getHeavyMediaIdsFromChats';
-import { loadHeavyMedia } from './heavy-media';
-import { showNotificationFx } from './chat-notifications';
-import { $cache } from './cache';
 import { TUser } from '../../user/model/types';
+import { getHeavyMediaIdsFromChats } from '../lib/getHeavyMediaIdsFromChats';
+import { $cache } from './cache';
+import { showNotificationFx } from './chat-notifications';
+import { loadHeavyMedia } from './heavy-media';
+import { TChat } from './types';
 
 type UpdateTypingProps = { userId: string; chatId: string; isTyping: boolean };
 
@@ -25,14 +25,10 @@ const $initialLoad = createStore(true);
 export const subscribeToChatsFx = createEffect<string, void, Error>();
 export const initialChatLoadFx = createEffect<TUser, TChat[], Error>();
 const updateIsTypingFx = createEffect<UpdateTypingProps, void, Error>();
-export const addingUsersToChatFx = createEffect<
-    { chat: TChat; userIds: string },
-    void,
-    Error
->();
 
 export const updateChats = createEvent<TChat[]>();
 export const updateIsTyping = createEvent<boolean>();
+export const insertChats = createEvent<TChat[]>();
 
 export const $currentChatId = createStore<string | undefined | null>('');
 
@@ -47,8 +43,11 @@ export const $currentChat = combine(
     $chats,
     (currentChatId, chats) => {
         return chats.find((chat) => chat.id === currentChatId);
-    }
+    },
+    { skipVoid: false }
 );
+
+export const $amITyping = createStore(false);
 
 export const currentChatIdApi = createApi($currentChatId, {
     setCurrentChatId: (_, id: string | null | undefined) => id,
@@ -143,6 +142,11 @@ sample({
 
 sample({
     clock: updateIsTyping,
+    target: $amITyping,
+});
+
+sample({
+    clock: updateIsTyping,
     source: { user: $user, chatId: $currentChatId },
     filter: ({ user, chatId }) => !!user && !!chatId,
     fn: ({ user, chatId }, isTyping) => ({
@@ -154,19 +158,15 @@ sample({
 });
 
 initialChatLoadFx.use(async (user: TUser) => {
-    const chats = await Database.Chats.getChatsByIds(
-        user.uid,
-        user.chats ?? []
-    );
+    const chats = await Database.Chats.getChatsByIds(user.uid);
     return chats;
 });
 
 subscribeToChatsFx.use(async (userId: string) => {
-    console.log('update', userId);
     unsubscribe = await Database.Chats.subscribeToChatsWithUserId(
         userId,
         (chats) => {
-            updateChats(chats);
+            insertChats(chats);
         }
     );
 });

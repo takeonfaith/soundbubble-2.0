@@ -56,7 +56,7 @@ export const ChatItem = ({
         currentUser
     );
     const lastMessage = chat.lastMessage;
-    const sendStatus = getSendStatus(lastMessage, chat.participants);
+    const sendStatus = getSendStatus(lastMessage);
 
     const { sender } = getLastMessageSender(
         lastMessage,
@@ -117,7 +117,10 @@ export const ChatItem = ({
                     {lastMessage && (
                         <LastMessageSentTimeStyled>
                             <MessageSentStatus
-                                isMine={sender === 'You'}
+                                isMine={
+                                    currentUser?.uid ===
+                                    chat.lastMessage?.sender
+                                }
                                 sendStatus={sendStatus}
                             />
                             <span>{lastMessageDate}</span>

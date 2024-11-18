@@ -11,17 +11,16 @@ import { DefaultContextMenuStyled } from '../../../../shared/components/defaultC
 import { Flex } from '../../../../shared/components/flex';
 import { ENTITIES_ICONS } from '../../../../shared/constants/icons';
 import getUID from '../../../../shared/funcs/getUID';
+import { modalModel } from '../../../../layout/modal/model';
+import { AttachEntityToChatModal } from './attach/AttachEntityToChatModal';
 
 const AttachmentContextMenuStyled = styled(DefaultContextMenuStyled)`
-    padding: 4px;
     gap: 4px;
     display: flex;
     flex-direction: column;
     background: ${({ theme }) => theme.colors.pageBackground3};
 
     button {
-        padding: 8px;
-        border-radius: 4px;
         gap: 10px;
 
         svg {
@@ -54,6 +53,10 @@ export const ChatBottom = () => {
     const [currentChat] = chatModel.useCurrentChat();
     const [, loading] = chatModel.useMessages();
     const [currentUser] = userModel.useUser();
+    const [amITyping] = chatModel.useTyping();
+    const isInChat = currentUser
+        ? currentChat?.participants.includes(currentUser.uid)
+        : false;
 
     const [value, setValue] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
@@ -62,11 +65,11 @@ export const ChatBottom = () => {
         setValue(value);
         const isTyping = value.length > 0;
         if (currentUser) {
-            const wasAlreadyTyping =
-                currentChat?.typing.includes(currentUser.uid) ?? false;
-            if (isTyping && !wasAlreadyTyping) {
+            console.log({ isTyping, amITyping });
+
+            if (isTyping && !amITyping) {
                 chatModel.events.updateIsTyping(true);
-            } else if (!isTyping && wasAlreadyTyping) {
+            } else if (!isTyping && amITyping) {
                 chatModel.events.updateIsTyping(false);
             }
         }
@@ -74,13 +77,14 @@ export const ChatBottom = () => {
 
     useEffect(() => {
         if (!loading) {
+            setValue('');
             inputRef.current?.focus();
         }
     }, [currentChat?.id, loading]);
 
     const handleSendMessage = () => {
         if (value.trim().length === 0 || !currentUser?.uid) return;
-        if (currentChat?.id) {
+        if (currentChat?.id && isInChat) {
             const id = getUID();
             chatModel.events.sendMessage({
                 chats: [currentChat],
@@ -104,7 +108,16 @@ export const ChatBottom = () => {
             e,
             content: (
                 <AttachmentContextMenuStyled>
-                    <Button className="blue">
+                    <Button
+                        className="blue"
+                        onClick={() =>
+                            modalModel.events.open({
+                                title: '',
+                                content: <AttachEntityToChatModal />,
+                                sizeY: 'l',
+                            })
+                        }
+                    >
                         {ENTITIES_ICONS.song}
                         Songs
                     </Button>
@@ -118,8 +131,7 @@ export const ChatBottom = () => {
                     </Button>
                 </AttachmentContextMenuStyled>
             ),
-            height: 136,
-            width: 170,
+            height: 144,
         });
     };
 
@@ -129,6 +141,8 @@ export const ChatBottom = () => {
             handleSendMessage();
         }
     };
+
+    if (!isInChat) return null;
 
     return (
         <ChatInputArea

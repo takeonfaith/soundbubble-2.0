@@ -1,14 +1,24 @@
-import { useState, useRef, useEffect } from 'react';
-import { playlistModel } from '../../../../entities/playlist/model';
-import { PlaylistNameStyled, PlaylistNameInput } from '../../styles';
+import { useEffect, useRef, useState } from 'react';
+import { CSSProperties } from 'styled-components';
+import { PlaylistNameInput, PlaylistNameStyled } from '../../styles';
 
 type Props = {
     name: string | undefined;
     isOwner: boolean;
+    onUpdate?: (newName: string) => void;
+    children?: (newName: string) => React.ReactNode;
     isEditing?: boolean;
+    inputStyle?: CSSProperties;
 };
 
-export const PlaylistName = ({ name, isOwner, isEditing }: Props) => {
+export const PlaylistName = ({
+    name,
+    isOwner,
+    isEditing,
+    onUpdate,
+    children,
+    inputStyle,
+}: Props) => {
     const [newName, setNewName] = useState(name);
     const [isEditingName, setIsEditingName] = useState(isEditing);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -33,13 +43,8 @@ export const PlaylistName = ({ name, isOwner, isEditing }: Props) => {
             return;
         }
 
-        if (newName !== name) {
-            playlistModel.events.updatePlaylist({
-                update: {
-                    name: newName,
-                    lastEditedTime: Date.now(),
-                },
-            });
+        if (newName && newName !== name) {
+            onUpdate?.(newName.trim());
         }
     };
 
@@ -73,7 +78,11 @@ export const PlaylistName = ({ name, isOwner, isEditing }: Props) => {
             }}
         >
             {!isEditingName ? (
-                <h1>{newName}</h1>
+                children && newName ? (
+                    children(newName)
+                ) : (
+                    <h1>{newName}</h1>
+                )
             ) : (
                 <PlaylistNameInput
                     ref={inputRef}
@@ -82,6 +91,7 @@ export const PlaylistName = ({ name, isOwner, isEditing }: Props) => {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     maxLength={100}
+                    style={{ ...inputStyle }}
                 />
             )}
         </PlaylistNameStyled>

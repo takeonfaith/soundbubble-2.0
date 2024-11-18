@@ -15,8 +15,6 @@ export const getSuggestions = (emailValue: string): TExtendedSuggestion[] => {
     const [mailName, emailValueProvider] = emailValue.split('@');
 
     if (emailValue.includes('@')) {
-        console.log(emailValueProvider);
-
         return emailProviders
             .filter((provider) => {
                 return provider.fullName.includes(emailValueProvider);

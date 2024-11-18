@@ -1,5 +1,5 @@
 import { IconArrowDown } from '@tabler/icons-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useChatInfo } from '../../../../entities/chat/hooks/useChatInfo';
 import { SYSTEM_MESSAGE_SENDER } from '../../../../entities/chat/lib/getLastMessageSender';
 import { chatModel } from '../../../../entities/chat/model';
@@ -22,15 +22,23 @@ import {
     MessageSecton,
     MessagesSection,
     ScrollToChatBottomButton,
+    SystemMessageItemStyled,
     UserAvatarStyled,
 } from './styles';
 
 export const ChatMessages = () => {
     const [cache] = chatModel.useCache();
     const [currentChat] = chatModel.useCurrentChat();
-    const [messages, loading, loadingPrevious, canMoreBeLoaded] =
-        chatModel.useMessages();
+    const [
+        messages,
+        loading,
+        loadingPrevious,
+        canMoreBeLoaded,
+        firstUnreadMessage,
+    ] = chatModel.useMessages();
     const [currentUser] = userModel.useUser();
+    const [unreadMap] = chatModel.useUnread();
+    const unreadMessages = currentChat ? unreadMap[currentChat.id] : 0;
     const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
     const scrollRef = useRef<HTMLDivElement>(null);
     const anchorRef = useRef<HTMLDivElement>(null);
@@ -42,14 +50,9 @@ export const ChatMessages = () => {
     );
     const preparedMessages = prepareMessages(messages);
 
-    const unreadMessages =
-        messages.filter(
-            (message) => !message?.seenBy?.includes(currentUser?.uid ?? '')
-        ) ?? 0;
-
-    const handleSeenMessage = (messageId: string) => {
+    const handleSeenMessage = useCallback((messageId: string) => {
         chatModel.events.updateUnread(messageId);
-    };
+    }, []);
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
         // const should =
@@ -63,20 +66,22 @@ export const ChatMessages = () => {
     }, [currentChat?.id]);
 
     useEffect(() => {
-        console.log(shouldScrollToBottom && !loading);
-
         if (shouldScrollToBottom && !loading) {
             anchorRef.current?.scrollIntoView({
                 behavior: 'instant',
                 block: 'end',
             });
         }
-    }, [messages.length, loading, shouldScrollToBottom]);
+    }, [messages.length, loading, shouldScrollToBottom, firstUnreadMessage]);
 
     if (!currentChat) return null;
 
     return (
-        <ChatMessagesStyled ref={scrollRef} onScroll={handleScroll}>
+        <ChatMessagesStyled
+            className={firstUnreadMessage ? 'shift-to-first-unread' : ''}
+            ref={scrollRef}
+            onScroll={handleScroll}
+        >
             <SkeletonPageAnimation
                 loading={loading}
                 skeleton={
@@ -86,14 +91,17 @@ export const ChatMessages = () => {
                 }
                 style={{ height: '100%' }}
             >
-                <LoadingMoreMessages
-                    messages={messages}
-                    canMoreBeLoaded={canMoreBeLoaded}
-                    loadingPrevious={loadingPrevious}
-                    scrollRef={scrollRef}
-                    setShouldScrollToBottom={setShouldScrollToBottom}
-                    loading={loading}
-                />
+                {!loading && (
+                    <LoadingMoreMessages
+                        messages={messages}
+                        currentChat={currentChat}
+                        canMoreBeLoaded={canMoreBeLoaded}
+                        loadingPrevious={loadingPrevious}
+                        scrollRef={scrollRef}
+                        setShouldScrollToBottom={setShouldScrollToBottom}
+                        shouldScrollBottom={shouldScrollToBottom}
+                    />
+                )}
 
                 {!loading &&
                     preparedMessages.map((m, i, arr) => {
@@ -113,16 +121,27 @@ export const ChatMessages = () => {
                             month: 'long',
                             year: 'numeric',
                         });
-                        // const isNotSeenFirst = m.find(
-                        //     (message) => message.id === firstUnreadMessageId
-                        // );
+                        const isNotSeenFirst = firstUnreadMessage
+                            ? m.find(
+                                  (message) =>
+                                      message.id === firstUnreadMessage.id
+                              )
+                            : false;
 
                         return (
                             <React.Fragment key={i}>
                                 {showDate && (
                                     <MessagesDate>{date}</MessagesDate>
                                 )}
-                                {/* {isNotSeenFirst && <SystemMessageItem message={createNewMessage('soundbubble', "Unread Messages")} />} */}
+                                {isNotSeenFirst && (
+                                    <SystemMessageItemStyled
+                                        className="bg"
+                                        ref={anchorRef}
+                                    >
+                                        Unread messages
+                                    </SystemMessageItemStyled>
+                                )}
+
                                 <MessageSecton className={isMine ? 'mine' : ''}>
                                     {!isSystemMessage && (
                                         <AvatarSection>
@@ -173,26 +192,22 @@ export const ChatMessages = () => {
                                             handleSeenMessage={
                                                 handleSeenMessage
                                             }
-                                            isSystemMessage={isSystemMessage}
                                         />
                                     </MessagesSection>
                                 </MessageSecton>
-                                {/* {isNotSeenFirst && <div ref={anchorRef} style={{ width: '100%', minHeight: '20px' }} />} */}
                             </React.Fragment>
                         );
                     })}
-                {
-                    <div
-                        ref={anchorRef}
-                        style={{ width: '100%', minHeight: '90px' }}
-                    />
-                }
+                <div
+                    ref={!firstUnreadMessage ? anchorRef : undefined}
+                    style={{ width: '100%', minHeight: '90px' }}
+                />
                 {!shouldScrollToBottom && (
                     <ScrollToChatBottomButton>
                         <IconArrowDown size={20} />
-                        {unreadMessages.length !== 0 && (
+                        {!!unreadMessages && (
                             <NotificationBadge>
-                                {unreadMessages.length}
+                                {unreadMessages}
                             </NotificationBadge>
                         )}
                     </ScrollToChatBottomButton>

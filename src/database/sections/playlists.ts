@@ -24,6 +24,7 @@ import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { Chats } from './chats';
 import { shuffleArray } from '../../entities/song/lib/shuffleArray';
+import getUID from '../../shared/funcs/getUID';
 
 export class Playlists {
     static ref = FB.get('playlists');
@@ -197,7 +198,9 @@ export class Playlists {
                 throw new Error('Participants not specified');
 
             await asyncRequests(participants, async (participant) => {
+                const id = getUID();
                 const message = createMessageObject({
+                    id,
                     sender: senderId,
                     message: 'Invitation to playlist',
                     participants: participants.map((p) => p.uid),

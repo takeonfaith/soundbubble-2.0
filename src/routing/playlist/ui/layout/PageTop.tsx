@@ -166,6 +166,14 @@ export const PageTop = ({
                                     isEditing={isEditing}
                                     name={name}
                                     isOwner={isOwner}
+                                    onUpdate={(newName) => {
+                                        playlistModel.events.updatePlaylist({
+                                            update: {
+                                                name: newName,
+                                                lastEditedTime: Date.now(),
+                                            },
+                                        });
+                                    }}
                                 />
                                 {(playlist?.isPrivate || isEditing) && (
                                     <Button

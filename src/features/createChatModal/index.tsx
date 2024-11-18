@@ -47,8 +47,9 @@ export const CreateChatModal = () => {
                     ...selectedFriends.map((s) => s.uid),
                 ];
 
-                const chat = createChatObject(participants, {
+                const chat = createChatObject({
                     chatName: groupTitle.trim(),
+                    participants,
                 });
 
                 chatModel.events.createChat({

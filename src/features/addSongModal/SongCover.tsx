@@ -15,7 +15,7 @@ export const SongCover = () => {
             title: 'General Info',
             content: <GeneralInfo />,
             sizeX: 's',
-            sizeY: 's',
+            sizeY: 'm',
         });
     };
 

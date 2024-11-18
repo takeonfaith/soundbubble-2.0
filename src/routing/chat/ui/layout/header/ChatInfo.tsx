@@ -1,31 +1,36 @@
 import {
+    IconCircleCheck,
     IconDots,
     IconLogout,
-    IconMessage2,
     IconPencil,
-    IconSearch,
     IconTrash,
-    IconUser,
     IconUserCircle,
 } from '@tabler/icons-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { useChatInfo } from '../../../../../entities/chat/hooks/useChatInfo';
-import { TCache, TChat } from '../../../../../entities/chat/model/types';
+import { chatModel } from '../../../../../entities/chat/model';
+import { TCache } from '../../../../../entities/chat/model/types';
 import { createQueueObject } from '../../../../../entities/song/lib/createQueueObject';
 import { VerticalSongsList } from '../../../../../entities/song/ui/verticalList';
 import { userModel } from '../../../../../entities/user/model';
 import { TUser } from '../../../../../entities/user/model/types';
 import { UserItem } from '../../../../../entities/user/ui';
-import { UserCover } from '../../../../../entities/user/ui/UserCover';
+import { popupModel } from '../../../../../layout/popup/model';
 import { Button } from '../../../../../shared/components/button';
+import { DefaultButton } from '../../../../../shared/components/button/DefaultButton';
+import { DefaultContextMenuStyled } from '../../../../../shared/components/defaultContextMenu';
 import { Flex } from '../../../../../shared/components/flex';
+import { LoadingWrapper } from '../../../../../shared/components/loadingWrapper';
 import { Subtext } from '../../../../../shared/components/subtext';
 import { Tabs } from '../../../../../shared/components/tabs';
+import { PlaylistName } from '../../../../playlist/ui/layout/PlaylistName';
 import { AddUserButton } from './AddUserButton';
+import { ChatPhoto } from './ChatPhoto';
 import { ChatStatus } from './ChatStatus';
-import { popupModel } from '../../../../../layout/popup/model';
-import { DefaultContextMenuStyled } from '../../../../../shared/components/defaultContextMenu';
+import { modalModel } from '../../../../../layout/modal/model';
+import { confirmModel } from '../../../../../layout/confirm/model';
 
 const ChatInfoStyled = styled.div`
     display: flex;
@@ -47,10 +52,49 @@ const UserList = styled.div`
     display: flex;
     flex-direction: column;
     gap: 8px;
+
+    &.shift {
+        transform: translateY(-70px);
+    }
+`;
+
+const NameAndStatus = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: 0.2s;
+
+    &.shift {
+        position: absolute;
+        left: 35px;
+        top: 400px;
+        font-size: 1.4rem;
+        align-items: flex-start;
+
+        & > * {
+            color: #fff;
+        }
+    }
+`;
+
+const ChatButtons = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.2s;
+
+    &.shift {
+        transform: translate(-132px, -110px);
+
+        button {
+            background: ${({ theme }) => theme.colors.darkHover};
+            color: #fff;
+        }
+    }
 `;
 
 type Props = {
-    chat: TChat;
     cache: TCache;
 };
 
@@ -60,8 +104,9 @@ const TABS = [
     { title: 'Authors', url: '' },
 ];
 
-export const ChatInfo = ({ chat, cache }: Props) => {
+export const ChatInfo = ({ cache }: Props) => {
     const [currentUser] = userModel.useUser();
+    const [chat] = chatModel.useCurrentChat();
     const {
         chatImage,
         chatTitle,
@@ -69,13 +114,19 @@ export const ChatInfo = ({ chat, cache }: Props) => {
         statuses,
         typing,
         membersOnline,
+        notYou,
     } = useChatInfo(chat, cache, currentUser);
-    const isOwner = chat.admins?.includes(currentUser?.uid ?? '') ?? false;
-    const users = chat.participants.map(
+    const isAdmin = currentUser
+        ? chat?.admins?.includes(currentUser.uid)
+        : false;
+    const [isEditingMode, isLoadingEditing] = chatModel.useEditing();
+    const navigate = useNavigate();
+    const users = chat?.participants.map(
         (participant) => cache[participant] as TUser
     );
     const queue = createQueueObject({ songs: [] });
     const [currentTab, setCurrentTab] = useState(0);
+    const [isFullSize, setIsFullSize] = useState(false);
 
     const handleOpenContextMenu = (e: Evt<'btn'>) => {
         e.stopPropagation();
@@ -97,81 +148,83 @@ export const ChatInfo = ({ chat, cache }: Props) => {
             ),
         });
     };
+
+    const handleDeleteUserFromChat = (user: TUser) => {
+        if (chat) {
+            confirmModel.events.open({
+                text: `Are you sure you want to remove ${user.displayName} from chat?`,
+                onAccept: () => {
+                    chatModel.events.editChat({
+                        chat,
+                        update: {
+                            participants: chat.participants.filter(
+                                (p) => p !== user.uid
+                            ),
+                        },
+                        onSuccess: () => {
+                            chatModel.events.toggleIsEditing();
+                        },
+                    });
+                },
+            });
+        }
+    };
+
     const currentAttachments = [<VerticalSongsList queue={queue} />];
+
+    if (!chat) return null;
 
     return (
         <ChatInfoStyled>
+            {isLoadingEditing && <LoadingWrapper />}
+
             <Flex d="column" gap={16}>
-                <UserCover
-                    src={chatImage}
-                    colors={[]}
-                    size={'160px'}
-                    fallbackIcon={<IconMessage2 />}
-                    isAuthor={false}
+                <ChatPhoto
+                    chat={chat}
+                    chatTitle={chatTitle}
+                    chatImage={chatImage}
+                    isEditingMode={isEditingMode}
+                    isFullSize={isFullSize}
+                    setIsFullSize={setIsFullSize}
                 />
-                <Flex d="column" gap={4}>
-                    <h3>{chatTitle}</h3>
-                    <ChatStatus
-                        isGroupChat={isGroupChat}
-                        typing={typing}
-                        membersOnline={membersOnline}
-                        participants={chat.participants}
-                        statuses={statuses}
-                    />
-                </Flex>
-                <Flex gap={10}>
-                    <Button
-                        $width="80px"
-                        $height="60px"
-                        className="outline"
-                        style={{
-                            flexDirection: 'column',
-                            gap: '6px',
-                            fontWeight: '300',
-                            fontSize: '0.8rem',
+                <NameAndStatus className={isFullSize ? 'shift' : ''}>
+                    <PlaylistName
+                        name={chatTitle}
+                        isOwner={true}
+                        onUpdate={(newName) => {
+                            chatModel.events.editChat({
+                                chat,
+                                update: {
+                                    chatName: newName,
+                                },
+                            });
+                        }}
+                        isEditing={isEditingMode}
+                        inputStyle={{
+                            fontSize: '1.17rem',
+                            fontWeight: '400',
+                            padding: '0 16px',
+                            height: '44px',
                         }}
                     >
-                        <IconSearch size={20} />
-                        Search
-                    </Button>
-                    {isGroupChat && (
-                        <>
-                            <Button
-                                $width="80px"
-                                $height="60px"
-                                className="outline"
-                                style={{
-                                    flexDirection: 'column',
-                                    gap: '6px',
-                                    fontWeight: '300',
-                                    fontSize: '0.8rem',
-                                }}
-                            >
-                                <IconPencil size={20} />
-                                Edit
-                            </Button>
-                            <Button
-                                $width="80px"
-                                $height="60px"
-                                className="outline"
-                                style={{
-                                    flexDirection: 'column',
-                                    gap: '6px',
-                                    fontWeight: '300',
-                                    fontSize: '0.8rem',
-                                }}
-                                onClick={handleOpenContextMenu}
-                            >
-                                <IconDots size={20} />
-                                More
-                            </Button>
-                        </>
+                        {(newName) => <h3>{newName}</h3>}
+                    </PlaylistName>
+                    {!isEditingMode && (
+                        <ChatStatus
+                            isGroupChat={isGroupChat}
+                            typing={typing}
+                            membersOnline={membersOnline}
+                            participants={chat.participants}
+                            statuses={statuses}
+                        />
                     )}
-                    {!isGroupChat && (
-                        <Button
-                            className="outline"
+                </NameAndStatus>
+                {!isEditingMode && (
+                    <ChatButtons className={isFullSize ? 'shift' : ''}>
+                        {/* <Button
                             $width="80px"
                             $height="60px"
+                            className="outline"
                             style={{
                                 flexDirection: 'column',
                                 gap: '6px',
@@ -179,16 +232,86 @@ export const ChatInfo = ({ chat, cache }: Props) => {
                                 fontSize: '0.8rem',
                             }}
                         >
-                            <IconUserCircle size={20} />
-                            Profile
-                        </Button>
-                    )}
-                </Flex>
+                            <IconSearch size={20} />
+                            Search
+                        </Button> */}
+                        {isGroupChat && (
+                            <>
+                                <Button
+                                    $width="80px"
+                                    $height="60px"
+                                    className="outline"
+                                    style={{
+                                        flexDirection: 'column',
+                                        gap: '6px',
+                                        fontWeight: '300',
+                                        fontSize: '0.8rem',
+                                    }}
+                                    onClick={() => {
+                                        setIsFullSize(false);
+                                        chatModel.events.toggleIsEditing();
+                                    }}
+                                >
+                                    <IconPencil size={20} />
+                                    Edit
+                                </Button>
+                                <Button
+                                    $width="80px"
+                                    $height="60px"
+                                    className="outline"
+                                    style={{
+                                        flexDirection: 'column',
+                                        gap: '6px',
+                                        fontWeight: '300',
+                                        fontSize: '0.8rem',
+                                    }}
+                                    onClick={handleOpenContextMenu}
+                                >
+                                    <IconDots size={20} />
+                                    More
+                                </Button>
+                            </>
+                        )}
+                        {!isGroupChat && (
+                            <Button
+                                className="outline"
+                                $width="80px"
+                                $height="60px"
+                                style={{
+                                    flexDirection: 'column',
+                                    gap: '6px',
+                                    fontWeight: '300',
+                                    fontSize: '0.8rem',
+                                }}
+                                onClick={() => {
+                                    navigate(
+                                        `/user/${
+                                            (cache[notYou[0]] as TUser).uid
+                                        }`
+                                    );
+                                    modalModel.events.close();
+                                }}
+                            >
+                                <IconUserCircle size={20} />
+                                Profile
+                            </Button>
+                        )}
+                    </ChatButtons>
+                )}
+                {isEditingMode && (
+                    <DefaultButton
+                        onClick={() => chatModel.events.toggleIsEditing()}
+                        appearance="primary"
+                    >
+                        <IconCircleCheck />
+                        Done editing
+                    </DefaultButton>
+                )}
             </Flex>
             {isGroupChat && (
-                <UserList>
+                <UserList className={isFullSize ? 'shift' : ''}>
                     <AddUserButton chat={chat} cache={cache} />
-                    {users.map((user) => {
+                    {users?.map((user) => {
                         const isOwner =
                             chat.admins?.includes(user?.uid ?? '') ?? false;
                         return (
@@ -197,6 +320,12 @@ export const ChatInfo = ({ chat, cache }: Props) => {
                                 user={user}
                                 key={user?.uid}
                                 showLastSeen
+                                onClick={() => modalModel.events.close()}
+                                onDelete={
+                                    isAdmin && isEditingMode && !isOwner
+                                        ? handleDeleteUserFromChat
+                                        : undefined
+                                }
                             >
                                 {isOwner && <Subtext>Owner</Subtext>}
                             </UserItem>

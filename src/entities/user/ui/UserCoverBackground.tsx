@@ -6,7 +6,7 @@ export const ChatBackgroundStyled = styled.div<{
     $width?: string;
 }>`
     width: ${({ $width }) => $width ?? '50px'};
-    height: 100%;
+    height: ${({ $width }) => $width ?? '50px'};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -24,9 +24,10 @@ export const ChatBackgroundStyled = styled.div<{
 type Props = {
     name: string | undefined | null;
     width?: string;
+    borderRadius?: string;
 };
 
-export const UserCoverBackground = ({ name, width }: Props) => {
+export const UserCoverBackground = ({ name, width, borderRadius }: Props) => {
     if (!name) return null;
 
     const abbr =
@@ -39,7 +40,11 @@ export const UserCoverBackground = ({ name, width }: Props) => {
     const background = getBackground(abbr);
 
     return (
-        <ChatBackgroundStyled $background={background} $width={width}>
+        <ChatBackgroundStyled
+            $background={background}
+            $width={width}
+            style={{ borderRadius }}
+        >
             {abbr}
         </ChatBackgroundStyled>
     );

@@ -56,7 +56,9 @@ export class Songs {
         }
     }
 
-    static getSongByUid = async (uid: string | undefined): Promise<TSong> => {
+    static getSongByUid = async (
+        uid: string | undefined
+    ): Promise<TSong | null> => {
         try {
             if (!uid) {
                 throw new Error(ERRORS.operationFailed('UID must be provided'));
@@ -203,7 +205,9 @@ export class Songs {
     static async loadLastQueue(userId: string) {
         try {
             const queue = await FB.getById('lastQueue', userId);
-            const songs = await FB.getByIds('songs', queue.songIds);
+            const songs = queue
+                ? await FB.getByIds('songs', queue.songIds)
+                : [];
 
             return { queue, songs: songs ?? [] };
         } catch (error) {

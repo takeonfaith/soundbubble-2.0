@@ -1,5 +1,6 @@
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { SYSTEM_MESSAGE_SENDER } from '../../../../entities/chat/lib/getLastMessageSender';
 import {
     LocalSendStatus,
     TCache,
@@ -18,6 +19,7 @@ import { getEntityType } from '../../../../features/searchWithHints/lib/getEntit
 import { popupModel } from '../../../../layout/popup/model';
 import { Flex } from '../../../../shared/components/flex';
 import { useIsOnScreen } from '../../../../shared/hooks/useIsOnScreen';
+import { getTime } from '../../lib/getTime';
 import {
     AttachmentStyled,
     DateAndSeenIcon,
@@ -25,6 +27,7 @@ import {
     MessageSender,
     MessageStyled,
     MessageWrapper,
+    SystemMessageItemStyled,
 } from '../layout/styles';
 import { MessageContextMenu } from './MessageContextMenu';
 import { MessageSentStatus } from './MessageSentStatus';
@@ -38,7 +41,6 @@ type Props = {
     cache: TCache;
     isPrevByTheSameSender: boolean;
     isFirst: boolean;
-    isNotSeen: boolean;
     sendStatus: LocalSendStatus;
     onSeen: (messageId: string) => void;
 };
@@ -101,7 +103,6 @@ const renderAttachments = (
 export const MessageItem = ({
     chatId,
     message,
-    isNotSeen,
     isMine,
     cache,
     isPrevByTheSameSender,
@@ -114,12 +115,14 @@ export const MessageItem = ({
         message.attachedAlbums.length ||
         message.attachedAuthors.length;
     const targetRef = useRef(null);
+    const isSystemMessage = message.sender === SYSTEM_MESSAGE_SENDER;
+    const isOnScreen = useIsOnScreen(targetRef);
 
-    useIsOnScreen(targetRef, () => {
-        if (!isNotSeen) {
+    useEffect(() => {
+        if (isOnScreen && sendStatus === LocalSendStatus.sent && !isMine) {
             onSeen(message.id);
         }
-    });
+    }, [isMine, message.id, isOnScreen, sendStatus, onSeen]);
 
     const handleContextMenu = (
         e: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -132,6 +135,14 @@ export const MessageItem = ({
             e,
         });
     };
+
+    if (isSystemMessage) {
+        return (
+            <SystemMessageItemStyled ref={targetRef}>
+                {message.message}
+            </SystemMessageItemStyled>
+        );
+    }
 
     return (
         <MessageStyled ref={targetRef}>
@@ -189,12 +200,7 @@ export const MessageItem = ({
                     </Flex>
                     {!message.playlistInvitation?.id && (
                         <DateAndSeenIcon>
-                            <span>
-                                {new Date(message.sentTime).toLocaleTimeString(
-                                    'ru-RU',
-                                    { hour: '2-digit', minute: '2-digit' }
-                                )}
-                            </span>
+                            <span>{getTime(message.sentTime)}</span>
                             <MessageSentStatus
                                 isMine={isMine}
                                 sendStatus={sendStatus}

@@ -8,6 +8,10 @@ import { AddEntitiesUI } from '../../../../../features/addEntitiesUI';
 import { BadgeStyled } from '../../../../../features/shareModal/styles';
 import { DefaultButton } from '../../../../../shared/components/button/DefaultButton';
 import { CheckIcon } from '../../../../../shared/components/checkIcon';
+import { useUnit } from 'effector-react';
+import { Button } from '../../../../../shared/components/button';
+import { modalModel } from '../../../../../layout/modal/model';
+import { editChatFx } from '../../../../../entities/chat/model/chat-editing';
 
 const AddFriendsToChatModalStyled = styled.div`
     padding: 10px 20px;
@@ -19,23 +23,38 @@ type Props = {
     cache: TCache;
 };
 
-export const AddFriendsToChatModal = ({ chat, cache }: Props) => {
+export const AddFriendsToChatModal = ({ chat }: Props) => {
     const [friends] = userModel.useFriends();
-    const [, isAddingFriends] = chatModel.useCurrentChat();
+    const isEditing = useUnit(editChatFx.pending);
 
     const handleAddToChat = (addedFriends: TUser[]) => {
-        return () => {};
+        return () => {
+            chatModel.events.editChat({
+                chat,
+                update: {
+                    participants: [
+                        ...chat.participants,
+                        ...addedFriends.map((f) => f.uid),
+                    ],
+                },
+                onSuccess: () => {
+                    modalModel.events.close();
+                },
+            });
+        };
     };
 
     return (
         <AddFriendsToChatModalStyled>
             <AddEntitiesUI
                 entities={friends}
-                initiallyAddedItems={chat.participants.map(
-                    (p) => cache[p] as TUser
-                )}
+                initiallyAddedItems={[]}
                 inputPlaceholder={'Search for friends...'}
-                renderItem={(user, checked, onClick, initiallyChecked) => {
+                renderItem={(user, checked, onClick) => {
+                    const initiallyChecked = chat.participants.includes(
+                        user.uid
+                    );
+
                     return (
                         <UserItem
                             orientation="horizontal"
@@ -43,11 +62,17 @@ export const AddFriendsToChatModal = ({ chat, cache }: Props) => {
                             key={user.uid}
                             as="button"
                             onClick={onClick}
+                            showLastSeen
+                            disabled={initiallyChecked}
                         >
-                            <CheckIcon
-                                checked={checked}
-                                type={!initiallyChecked ? 'checkbox' : 'minus'}
-                            />
+                            {!initiallyChecked && (
+                                <Button $width="50px">
+                                    <CheckIcon
+                                        checked={checked}
+                                        type={'plus'}
+                                    />
+                                </Button>
+                            )}
                         </UserItem>
                     );
                 }}
@@ -57,9 +82,9 @@ export const AddFriendsToChatModal = ({ chat, cache }: Props) => {
                             <DefaultButton
                                 appearance="primary"
                                 onClick={handleAddToChat(addedFriends)}
-                                loading={isAddingFriends}
+                                loading={isEditing}
                             >
-                                Add friends
+                                Add to chat
                                 {addedFriends.length > 1 && (
                                     <BadgeStyled>
                                         {addedFriends.length}

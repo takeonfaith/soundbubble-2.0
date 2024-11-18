@@ -120,6 +120,7 @@ export const DateAndSeenIcon = styled(LastMessageSentTimeStyled)`
     justify-content: flex-end;
     margin-top: 8px;
     font-size: 0.65rem;
+    white-space: nowrap;
 
     svg {
         width: 14px;
@@ -156,6 +157,11 @@ export const ChatMessagesStyled = styled.div`
     background-size: 20px 20px;
     background-position: 0px 0px;
     align-items: center;
+    position: relative;
+
+    &.shift-to-first-unread {
+        scroll-padding-bottom: 60vh;
+    }
 `;
 
 export const ChatInputArea = styled.div`
@@ -217,7 +223,7 @@ export const MessagesDate = styled.div`
     font-size: 0.8rem;
     position: sticky;
     top: 0px;
-    z-index: 1;
+    z-index: 2;
     background: ${({ theme }) => theme.colors.pageBackground};
     border: 1px solid ${({ theme }) => theme.colors.border};
     margin: 10px auto;
@@ -312,7 +318,12 @@ export const SystemMessageItemStyled = styled.div`
     padding: 10px 20px;
     font-weight: 300;
     font-size: 0.8rem;
-    opacity: 0.6;
+    color: ${({ theme }) => theme.colors.greyText2};
+    z-index: 1;
+
+    &.bg {
+        background: ${({ theme }) => theme.colors.pageBackground};
+    }
 `;
 
 export const AttachmentStyled = styled.div`

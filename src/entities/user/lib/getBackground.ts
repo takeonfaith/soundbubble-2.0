@@ -21,6 +21,7 @@ export const getBackground = (abbr: string) => {
 		case "S":
 		case "4":
 		case "3":
+		case "Т":
 			return 'linear-gradient(45deg, #3f2db4, #3558ca)'
 		case "H":
 		case "E":
@@ -30,6 +31,16 @@ export const getBackground = (abbr: string) => {
 		case "5":
 		case "6":
 		case "7":
+		case "С":
+			return 'linear-gradient(45deg, #b42d2d, #ca3578)'
+		case "А":
+		case "Б":
+		case "В":
+		case "Г":
+		case "И":
+		case "Ь":
+		case "Ъ":
+		case "Ы":
 			return 'linear-gradient(45deg, #b42d2d, #ca3578)'
 
 		default:

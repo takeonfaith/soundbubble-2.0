@@ -11,9 +11,9 @@ export const getHumanDuration = (
     const seconds = Math.floor(duration % 60);
 
     if (format === 'text') {
-        return `${hours > 0 ? `${hours} hrs.` : ''} ${
-            minutes > 0 ? `${minutes} min.` : ''
-        } ${seconds} sec.`;
+        return `${
+            hours > 0 ? `${hours} ${hours === 1 ? 'hour' : 'hours'}` : ''
+        } ${minutes > 0 ? `${minutes} min.` : ''} ${seconds} sec.`;
     }
 
     return `${hours > 0 ? `${get2DigitNumber(hours)}:` : ''}${get2DigitNumber(

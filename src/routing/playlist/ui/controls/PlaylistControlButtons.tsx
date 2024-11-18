@@ -81,6 +81,7 @@ export const PlaylistControlButtons = ({
     }, [state]);
 
     const handleInfo = () => {
+        popupModel.events.close();
         modalModel.events.open({
             title: '',
             content: <PlaylistInfo playlist={playlist} />,
@@ -88,6 +89,7 @@ export const PlaylistControlButtons = ({
     };
 
     const handleShare = () => {
+        popupModel.events.close();
         modalModel.events.open({
             title: `Share ${playlist?.name} with friends`,
             content: <ShareModal entity={playlist} />,
@@ -223,7 +225,7 @@ export const PlaylistControlButtons = ({
                 <Flex gap={10}>
                     <Button
                         $height="45px"
-                        $width={queue.songs.length === 1 ? '100px' : '45px'}
+                        $width="45px"
                         style={{
                             borderRadius: '30px',
                             color: '#fff',
@@ -245,7 +247,6 @@ export const PlaylistControlButtons = ({
                             playling={false}
                             size={20}
                         />
-                        {queue.songs.length === 1 && 'Play'}
                     </Button>
                     {queue.songs.length !== 1 && (
                         <Button

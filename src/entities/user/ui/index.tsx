@@ -1,4 +1,8 @@
-import { IconChevronRight, IconDiscountCheckFilled } from '@tabler/icons-react';
+import {
+    IconChevronRight,
+    IconDiscountCheckFilled,
+    IconSquareRoundedMinusFilled,
+} from '@tabler/icons-react';
 import { memo } from 'react';
 import { Button } from '../../../shared/components/button';
 import { Flex } from '../../../shared/components/flex';
@@ -11,14 +15,17 @@ import { OnlineIndicator, UserItemStyled } from './styles';
 import { useTheme } from 'styled-components';
 import { LikeButton } from '../../../features/likeButton';
 import { useToggleUserLike } from '../hooks/useToggleUserLike';
+import { DeleteButton } from '../../song/ui/styles';
 
 type Props = {
     user: TUser | null | undefined;
     orientation?: TOrientation;
-    onClick?: (user: TUser, e: Evt<'a'>) => void;
     children?: React.ReactNode;
     as?: string;
     showLastSeen?: boolean;
+    disabled?: boolean;
+    onClick?: (user: TUser, e: Evt<'a'>) => void;
+    onDelete?: (user: TUser) => void;
 };
 
 export const UserItem = memo(
@@ -28,7 +35,9 @@ export const UserItem = memo(
         children,
         as,
         showLastSeen,
+        disabled,
         orientation = 'vertical',
+        onDelete,
     }: Props) => {
         const theme = useTheme();
         const { handleToggleLike, isLiked } = useToggleUserLike(user);
@@ -50,7 +59,7 @@ export const UserItem = memo(
         const link = isAuthor ? `/author/${uid}` : `/user/${uid}`;
 
         const handleClick = (e: Evt<'a'>) => {
-            console.log(e);
+            if (disabled) return;
 
             e.stopPropagation();
             onClick?.(user, e);
@@ -62,7 +71,20 @@ export const UserItem = memo(
                 to={link}
                 className={orientation}
                 onClick={handleClick}
+                disabled={disabled}
             >
+                {orientation === 'horizontal' && onDelete && (
+                    <DeleteButton
+                        onClick={(e) => {
+                            e.preventDefault();
+                            onDelete(user);
+                        }}
+                        $height="35px"
+                        $width="45px"
+                    >
+                        <IconSquareRoundedMinusFilled />
+                    </DeleteButton>
+                )}
                 {orientation === 'vertical' && isAuthor && (
                     <LikeButton
                         entity={user}
