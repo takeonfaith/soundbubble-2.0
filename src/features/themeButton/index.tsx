@@ -5,9 +5,9 @@ import { settingsModel } from '../../entities/settings/model';
 import { Button } from '../../shared/components/button';
 
 const ThemeButtonStyled = styled(Button)`
-    min-height: 30px;
-    height: 30px;
-    min-width: 30px;
+    min-height: 35px;
+    height: 35px;
+    min-width: 35px;
 `;
 
 const ThemeButtonIconStyled = styled.div`
@@ -65,8 +65,8 @@ export const ThemeButton = () => {
     return (
         <ThemeButtonStyled $width="20px" onClick={handleTheme}>
             <ThemeButtonIconStyled className={`theme ${theme.toString()}`}>
-                <IconSun size={18} />
-                <IconMoon size={18} />
+                <IconSun size={20} />
+                <IconMoon size={20} />
             </ThemeButtonIconStyled>
         </ThemeButtonStyled>
     );

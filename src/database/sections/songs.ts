@@ -14,12 +14,12 @@ import { createDefaultSuggestion } from '../../entities/search/lib/createDefault
 import { createLyricsObject } from '../../entities/song/lib/createLyricsObject';
 import { createSongObject } from '../../entities/song/lib/createSongObject';
 import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
-import { TUploadSongForm } from '../../features/addSongModal/model';
 import { FB } from '../../firebase';
 import { ERRORS } from '../../shared/constants';
 import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import getUID from '../../shared/funcs/getUID';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
+import { AddSongFormType } from '../../features/addSongModal/model';
 
 export class Songs {
     static ref = FB.get('songs');
@@ -92,7 +92,7 @@ export class Songs {
         return await FB.getByIds('songs', uids);
     };
 
-    static async uploadSong(form: TUploadSongForm) {
+    static async uploadSong(form: AddSongFormType) {
         try {
             const {
                 coverFile,
@@ -132,9 +132,9 @@ export class Songs {
                 imageColors,
                 duration,
                 authors: fullAuthors.map(createAuthorObject),
-                moods: moods.map((m) => m.fullName),
-                langs: langs.map((l) => l.fullName),
-                genres: genres.map((g) => g.fullName),
+                moods: moods,
+                langs: langs,
+                genres: genres,
                 releaseDate: releaseDate,
                 hasLyrics: songLyrics !== null,
             });

@@ -1,12 +1,18 @@
 import { IconPencilPlus, IconSearch } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+import { getSendStatus } from '../../entities/chat/lib/getSendStatus';
 import { chatModel } from '../../entities/chat/model';
+import { TChat } from '../../entities/chat/model/types';
 import { ChatItem } from '../../entities/chat/ui/ChatItem';
+import { userModel } from '../../entities/user/model';
+import { TUser } from '../../entities/user/model/types';
 import { CreateChatModal } from '../../features/createChatModal';
 import { modalModel } from '../../layout/modal/model';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
+import { normalizeString } from '../../shared/funcs/normalizeString';
 import { ChatsSkeleton } from './ChatsSkeleton';
 import {
     ChatListStyled,
@@ -14,15 +20,10 @@ import {
     DesktopWrapperStyled,
     ListOfChats,
 } from './styles';
-import { useEffect, useState } from 'react';
-import { TChat } from '../../entities/chat/model/types';
-import { normalizeString } from '../../shared/funcs/normalizeString';
-import { userModel } from '../../entities/user/model';
-import { TUser } from '../../entities/user/model/types';
 
 export const ChatList = () => {
     const [chats, loadingChats] = chatModel.useChats();
-    const [chatUnreadCount] = chatModel.useUnread();
+    const [chatUnreadCount, maxSeenAtInCurrentChat] = chatModel.useUnread();
     const [currentChat] = chatModel.useCurrentChat();
     const [currentUser] = userModel.useUser();
     const [cache] = chatModel.useCache();
@@ -108,11 +109,21 @@ export const ChatList = () => {
                 >
                     {visibleChats.map((chat) => {
                         const unreadCount = chatUnreadCount[chat.id];
+                        const isMine =
+                            chat.lastMessage?.sender === currentUser?.uid;
+
+                        const sendStatus = getSendStatus(
+                            chat.lastMessage,
+                            isMine,
+                            maxSeenAtInCurrentChat,
+                            unreadCount?.lastReadAt
+                        );
 
                         return (
                             <ChatItem
                                 isSelected={currentChat?.id === chat.id}
-                                unreadCount={unreadCount}
+                                unreadCount={unreadCount?.unreadCount ?? 0}
+                                sendStatus={sendStatus}
                                 cache={cache}
                                 chat={chat}
                                 key={chat.id}

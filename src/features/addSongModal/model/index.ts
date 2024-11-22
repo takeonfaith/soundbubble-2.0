@@ -1,38 +1,74 @@
-import { createEvent, createStore, sample } from 'effector';
+import { effectorForm } from '../../../shared/effector/form';
+import { TForm } from '../../../shared/effector/form/types';
 import { TExtendedSuggestion } from '../../searchWithHints/types';
 
-const DEFAULT_FORM_STORE = {
-    songFile: null as File | null,
-    name: '',
-    author: '',
-    authors: [] as TExtendedSuggestion[],
-    duration: 0,
-    coverFile: null as File | null,
-    imageColors: [] as string[],
-    lyrics: '',
-    langs: [] as TExtendedSuggestion[],
-    moods: [] as TExtendedSuggestion[],
-    genres: [] as TExtendedSuggestion[],
-    releaseDate: undefined as string | undefined,
+export type FormType<T extends TForm> = {
+    [key in keyof T]: T[key]['init'];
 };
 
-export type TUploadSongForm = typeof DEFAULT_FORM_STORE;
+const initial = {
+    songFile: {
+        type: 'file',
+        required: true,
+        init: null as File | null,
+    },
+    imageColors: {
+        type: 'stringArray',
+        required: true,
+        init: [] as string[],
+    },
+    name: {
+        type: 'text',
+        required: true,
+        init: '',
+    },
+    author: {
+        type: 'text',
+        required: false,
+        init: '',
+    },
+    authors: {
+        type: 'authors',
+        required: true,
+        init: [] as TExtendedSuggestion[],
+    },
+    duration: {
+        type: 'number',
+        required: true,
+        init: 0 as number,
+    },
+    coverFile: {
+        type: 'file',
+        required: true,
+        init: null,
+    },
+    lyrics: {
+        type: 'text',
+        required: false,
+        init: '',
+    },
+    langs: {
+        type: 'stringArray',
+        required: true,
+        init: [] as string[],
+    },
+    moods: {
+        type: 'stringArray',
+        required: true,
+        init: [] as string[],
+    },
+    genres: {
+        type: 'stringArray',
+        required: true,
+        init: [] as string[],
+    },
+    releaseDate: {
+        type: 'date',
+        required: true,
+        init: new Date().toLocaleDateString('fr-CA'),
+    },
+} as const;
 
-type TForm = {
-    id: keyof typeof DEFAULT_FORM_STORE;
-    value: (typeof DEFAULT_FORM_STORE)[keyof typeof DEFAULT_FORM_STORE];
-};
+export type AddSongFormType = FormType<typeof initial>;
 
-export const updateField = createEvent<TForm>();
-
-export const $addSongForm = createStore(DEFAULT_FORM_STORE);
-
-sample({
-    clock: updateField,
-    source: $addSongForm,
-    fn: (store, { id, value }) => ({
-        ...store,
-        [id]: value,
-    }),
-    target: $addSongForm,
-});
+export const { useForm } = effectorForm(initial);

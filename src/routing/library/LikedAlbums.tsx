@@ -7,6 +7,7 @@ import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 import { PageGridStyled } from './styles';
+import { Flex } from '../../shared/components/flex';
 
 export const LikedAlbums = () => {
     const [added, loadingAdded] = userModel.useAddedPlaylists();
@@ -18,11 +19,15 @@ export const LikedAlbums = () => {
         <ContentWrapper>
             {loadingAdded && <Loading />}
             {!loadingAdded && !allAlbums.length && (
-                <PageMessage
-                    icon={IconDiscOff}
-                    title={'No albums added'}
-                    description={'They will appear here if you add a new album'}
-                />
+                <Flex height="100%" width="100%" jc="center" padding="20vh">
+                    <PageMessage
+                        icon={IconDiscOff}
+                        title={'No albums added'}
+                        description={
+                            'They will appear here if you add a new album'
+                        }
+                    />
+                </Flex>
             )}
             <PageGridStyled>
                 {allAlbums.map((playlist) => {
@@ -31,6 +36,7 @@ export const LikedAlbums = () => {
                             orientation={isMobile ? 'horizontal' : 'vertical'}
                             playlist={playlist}
                             key={playlist.id}
+                            isAuthor={false}
                         />
                     );
                 })}

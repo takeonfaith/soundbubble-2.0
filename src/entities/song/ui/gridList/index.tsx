@@ -3,8 +3,8 @@ import { SongItem } from '..';
 import { ArrowButton } from '../../../../shared/components/horizontalList/styles';
 import { useScrollList } from '../../../../shared/components/horizontalList/useScrollList';
 import useCurrentDevice from '../../../../shared/hooks/useCurrentDevice';
+import { useSongPlay } from '../../hooks/useSongPlay';
 import { TQueue, TSong } from '../../model/types';
-import { songModel } from '../../new-model';
 import { GridSongListStyled, GridWrapper } from './styles';
 
 type Props = {
@@ -14,28 +14,21 @@ type Props = {
 
 export const GridSongList = (props: Props) => {
     const { queue, children } = props;
-    const { currentSong, state } = songModel.useSong();
     const { isMobile } = useCurrentDevice();
     const maxGridRows = isMobile ? 4 : 3;
     const { songs } = queue;
+    const songProps = useSongPlay({ queue });
     const items = children?.(songs) ?? (
         <>
             {songs.map((song, index) => {
-                const isCurrent = song.id === currentSong?.id;
-
                 return (
                     <SongItem
-                        onClick={() =>
-                            songModel.controls.play({
-                                queue,
-                                currentSongIndex: index,
-                            })
-                        }
                         index={index}
                         key={song.id + index}
                         song={song}
-                        playing={isCurrent && state === 'playing'}
-                        loading={isCurrent && state === 'loading'}
+                        {...songProps}
+                        loading={songProps.getLoading(song)}
+                        playing={songProps.getPlaying(song)}
                     />
                 );
             })}

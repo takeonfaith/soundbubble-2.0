@@ -8,16 +8,15 @@ import {
     IconMoodShare,
     IconMoodWink2,
 } from '@tabler/icons-react';
+import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
+import { Input } from '../../shared/components/input';
 import { TExtendedSuggestion } from '../searchWithHints/types';
 import { SearchWithItems } from '../searchWithItems';
 import { SignUpModalStyled } from '../signUpModal/styles';
-import { modalModel } from '../../layout/modal/model';
 import { Lyrics } from './Lyrics';
-import { $addSongForm, updateField } from './model';
-import { Input } from '../../shared/components/input';
-import { useUnit } from 'effector-react';
+import { useForm } from './model';
 
 const MOODS: TExtendedSuggestion[] = [
     {
@@ -77,6 +76,7 @@ const GENRES: TExtendedSuggestion[] = [
     { uid: 'electronic', fullName: 'Electronic', place: 'users' },
     { uid: 'country', fullName: 'Country', place: 'users' },
     { uid: 'folk', fullName: 'Folk', place: 'users' },
+    { uid: 'dance', fullName: 'Dance', place: 'users' },
     { uid: 'blues', fullName: 'Blues', place: 'users' },
     { uid: 'jazz', fullName: 'Jazz', place: 'users' },
     { uid: 'world', fullName: 'World', place: 'users' },
@@ -98,7 +98,6 @@ const LANGUAGES: TExtendedSuggestion[] = [
 ];
 
 export const GeneralInfo = () => {
-    const form = useUnit($addSongForm);
     const handleNext = () => {
         modalModel.events.open({
             title: 'Lyrics',
@@ -107,6 +106,11 @@ export const GeneralInfo = () => {
             sizeY: 's',
         });
     };
+    const { values, updateField, errors, onSubmit, onChange } = useForm(
+        handleNext,
+        ['genres', 'moods', 'langs', 'releaseDate']
+    );
+    console.log(values);
 
     return (
         <SignUpModalStyled>
@@ -115,41 +119,54 @@ export const GeneralInfo = () => {
                     type="date"
                     placeholder="Release date"
                     label="Release date"
-                    value={form.releaseDate?.toString()}
-                    onChange={(event) =>
-                        updateField({
-                            id: 'releaseDate',
-                            value: event.target.value,
-                        })
-                    }
+                    required
+                    id="releaseDate"
+                    value={values.releaseDate}
+                    error={errors.releaseDate}
+                    onChange={onChange}
                 />
                 <SearchWithItems
                     onSubmit={(addedItems) =>
-                        updateField({ id: 'genres', value: addedItems })
+                        updateField({
+                            id: 'genres',
+                            value: addedItems.map((item) => item.fullName),
+                        })
                     }
                     items={GENRES}
                     label="Genres"
                     placeholder="Find genres"
+                    error={errors.genres}
+                    required
                 />
                 <SearchWithItems
                     onSubmit={(addedItems) =>
-                        updateField({ id: 'moods', value: addedItems })
+                        updateField({
+                            id: 'moods',
+                            value: addedItems.map((item) => item.fullName),
+                        })
                     }
                     items={MOODS}
                     label="Moods"
                     placeholder="Find moods"
+                    error={errors.moods}
+                    required
                 />
                 <SearchWithItems
                     onSubmit={(addedItems) =>
-                        updateField({ id: 'langs', value: addedItems })
+                        updateField({
+                            id: 'langs',
+                            value: addedItems.map((item) => item.fullName),
+                        })
                     }
                     items={LANGUAGES}
                     label="Languages"
                     placeholder="Find languages"
+                    error={errors.langs}
+                    required
                 />
             </Flex>
             <Flex width="100%">
-                <DefaultButton onClick={handleNext} appearance="primary">
+                <DefaultButton onClick={onSubmit} appearance="primary">
                     Next
                 </DefaultButton>
             </Flex>

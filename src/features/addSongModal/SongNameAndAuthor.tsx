@@ -1,7 +1,8 @@
-import { useUnit } from 'effector-react';
 import { useCallback, useState } from 'react';
+import styled from 'styled-components';
 import { Database } from '../../database';
 import { modalModel } from '../../layout/modal/model';
+import { Button } from '../../shared/components/button';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
@@ -10,26 +11,39 @@ import { useEffectOnce } from '../../shared/hooks/useEffectOnce';
 import { AuthorsInput } from '../authorsInput';
 import { TExtendedSuggestion } from '../searchWithHints/types';
 import { SignUpModalStyled } from '../signUpModal/styles';
-import { $addSongForm, updateField } from './model';
+import { CreateAuthor } from './CreateAuthor';
+import { useForm } from './model';
 import { SongCover } from './SongCover';
 
-export const SongNameAndAuthor = () => {
-    const { name, author, authors } = useUnit($addSongForm);
-    const [error, setError] = useState<string | null>(null);
-    const [loadingItems, setLoadingItems] = useState(false);
+const CreateAuthorButton = styled(Button)`
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: ${({ theme }) => theme.scheme.blue.text};
+    padding: 2px 8px;
 
+    &:hover {
+        background: ${({ theme }) => theme.scheme.blue.transparent};
+    }
+`;
+
+export const SongNameAndAuthor = () => {
     const handleNext = () => {
-        if (name && authors.length > 0) {
-            modalModel.events.open({
-                title: 'Song cover',
-                content: <SongCover />,
-                sizeX: 's',
-                sizeY: 's',
-            });
-        } else {
-            setError('Song name and authors are required');
-        }
+        modalModel.events.open({
+            title: 'Song cover',
+            content: <SongCover />,
+            sizeX: 's',
+            sizeY: 's',
+        });
     };
+
+    const {
+        updateField,
+        values: { name, author, authors },
+        errors,
+        onSubmit,
+        onChange,
+    } = useForm(handleNext, ['name', 'authors']);
+    const [loadingItems, setLoadingItems] = useState(false);
 
     const requestAuthors = useCallback(async (value: string) => {
         const res = await Database.SearchSuggestions.getSearchSuggestions(
@@ -77,7 +91,12 @@ export const SongNameAndAuthor = () => {
             }
         }
         setLoadingItems(false);
-        updateField({ id: 'authors', value: result });
+        console.log({ result });
+
+        updateField({
+            id: 'authors',
+            value: result,
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -91,34 +110,46 @@ export const SongNameAndAuthor = () => {
         <SignUpModalStyled>
             <Flex gap={15} d="column" height="100%" jc="center" width="100%">
                 <Message type="success">File succesfully uploaded!</Message>
-                {error && <Message type="error">{error}</Message>}
                 <Input
                     required
                     placeholder="Song name"
                     label="Song name"
+                    id="name"
                     value={name}
-                    onChange={(value) => {
-                        updateField({
-                            id: 'name',
-                            value: value.currentTarget.value,
-                        });
-                        setError(null);
-                    }}
+                    error={errors.name}
+                    onChange={onChange}
                 />
                 <AuthorsInput
                     onChange={(value) => updateField({ id: 'author', value })}
                     onSumbit={(authors) => {
-                        updateField({ id: 'authors', value: authors });
-                        setError(null);
+                        updateField({
+                            id: 'authors',
+                            value: authors,
+                        });
                     }}
                     value={author}
                     addedAuthors={authors}
                     required={true}
-                    error={undefined}
+                    error={errors.authors}
                     loadingItems={loadingItems}
                 />
+                <CreateAuthorButton
+                    $height="10px"
+                    className="forgot-password"
+                    $width="fit-content"
+                    onClick={() =>
+                        modalModel.events.open({
+                            title: 'Create author',
+                            content: <CreateAuthor />,
+                            sizeX: 's',
+                            sizeY: 'm',
+                        })
+                    }
+                >
+                    Author in not on soundbubble?
+                </CreateAuthorButton>
             </Flex>
-            <Flex width="100%" onClick={handleNext}>
+            <Flex width="100%" onClick={onSubmit}>
                 <DefaultButton appearance="primary">Next</DefaultButton>
             </Flex>
         </SignUpModalStyled>

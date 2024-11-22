@@ -65,8 +65,6 @@ export const ChatBottom = () => {
         setValue(value);
         const isTyping = value.length > 0;
         if (currentUser) {
-            console.log({ isTyping, amITyping });
-
             if (isTyping && !amITyping) {
                 chatModel.events.updateIsTyping(true);
             } else if (!isTyping && amITyping) {

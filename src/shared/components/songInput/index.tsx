@@ -17,6 +17,7 @@ import {
     UploadedSongStyled,
 } from './styles';
 import { getHumanFileSize } from '../../funcs/getHumanFileSize';
+import { InputError } from '../input/styles';
 
 const UploadedSong = ({
     file,
@@ -120,7 +121,6 @@ export const SongInput = ({ file, onChange, error }: Props) => {
         } else if (files) {
             file = files[0];
         }
-        console.log(file);
 
         if (file && file.type.includes('audio')) {
             onChange(file);
@@ -142,6 +142,7 @@ export const SongInput = ({ file, onChange, error }: Props) => {
 
     return (
         <>
+            {error && <InputError>{error}</InputError>}
             <SongInputStyled
                 onDragEnter={handleDrag}
                 onSubmit={(e) => e.preventDefault()}

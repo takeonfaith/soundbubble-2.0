@@ -1,36 +1,26 @@
-import { useUnit } from 'effector-react';
-import { useState } from 'react';
 import { getSongDuration } from '../../entities/song/lib/getSongDuration';
 import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { SongInput } from '../../shared/components/songInput';
 import { SignUpModalStyled } from '../signUpModal/styles';
-import { $addSongForm, updateField } from './model';
+import { useForm } from './model';
 import { SongNameAndAuthor } from './SongNameAndAuthor';
-import { toastModel } from '../../layout/toast/model';
 
 export const AddSongModal = () => {
-    const { songFile } = useUnit($addSongForm);
-    const [error, setError] = useState<string | null>(null);
-    const handleNext = (song: File | null) => {
-        if (song) {
-            modalModel.events.open({
-                title: 'Name and author',
-                content: <SongNameAndAuthor />,
-                sizeX: 's',
-                sizeY: 's',
-            });
-        } else {
-            toastModel.events.add({
-                type: 'error',
-                message: 'Song file is required',
-            });
-        }
+    const handleNext = () => {
+        modalModel.events.open({
+            title: 'Name and author',
+            content: <SongNameAndAuthor />,
+            sizeX: 's',
+            sizeY: 's',
+        });
     };
+    const { values, updateField, errors, onSubmit } = useForm(handleNext, [
+        'songFile',
+    ]);
 
     const handleChange = (file: File | null) => {
-        setError(null);
         if (file === null) {
             updateField({ id: 'songFile', value: null });
             updateField({ id: 'name', value: '' });
@@ -42,7 +32,6 @@ export const AddSongModal = () => {
         const [author, name] = file.name.includes('-')
             ? file.name.replace('.mp3', '').split('-')
             : ['', file.name.replace('.mp3', '')];
-        console.log(author, name);
 
         updateField({ id: 'songFile', value: file });
         updateField({
@@ -58,19 +47,19 @@ export const AddSongModal = () => {
 
             updateField({ id: 'duration', value: res });
         });
-        handleNext(file);
+        handleNext();
     };
 
     return (
         <SignUpModalStyled>
             <Flex d="column" gap={10} width="100%" jc="center" height="100%">
                 <SongInput
-                    error={error}
+                    error={errors.songFile}
                     onChange={handleChange}
-                    file={songFile}
+                    file={values.songFile}
                 />
             </Flex>
-            <Flex width="100%" onClick={() => handleNext(songFile)}>
+            <Flex width="100%" onClick={onSubmit}>
                 <DefaultButton appearance="primary">Next</DefaultButton>
             </Flex>
         </SignUpModalStyled>

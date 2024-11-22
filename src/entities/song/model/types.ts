@@ -78,3 +78,5 @@ export type TLastQueue = TLoadQueue & {
     currentSongIndex: number;
     userId: string;
 };
+
+export type TNextFrom = 'from_next_button' | 'from_end_track';

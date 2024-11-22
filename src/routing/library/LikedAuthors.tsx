@@ -20,13 +20,15 @@ export const LikedAuthors = () => {
                 </Flex>
             )}
             {!loading && !addedAuthors.length && (
-                <PageMessage
-                    icon={IconMicrophone2Off}
-                    title={'No authors added'}
-                    description={
-                        'They will appear here if you subscribe or add song'
-                    }
-                />
+                <Flex height="100%" width="100%" jc="center" padding="20vh">
+                    <PageMessage
+                        icon={IconMicrophone2Off}
+                        title={'No authors added'}
+                        description={
+                            'They will appear here if you subscribe or add song'
+                        }
+                    />
+                </Flex>
             )}
             <AuthorPageGridStyled>
                 {addedAuthors.map((author) => {

@@ -62,6 +62,12 @@ export type THeavyMedia = {
     userIds: string[];
 };
 
-export type TUnreadCount = Record<string, number>;
+export type TUnreadCount = Record<string, TUnread & { chatId: string }>;
 
 export type TWallpaper = { id: string; image: string };
+
+export type TUnread = {
+    lastReadAt: number | null;
+    unreadCount: number;
+    userId: string;
+};

@@ -1,8 +1,9 @@
 import { sample } from 'effector';
 import { $user } from '../../user/model';
 import { insertChats, $chats, $currentChat } from './chats';
-import { $chatTotalUnreadCountMap } from './unread';
 import { insertChatsSorted } from '../lib/insertChatsSorted';
+import { $unreadCountMap } from './unread';
+import { updateDeepObject } from '../../../shared/funcs/updateDeepObject';
 
 sample({
     clock: insertChats,
@@ -10,17 +11,11 @@ sample({
         user: $user,
         currentChat: $currentChat,
         chats: $chats,
-        chatTotalUnreadCountMap: $chatTotalUnreadCountMap,
+        chatTotalUnreadCountMap: $unreadCountMap,
     },
     filter: ({ user, currentChat, chats }, insertingChats) => {
         const first = insertingChats[0];
         const chatIndex = chats.findIndex((c) => c.id === first.id);
-        console.log(
-            !!user,
-            chats[chatIndex]?.lastMessage?.sender !== user?.uid,
-            !currentChat || first.id !== currentChat.id,
-            chats[chatIndex]?.lastMessage?.id !== first.lastMessage?.id
-        );
 
         return (
             !!user &&
@@ -30,12 +25,13 @@ sample({
         );
     },
     fn: ({ chatTotalUnreadCountMap }, chat) => {
-        return {
-            ...chatTotalUnreadCountMap,
-            [chat[0].id]: chatTotalUnreadCountMap[chat[0].id] + 1,
-        };
+        return updateDeepObject(
+            chatTotalUnreadCountMap,
+            `${chat[0].id}.unreadCount`,
+            chatTotalUnreadCountMap[chat[0].id].unreadCount + 1
+        );
     },
-    target: $chatTotalUnreadCountMap,
+    target: $unreadCountMap,
 });
 
 sample({

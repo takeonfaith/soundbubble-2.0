@@ -1,2 +1,2 @@
 export const MAX_MESSAGES_PER_LOAD = 25;
-export const READ_MESSAGES_COOLDOWN = 100;
+export const READ_MESSAGES_COOLDOWN = 1000;

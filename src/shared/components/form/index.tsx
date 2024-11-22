@@ -7,6 +7,7 @@ import { Input } from '../input';
 import { Message } from '../mesage';
 import { Textarea } from '../textarea';
 import { FormProps, TField } from './types';
+import { TExtendedSuggestion } from '../../../features/searchWithHints/types';
 
 const COMPONENTS = {
     email: EmailInput,
@@ -40,6 +41,13 @@ export const Form = forwardRef(
                             label={field.label ?? undefined}
                             placeholder={field.placeholder}
                             key={field.id}
+                            addedAuthors={[]}
+                            loadingItems={false}
+                            onSumbit={function (
+                                addedAuthors: TExtendedSuggestion[]
+                            ): void {
+                                throw new Error('Function not implemented.');
+                            }}
                         />
                     );
                 })}

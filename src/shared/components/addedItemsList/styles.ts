@@ -10,7 +10,7 @@ export const AddedItemsListStyled = styled.div`
     position: sticky;
     top: 0;
     padding-bottom: 4px;
-    z-index: 20;
+    z-index: 10;
     background: ${({ theme }) => theme.colors.modal};
     padding: 0 8px;
 

@@ -24,13 +24,9 @@ import {
     MAX_SEARCH_HISTORY_QUANTITY,
     REMOVE_FROM_LIBRARY_TIMEOUT,
 } from './constants';
-import {
-    CreateUserCreditsType,
-    FriendStatus,
-    LoginCreditsType,
-    TPageStore,
-    TUser,
-} from './types';
+import { signUp, signUpFx } from './sign-up';
+import { FriendStatus, LoginCreditsType, TPageStore, TUser } from './types';
+import { createAuthor } from './create-author';
 
 const loginFx = createEffect(async (credits: LoginCreditsType) => {
     await Database.Users.login(credits);
@@ -207,6 +203,8 @@ const setSearchHistoryFx = createEffect(
 );
 
 const loadUserDataFx = createEffect(async (user: User | null) => {
+    console.log({ user });
+
     if (!user) return null;
 
     return await Database.Users.getUserById(user.uid);
@@ -250,7 +248,6 @@ const rejectFriendRequest = createEvent<string>();
 
 const login = createEvent<LoginCreditsType>();
 export const logout = createEvent();
-const createUser = createEvent<CreateUserCreditsType>();
 export const setUser = createEvent<TUser>();
 const getUserPage = createEvent<{ userId: string; sortSongs: boolean }>();
 const loadSimilarAuthors = createEvent<TSong[]>();
@@ -410,6 +407,13 @@ rejectFriendRequestFx.failData.watch((err) => {
         duration: 5000,
         reason: err.message,
     });
+});
+
+sample({
+    clock: signUpFx.doneData,
+    filter: Boolean,
+    fn: (user) => user,
+    target: setUser,
 });
 
 sample({
@@ -1052,7 +1056,7 @@ export const userModel = {
         login,
         logout,
         loadSimilarAuthors,
-        createUser,
+        signUp,
         setUser,
         getUserPage,
         resetUserPage,
@@ -1065,6 +1069,7 @@ export const userModel = {
         loadUserData,
         acceptFriendRequest,
         rejectFriendRequest,
+        createAuthor,
     },
     gates: {
         useLoadUser: () => useGate(userGate),

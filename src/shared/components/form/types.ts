@@ -2,13 +2,16 @@ export type FieldType =
     | 'email'
     | 'password'
     | 'text'
+    | 'number'
     | 'textarea'
     | 'date'
-    | 'authors';
+    | 'authors'
+    | 'file'
+    | 'stringArray';
 
-export type TField = {
+export type TField<T = void> = {
     type: FieldType;
-    id: string;
+    id: T extends void ? string : T;
     required: boolean;
     label?: string;
     placeholder?: string;

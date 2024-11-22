@@ -9,7 +9,10 @@ export const usePlayerMusicControls = () => {
 
     const disableNextSongButton = false;
 
-    const handlePlay = useCallback(() => songModelNew.controls.play({}), []);
+    const handlePlay = useCallback(
+        () => songModelNew.controls.togglePlayPause(),
+        []
+    );
 
     const handleChangeTime: React.ChangeEventHandler<HTMLInputElement> = (
         e
@@ -43,6 +46,10 @@ export const usePlayerMusicControls = () => {
         [handlePlay]
     );
 
+    const handleNext = () => {
+        songModelNew.queue.next('from_next_button');
+    };
+
     useEffect(() => {
         addEventListener('keydown', handleKeyDown);
 
@@ -61,7 +68,7 @@ export const usePlayerMusicControls = () => {
         handleLoopMode,
         onPlay: handlePlay,
         onPrev: songModelNew.queue.previous,
-        onNext: songModelNew.queue.next,
+        onNext: handleNext,
         handleMouseUp,
         handleChangeTime,
     };

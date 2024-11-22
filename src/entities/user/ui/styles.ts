@@ -16,6 +16,16 @@ export const UserItemStyled = styled(Link)<{ disabled?: boolean }>`
     opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
     pointer-events: ${({ disabled }) => (disabled ? 'none' : 'all')};
 
+    &.vertical {
+        position: relative;
+
+        .children {
+            position: absolute;
+            right: 10px;
+            bottom: 30px;
+        }
+    }
+
     .verified-icon {
         min-width: 16px;
         height: 16px;

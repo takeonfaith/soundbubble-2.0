@@ -41,7 +41,7 @@ const addMessage = createEvent<TMessage>();
 export const $currentChatMessages = createStore<TMessage[]>([]);
 export const $firstUnreadMessage = createStore<TMessage | null>(null);
 
-const $initialLoad = createStore(true);
+export const $initialLoad = createStore(true);
 const $pagination = createStore(0);
 export const $canMoreBeLoaded = createStore(true);
 export const loadNextMessages = createEvent();
@@ -225,8 +225,6 @@ subscribeToCurrentChatMessagesFx.use(async ({ chatId }) => {
     unsubscribe = await Database.Chats.subscribeToChatMessagesWithChatId(
         chatId,
         (messages) => {
-            console.log('subscrube', messages);
-
             addMessage(messages[0]);
         }
     );

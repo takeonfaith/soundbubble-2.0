@@ -1,144 +1,205 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
+import { Unsubscribe } from 'firebase/firestore';
 import { debounce } from 'patronum';
 import { Database } from '../../../database';
+import { updateDeepObject } from '../../../shared/funcs/updateDeepObject';
 import { $user, logout } from '../../user/model';
-import { TUser } from '../../user/model/types';
-import { $currentChat, initialChatLoadFx } from './chats';
-import { TChat, TMessage, TUnreadCount } from './types';
-import { $currentChatMessages } from './messages';
+import { $currentChat, $currentChatId, initialChatLoadFx } from './chats';
 import { READ_MESSAGES_COOLDOWN } from './constants';
+import { initiallyLoadChatMessagesFx } from './messages';
+import { sendMessage } from './send-message';
+import { TUnreadCount } from './types';
 
-type LoadInitialUnreadCountProps = { chats: TChat[]; user: TUser };
+let unsubscribe: Unsubscribe | null = null;
 
 export const loadInitialUnreadCountFx = createEffect<
-    LoadInitialUnreadCountProps,
-    TUnreadCount,
-    Error
+    { chatIds: string[]; userId: string },
+    TUnreadCount
+>();
+const subscribeToCurrentChatUnreadFx = createEffect<
+    {
+        chatId: string;
+        userId: string;
+    },
+    void
 >();
 
-const readMessagesFx = createEffect<
-    { chat: TChat; messageIds: string[]; userId: string },
-    void,
-    Error
+const updateLastReadAtFx = createEffect<
+    {
+        chatId: string;
+        userId: string;
+        lastReadAt: number;
+        messagesReadCount: number;
+    },
+    void
 >();
 
-export const updateUnread = createEvent<string>();
-export const updateUnreadMessages = createEvent();
+const updateMaxSeenAt = createEvent<number[]>();
+export const updateUnread = createEvent<number>();
+const updateLastReadAt = createEvent();
 
-const $messagesToRead = createStore<string[]>([]);
+export const $userLastReadAt = createStore<number>(Infinity);
+const $messagesReadCount = createStore(0);
+
+export const $unreadCountMap = createStore<TUnreadCount>({});
+export const $maxSeenAtInCurrentChat = createStore<number | null>(null);
+
+$unreadCountMap.reset(logout);
+$userLastReadAt.reset(logout);
+$maxSeenAtInCurrentChat.reset(logout);
+$messagesReadCount.reset(logout);
 
 debounce(updateUnread, READ_MESSAGES_COOLDOWN).watch(() => {
-    console.log('updateUnread delayed');
-    updateUnreadMessages();
+    updateLastReadAt();
 });
 
-export const $chatTotalUnreadCountMap = createStore<TUnreadCount>({});
+$currentChatId.watch(() => {
+    unsubscribe?.();
+});
 
-$chatTotalUnreadCountMap.reset(logout);
+sample({
+    clock: $currentChat,
+    fn: () => 0,
+    target: $messagesReadCount,
+});
+
+sample({
+    clock: updateUnread,
+    source: $messagesReadCount,
+    fn: (count) => count + 1,
+    target: $messagesReadCount,
+});
+
+sample({
+    clock: updateUnread,
+    source: { currentChat: $currentChat, unreadCountMap: $unreadCountMap },
+    filter: ({ currentChat, unreadCountMap }) =>
+        !!currentChat && unreadCountMap[currentChat.id]?.unreadCount > 0,
+    fn: ({ currentChat, unreadCountMap }) => {
+        return updateDeepObject(
+            unreadCountMap,
+            `${currentChat!.id}.unreadCount`,
+            unreadCountMap[currentChat!.id].unreadCount - 1
+        );
+    },
+    target: $unreadCountMap,
+});
+
+sample({
+    clock: updateUnread,
+    source: $userLastReadAt,
+    fn: (userLastReadAt, sentTime) => {
+        return Math.max(userLastReadAt ?? 0, sentTime);
+    },
+    target: $userLastReadAt,
+});
 
 sample({
     clock: initialChatLoadFx.doneData,
-    source: { user: $user },
-    filter: ({ user }, chats) => chats.length > 0 && !!user,
-    fn: ({ user }, chats) => ({ chats, user: user! }),
+    source: $user,
+    filter: (user) => !!user,
+    fn: (user, chats) => ({
+        userId: user!.uid,
+        chatIds: chats.map((c) => c.id),
+    }),
     target: loadInitialUnreadCountFx,
 });
 
 sample({
     clock: loadInitialUnreadCountFx.doneData,
-    target: $chatTotalUnreadCountMap,
+    target: $unreadCountMap,
 });
 
 sample({
-    clock: updateUnread,
-    source: { messages: $currentChatMessages, user: $user },
-    filter: ({ user, messages }) => !!messages.length && !!user,
-    fn: ({ user, messages }, id) => {
-        return messages.map((m) => {
-            if (m.id === id) {
-                return {
-                    ...m,
-                    unreadBy: m?.unreadBy
-                        ? m?.unreadBy?.filter((u) => u !== user!.uid)
-                        : [],
-                    isRead: true,
-                };
-            } else return m;
-        }) as TMessage[];
-    },
-    target: $currentChatMessages,
-});
+    clock: initiallyLoadChatMessagesFx.done,
+    source: $unreadCountMap,
+    fn: (unreadCountMap, { params: { chatId } }) => {
+        if (chatId) {
+            const res = unreadCountMap[chatId]?.lastReadAt ?? 0;
+            console.log(unreadCountMap, chatId, res);
 
-sample({
-    clock: updateUnread,
-    source: {
-        currentChat: $currentChat,
-        chatTotalUnreadCountMap: $chatTotalUnreadCountMap,
-    },
-    filter: ({ currentChat, chatTotalUnreadCountMap }) => {
-        return !!currentChat && chatTotalUnreadCountMap[currentChat.id] > 0;
-    },
-    fn: ({ chatTotalUnreadCountMap, currentChat }) => {
-        const res = {
-            ...chatTotalUnreadCountMap,
-            [currentChat!.id]: chatTotalUnreadCountMap[currentChat!.id] - 1,
-        };
-
-        if (!res[currentChat!.id]) {
-            delete res[currentChat!.id];
+            return res;
         }
+
+        return Infinity;
+    },
+    target: $userLastReadAt,
+});
+
+sample({
+    clock: sendMessage,
+    source: $currentChat,
+    filter: (currentChat) => !!currentChat,
+    fn: (currentChat, { message }) => {
+        const res = message(currentChat!).sentTime;
 
         return res;
     },
-    target: $chatTotalUnreadCountMap,
+    target: $userLastReadAt,
 });
 
 sample({
-    clock: updateUnread,
-    source: {
-        messagesToRead: $messagesToRead,
-        currentChat: $currentChat,
-        user: $user,
-    },
-    filter: ({ user, currentChat }) => !!user && !!currentChat,
-    fn: ({ messagesToRead }, id) => [...messagesToRead, id],
-    target: $messagesToRead,
+    clock: updateMaxSeenAt,
+    fn: (statuses) => Math.max(...statuses),
+    target: $maxSeenAtInCurrentChat,
 });
 
 sample({
-    clock: updateUnreadMessages,
+    clock: initiallyLoadChatMessagesFx.done,
+    fn: ({ params }) => params,
+    target: subscribeToCurrentChatUnreadFx,
+});
+
+sample({
+    clock: updateLastReadAt,
     source: {
-        messagesToRead: $messagesToRead,
-        currentChat: $currentChat,
         user: $user,
+        userLastReadAt: $userLastReadAt,
+        currentChat: $currentChat,
+        messagesReadCount: $messagesReadCount,
     },
-    filter: ({ user, currentChat, messagesToRead }) =>
-        !!user && !!currentChat && messagesToRead.length > 0,
-    fn: ({ currentChat, user, messagesToRead }) => ({
-        chat: currentChat!,
+    filter: ({ currentChat, user, userLastReadAt }) =>
+        !!currentChat && !!user && !!userLastReadAt,
+    fn: ({ currentChat, user, userLastReadAt, messagesReadCount }) => ({
+        chatId: currentChat!.id,
         userId: user!.uid,
-        messageIds: messagesToRead,
+        lastReadAt: userLastReadAt!,
+        messagesReadCount,
     }),
-    target: readMessagesFx,
+    target: updateLastReadAtFx,
 });
 
 sample({
-    clock: readMessagesFx.doneData,
-    fn: () => [],
-    target: $messagesToRead,
+    clock: updateLastReadAtFx.doneData,
+    fn: () => 0,
+    target: [$messagesReadCount],
 });
 
-loadInitialUnreadCountFx.use(async ({ chats, user }) => {
-    // const totalUnreadCount = await Database.Chats.loadInitialUnreadCount(
-    //     chats,
-    //     user
-    // );
+loadInitialUnreadCountFx.use(async ({ chatIds, userId }) => {
+    const res = await Database.Chats.loadInitialUnreadCount(chatIds, userId);
 
-    // return totalUnreadCount;
+    return res;
 });
 
-readMessagesFx.use(async ({ messageIds, chat, userId }) => {
-    console.log(messageIds);
+updateLastReadAtFx.use(
+    async ({ chatId, userId, lastReadAt, messagesReadCount }) => {
+        console.log('read messages', messagesReadCount, new Date(lastReadAt));
 
-    await Database.Chats.readMessages(chat, messageIds, userId);
+        await Database.Chats.readMessages(
+            chatId,
+            userId,
+            lastReadAt,
+            messagesReadCount
+        );
+    }
+);
+
+subscribeToCurrentChatUnreadFx.use(async ({ chatId, userId }) => {
+    unsubscribe = await Database.Chats.subscribeToCurrentChatUnread(
+        chatId,
+        userId,
+        (statuses) => {
+            updateMaxSeenAt(statuses.map((status) => status.lastReadAt ?? 0));
+        }
+    );
 });

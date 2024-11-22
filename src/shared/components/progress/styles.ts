@@ -12,4 +12,5 @@ export const ProgressLine = styled.div<{ $background?: string }>`
     background: ${({ $background }) => $background ?? 'grey'};
     height: 100%;
     border-radius: 10px;
+    transition: 0.15s width, 0.2s background;
 `;

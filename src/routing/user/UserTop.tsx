@@ -101,7 +101,9 @@ export const UserTop = ({ user }: Props) => {
             Database.Chats.getChatByUserIds(currentUser.uid, user.uid).then(
                 (chat) => {
                     setLoading(false);
-                    navigate(`/chat/${chat.id}`);
+                    if (chat) {
+                        navigate(`/chat/${chat.id}`);
+                    }
                 }
             );
         }
@@ -125,7 +127,7 @@ export const UserTop = ({ user }: Props) => {
                     </Subtext>
                 </UserInfoName>
                 <UserButtons>
-                    {!isOwner && (
+                    {!isOwner && !!currentUser && (
                         <DefaultButton
                             width="100%"
                             onClick={friendButton.onClick}

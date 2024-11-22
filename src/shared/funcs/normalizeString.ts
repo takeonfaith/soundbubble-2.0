@@ -9,6 +9,7 @@ export const normalizeString = (str: string, removeComma?: boolean) => {
 
         .replace(/-/g, '')
         .replace('ć', 'c')
+        .replace('ó', 'o')
         .toLowerCase();
     return shouldRemoveComma ? result.replace(/[,'._/]/g, '') : result;
 };

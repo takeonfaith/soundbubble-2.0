@@ -12,11 +12,11 @@ import styled from 'styled-components';
 import { useChatInfo } from '../../../../../entities/chat/hooks/useChatInfo';
 import { chatModel } from '../../../../../entities/chat/model';
 import { TCache } from '../../../../../entities/chat/model/types';
-import { createQueueObject } from '../../../../../entities/song/lib/createQueueObject';
-import { VerticalSongsList } from '../../../../../entities/song/ui/verticalList';
 import { userModel } from '../../../../../entities/user/model';
 import { TUser } from '../../../../../entities/user/model/types';
 import { UserItem } from '../../../../../entities/user/ui';
+import { confirmModel } from '../../../../../layout/confirm/model';
+import { modalModel } from '../../../../../layout/modal/model';
 import { popupModel } from '../../../../../layout/popup/model';
 import { Button } from '../../../../../shared/components/button';
 import { DefaultButton } from '../../../../../shared/components/button/DefaultButton';
@@ -24,13 +24,10 @@ import { DefaultContextMenuStyled } from '../../../../../shared/components/defau
 import { Flex } from '../../../../../shared/components/flex';
 import { LoadingWrapper } from '../../../../../shared/components/loadingWrapper';
 import { Subtext } from '../../../../../shared/components/subtext';
-import { Tabs } from '../../../../../shared/components/tabs';
 import { PlaylistName } from '../../../../playlist/ui/layout/PlaylistName';
 import { AddUserButton } from './AddUserButton';
 import { ChatPhoto } from './ChatPhoto';
 import { ChatStatus } from './ChatStatus';
-import { modalModel } from '../../../../../layout/modal/model';
-import { confirmModel } from '../../../../../layout/confirm/model';
 
 const ChatInfoStyled = styled.div`
     display: flex;
@@ -98,12 +95,6 @@ type Props = {
     cache: TCache;
 };
 
-const TABS = [
-    { title: 'Songs', url: '' },
-    { title: 'Albums', url: '' },
-    { title: 'Authors', url: '' },
-];
-
 export const ChatInfo = ({ cache }: Props) => {
     const [currentUser] = userModel.useUser();
     const [chat] = chatModel.useCurrentChat();
@@ -124,8 +115,6 @@ export const ChatInfo = ({ cache }: Props) => {
     const users = chat?.participants.map(
         (participant) => cache[participant] as TUser
     );
-    const queue = createQueueObject({ songs: [] });
-    const [currentTab, setCurrentTab] = useState(0);
     const [isFullSize, setIsFullSize] = useState(false);
 
     const handleOpenContextMenu = (e: Evt<'btn'>) => {
@@ -169,8 +158,6 @@ export const ChatInfo = ({ cache }: Props) => {
             });
         }
     };
-
-    const currentAttachments = [<VerticalSongsList queue={queue} />];
 
     if (!chat) return null;
 
@@ -333,14 +320,6 @@ export const ChatInfo = ({ cache }: Props) => {
                     })}
                 </UserList>
             )}
-            <Tabs
-                tabs={TABS}
-                currentTab={currentTab}
-                onTabClick={(tab) =>
-                    setCurrentTab(TABS.findIndex((t) => t.title === tab.title))
-                }
-            />
-            {currentAttachments[currentTab]}
         </ChatInfoStyled>
     );
 };

@@ -81,7 +81,7 @@ export const AddEntitiesUI = <T extends TEntity>({
                 )}
             </Flex>
             {children}
-            <Flex d="column" width="100%" padding="0 0 150px 0" gap={gap}>
+            <Flex d="column" width="100%" padding="0 0 150px 0" gap={gap} className='entities-list'>
                 {visibleItems.map((item, index) => {
                     const id = getEntityId(item);
                     const checked = !!addedItems.find(

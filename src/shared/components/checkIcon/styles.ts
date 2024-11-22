@@ -6,6 +6,6 @@ export const CheckIconStyled = styled.div<{ $checked: boolean; $type: string }>`
             ? $type === 'minus'
                 ? theme.scheme.red.action
                 : theme.scheme.blue.action
-            : theme.scheme.grey.text};
+            : theme.colors.greyText};
     height: 24px;
 `;

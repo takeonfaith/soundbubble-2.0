@@ -14,8 +14,7 @@ import { OnlineIndicator } from '../../user/ui/styles';
 import { useChatInfo } from '../hooks/useChatInfo';
 import { getLastMessageDate } from '../lib/getLastMessageDate';
 import { getLastMessageSender } from '../lib/getLastMessageSender';
-import { getSendStatus } from '../lib/getSendStatus';
-import { TCache, TChat } from '../model/types';
+import { LocalSendStatus, TCache, TChat } from '../model/types';
 import {
     ChatItemStyled,
     ChatTitle,
@@ -31,6 +30,7 @@ type Props = {
     unreadCount: number;
     isSelected: boolean;
     children?: React.ReactNode;
+    sendStatus: LocalSendStatus;
     onClick?: (chat: TChat, e: Evt<'a'>) => void;
     size?: 's' | 'm';
 };
@@ -47,6 +47,7 @@ export const ChatItem = ({
     cache,
     children,
     onClick,
+    sendStatus,
     size = 'm',
 }: Props) => {
     const [currentUser] = userModel.useUser();
@@ -56,7 +57,6 @@ export const ChatItem = ({
         currentUser
     );
     const lastMessage = chat.lastMessage;
-    const sendStatus = getSendStatus(lastMessage);
 
     const { sender } = getLastMessageSender(
         lastMessage,

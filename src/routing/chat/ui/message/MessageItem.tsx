@@ -42,7 +42,7 @@ type Props = {
     isPrevByTheSameSender: boolean;
     isFirst: boolean;
     sendStatus: LocalSendStatus;
-    onSeen: (messageId: string) => void;
+    onSeen: (sentTime: number) => void;
 };
 
 const renderAttachments = (
@@ -120,9 +120,11 @@ export const MessageItem = ({
 
     useEffect(() => {
         if (isOnScreen && sendStatus === LocalSendStatus.sent && !isMine) {
-            onSeen(message.id);
+            console.log(message.message);
+
+            onSeen(message.sentTime);
         }
-    }, [isMine, message.id, isOnScreen, sendStatus, onSeen]);
+    }, [isMine, isOnScreen, sendStatus, onSeen, message.sentTime]);
 
     const handleContextMenu = (
         e: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -140,12 +142,17 @@ export const MessageItem = ({
         return (
             <SystemMessageItemStyled ref={targetRef}>
                 {message.message}
+                <MessageSentStatus isMine={true} sendStatus={sendStatus} />
+                <span>{getTime(message.sentTime)}</span>
             </SystemMessageItemStyled>
         );
     }
 
     return (
-        <MessageStyled ref={targetRef}>
+        <MessageStyled
+            ref={targetRef}
+            className={sendStatus === LocalSendStatus.pending ? 'new' : ''}
+        >
             {!isMine && isFirst && (
                 <MessageSender>
                     {(cache[message.sender] as TUser)?.displayName}
@@ -202,7 +209,7 @@ export const MessageItem = ({
                         <DateAndSeenIcon>
                             <span>{getTime(message.sentTime)}</span>
                             <MessageSentStatus
-                                isMine={isMine}
+                                isMine={true}
                                 sendStatus={sendStatus}
                             />
                         </DateAndSeenIcon>

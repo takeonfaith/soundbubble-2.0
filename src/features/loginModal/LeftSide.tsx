@@ -15,7 +15,7 @@ const Block = ({ icon }: { icon: React.ReactNode }) => {
 
 export const LeftSide = () => {
     return (
-        <PromoStyled>
+        <PromoStyled className="promo">
             <Logo short />
             <Blocks>
                 <Block icon={<IconMusic />} />

@@ -4,8 +4,8 @@ import {
     arrayUnion,
     collection,
     DocumentData,
-    getCountFromServer,
     getDocs,
+    increment,
     limit,
     onSnapshot,
     or,
@@ -22,6 +22,7 @@ import {
     TCache,
     TChat,
     TMessage,
+    TUnread,
     TUnreadCount,
     TUploadChat,
 } from '../../entities/chat/model/types';
@@ -57,9 +58,17 @@ export class Chats {
 
     static async getFirstUnreadDocument(chatId: string, userId: string) {
         try {
+            const res = (await FB.getDeepById('newChats', [
+                chatId,
+                'unread',
+                userId,
+            ])) as TUnread;
+
+            if (!res) return null;
+
             const q = query(
                 FB.getSubCollection('newChats', `${chatId}/messages`),
-                where('unreadBy', 'array-contains', userId),
+                where('sentTime', '>', res.lastReadAt),
                 orderBy('sentTime', 'asc'),
                 limit(1)
             );
@@ -204,6 +213,42 @@ export class Chats {
                     lastMessage: message,
                     updateTime: Date.now(),
                 });
+
+                await FB.updateDeepByIds(
+                    'newChats',
+                    [chat.id, 'unread', message.sender],
+                    {
+                        lastReadAt: message.sentTime,
+                    }
+                );
+
+                const notYou = chat.participants.filter(
+                    (p) => p !== message.sender
+                );
+
+                const isSuccessfull = await FB.updateByIdsWithBatches(
+                    'newChats',
+                    [chat.id, 'unread'],
+                    notYou,
+                    {
+                        unreadCount: increment(1),
+                    }
+                );
+
+                console.log('isSuccessfull', isSuccessfull);
+
+                if (!isSuccessfull) {
+                    await FB.setByIdsWithBatches(
+                        'newChats',
+                        [chat.id, 'unread'],
+                        notYou,
+                        (userId) => ({
+                            unreadCount: 1,
+                            lastReadAt: null,
+                            userId,
+                        })
+                    );
+                }
             };
 
             await asyncRequests(chats, (chat) => {
@@ -220,7 +265,9 @@ export class Chats {
 
     static async createChat(chat: TChat): Promise<TChat> {
         try {
-            if (chat.participants.length === 2) {
+            const isGroupChat = chat.chatName.length !== 0;
+
+            if (!isGroupChat) {
                 const [senderId, receiverId] = chat.participants;
 
                 const probableChat = await this.getChatByUserIds(
@@ -232,9 +279,10 @@ export class Chats {
             }
 
             await FB.setById('newChats', chat.id, chat);
+            const messageId = getUID();
+
             // If chat is group chat, first message should be about creation
-            if (chat.chatName.length !== 0) {
-                const messageId = getUID();
+            if (isGroupChat) {
                 await this.sendMessage([chat], () =>
                     createMessageObject({
                         id: messageId,
@@ -245,10 +293,14 @@ export class Chats {
                 );
             }
 
-            await asyncRequests(chat.participants, (userId) => {
-                return FB.updateById('users', userId, {
+            const updateUser = async (userId: string) => {
+                await FB.updateById('users', userId, {
                     chats: arrayUnion(chat.id),
                 });
+            };
+
+            await asyncRequests(chat.participants, (userId) => {
+                return updateUser(userId);
             });
 
             return chat;
@@ -376,29 +428,33 @@ export class Chats {
         }
     }
 
-    static async loadInitialUnreadCount(chats: TChat[], user: TUser) {
+    static async loadInitialUnreadCount(chatIds: string[], userId: string) {
         try {
-            const getUnreadCount = async (chat: TChat) => {
-                const q = query(
-                    FB.getSubCollection('newChats', `${chat.id}/messages`),
-                    where('unreadBy', 'array-contains', user.uid)
-                );
-                const snapshot = await getCountFromServer(q);
+            const getUnreadCount = async (chatId: string) => {
+                const unread = ((await FB.getDeepById('newChats', [
+                    chatId,
+                    'unread',
+                    userId,
+                ])) ?? null) as TUnread;
 
-                return { count: snapshot.data().count, id: chat.id };
+                if (unread) {
+                    return { ...unread, chatId };
+                } else return null;
             };
 
-            const arr = await asyncRequests(chats, (chat) => {
-                return getUnreadCount(chat);
+            const arr = await asyncRequests(chatIds, (chatId) => {
+                return getUnreadCount(chatId);
             });
 
-            return arr.reduce((acc, { id, count }) => {
-                if (count !== 0) {
-                    acc[id] = count;
+            return arr.reduce((acc, props) => {
+                if (props !== null) {
+                    acc[props.chatId] = props;
                 }
                 return acc;
             }, {} as TUnreadCount);
         } catch (error) {
+            console.log(error);
+
             throw new Error(
                 'Failed to load initial unread count for chat' +
                     (error as Error).toString()
@@ -407,30 +463,18 @@ export class Chats {
     }
 
     static async readMessages(
-        chat: TChat,
-        messageIds: string[],
-        userId: string
+        chatId: string,
+        userId: string,
+        lastReadAt: number,
+        messagesReadCount: number
     ) {
         try {
-            if (chat?.lastMessage?.id === messageIds[messageIds.length - 1]) {
-                await FB.updateById('newChats', chat.id, {
-                    lastMessage: {
-                        ...chat.lastMessage,
-                        isRead: true,
-                        unreadBy: arrayRemove(userId),
-                    },
-                });
-            }
+            console.log('read messages', messagesReadCount, lastReadAt);
 
-            await FB.updateByIdsWithBatches(
-                'newChats',
-                [chat.id, 'messages'],
-                messageIds,
-                {
-                    isRead: true,
-                    unreadBy: arrayRemove(userId),
-                }
-            );
+            await FB.updateDeepByIds('newChats', [chatId, 'unread', userId], {
+                lastReadAt,
+                unreadCount: increment(-messagesReadCount),
+            });
         } catch (error) {
             throw new Error(
                 'Failed to mark messages as read' + (error as Error).toString()
@@ -534,6 +578,31 @@ export class Chats {
         } catch (error) {
             console.error(error);
             throw new Error('Failed to load wallpapers');
+        }
+    }
+
+    static async subscribeToCurrentChatUnread(
+        chatId: string,
+        userId: string,
+        callback: (statuses: TUnread[]) => void
+    ) {
+        try {
+            const q = query(
+                collection(FB.firestore, `newChats/${chatId}/unread`),
+                where('userId', '!=', userId)
+            );
+
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                const statuses = getDataFromDoc<TUnread>(querySnapshot);
+                console.log('tut podpiska', userId, statuses);
+
+                callback(statuses);
+            });
+
+            return unsubscribe;
+        } catch (error) {
+            console.error(error);
+            throw new Error('Failed to subscribe to current chat unread');
         }
     }
 }

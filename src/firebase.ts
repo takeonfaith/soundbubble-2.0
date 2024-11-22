@@ -35,7 +35,12 @@ import {
     uploadBytes,
 } from 'firebase/storage';
 import { getDataFromDoc } from './database/lib/getDataFromDoc';
-import { TChat, TMessage, TWallpaper } from './entities/chat/model/types';
+import {
+    TChat,
+    TMessage,
+    TUnread,
+    TWallpaper,
+} from './entities/chat/model/types';
 import { TPlaylist } from './entities/playlist/model/types';
 import { TSuggestion } from './entities/search/model/types';
 import { TLastQueue, TLyric, TSong } from './entities/song/model/types';
@@ -102,13 +107,13 @@ type TCollectionType<T extends TCollections> = T extends 'songs'
     : never;
 
 type TSubcollection<T extends TCollections> = T extends 'newChats'
-    ? 'messages'
+    ? 'messages' | 'unread'
     : never;
 
 type TSubcollectionDataType<
     K extends TCollections,
     T extends TSubcollection<K>
-> = T extends 'messages' ? Partial<TMessage> : never;
+> = T extends 'messages' ? TMessage : T extends 'unread' ? TUnread : never;
 
 type TStorageFolder =
     | 'chatCovers'
@@ -175,11 +180,11 @@ export class FB {
     static async setDeepByIds<T extends TCollections>(
         collectionType: T,
         path: [string, TSubcollection<T>, string],
-        data: TSubcollectionDataType<T, TSubcollection<T>>
+        data: DeepDataType<T, TSubcollection<T>>
     ): Promise<void> {
         const ref = doc(this.get(collectionType), ...path);
 
-        await setDoc(ref, data);
+        await setDoc<DocumentData, DocumentData>(ref, data);
     }
 
     static async getById<T extends TCollections>(
@@ -312,21 +317,77 @@ export class FB {
         return await sendPasswordResetEmail(this.auth, email);
     }
 
+    static async setByIdsWithBatches<T extends TCollections>(
+        collectionType: T,
+        path: [string, TSubcollection<T>],
+        ids: string[],
+        data: (id: string) => TSubcollectionDataType<T, TSubcollection<T>>
+    ): Promise<boolean> {
+        try {
+            const batch = writeBatch(this.firestore);
+
+            for (let i = 0; i < ids.length; i++) {
+                const id = ids[i];
+                const ref = doc(this.firestore, collectionType, ...path, id);
+
+                batch.set(ref, data(id));
+            }
+
+            await batch.commit();
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
     static async updateByIdsWithBatches<T extends TCollections>(
         collectionType: T,
         path: [string, TSubcollection<T>],
         ids: string[],
         data: DeepDataType<T, TSubcollection<T>>
-    ) {
-        const batch = writeBatch(this.firestore);
+    ): Promise<boolean> {
+        try {
+            const batch = writeBatch(this.firestore);
 
-        for (let i = 0; i < ids.length; i++) {
-            const id = ids[i];
-            const ref = doc(this.firestore, collectionType, ...path, id);
+            for (let i = 0; i < ids.length; i++) {
+                const id = ids[i];
+                const ref = doc(this.firestore, collectionType, ...path, id);
 
-            batch.update(ref, data);
+                batch.update(ref, data);
+            }
+
+            await batch.commit();
+            return true;
+        } catch (error) {
+            return false;
         }
-
-        await batch.commit();
     }
 }
+
+// const addUnreadSubcollectionToAllChats = async () => {
+//     const allChats = await FB.getAll('newChats');
+
+//     const updateAgain = async (chat: TChat) => {
+//         const lastMessage = chat.lastMessage;
+//         await FB.setByIdsWithBatches(
+//             'newChats',
+//             [chat.id, 'unread'],
+//             chat.participants,
+//             (userId) => ({
+//                 unreadCount: 0,
+//                 lastReadAt: lastMessage?.sentTime ?? null,
+//                 userId,
+//             })
+//         );
+//     };
+
+//     await asyncRequests(allChats, (chat) => {
+//         return updateAgain(chat);
+//     });
+
+//     console.log(
+//         'ura!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+//     );
+// };
+
+// addUnreadSubcollectionToAllChats();

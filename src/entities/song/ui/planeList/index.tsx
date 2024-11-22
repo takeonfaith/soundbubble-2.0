@@ -1,50 +1,39 @@
+import React from 'react';
 import { SongItem } from '..';
-import { SongState, TQueue, TSong } from '../../model/types';
-import { songModel } from '../../new-model';
+import { useSongPlay } from '../../hooks/useSongPlay';
+import { TQueue, TSong } from '../../model/types';
 
 type Props = {
     queue: TQueue | null;
     showSerialNumber?: number;
     isEditing?: boolean;
+    children?: React.ReactNode;
+    onClick?: (item: TSong, e: Evt<'div'>) => void;
     onRemove?: (song: TSong) => void;
 };
 
 export const PlaneSongList = (props: Props) => {
-    const { currentSong, state } = songModel.useSong();
-    const { queue, showSerialNumber, isEditing, onRemove } = props;
+    const songProps = useSongPlay(props);
+    const { queue, children } = props;
 
     if (!queue) return null;
 
     const { songs } = queue;
 
-    const handlePlay = (_: TSong, __: Evt<'div'>, currentSongIndex: number) => {
-        songModel.controls.play({
-            queue,
-            currentSongIndex,
-        });
-    };
-
     return (
         <>
             {songs.map((song, index) => {
-                const isCurrent = song.id === currentSong?.id;
-
                 return (
                     <SongItem
-                        onClick={handlePlay}
-                        showSerialNumber={showSerialNumber}
                         index={index}
                         key={song.id + index}
                         song={song}
-                        isEditing={isEditing}
-                        onRemove={onRemove}
-                        playing={isCurrent && state === SongState.playing}
-                        loading={
-                            isCurrent &&
-                            (state === SongState.loading ||
-                                state === SongState.loadingThenPlay)
-                        }
-                    />
+                        playing={songProps.getPlaying(song)}
+                        loading={songProps.getLoading(song)}
+                        {...songProps}
+                    >
+                        {children}
+                    </SongItem>
                 );
             })}
         </>

@@ -131,8 +131,10 @@ export const UserItem = memo(
                         />
                     )}
                 </Flex>
-                {children ??
-                    (orientation === 'horizontal' && (
+                {children ? (
+                    <div className="children">{children}</div>
+                ) : (
+                    orientation === 'horizontal' && (
                         <Button $width="45px">
                             <IconChevronRight
                                 opacity={0.3}
@@ -140,7 +142,8 @@ export const UserItem = memo(
                                 size={22}
                             />
                         </Button>
-                    ))}
+                    )
+                )}
             </UserItemStyled>
         );
     }

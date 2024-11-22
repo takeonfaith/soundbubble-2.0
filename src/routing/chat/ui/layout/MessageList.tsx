@@ -9,7 +9,9 @@ type Props = {
     participants: string[];
     currentUser: TUser | null;
     cache: TCache;
-    handleSeenMessage: (messageId: string) => void;
+    maxSeenAtInCurrentChat: number | null;
+    myLastReadAt: number | null;
+    handleSeenMessage: (sentTime: number) => void;
 };
 
 export const MessageList = ({
@@ -18,14 +20,27 @@ export const MessageList = ({
     currentUser,
     cache,
     handleSeenMessage,
+    maxSeenAtInCurrentChat,
+    myLastReadAt,
 }: Props) => {
     if (!currentUser) return null;
+
+    console.log({
+        maxSeenAtInCurrentChat: new Date(maxSeenAtInCurrentChat ?? 0),
+        myLastReadAt: new Date(myLastReadAt ?? 0),
+    });
 
     return (
         <>
             {messages.map((message, i) => {
                 const isMine = message.sender === currentUser?.uid;
-                const sendStatus = getSendStatus(message);
+
+                const sendStatus = getSendStatus(
+                    message,
+                    isMine,
+                    maxSeenAtInCurrentChat,
+                    myLastReadAt
+                );
 
                 return (
                     <MessageItem

@@ -1,9 +1,13 @@
+import { IconUserOff } from '@tabler/icons-react';
 import { useEffect } from 'react';
+import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { GridSongList } from '../../entities/song/ui/gridList';
 import { userModel } from '../../entities/user/model';
+import { TUser } from '../../entities/user/model/types';
 import { UserItem } from '../../entities/user/ui';
 import { HorizontalList } from '../../shared/components/horizontalList';
 import { NavigationTitle } from '../../shared/components/navigationTitle';
+import { PageMessage } from '../../shared/components/pageMessage';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { Subtext } from '../../shared/components/subtext';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
@@ -13,25 +17,28 @@ import { AuthorPageWrapper } from '../author/styles';
 import { SkeletonLoading } from './SkeletonLoading';
 import { SectionStyled } from './styles';
 import { UserTop } from './UserTop';
-import { TUser } from '../../entities/user/model/types';
-import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 
 type Props = {
     data?: TUser | null;
+    loadingUser?: boolean;
 };
 
-export const UserPage = ({ data }: Props) => {
+export const UserPage = ({ data, loadingUser }: Props) => {
     const [{ user: currentPageUser, songs, lastSongPlayed, friends }, loading] =
         userModel.useUserPage();
     const userPageData = data ?? currentPageUser;
+    const loadingData = loadingUser || loading;
 
     useUrlParamId({
         page: 'user',
         onChangeId: (id) => {
             if (id) {
-                console.log(id);
-
-                userModel.events.getUserPage({ userId: id, sortSongs: false });
+                if (!data) {
+                    userModel.events.getUserPage({
+                        userId: id,
+                        sortSongs: false,
+                    });
+                }
             }
         },
     });
@@ -49,11 +56,21 @@ export const UserPage = ({ data }: Props) => {
         url: `/user/${userPageData?.uid}`,
     });
 
+    if (!loadingData && !userPageData) {
+        return (
+            <PageMessage
+                icon={IconUserOff}
+                title={'No user found'}
+                description={''}
+            />
+        );
+    }
+
     return (
         <AuthorPageWrapper>
             <SkeletonPageAnimation
                 skeleton={<SkeletonLoading />}
-                loading={!userPageData || loading}
+                loading={loadingData}
             >
                 <UserTop user={userPageData} />
                 {lastSongPlayed && (

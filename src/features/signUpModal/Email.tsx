@@ -1,21 +1,10 @@
-import { IconMail } from '@tabler/icons-react';
 import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
-import { Input } from '../../shared/components/input';
+import { EmailInput } from '../emailInput';
+import { useForm } from './model';
 import { Passwords } from './Passwords';
 import { SignUpModalStyled } from './styles';
-import { EmailInput } from '../emailInput';
-
-// const fields = [
-//     {
-//         id: 'email',
-//         label: 'Email Address',
-//         type: 'email',
-//         placeholder: 'Enter your email',
-//         required: true,
-//     },
-// ] as const;
 
 export const Email = () => {
     const handleNext = () => {
@@ -26,6 +15,10 @@ export const Email = () => {
             sizeY: 's',
         });
     };
+
+    const { values, errors, updateField, onSubmit } = useForm(handleNext, [
+        'email',
+    ]);
 
     return (
         <SignUpModalStyled>
@@ -38,12 +31,12 @@ export const Email = () => {
                 ai="flex-start"
             >
                 <EmailInput
-                    onChange={function (value: string): void {
-                        throw new Error('Function not implemented.');
+                    onChange={(value) => {
+                        updateField({ id: 'email', value });
                     }}
-                    value={''}
-                    required={false}
-                    error={undefined}
+                    value={values.email}
+                    required
+                    error={errors.email}
                 />
             </Flex>
             <Flex width="100%" gap={10}>
@@ -53,7 +46,7 @@ export const Email = () => {
                 >
                     Previous
                 </DefaultButton>
-                <DefaultButton appearance="primary" onClick={handleNext}>
+                <DefaultButton appearance="primary" onClick={onSubmit}>
                     Next
                 </DefaultButton>
             </Flex>

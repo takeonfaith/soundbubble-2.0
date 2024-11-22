@@ -39,6 +39,10 @@ export const InputWrapper = styled.div`
     overflow: hidden;
     border: 3px dashed ${({ theme }) => theme.colors.border};
 
+    &.error {
+        border: 3px dashed ${({ theme }) => theme.scheme.red.action};
+    }
+
     &:hover {
         ${CenterButton} {
             &.with-preview {

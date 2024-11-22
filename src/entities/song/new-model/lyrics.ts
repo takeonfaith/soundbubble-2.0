@@ -3,7 +3,7 @@ import { useUnit } from 'effector-react';
 import { Database } from '../../../database';
 import { toastModel } from '../../../layout/toast/model';
 import { TLyric } from '../model/types';
-import { $currentSong } from '.';
+import { $currentSong } from './queue';
 
 const loadLyricsFx = createEffect<string, TLyric[], Error>();
 const loadLyrics = createEvent();

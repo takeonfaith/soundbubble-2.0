@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { songModel } from '../../../entities/song/model';
 import { CoolestGradientStyled } from './styles';
 
 let curX = 0;
@@ -14,8 +13,9 @@ type Props = {
 };
 
 export const LavaLampBackground = ({ colors }: Props) => {
+    console.log({ colors });
+
     const interactiveBubbleRef = useRef<HTMLDivElement | null>(null);
-    const { currentSong } = songModel.useSong();
 
     const move = useCallback(() => {
         curX += (tgX - curX) / FOLOWING_DELAY_FACTOR;
@@ -41,7 +41,7 @@ export const LavaLampBackground = ({ colors }: Props) => {
 
     return (
         <CoolestGradientStyled
-            $colors={colors ?? currentSong?.imageColors ?? []}
+            $colors={colors ?? []}
             onMouseMove={handleMouseMove}
         >
             <div className="noise-layer"></div>

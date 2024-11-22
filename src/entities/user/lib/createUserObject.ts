@@ -2,28 +2,23 @@ import { Timestamp } from 'firebase/firestore';
 import getUID from '../../../shared/funcs/getUID';
 import { TUser } from '../model/types';
 
-type UserProps = Partial<TUser>;
+type UserProps = Partial<TUser> & {
+    displayName: string;
+};
 
 export const createUserObject = (props: UserProps): TUser => ({
     uid: getUID(),
     imageColors: [],
     photoURL: '',
     isAuthor: false,
-    displayName: 'Test User',
-    isVerified: true,
-    online: 0,
+    isVerified: false,
+    online: Date.now(),
     lastSongPlayed: '',
     addedPlaylists: [],
     addedAuthors: [],
     addedSongs: [],
     regDate: Timestamp.now(),
     ownPlaylists: [],
-    lastQueue: {
-        image: '',
-        name: '',
-        songsList: [],
-        source: '',
-    },
     numberOfListenersPerMonth: 0,
     subscribers: 0,
     ...props,

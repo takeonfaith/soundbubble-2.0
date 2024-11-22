@@ -121,24 +121,19 @@ export const GlobalSearch = ({ queryValue, where, showTabs = true }: Props) => {
         }, 100);
     };
 
-    // useEffect(() => {
-    //     console.log(searchQuery, queryValue);
-
-    //     if (
-    //         searchQuery !== queryValue ||
-    //         (queryValue.length > 0 && result.length === 0)
-    //     ) {
-    //         // если в поисковой строке есть что-то, но результатов нет,
-    //         // то запросить результаты по введенному значению
-    //         handleGetResult();
-    //     }
-    // }, [
-    //     handleGetResult,
-    //     queryValue.length,
-    //     searchQuery,
-    //     result.length,
-    //     queryValue,
-    // ]);
+    useEffect(() => {
+        if (queryValue.length > 0 && result.length === 0) {
+            // если в поисковой строке есть что-то, но результатов нет,
+            // то запросить результаты по введенному значению
+            handleGetResult();
+        }
+    }, [
+        handleGetResult,
+        queryValue.length,
+        searchQuery,
+        result.length,
+        queryValue,
+    ]);
 
     return (
         <>

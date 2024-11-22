@@ -1,7 +1,6 @@
 import {
     IconCircle,
     IconCircleCheckFilled,
-    IconCirclePlus,
     IconSquareRoundedMinusFilled,
     IconSquareRoundedPlus,
 } from '@tabler/icons-react';

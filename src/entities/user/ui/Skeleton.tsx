@@ -3,7 +3,10 @@ import { Flex } from '../../../shared/components/flex';
 import { SkeletonShape } from '../../../shared/components/skeleton';
 import { TOrientation } from '../types';
 
-const UserCoverSkeleton = styled(SkeletonShape)`
+const UserCoverSkeleton = styled(SkeletonShape)<{
+    width: string;
+    height: string;
+}>`
     --size: calc(100vw / 10 - 17px);
 
     @media (max-width: 1200px) {
@@ -18,18 +21,19 @@ const UserCoverSkeleton = styled(SkeletonShape)`
         --size: calc(100vw / 3 - 27px);
     }
 
-    width: var(--size);
-    height: var(--size);
+    width: ${({ width }) => width ?? 'var(--size)'};
+    height: ${({ height }) => height ?? 'var(--size)'};
 `;
 
 type Props = {
     orientation?: TOrientation;
+    size?: string;
 };
 
-export const UserSkeleton = ({ orientation = 'vertical' }: Props) => {
+export const UserSkeleton = ({ size, orientation = 'vertical' }: Props) => {
     if (orientation === 'horizontal') {
         return (
-            <Flex gap={10} width='100%'>
+            <Flex gap={10} width="100%">
                 <SkeletonShape radius="100%" width="40px" height="40px" />
                 <Flex d="column" gap={4} ai="flex-start">
                     <SkeletonShape radius="4px" width="200px" height="14px" />
@@ -40,11 +44,11 @@ export const UserSkeleton = ({ orientation = 'vertical' }: Props) => {
     }
 
     return (
-        <Flex d="column" gap={10}>
+        <Flex d="column" gap={10} width={size}>
             <UserCoverSkeleton
                 radius="100%"
-                width="calc(100vw / 11)"
-                height="calc(100vw / 11)"
+                width={size ?? 'calc(100vw / 11)'}
+                height={size ?? 'calc(100vw / 11)'}
             />
             <Flex d="column" gap={4}>
                 <SkeletonShape radius="4px" width="140px" height="20px" />

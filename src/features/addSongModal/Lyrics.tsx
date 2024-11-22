@@ -1,22 +1,29 @@
-import { useUnit } from 'effector-react';
+import {
+    uploadSong,
+    useUploadingSong,
+} from '../../entities/song/new-model/upload';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { Textarea } from '../../shared/components/textarea';
 import { SignUpModalStyled } from '../signUpModal/styles';
-import { $addSongForm, updateField } from './model';
-import { uploadSong, useUploadingSong } from '../../entities/song/model/upload';
+import { useForm } from './model';
 
 export const Lyrics = () => {
-    const form = useUnit($addSongForm);
+    const { values, updateField, onSubmit, errors } = useForm((val) => {
+        console.log({ val });
+
+        uploadSong(val);
+    });
+    console.log(errors);
+
     const uploadingSong = useUploadingSong();
-    console.log(form);
 
     return (
         <SignUpModalStyled>
             <Flex height="100%" jc="center" width="100%">
                 <Textarea
                     label="Lyrics"
-                    value={form.lyrics}
+                    value={values.lyrics}
                     placeholder="Enter lyrics here..."
                     onChange={(value) => updateField({ id: 'lyrics', value })}
                 />
@@ -25,7 +32,7 @@ export const Lyrics = () => {
                 <DefaultButton
                     appearance="primary"
                     loading={uploadingSong}
-                    onClick={() => uploadSong(form)}
+                    onClick={onSubmit}
                 >
                     Add song to soundbubble
                 </DefaultButton>

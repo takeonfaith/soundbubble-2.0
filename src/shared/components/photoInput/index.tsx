@@ -16,17 +16,25 @@ import {
     InputWrapper,
     PhotoInputStyled,
 } from './styles';
+import { InputError } from '../input/styles';
 
 type Props = {
     file: File | string | null;
     colors: string[];
+    error?: string | null;
     onUpload: (photo: File | null) => void;
     onColors: (colors: string[]) => void;
 };
 
 const EXTENSIONS = '.png, .jpg, .jpeg, .avif';
 
-export const PhotoInput = ({ colors, onColors, onUpload, file }: Props) => {
+export const PhotoInput = ({
+    colors,
+    onColors,
+    onUpload,
+    file,
+    error,
+}: Props) => {
     const [preview, setPreview] = useState<string | null>(null);
     const [showColors, setShowColors] = useState(false);
 
@@ -58,7 +66,8 @@ export const PhotoInput = ({ colors, onColors, onUpload, file }: Props) => {
 
     return (
         <>
-            <InputWrapper>
+            {error && <InputError>{error}</InputError>}
+            <InputWrapper className={error ? 'error' : ''}>
                 {preview && <BackgroundPreview $colors={colors} />}
                 <PhotoInputStyled>
                     <input

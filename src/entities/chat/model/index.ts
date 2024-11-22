@@ -1,6 +1,12 @@
 import { useUnit } from 'effector-react';
 import { $cache } from './cache';
 import {
+    $isEditingMode,
+    editChat,
+    editChatFx,
+    toggleIsEditing,
+} from './chat-editing';
+import {
     $amITyping,
     $chats,
     $currentChat,
@@ -21,23 +27,24 @@ import {
 } from './messages';
 import { sendMessage } from './send-message';
 import {
-    $chatTotalUnreadCountMap,
+    $maxSeenAtInCurrentChat,
+    $unreadCountMap,
+    $userLastReadAt,
     loadInitialUnreadCountFx,
     updateUnread,
 } from './unread';
-import {
-    $isEditingMode,
-    editChat,
-    editChatFx,
-    toggleIsEditing,
-} from './chat-editing';
 import { $wallpapers, loadWallpapers, loadWallpapersFx } from './wallpapers';
 export * from './chats-update';
 
 export const chatModel = {
     useChats: () => useUnit([$chats, subscribeToChatsFx.pending]),
     useUnread: () =>
-        useUnit([$chatTotalUnreadCountMap, loadInitialUnreadCountFx.pending]),
+        useUnit([
+            $unreadCountMap,
+            $maxSeenAtInCurrentChat,
+            $userLastReadAt,
+            loadInitialUnreadCountFx.pending,
+        ]),
     useCurrentChat: () => useUnit([$currentChat]),
     useTyping: () => useUnit([$amITyping]),
     useMessages: () =>
@@ -56,10 +63,10 @@ export const chatModel = {
         createChat,
         updateIsTyping,
         loadNextMessages,
-        updateUnread,
         editChat,
         toggleIsEditing,
         loadWallpapers,
+        updateUnread,
         ...currentChatIdApi,
         ...canMoreBeLoadedApi,
     },

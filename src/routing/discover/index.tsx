@@ -1,6 +1,6 @@
 import { IconPlayerPlayFilled } from '@tabler/icons-react';
 import styled from 'styled-components';
-import { songModel } from '../../entities/song/model';
+import { songModel } from '../../entities/song/new-model';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
 import { LavaLampBackground } from '../../shared/components/lavaLampBackground';
@@ -15,7 +15,9 @@ const PlaybuttonStyled = styled.div`
 `;
 
 export const DiscoverPage = () => {
-    const isOpen = songModel.fullscreen.useFullScreen();
+    const isOpen = songModel.useFullScreenPlayer();
+    const { currentSong } = songModel.useSong();
+
     return (
         <div
             style={{
@@ -25,7 +27,9 @@ export const DiscoverPage = () => {
                 overflow: 'auto',
             }}
         >
-            {!isOpen && <LavaLampBackground />}
+            {!isOpen && (
+                <LavaLampBackground colors={currentSong?.imageColors} />
+            )}
             <PlaybuttonStyled>
                 <Button
                     $width="260px"

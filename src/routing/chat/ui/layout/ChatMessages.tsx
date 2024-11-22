@@ -37,7 +37,23 @@ export const ChatMessages = () => {
         firstUnreadMessage,
     ] = chatModel.useMessages();
     const [currentUser] = userModel.useUser();
-    const [unreadMap] = chatModel.useUnread();
+    const [unreadMap, maxSeenAtInCurrentChat, myLastReadAt] =
+        chatModel.useUnread();
+    // console.log({
+    //     myLastReadAt: new Date(myLastReadAt).toLocaleDateString('ru-RU', {
+    //         hour: '2-digit',
+    //         minute: '2-digit',
+    //         second: '2-digit',
+    //     }),
+    //     maxSeenAtInCurrentChat: new Date(
+    //         maxSeenAtInCurrentChat ?? 0
+    //     ).toLocaleDateString('ru-RU', {
+    //         hour: '2-digit',
+    //         minute: '2-digit',
+    //         second: '2-digit',
+    //     }),
+    // });
+
     const unreadMessages = currentChat ? unreadMap[currentChat.id] : 0;
     const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -50,8 +66,8 @@ export const ChatMessages = () => {
     );
     const preparedMessages = prepareMessages(messages);
 
-    const handleSeenMessage = useCallback((messageId: string) => {
-        chatModel.events.updateUnread(messageId);
+    const handleSeenMessage = useCallback((sentTime: number) => {
+        chatModel.events.updateUnread(sentTime);
     }, []);
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -124,7 +140,8 @@ export const ChatMessages = () => {
                         const isNotSeenFirst = firstUnreadMessage
                             ? m.find(
                                   (message) =>
-                                      message.id === firstUnreadMessage.id
+                                      message.id === firstUnreadMessage.id &&
+                                      !isMine
                               )
                             : false;
 
@@ -182,6 +199,10 @@ export const ChatMessages = () => {
                                         }
                                     >
                                         <MessageList
+                                            maxSeenAtInCurrentChat={
+                                                maxSeenAtInCurrentChat
+                                            }
+                                            myLastReadAt={myLastReadAt}
                                             messages={m}
                                             chatId={currentChat.id}
                                             participants={
@@ -207,7 +228,7 @@ export const ChatMessages = () => {
                         <IconArrowDown size={20} />
                         {!!unreadMessages && (
                             <NotificationBadge>
-                                {unreadMessages}
+                                {unreadMessages.unreadCount}
                             </NotificationBadge>
                         )}
                     </ScrollToChatBottomButton>

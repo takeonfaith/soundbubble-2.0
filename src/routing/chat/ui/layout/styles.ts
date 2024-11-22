@@ -23,6 +23,22 @@ export const MessageStyled = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
+    position: relative;
+
+    &.new {
+        animation: messageAppear 0.3s forwards;
+
+        @keyframes messageAppear {
+            0% {
+                opacity: 0;
+                top: 30px;
+            }
+            100% {
+                opacity: 1;
+                top: 0px;
+            }
+        }
+    }
 `;
 
 export const MessageBubble = styled.div<{

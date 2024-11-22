@@ -2,32 +2,29 @@ import styled from 'styled-components';
 import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
+import { PasswordInput } from '../passwordInput/PasswordInput';
+import { ChoosingAuthors } from './ChoosingAuthors';
+import { useForm } from './model';
 import { PasswordStrength } from './PasswordStrength';
 import { SignUpModalStyled } from './styles';
-
-// const fields = [
-//     {
-//         label: 'Password',
-//         id: 'password',
-//         type: 'password',
-//         placeholder: 'Enter your password',
-//         required: true,
-//     },
-//     {
-//         label: 'Confirm Password',
-//         id: 'confirmPassword',
-//         type: 'password',
-//         placeholder: 'Confirm your password',
-//         required: true,
-//     },
-// ] as const;
 
 export const PasswordRules = styled.div`
     background: ${({ theme }) => theme.colors.pageBackground2};
 `;
 
 export const Passwords = () => {
-    const handleSignUp = () => {};
+    const handleNext = () => {
+        modalModel.events.open({
+            title: 'Choose your favorite authors',
+            content: <ChoosingAuthors />,
+            sizeX: 'm',
+            sizeY: 'l',
+        });
+    };
+
+    const { values, onChange, errors, onSubmit } = useForm(handleNext, [
+        'password',
+    ]);
 
     return (
         <SignUpModalStyled>
@@ -39,10 +36,15 @@ export const Passwords = () => {
                 ai="center"
                 jc="center"
             >
-                <PasswordStrength />
-                {/* <Form fields={fields} valueObj={undefined} handleChange={function (key: string): (val: string | React.ChangeEvent<HTMLInputElement>) => void {
-                    throw new Error('Function not implemented.');
-                } } /> */}
+                <PasswordInput
+                    id="password"
+                    placeholder="Enter your password..."
+                    value={values.password}
+                    onChange={onChange}
+                    required
+                    error={errors.password}
+                />
+                <PasswordStrength value={values.password} />
             </Flex>
             <Flex width="100%" gap={10}>
                 <DefaultButton
@@ -51,8 +53,8 @@ export const Passwords = () => {
                 >
                     Previous
                 </DefaultButton>
-                <DefaultButton appearance="primary" onClick={handleSignUp}>
-                    Sign Up
+                <DefaultButton appearance="primary" onClick={onSubmit}>
+                    Next
                 </DefaultButton>
             </Flex>
         </SignUpModalStyled>

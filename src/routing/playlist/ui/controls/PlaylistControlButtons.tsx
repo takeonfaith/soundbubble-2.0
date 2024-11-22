@@ -234,8 +234,7 @@ export const PlaylistControlButtons = ({
                         className="primary"
                         onClick={() => {
                             setButtonType('play');
-
-                            songModel.controls.play({
+                            songModel.controls.playPauseQueue({
                                 queue,
                                 currentSongIndex: 0,
                             });
@@ -248,25 +247,23 @@ export const PlaylistControlButtons = ({
                             size={20}
                         />
                     </Button>
-                    {queue.songs.length !== 1 && (
-                        <Button
-                            $width="45px"
-                            $height="45px"
-                            className="outline"
-                            style={{ borderRadius: '30px' }}
-                            onClick={() => {
-                                setButtonType('shuffle');
-                                songModel.controls.shufflePlay({ queue });
-                            }}
-                            disabled={buttonsDisabled}
-                        >
-                            {buttonType === 'shuffle' ? (
-                                <Loading />
-                            ) : (
-                                <IconArrowsShuffle size={20} />
-                            )}
-                        </Button>
-                    )}
+                    <Button
+                        $width="45px"
+                        $height="45px"
+                        className="outline"
+                        style={{ borderRadius: '30px' }}
+                        onClick={() => {
+                            setButtonType('shuffle');
+                            songModel.controls.shufflePlayPause({ queue });
+                        }}
+                        disabled={buttonsDisabled}
+                    >
+                        {buttonType === 'shuffle' ? (
+                            <Loading />
+                        ) : (
+                            <IconArrowsShuffle size={20} />
+                        )}
+                    </Button>
                 </Flex>
             )}
             {isAuthor && !isEditing && noSongs && (
@@ -303,7 +300,7 @@ export const PlaylistControlButtons = ({
                 {playlist && !isAuthor && (
                     <Like playlist={playlist} likeModel={likeModel} />
                 )}
-                {!isEditing && !noSongs && queue.songs.length > 3 && (
+                {!isEditing && !noSongs && (
                     <Button
                         $width="100px"
                         className="ghost"

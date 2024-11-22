@@ -30,7 +30,9 @@ export const Sidebar = () => {
     const [unreadMap] = chatModel.useUnread();
 
     const notificationsDic: Record<string, number> = {
-        chat: Object.keys(unreadMap).length,
+        chat: Object.keys(unreadMap).filter(
+            (key) => unreadMap[key].unreadCount > 0
+        ).length,
         friends: friendRequests.length,
     };
 

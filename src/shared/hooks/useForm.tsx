@@ -106,7 +106,7 @@ export const useForm = <T extends TField>({
         onSumbit,
         areAllRequiredFieldFilled,
         formProps: {
-            sumbitError: sumbitError,
+            sumbitError,
             fields,
             valueObj,
             handleChange,

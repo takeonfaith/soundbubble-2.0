@@ -19,17 +19,50 @@ import {
 } from 'firebase/firestore';
 import { Playlists, Songs } from '.';
 import { TPlaylist } from '../../entities/playlist/model/types';
+import { createDefaultSuggestion } from '../../entities/search/lib/createDefaultSuggestion';
+import { createUserObject } from '../../entities/user/lib/createUserObject';
+import { CreateAuthorForm } from '../../entities/user/model/create-author';
 import { FB } from '../../firebase';
 import { ERRORS } from '../../shared/constants';
 
 export class Users {
     static ref = FB.get('users');
 
-    static createUser({ email, password }: CreateUserCreditsType) {
+    static async createUser(props: CreateUserCreditsType) {
         try {
-            return FB.createUser(email, password);
+            const {
+                email,
+                password,
+                displayName,
+                photoFile,
+                imageColors,
+                addedAuthors,
+            } = props;
+            console.log(props);
+
+            let photoURL = '';
+            if (photoFile) {
+                photoURL = await FB.uploadFile('usersImages', photoFile);
+            }
+            const userCreds = await FB.createUser(email, password);
+            const newUser = createUserObject({
+                uid: userCreds.user.uid,
+                displayName,
+                photoURL,
+                imageColors,
+                addedAuthors,
+            });
+            await FB.setById('users', newUser.uid, newUser);
+            await FB.setById(
+                'search',
+                newUser.uid,
+                createDefaultSuggestion(newUser)
+            );
+
+            return newUser;
         } catch (error) {
             console.error(error);
+            return null;
         }
     }
 
@@ -54,8 +87,13 @@ export class Users {
             if (!uid)
                 throw new Error(ERRORS.loginFailed('UID must be provided'));
 
-            return FB.getById('users', uid);
+            const res = await FB.getById('users', uid);
+            console.log(res);
+
+            return res;
         } catch (error) {
+            console.log(error);
+
             throw new Error('Failed to get user by id: ' + uid);
         }
     }
@@ -374,6 +412,8 @@ export class Users {
         try {
             const user = await this.getUserById(userId);
 
+            if (!user) return null;
+
             const userSongs = user?.ownSongs?.length
                 ? user?.ownSongs
                 : user?.addedSongs ?? [];
@@ -402,14 +442,46 @@ export class Users {
                 user,
                 songs,
                 playlists,
-                lastSongPlayed:
-                    lastQueue?.songs[lastQueue.queue.currentSongIndex],
+                lastSongPlayed: lastQueue?.queue
+                    ? lastQueue?.songs[lastQueue.queue.currentSongIndex]
+                    : null,
                 friends,
             };
         } catch (error) {
             console.log('Failed to get user page', error);
 
             throw new Error('Failed to get user page');
+        }
+    }
+
+    static async createAuthor(props: CreateAuthorForm) {
+        try {
+            const { displayName, imageColors, photoFile } = props;
+            let photoURL = '';
+            if (photoFile) {
+                photoURL = await FB.uploadFile('usersImages', photoFile);
+            }
+
+            const newUser = createUserObject({
+                displayName,
+                imageColors,
+                photoURL,
+                isAuthor: true,
+                isVerified: true,
+            });
+
+            await FB.setById('users', newUser.uid, newUser);
+            await FB.setById(
+                'search',
+                newUser.uid,
+                createDefaultSuggestion(newUser)
+            );
+
+            return newUser;
+        } catch (error) {
+            console.log('Failed to create author', error);
+
+            throw new Error('Failed to create author');
         }
     }
 }

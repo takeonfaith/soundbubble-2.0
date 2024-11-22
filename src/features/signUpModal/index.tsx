@@ -1,23 +1,13 @@
 import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
-import { Form } from '../../shared/components/form';
+import { Input } from '../../shared/components/input';
 import { Logo } from '../../shared/components/logo';
 import { Subtext } from '../../shared/components/subtext';
-import { useForm } from '../../shared/hooks/useForm';
 import backgroundImg from './img/background.png';
+import { useForm } from './model';
 import { SignUpWrapper } from './styles';
 import { UserPhoto } from './UserPhoto';
-
-const fields = [
-    {
-        label: 'Name',
-        id: 'name',
-        type: 'text',
-        placeholder: 'Enter your name',
-        required: true,
-    },
-] as const;
 
 export const SignUpModal = () => {
     const handleNext = () => {
@@ -28,12 +18,10 @@ export const SignUpModal = () => {
             sizeY: 's',
         });
     };
-    const { formProps, onSumbit } = useForm({
-        fields,
-        handleSubmit: () => {
-            handleNext();
-        },
-    });
+
+    const { values, errors, onSubmit, onChange } = useForm(handleNext, [
+        'name',
+    ]);
 
     return (
         <SignUpWrapper>
@@ -56,11 +44,19 @@ export const SignUpModal = () => {
                 >
                     Please enter your name in the field below and hit next
                 </Subtext>
-                <Form {...formProps} />
+                <Input
+                    placeholder="Enter your name..."
+                    label="Name"
+                    id="name"
+                    value={values.name}
+                    required
+                    onChange={onChange}
+                    error={errors.name}
+                />
             </Flex>
 
             <Flex width="100%" gap={10}>
-                <DefaultButton appearance="primary" onClick={onSumbit}>
+                <DefaultButton appearance="primary" onClick={onSubmit}>
                     Next
                 </DefaultButton>
             </Flex>

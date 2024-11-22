@@ -1,15 +1,12 @@
-import { useUnit } from 'effector-react';
+import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { PhotoInput } from '../../shared/components/photoInput';
 import { SignUpModalStyled } from '../signUpModal/styles';
-import { $addSongForm, updateField } from './model';
 import { GeneralInfo } from './GeneralInfo';
-import { modalModel } from '../../layout/modal/model';
+import { useForm } from './model';
 
 export const SongCover = () => {
-    const form = useUnit($addSongForm);
-
     const handleNext = () => {
         modalModel.events.open({
             title: 'General Info',
@@ -19,14 +16,17 @@ export const SongCover = () => {
         });
     };
 
-    console.log(form);
+    const { values, updateField, onSubmit, errors } = useForm(handleNext, [
+        'coverFile',
+    ]);
 
     return (
         <SignUpModalStyled>
             <Flex width="100%" d="column" gap={10} height="100%" jc="center">
                 <PhotoInput
-                    file={form.coverFile}
-                    colors={form.imageColors}
+                    file={values.coverFile}
+                    error={errors.coverFile}
+                    colors={values.imageColors}
                     onUpload={(file) => {
                         updateField({ id: 'coverFile', value: file });
                     }}
@@ -36,7 +36,7 @@ export const SongCover = () => {
                 />
             </Flex>
             <Flex width="100%">
-                <DefaultButton appearance="primary" onClick={handleNext}>
+                <DefaultButton appearance="primary" onClick={onSubmit}>
                     Next
                 </DefaultButton>
             </Flex>

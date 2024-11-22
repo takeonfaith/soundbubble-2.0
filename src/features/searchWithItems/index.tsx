@@ -20,6 +20,8 @@ type Props<T extends TExtendedSuggestion> = {
     items: T[];
     placeholder: string;
     label: string;
+    error?: string;
+    required?: boolean;
     onSubmit: (addedItems: T[]) => void;
 };
 
@@ -27,6 +29,8 @@ export const SearchWithItems = <T extends TExtendedSuggestion>({
     items,
     label,
     placeholder,
+    error,
+    required,
     onSubmit,
 }: Props<T>) => {
     const [value, setValue] = useState('');
@@ -60,6 +64,8 @@ export const SearchWithItems = <T extends TExtendedSuggestion>({
                 onChange={handleChange}
                 onSumbit={handleSubmit}
                 disableCopyButton
+                error={error}
+                required={required}
             />
             <Items
                 added={addedItems}

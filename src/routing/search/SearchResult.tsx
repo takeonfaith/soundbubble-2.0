@@ -3,22 +3,19 @@ import { IconDiscOff } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
 import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { PlaylistItem } from '../../entities/playlist/ui';
 import {
     $isLoadingResult,
     $searchQuery,
     $searchResult,
 } from '../../entities/search/model';
-import { SongItem } from '../../entities/song/ui';
-import { UserItem } from '../../entities/user/ui';
-import { getEntityType } from '../../features/searchWithHints/lib/getEntityType';
+import { EntityList } from '../../shared/components/entityList';
 import { Flex } from '../../shared/components/flex';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { ENTITIES_ICONS } from '../../shared/constants/icons';
 import { SearchSkeleton } from './SearchSkeleton';
 import { TopAuthorCard } from './TopAuthorCard';
+import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 
 const SearchPageWrapper = styled.div`
     max-width: 650px;
@@ -32,16 +29,6 @@ const SearchPageWrapper = styled.div`
         margin-top: 0px;
     }
 `;
-
-export const EntityTypeMap = {
-    song: SongItem,
-    author: UserItem,
-    user: UserItem,
-    playlist: PlaylistItem,
-    album: PlaylistItem,
-    deleted: PlaylistItem,
-    chat: () => null,
-};
 
 export const SearchResult = () => {
     const [params] = useSearchParams();
@@ -62,6 +49,11 @@ export const SearchResult = () => {
 
     // const notSearchedYet =
     //     params.get('query') === null && result.length === 0 && !isLoading;
+
+    const queue = createQueueObject({
+        name: 'Search',
+        url: `/search/?query=${searchQuery}`,
+    });
 
     return (
         <ContentWrapper>
@@ -138,27 +130,12 @@ export const SearchResult = () => {
                                 {isAuthorCard && (
                                     <TopAuthorCard author={first} />
                                 )}
-                                {result.map((item, index) => {
-                                    const type = getEntityType(item);
-                                    if (isAuthorCard && index === 0)
-                                        return null;
-
-                                    if (type) {
-                                        const Component = EntityTypeMap[type];
-                                        return (
-                                            <Component
-                                                song={item}
-                                                playing={false}
-                                                loading={false}
-                                                index={0}
-                                                onClick={undefined}
-                                                user={item}
-                                                playlist={item}
-                                                isAuthor={false}
-                                            />
-                                        );
+                                <EntityList
+                                    queue={queue}
+                                    entities={
+                                        isAuthorCard ? result.slice(1) : result
                                     }
-                                })}
+                                />
                             </Flex>
                         </>
                     )}

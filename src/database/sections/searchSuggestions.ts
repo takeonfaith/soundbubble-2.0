@@ -5,6 +5,7 @@ import {
     limit,
     orderBy,
     query,
+    QueryFieldFilterConstraint,
     where,
 } from 'firebase/firestore';
 import { Database } from '..';
@@ -90,12 +91,20 @@ export class SearchSuggestions {
         }
     }
 
-    static async getSearchResult(queryStr: string, place: TPlace | undefined) {
+    static async getSearchResult(
+        queryStr: string,
+        place: TPlace | undefined,
+        restrictions?: QueryFieldFilterConstraint[]
+    ) {
         try {
             // TODO: оптимизировать так, чтобы не делать запрос к suggestions повторно
             const placeRestrictions = [];
             if (place) {
                 placeRestrictions.push(where('place', '==', place));
+            }
+
+            if (restrictions) {
+                placeRestrictions.push(restrictions[0]);
             }
 
             const q = query(

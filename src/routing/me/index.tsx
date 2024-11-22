@@ -2,7 +2,7 @@ import { userModel } from '../../entities/user/model';
 import { UserPage } from '../user';
 
 export const MePage = () => {
-    const [currentUser] = userModel.useUser();
+    const [currentUser, loading] = userModel.useUser();
 
-    return <UserPage data={currentUser} />;
+    return <UserPage data={currentUser} loadingUser={loading} />;
 };

@@ -103,7 +103,7 @@ export const Layout = () => {
         popupModel.events.open({
             content: <UserContextMenu />,
             e,
-            height: 345,
+            height: 209,
         });
     };
 
@@ -115,10 +115,9 @@ export const Layout = () => {
             <Popup />
 
             <LayoutHeader>
-                <Flex gap={22}>
-                    <Flex gap={40}>
+                <Flex gap={0}>
+                    <Flex width="calc(var(--sidebar-width) - 30px)">
                         <Logo />
-                        <ThemeButton />
                     </Flex>
                     <GlobalSearchWrapper>
                         <GlobalSearch
@@ -128,7 +127,9 @@ export const Layout = () => {
                         />
                     </GlobalSearchWrapper>
                 </Flex>
-                <>
+                <Flex gap={16}>
+                    <ThemeButton />
+
                     {currentUser && (
                         <Button $width="40px" onClick={handleOpenUserPopup}>
                             {currentUser.isAdmin && <AdminCircle />}
@@ -141,7 +142,7 @@ export const Layout = () => {
                         </Button>
                     )}
                     <LoginButton />
-                </>
+                </Flex>
             </LayoutHeader>
             <LayoutStyled className={currentChat ? 'chat-page' : ''}>
                 <Sidebar />

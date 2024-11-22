@@ -16,7 +16,7 @@ export type TUser = {
     isVerified: boolean;
     isAdmin?: boolean;
     isAuthor?: boolean;
-    lastQueue: {
+    lastQueue?: {
         image: string;
         name: string;
         songsList: string[];
@@ -37,7 +37,10 @@ export type LoginCreditsType = {
 };
 
 export type CreateUserCreditsType = LoginCreditsType & {
-    name: string;
+    displayName: string;
+    photoFile?: File | null;
+    imageColors?: string[];
+    addedAuthors?: string[];
 };
 
 export type TPageStore = {
