@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { PhotoInput } from '../../shared/components/photoInput';
+import { subtractArrays } from '../../shared/funcs/subtractArrays';
 
 type Props = {
     onSave: (
-        newPhoto: File | null,
+        newPhoto: File | null | undefined,
         imageColors: string[],
         setLoading: React.Dispatch<React.SetStateAction<boolean>>
     ) => void;
@@ -26,12 +27,16 @@ export const EditPhotoModal = ({ onSave, photo, imageColors }: Props) => {
         setNewImageColors(colors);
     };
 
-    const isAvailableToChange = photo !== newPhoto;
+    const isAvailableToChange =
+        photo !== newPhoto ||
+        subtractArrays(imageColors, newImageColors).length !== 0;
 
     const handleUpdatePlaylist = () => {
-        if (newPhoto === null || newPhoto instanceof File) {
+        if (isAvailableToChange) {
             setLoading(true);
-            onSave(newPhoto, imageColors, setLoading);
+            const updatedPhoto =
+                photo === newPhoto ? undefined : (newPhoto as File | null);
+            onSave(updatedPhoto, newImageColors, setLoading);
         }
     };
 

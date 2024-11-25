@@ -1,16 +1,23 @@
+import { Database } from '../../../database';
 import { TUser } from '../../../entities/user/model/types';
 import { effectorForm } from '../../../shared/effector/form';
 
 export const { useForm } = effectorForm({
     name: {
+        type: 'text',
         init: '',
         required: true,
-        type: 'text',
     },
     email: {
         init: '',
         required: true,
         type: 'email',
+        asyncValidation: async (email) => {
+            const isTaken = await Database.Users.checkIfEmailIsTaken(email);
+            return isTaken
+                ? 'This email is already taken. Choose a different one'
+                : undefined;
+        },
     },
     password: {
         init: '',
@@ -18,12 +25,12 @@ export const { useForm } = effectorForm({
         type: 'password',
     },
     photo: {
-        init: null as File | null,
+        init: null,
         required: false,
         type: 'file',
     },
     imageColors: {
-        init: [] as string[],
+        init: [],
         required: false,
         type: 'stringArray',
     },
@@ -33,8 +40,11 @@ export const { useForm } = effectorForm({
         type: 'authors',
     },
     added: {
-        init: [] as string[],
+        init: [],
         required: true,
-        type: 'authors',
+        type: 'stringArray',
+        validation: (added) => {
+            return added.length < 5 ? 'Should add at least 5' : undefined;
+        },
     },
 });

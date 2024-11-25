@@ -7,6 +7,8 @@ import { $currentSong } from './queue';
 
 const loadLyricsFx = createEffect<string, TLyric[], Error>();
 const loadLyrics = createEvent();
+export const calculateCurrentLyric = createEvent<number>();
+export const nextCurrentLyric = createEvent<number>();
 
 const $lyrics = createStore<TLyric[]>([]);
 const $currentLyricIndex = createStore(0);

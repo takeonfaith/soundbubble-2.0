@@ -39,12 +39,12 @@ export const ControlButtons = ({ queue, buttonColor }: Props) => {
                     e.preventDefault();
                     setButtonType('play');
                     if (shouldLoadSongs) {
-                        songModel.controls.loadAndPlay({
+                        songModel.controls.loadSongsThenPlay({
                             queue,
                             currentSongIndex,
                         });
                     } else {
-                        songModel.controls.play({
+                        songModel.controls.playPauseQueue({
                             queue,
                             currentSongIndex,
                         });

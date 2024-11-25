@@ -133,7 +133,7 @@ export class Playlists {
         try {
             if (!playlist) throw new Error('Playlist is not specified');
 
-            let imageUrl = playlist.image;
+            let imageUrl = ''
 
             if (
                 'image' in update &&
@@ -147,10 +147,18 @@ export class Playlists {
                 await FB.deleteFile('songsImages', playlist.image);
             }
 
-            const whatToUpdate: Partial<TPlaylist> =
-                imageUrl !== playlist.image
-                    ? { ...update, image: imageUrl }
-                    : (update as TPlaylist);
+            if (update.image === null) {
+                await FB.deleteFile('songsImages', playlist.image);
+            }
+
+            const { image, ...updateWithoutImage } = update;
+
+            const whatToUpdate: Partial<TPlaylist> = { ...updateWithoutImage };
+            console.log(update);
+
+            if (image !== undefined) {
+                whatToUpdate.image = imageUrl;
+            }
 
             await FB.updateById('playlists', playlist.id, whatToUpdate);
 
@@ -182,6 +190,8 @@ export class Playlists {
 
             return { ...playlist, ...whatToUpdate } as TPlaylist;
         } catch (error) {
+            console.log(`Failed to update playlist ${playlist.id}, ${error}`);
+
             throw new Error(
                 `Failed to update playlist ${playlist.id}, ${error}`
             );

@@ -8,7 +8,7 @@ import {
 } from 'effector';
 import { Unsubscribe } from 'firebase/firestore';
 import { Database } from '../../../database';
-import { $user, logout, setUser } from '../../user/model';
+import { $user, logout, setUser } from '../../user/model/user';
 import { TUser } from '../../user/model/types';
 import { getHeavyMediaIdsFromChats } from '../lib/getHeavyMediaIdsFromChats';
 import { $cache } from './cache';

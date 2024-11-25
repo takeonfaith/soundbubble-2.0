@@ -24,7 +24,6 @@ type Props = {
     playlist: TPlaylist | null;
     isLoadingEditing: boolean;
     loading: boolean;
-    error: string | null;
     queue: TQueue;
     isOwner: boolean;
     searching?: {
@@ -50,7 +49,6 @@ export const PlaylistPageContent = (props: Props) => {
         imageUrl,
         isLoadingEditing,
         loading,
-        error,
         isOwner,
         queue,
         searching,
@@ -59,6 +57,8 @@ export const PlaylistPageContent = (props: Props) => {
         handleRemoveSong,
         likeModel,
     } = props;
+
+    const error = !loading && !playlist;
 
     return (
         <PageWrapper>
@@ -99,7 +99,9 @@ export const PlaylistPageContent = (props: Props) => {
                             <VerticalSongsList
                                 queue={queue}
                                 isEditing={isEditing}
-                                onRemove={handleRemoveSong}
+                                onRemove={
+                                    isOwner ? handleRemoveSong : undefined
+                                }
                             />
                             {(currentPlaylistSongs?.length ?? 0) > 0 &&
                                 searching?.value.length === 0 &&

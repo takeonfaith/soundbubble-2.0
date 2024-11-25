@@ -1,12 +1,30 @@
-import { FieldType } from '../../components/form/types';
+import { TUser } from '../../../entities/user/model/types';
 
-export type TField = {
-    init: unknown;
+export type FieldType =
+    | 'email'
+    | 'password'
+    | 'text'
+    | 'number'
+    | 'date'
+    | 'authors'
+    | 'file'
+    | 'stringArray';
+
+type TField<T extends FieldType, K> = {
+    type: T;
+    init: K;
     required: boolean;
-    type: FieldType;
-    validation?: (value: unknown) => string | undefined;
+    validation?: (value: K) => string | undefined;
+    asyncValidation?: (value: K) => Promise<string | undefined>;
 };
 
+export type TFields =
+    | TField<'email' | 'date' | 'text' | 'password', string>
+    | TField<'file', File | null>
+    | TField<'authors', TUser[]>
+    | TField<'stringArray', string[]>
+    | TField<'number', number>;
+
 export type TForm = {
-    [key: string]: TField;
+    [key: string]: TFields;
 };

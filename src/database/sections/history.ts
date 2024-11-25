@@ -9,9 +9,9 @@ export class History {
         try {
             const historyIds = await FB.getById('history', userId);
 
-            const ids = new Set(historyIds.history);
+            if (!historyIds) return [];
 
-            const songs = await Songs.getSongsByUids(Array.from(ids));
+            const songs = await Songs.getSongsByUids(historyIds.history);
             return songs.reverse();
         } catch (error) {
             throw new Error('Failed to get history for user');

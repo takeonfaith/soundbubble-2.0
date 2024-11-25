@@ -31,6 +31,10 @@ const AttachedStyled = styled.div`
 
     h3 {
         font-weight: 300;
+
+        &.error {
+            color: ${({ theme }) => theme.scheme.red.action};
+        }
     }
 
     .list-title {
@@ -119,7 +123,9 @@ export const ChoosingAuthors = () => {
             sizeY: 'm',
         });
     };
-    const { values, updateField, onSubmit } = useForm(handleNext);
+    const { values, updateField, onSubmit, errors } = useForm(handleNext, [
+        'added',
+    ]);
 
     useEffect(() => {
         setLoading(true);
@@ -146,20 +152,28 @@ export const ChoosingAuthors = () => {
                     ai="flex-start"
                 >
                     <Flex jc="space-between" width="100%">
-                        <h3>Choose at least 5 artists you like </h3>
+                        <h3 className={errors.added ? 'error' : ''}>
+                            Choose at least 5 artists you like{' '}
+                        </h3>
                     </Flex>
                     <Subtext style={{ fontSize: '1rem' }}>
-                        So we know your taste
+                        {errors.added ?? 'So we know your taste'}
                     </Subtext>
                 </Flex>
                 <AttachEntity
                     library={values.authors}
                     submitButtonText={'Next'}
-                    onSubmit={(added) => {
+                    onEntityClick={(added) => {
+                        console.log({ added });
+
                         updateField({
                             id: 'added',
-                            value: added.map((u) => u.uid),
+                            value: (added as TUser[]).map((u) => u.uid),
                         });
+                    }}
+                    onSubmit={(added) => {
+                        console.log({ added });
+
                         onSubmit();
                     }}
                     orientation="vertical"

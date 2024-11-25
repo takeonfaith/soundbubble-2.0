@@ -7,7 +7,7 @@ import {
 } from 'effector';
 import { Unsubscribe } from 'firebase/auth';
 import { Database } from '../../../database';
-import { $user, logout } from '../../user/model';
+import { $user, logout } from '../../user/model/user';
 import { getHeavyMediaIdsFromMessages } from '../lib/getHeavyMediaIdsFromMessages';
 import { $currentChatId } from './chats';
 import { MAX_MESSAGES_PER_LOAD } from './constants';

@@ -1,8 +1,9 @@
 import { useUnit } from 'effector-react';
 import { useIsPlaylistLiked } from '../../../shared/hooks/useIsPlaylistLiked';
-import { addPlaylistFx, removePlaylistFx, userModel } from '../../user/model';
+import { addPlaylistFx, removePlaylistFx } from '../../user/model/user';
 import { TPlaylist } from '../model/types';
 import { useEffect, useState } from 'react';
+import { userModel } from '../../user/model';
 
 export type ToggleLike = {
     isLiked: boolean;

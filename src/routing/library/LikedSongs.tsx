@@ -15,7 +15,7 @@ import { normalizeString } from '../../shared/funcs/normalizeString';
 import { PageTop } from '../playlist/ui/layout/PageTop';
 
 export const LikedSongs = () => {
-    const [, , searching] = playlistModel.usePlaylist();
+    const [, , , searching] = playlistModel.usePlaylist();
     const [library, loading] = userModel.useSongLibrary();
     const [currentUser] = userModel.useUser();
     const [librarySongs, setLibrarySongs] = useState(library);

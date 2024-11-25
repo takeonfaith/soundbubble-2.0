@@ -21,6 +21,7 @@ import {
 } from './styles';
 import { usePlayer } from './usePlayer';
 import { SongState } from '../../entities/song/model/types';
+import { VolumeButton } from '../../features/volumeButton';
 
 export const Player = () => {
     const {
@@ -57,6 +58,23 @@ export const Player = () => {
                     <SongTitle>{currentSong?.name ?? 'Untitled'}</SongTitle>
                     <Authors authors={currentSong?.authors} />
                 </Flex>
+                <LikeButton
+                    disabled={!currentSong}
+                    width="42px"
+                    isLiked={isLiked}
+                    entity={currentSong}
+                    onClick={handleToggleLike}
+                    loading={performingAction}
+                    likeColor={currentSong?.imageColors[0]}
+                />
+                <Button
+                    $width="42px"
+                    $height="42px"
+                    onClick={handleMore}
+                    disabled={!currentSong}
+                >
+                    <IconDots size={20} />
+                </Button>
             </SongStyled>
             <PlayerMusicControls onClick={(e) => e.stopPropagation()}>
                 <MusicControls {...controls} />
@@ -82,15 +100,7 @@ export const Player = () => {
                     </MusicControlsStyled>
                 </MobilePlayButton>
                 <PlayerActionButtons onClick={(e) => e.stopPropagation()}>
-                    <LikeButton
-                        disabled={!currentSong}
-                        width="42px"
-                        isLiked={isLiked}
-                        entity={currentSong}
-                        onClick={handleToggleLike}
-                        loading={performingAction}
-                        likeColor={currentSong?.imageColors[0]}
-                    />
+                    <VolumeButton />
                     <Button
                         $width="42px"
                         $height="42px"
@@ -107,14 +117,6 @@ export const Player = () => {
                         onClick={handleLyrics}
                     >
                         <IconQuote size={20} />
-                    </Button>
-                    <Button
-                        $width="42px"
-                        $height="42px"
-                        onClick={handleMore}
-                        disabled={!currentSong}
-                    >
-                        <IconDots size={20} />
                     </Button>
                 </PlayerActionButtons>
             </Flex>

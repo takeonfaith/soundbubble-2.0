@@ -3,7 +3,7 @@ import { Unsubscribe } from 'firebase/firestore';
 import { debounce } from 'patronum';
 import { Database } from '../../../database';
 import { updateDeepObject } from '../../../shared/funcs/updateDeepObject';
-import { $user, logout } from '../../user/model';
+import { $user, logout } from '../../user/model/user';
 import { $currentChat, $currentChatId, initialChatLoadFx } from './chats';
 import { READ_MESSAGES_COOLDOWN } from './constants';
 import { initiallyLoadChatMessagesFx } from './messages';

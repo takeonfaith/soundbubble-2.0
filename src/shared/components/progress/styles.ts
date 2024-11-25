@@ -6,6 +6,7 @@ export const ProgressWrapper = styled.div`
     padding: 2px;
     background: ${({ theme }) => theme.colors.hover};
     border-radius: 10px;
+    outline: 0.5px solid ${({ theme }) => theme.colors.border};
 `;
 
 export const ProgressLine = styled.div<{ $background?: string }>`

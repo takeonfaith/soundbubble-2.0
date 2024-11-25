@@ -21,5 +21,5 @@ signUpFx.doneData.watch(() => {
 });
 
 signUpFx.use(async (props) => {
-    return await Database.Users.createUser(props);
+    return await Database.Users.signUp(props);
 });

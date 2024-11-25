@@ -18,7 +18,7 @@ export const ModalStyled = styled.div<{
     height: ${({ height }) => height ?? 'fit-content'};
     max-height: 80dvh;
     background: ${({ theme }) => theme.colors.modal};
-    border: 2px solid ${({ theme }) => theme.colors.border};
+    border: 1px solid ${({ theme }) => theme.colors.border};
     position: fixed;
     top: 50%;
     left: 50%;

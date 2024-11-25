@@ -19,16 +19,31 @@ import {
 } from 'firebase/firestore';
 import { Playlists, Songs } from '.';
 import { TPlaylist } from '../../entities/playlist/model/types';
-import { createDefaultSuggestion } from '../../entities/search/lib/createDefaultSuggestion';
+import {
+    createDefaultSuggestion,
+    getVariantsOfName,
+} from '../../entities/search/lib/createDefaultSuggestion';
 import { createUserObject } from '../../entities/user/lib/createUserObject';
 import { CreateAuthorForm } from '../../entities/user/model/create-author';
 import { FB } from '../../firebase';
 import { ERRORS } from '../../shared/constants';
+import { UpdatedUserFields } from '../../entities/user/model/edit-user';
+import { asyncRequests } from '../../shared/funcs/asyncRequests';
 
 export class Users {
     static ref = FB.get('users');
 
-    static async createUser(props: CreateUserCreditsType) {
+    static async createUser(user: TUser) {
+        try {
+            await FB.setById('users', user.uid, user);
+            await FB.setById('search', user.uid, createDefaultSuggestion(user));
+        } catch (error) {
+            console.error(error);
+            throw new Error(ERRORS.operationFailed('Failed to create user'));
+        }
+    }
+
+    static async signUp(props: CreateUserCreditsType) {
         try {
             const {
                 email,
@@ -40,11 +55,12 @@ export class Users {
             } = props;
             console.log(props);
 
+            const userCreds = await FB.createUser(email, password);
+
             let photoURL = '';
             if (photoFile) {
                 photoURL = await FB.uploadFile('usersImages', photoFile);
             }
-            const userCreds = await FB.createUser(email, password);
             const newUser = createUserObject({
                 uid: userCreds.user.uid,
                 displayName,
@@ -52,17 +68,16 @@ export class Users {
                 imageColors,
                 addedAuthors,
             });
-            await FB.setById('users', newUser.uid, newUser);
-            await FB.setById(
-                'search',
-                newUser.uid,
-                createDefaultSuggestion(newUser)
-            );
+
+            await this.createUser(newUser);
+            await FB.setById('history', newUser.uid, {
+                history: [],
+            });
 
             return newUser;
         } catch (error) {
             console.error(error);
-            return null;
+            throw new Error((error as Error).message);
         }
     }
 
@@ -470,18 +485,123 @@ export class Users {
                 isVerified: true,
             });
 
-            await FB.setById('users', newUser.uid, newUser);
-            await FB.setById(
-                'search',
-                newUser.uid,
-                createDefaultSuggestion(newUser)
-            );
+            await this.createUser(newUser);
 
             return newUser;
         } catch (error) {
             console.log('Failed to create author', error);
 
             throw new Error('Failed to create author');
+        }
+    }
+
+    static async editUser(user: TUser, update: UpdatedUserFields) {
+        try {
+            const { displayName, imageColors, photoFile } = update;
+            let photoURL = '';
+            if (photoFile) {
+                photoURL = await FB.uploadFile('usersImages', photoFile);
+            }
+
+            if (photoFile === null) {
+                await FB.deleteFile('usersImages', user.photoURL);
+            }
+
+            const finalUpdate: Partial<TUser> = {};
+
+            if (displayName) finalUpdate.displayName = displayName;
+            if (imageColors) finalUpdate.imageColors = imageColors;
+            if (photoURL) finalUpdate.photoURL = photoURL;
+            if (photoFile === null) finalUpdate.photoURL = '';
+
+            console.log(finalUpdate);
+
+            await FB.updateById('users', user.uid, finalUpdate);
+            if (displayName) {
+                await FB.updateById('search', user.uid, {
+                    fullName: displayName,
+                    variantsOfName: getVariantsOfName(displayName),
+                });
+
+                const updatePlaylistAuthors = async (playlistId: string) => {
+                    const playlist = await FB.getById('playlists', playlistId);
+                    const newPlaylistAuthors = playlist?.authors.map(
+                        (author) => {
+                            if (author.uid === user.uid) {
+                                return {
+                                    ...author,
+                                    displayName: finalUpdate.displayName,
+                                };
+                            }
+
+                            return author;
+                        }
+                    );
+
+                    await FB.updateById('playlists', playlistId, {
+                        authors: newPlaylistAuthors,
+                    });
+                };
+
+                await asyncRequests(user.ownPlaylists, (playlistId) => {
+                    return updatePlaylistAuthors(playlistId);
+                });
+            }
+
+            return finalUpdate;
+        } catch (error) {
+            console.log('Failed to edit user', error);
+
+            throw new Error('Failed to edit user');
+        }
+    }
+
+    static async deleteAccount(user: TUser, userCreds: User) {
+        try {
+            if (userCreds) {
+                const deleteOrUpdatePlaylist = async (playlistId: string) => {
+                    const playlist = await FB.getById('playlists', playlistId);
+                    if (!playlist) return Promise.resolve();
+
+                    if (playlist?.authors.length === 1) {
+                        return await Playlists.deletePlaylist(playlist);
+                    }
+
+                    return await Playlists.updatePlaylist(playlist, {
+                        authors: playlist.authors.filter(
+                            (author) => author.uid !== user.uid
+                        ),
+                        authorIds: playlist.authorIds.filter(
+                            (id) => id !== user.uid
+                        ),
+                    });
+                };
+
+                await asyncRequests(user.ownPlaylists, (playlistId) => {
+                    return deleteOrUpdatePlaylist(playlistId);
+                });
+
+                if (user.photoURL.length) {
+                    await FB.deleteFile('usersImages', user.photoURL);
+                }
+
+                await FB.deleteById('users', userCreds.uid);
+                await FB.deleteById('search', userCreds.uid);
+
+                await FB.deleteAccount(userCreds);
+            }
+        } catch (error) {
+            console.log('Failed to delete user', error);
+            throw new Error('Failed to delete user');
+        }
+    }
+
+    static async checkIfEmailIsTaken(email: string) {
+        try {
+            return await FB.checkIfEmailIsTaken(email);
+        } catch (error) {
+            console.error(error);
+            return false;
         }
     }
 }

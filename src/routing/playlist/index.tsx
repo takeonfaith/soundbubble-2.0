@@ -1,11 +1,8 @@
 import { IconMusicMinus } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
 import { useEffect, useState } from 'react';
-import {
-    deletePlaylistFx,
-    playlistModel,
-    updatePlaylistFx,
-} from '../../entities/playlist/model';
+import { useTogglePlaylistLike } from '../../entities/playlist/hooks/useTogglePlaylistLike';
+import { playlistModel } from '../../entities/playlist/model';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { TSong } from '../../entities/song/model/types';
 import { userModel } from '../../entities/user/model';
@@ -13,14 +10,13 @@ import { confirmModel } from '../../layout/confirm/model';
 import { normalizeString } from '../../shared/funcs/normalizeString';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
 import { PlaylistPageContent } from './PlaylistPageContent';
-import { useTogglePlaylistLike } from '../../entities/playlist/hooks/useTogglePlaylistLike';
+import { deletePlaylistFx } from '../../entities/playlist/model/delete-playlist';
+import { updatePlaylistFx } from '../../entities/playlist/model/update-playlist';
 
 export const PlaylistPage = () => {
-    const [
-        { currentPlaylist, currentPlaylistSongs, loading, error },
-        isEditing,
-        searching,
-    ] = playlistModel.usePlaylist();
+    const [currentPlaylist, loading, isEditing, searching] =
+        playlistModel.usePlaylist();
+    const [currentPlaylistSongs] = playlistModel.usePlaylistSongs();
     const [currentUser] = userModel.useUser();
     const [isUpdating, isDeleting] = useUnit([
         updatePlaylistFx.pending,
@@ -101,7 +97,6 @@ export const PlaylistPage = () => {
             playlist={currentPlaylist}
             isLoadingEditing={isLoadingEditing}
             loading={loading}
-            error={error}
             queue={queue}
             isOwner={isOwner}
             currentPlaylistSongs={playlistSongs}

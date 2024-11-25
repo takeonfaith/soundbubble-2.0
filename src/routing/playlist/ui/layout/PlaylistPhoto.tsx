@@ -7,6 +7,18 @@ import { LoadingOverlay } from '../../../../entities/song/ui/styles';
 import { EditPhotoModal } from '../../../../features/editPhotoModal';
 import { modalModel } from '../../../../layout/modal/model';
 import { IconWrapper } from '../../styles';
+import styled from 'styled-components';
+
+const EditPhotoOverlay = styled(LoadingOverlay)`
+    opacity: 0;
+    cursor: pointer;
+    transition: 0.2s opacity;
+
+    &:hover,
+    &.visible {
+        opacity: 0.9;
+    }
+`;
 
 type Props = {
     playlist: TPlaylist | null;
@@ -21,17 +33,19 @@ export const PlaylistPhoto = ({
     isEditing,
     imageUrl,
 }: Props) => {
-    const [{ currentPlaylist }] = playlistModel.usePlaylist();
+    const [currentPlaylist] = playlistModel.usePlaylist();
 
     if (!playlist && !imageUrl) {
         return <IconWrapper>{icon}</IconWrapper>;
     }
 
     const handleUpdatePlaylistPhoto = (
-        newPhoto: File | null,
+        newPhoto: File | null | undefined,
         imageColors: string[],
         setLoading: React.Dispatch<React.SetStateAction<boolean>>
     ) => {
+        console.log(newPhoto, imageColors);
+
         playlistModel.events.updatePlaylist({
             update: {
                 image: newPhoto,
@@ -54,25 +68,23 @@ export const PlaylistPhoto = ({
             colors={playlist?.imageColors}
             isAlbum={false}
         >
-            {isEditing && (
-                <LoadingOverlay
-                    style={{ opacity: '0.8', cursor: 'pointer' }}
-                    onClick={() =>
-                        modalModel.events.open({
-                            title: 'Edit playlist cover',
-                            content: (
-                                <EditPhotoModal
-                                    onSave={handleUpdatePlaylistPhoto}
-                                    imageColors={currentPlaylist.imageColors}
-                                    photo={currentPlaylist.image}
-                                />
-                            ),
-                        })
-                    }
-                >
-                    <IconPencil color="#fff" size={50} />
-                </LoadingOverlay>
-            )}
+            <EditPhotoOverlay
+                className={isEditing ? 'visible' : ''}
+                onClick={() =>
+                    modalModel.events.open({
+                        title: 'Edit playlist cover',
+                        content: (
+                            <EditPhotoModal
+                                onSave={handleUpdatePlaylistPhoto}
+                                imageColors={currentPlaylist.imageColors}
+                                photo={currentPlaylist.image}
+                            />
+                        ),
+                    })
+                }
+            >
+                <IconPencil color="#fff" size={50} />
+            </EditPhotoOverlay>
         </PlaylistCover>
     );
 };

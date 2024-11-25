@@ -1,5 +1,5 @@
 import { sample } from 'effector';
-import { $user } from '../../user/model';
+import { $user } from '../../user/model/user';
 import { insertChats, $chats, $currentChat } from './chats';
 import { insertChatsSorted } from '../lib/insertChatsSorted';
 import { $unreadCountMap } from './unread';

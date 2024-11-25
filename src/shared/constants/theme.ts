@@ -75,6 +75,7 @@ export const DARK_THEME = {
         toast: '#444444',
         disabled: '#000000cf',
         chatBackground: '#1f1f1f',
+        invert: 1,
     },
     scheme: {
         ...COLOR_SCHEME_DARK,
@@ -160,6 +161,7 @@ export const LIGHT_THEME: TTheme = {
         toast: '#fff',
         disabled: '#ffffffbf',
         chatBackground: '#f6f8fa',
+        invert: 0,
     },
     scheme: {
         ...COLOR_SCHEME_LIGHT,

@@ -3,6 +3,8 @@ import {
     NextOrObserver,
     User,
     createUserWithEmailAndPassword,
+    deleteUser,
+    fetchSignInMethodsForEmail,
     getAuth,
     onAuthStateChanged,
     sendPasswordResetEmail,
@@ -80,7 +82,8 @@ export type TCollections =
     | 'chatWallpapers'
     | 'newChats'
     | 'lyrics'
-    | 'lastQueue';
+    | 'lastQueue'
+    | 'frequencies';
 
 export type TDeepCollections = 'newChats/messages';
 
@@ -104,6 +107,13 @@ type TCollectionType<T extends TCollections> = T extends 'songs'
     ? TLastQueue
     : T extends 'chatWallpapers'
     ? TWallpaper
+    : T extends 'frequencies'
+    ? {
+          frequencyData: {
+              frequencies: [number, number, number];
+              time: number;
+          }[];
+      }
     : never;
 
 type TSubcollection<T extends TCollections> = T extends 'newChats'
@@ -360,6 +370,33 @@ export class FB {
             return true;
         } catch (error) {
             return false;
+        }
+    }
+
+    static async deleteAccount(userCreds: User) {
+        try {
+            if (userCreds) {
+                await this.auth.signOut();
+                await deleteUser(userCreds);
+                return true;
+            }
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
+
+    static async checkIfEmailIsTaken(email: string) {
+        try {
+            const providers = await fetchSignInMethodsForEmail(
+                this.auth,
+                email
+            );
+
+            return providers.length > 0;
+        } catch (error) {
+            console.error(error);
+            throw new Error(`Failed to get user by email: ${error}`);
         }
     }
 }

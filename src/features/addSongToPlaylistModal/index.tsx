@@ -1,8 +1,5 @@
 import { useUnit } from 'effector-react';
-import {
-    addSongsToPlaylistsFx,
-    playlistModel,
-} from '../../entities/playlist/model';
+import { playlistModel } from '../../entities/playlist/model';
 import { TPlaylist } from '../../entities/playlist/model/types';
 import { PlaylistItem } from '../../entities/playlist/ui';
 import { TSong } from '../../entities/song/model/types';
@@ -13,6 +10,7 @@ import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { CheckIcon } from '../../shared/components/checkIcon';
 import { Flex } from '../../shared/components/flex';
 import { AddEntitiesUI } from '../addEntitiesUI';
+import { addSongsToPlaylistsFx } from '../../entities/playlist/model/update-playlist';
 
 type Props = {
     song: TSong | null | undefined;
@@ -44,6 +42,7 @@ export const AddSongToPlaylistModal = ({ song }: Props) => {
                 renderItem={(playlist, checked, onClick) => {
                     return (
                         <PlaylistItem
+                            isAuthor={false}
                             as="div"
                             playlist={playlist}
                             onClick={onClick}

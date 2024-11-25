@@ -24,6 +24,7 @@ type Props = {
     as?: string;
     showLastSeen?: boolean;
     disabled?: boolean;
+    showLikeButton?: boolean;
     onClick?: (user: TUser, e: Evt<'a'>) => void;
     onDelete?: (user: TUser) => void;
 };
@@ -36,6 +37,7 @@ export const UserItem = memo(
         as,
         showLastSeen,
         disabled,
+        showLikeButton = true,
         orientation = 'vertical',
         onDelete,
     }: Props) => {
@@ -85,7 +87,7 @@ export const UserItem = memo(
                         <IconSquareRoundedMinusFilled />
                     </DeleteButton>
                 )}
-                {orientation === 'vertical' && isAuthor && (
+                {orientation === 'vertical' && isAuthor && showLikeButton && (
                     <LikeButton
                         entity={user}
                         likeColor={imageColors?.[0] ?? 'grey'}

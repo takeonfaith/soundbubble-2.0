@@ -1,12 +1,24 @@
-import { createStore, createApi, sample } from 'effector';
+import { createApi, createEvent, createStore, sample } from 'effector';
+
+export const setLastRangeValue = createEvent<number>();
 
 export const $currentTime = createStore<number>(0);
 // Is needed for changing the audio currentTime in AppAudio
 export const $lastTime = createStore<number>(-1);
+export const $isSliding = createStore(false);
+
+export const slidingApi = createApi($isSliding, {
+    setIsSliding: (_, val: boolean) => val,
+});
 
 export const currentTimeApi = createApi($currentTime, {
     reset: () => 0,
     set: (_, value: number) => value,
+});
+
+sample({
+    clock: setLastRangeValue,
+    target: $lastTime,
 });
 
 sample({
@@ -15,8 +27,8 @@ sample({
     target: $lastTime,
 });
 
-sample({
-    clock: currentTimeApi.set,
-    fn: () => -1,
-    target: $lastTime,
-});
+// sample({
+//     clock: currentTimeApi.set,
+//     fn: () => -1,
+//     target: $lastTime,
+// });

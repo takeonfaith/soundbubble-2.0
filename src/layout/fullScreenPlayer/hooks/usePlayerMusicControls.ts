@@ -1,5 +1,4 @@
 import { useCallback, useEffect } from 'react';
-import { songModel } from '../../../entities/song/model';
 import { songModel as songModelNew } from '../../../entities/song/new-model';
 
 export const usePlayerMusicControls = () => {
@@ -17,14 +16,14 @@ export const usePlayerMusicControls = () => {
     const handleChangeTime: React.ChangeEventHandler<HTMLInputElement> = (
         e
     ) => {
-        songModel.playblack.setIsSliding(true);
-        songModel.playblack.setCurrentTime(+e.target.value);
+        songModelNew.playback.setIsSliding(true);
+        songModelNew.playback.setCurrentTime(+e.currentTarget.value);
     };
 
     const handleMouseUp: React.MouseEventHandler<HTMLInputElement> = (e) => {
-        songModel.playblack.setIsSliding(false);
-        songModel.playblack.setLastRangeValue(+e.currentTarget.value);
-        songModel.lyrics.calculateCurrentLyric(+e.currentTarget.value);
+        songModelNew.playback.setIsSliding(false);
+        songModelNew.playback.setLastRangeValue(+e.currentTarget.value);
+        songModelNew.lyrics.calculateCurrentLyric(+e.currentTarget.value);
     };
 
     const handleLoopMode = () => {

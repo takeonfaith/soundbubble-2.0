@@ -26,6 +26,8 @@ export const Input = forwardRef(
         }: InputProps,
         ref
     ) => {
+        const val = props.value?.toString() ?? '';
+
         return (
             <InputWrapper $disabled={props.disabled}>
                 {label && (
@@ -56,11 +58,12 @@ export const Input = forwardRef(
                         </RightIcon>
                     )}
                 </InputFieldWrapper>
-                {props.maxLength && (
-                    <MaxLenWrapper>
-                        {props.value?.toString().length} / {props.maxLength}
-                    </MaxLenWrapper>
-                )}
+                {props.maxLength &&
+                    val.length + 10 >= (props.maxLength ?? 0) && (
+                        <MaxLenWrapper>
+                            {props.value?.toString().length} / {props.maxLength}
+                        </MaxLenWrapper>
+                    )}
             </InputWrapper>
         );
     }

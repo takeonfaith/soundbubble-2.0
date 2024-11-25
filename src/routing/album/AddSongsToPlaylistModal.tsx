@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { GlobalSearch } from '../../features/globalSearch';
-import { SearchWithHints } from '../../features/searchWithHints';
 import styled from 'styled-components';
 import { userModel } from '../../entities/user/model';
 import { Flex } from '../../shared/components/flex';

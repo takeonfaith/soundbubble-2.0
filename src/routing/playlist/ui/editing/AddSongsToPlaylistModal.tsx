@@ -1,13 +1,11 @@
-import { IconSearch } from '@tabler/icons-react';
+import { IconMusicOff, IconSearch } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Database } from '../../../../database';
-import {
-    addSongsToPlaylistsFx,
-    playlistModel,
-} from '../../../../entities/playlist/model';
+import { playlistModel } from '../../../../entities/playlist/model';
 import { TPlaylist } from '../../../../entities/playlist/model/types';
+import { addSongsToPlaylistsFx } from '../../../../entities/playlist/model/update-playlist';
 import { TEntity } from '../../../../entities/search/model/types';
 import { TSong } from '../../../../entities/song/model/types';
 import { SongItem } from '../../../../entities/song/ui';
@@ -41,7 +39,7 @@ type Props = {
 
 export const AddSongsToPlaylistModal = ({ playlist }: Props) => {
     const [library] = userModel.useSongLibrary();
-    const [{ currentPlaylistSongs }] = playlistModel.usePlaylist();
+    const [currentPlaylistSongs] = playlistModel.usePlaylistSongs();
     const [isAdding] = useUnit([addSongsToPlaylistsFx.pending]);
     const [loading, setLoading] = useState(false);
     const [listTitle, setListTitle] = useState('Library');
@@ -92,9 +90,7 @@ export const AddSongsToPlaylistModal = ({ playlist }: Props) => {
                 (results: TEntity[]) => {
                     setVisibleItems(results as TSong[]);
                     setLoading(false);
-                    if (results.length === 0) {
-                        setNotFound(true);
-                    }
+                    setNotFound(results.length === 0);
                 }
             );
         } else {
@@ -172,6 +168,13 @@ export const AddSongsToPlaylistModal = ({ playlist }: Props) => {
                     />
                 )}
             </AddEntitiesUI>
+            {!library.length && listTitle !== 'Global Search' && (
+                <PageMessage
+                    icon={IconMusicOff}
+                    title={'Library is empty'}
+                    description={''}
+                />
+            )}
         </AddSongsToPlaylistModalStyled>
     );
 };

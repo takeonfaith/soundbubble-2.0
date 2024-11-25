@@ -1,5 +1,11 @@
 import { useUnit } from 'effector-react';
-import { $lastTime, $currentTime, currentTimeApi } from './current-time';
+import {
+    $lastTime,
+    $currentTime,
+    currentTimeApi,
+    slidingApi,
+    setLastRangeValue,
+} from './current-time';
 import { $fullscreenPlayer, fullscreenPlayerApi } from './fullscreen-player';
 import {
     $loopMode,
@@ -11,6 +17,7 @@ import {
     toggleLoopMode,
     toggleShuffleMode,
     previous,
+    addToQueue,
 } from './queue';
 import {
     $songState,
@@ -23,9 +30,11 @@ import {
     play,
     playPauseQueue,
     togglePlayPause,
+    loadSongsThenPlay,
 } from './song-state';
 import { $volume, $isMuted, volumeApi, isMutedApi } from './volume';
 import './add-listening';
+import { calculateCurrentLyric, nextCurrentLyric } from './lyrics';
 
 export const songModel = {
     useSong: () =>
@@ -50,6 +59,7 @@ export const songModel = {
         stop,
         loadAndPlay,
         loadAndShuffle,
+        loadSongsThenPlay,
     },
     state: {
         load,
@@ -60,9 +70,16 @@ export const songModel = {
         previous,
         toggleLoopMode,
         toggleShuffleMode,
+        addToQueue,
+    },
+    lyrics: {
+        calculateCurrentLyric,
+        nextCurrentLyric,
     },
     playback: {
         setCurrentTime: currentTimeApi.set,
+        setIsSliding: slidingApi.setIsSliding,
+        setLastRangeValue,
     },
     fullscreenPlayer: {
         ...fullscreenPlayerApi,

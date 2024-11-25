@@ -45,11 +45,13 @@ export const Confirm = () => {
                 <ConfirmButtons>
                     <DefaultButton
                         onClick={onReject ?? handleClose}
-                        appearance="primary"
+                        appearance="outline"
                     >
                         No
                     </DefaultButton>
-                    <DefaultButton onClick={handleAccept}>Yes</DefaultButton>
+                    <DefaultButton onClick={handleAccept} appearance="primary">
+                        Yes
+                    </DefaultButton>
                 </ConfirmButtons>
             </ConfirmStyled>
         </ModalBackground>

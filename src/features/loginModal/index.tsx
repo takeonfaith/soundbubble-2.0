@@ -7,47 +7,27 @@ import { userModel } from '../../entities/user/model';
 import { modalModel } from '../../layout/modal/model';
 import { Button } from '../../shared/components/button';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
-import { Form } from '../../shared/components/form';
 import { Subtext } from '../../shared/components/subtext';
-import { useForm } from '../../shared/hooks/useForm';
+import { EmailInput } from '../emailInput';
+import { PasswordInput } from '../passwordInput/PasswordInput';
 import { SignUpModal } from '../signUpModal';
 import { ForgotPasswordModal } from './ForgotPasswordModal';
-import { LoginButtons, LoginModalStyled, RightSideStyled } from './styles';
 import { LeftSide } from './LeftSide';
+import { useForm } from './model';
+import { LoginButtons, LoginModalStyled, RightSideStyled } from './styles';
 
 type Props<T> = {
     actionAfterLogin?: T;
     title?: string;
 };
 
-const fields = [
-    {
-        id: 'email',
-        type: 'email',
-        label: 'Email',
-        required: true,
-        placeholder: 'Enter your email',
-    },
-    {
-        id: 'password',
-        type: 'password',
-        label: 'Password',
-        required: true,
-        placeholder: 'Enter your password',
-    },
-] as const;
-
 export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
     actionAfterLogin,
     title = 'Welcome back to Soundbubble',
 }: Props<T>) => {
     const [currentUser, _, loading] = userModel.useUser();
-    const { formProps, onSumbit } = useForm({
-        fields,
-        handleSubmit: (obj) => {
-            userModel.events.login(obj);
-        },
-        submitErrorMessage: '',
+    const { values, errors, onSubmit, updateField } = useForm((values) => {
+        userModel.events.login(values);
     });
 
     const handleOpenSignUp = () => {
@@ -74,30 +54,42 @@ export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
             <LeftSide />
             <RightSideStyled>
                 <Flex d="column" gap={10}>
-                    <div className="emoji">
-                        {!formProps.sumbitError ? '🥳' : '😬'}
-                    </div>
-                    <h2>
-                        {!formProps.sumbitError
-                            ? title
-                            : 'Ooops! Failed to log in'}
-                    </h2>
-                    {!formProps.sumbitError && (
-                        <Subtext style={{ fontSize: '1rem' }}>
-                            Please enter your details
-                        </Subtext>
-                    )}
+                    <div className="emoji">🥳</div>
+                    <h2>{title}</h2>
+
+                    <Subtext style={{ fontSize: '1rem' }}>
+                        Please enter your details
+                    </Subtext>
                 </Flex>
 
                 <Flex
-                    height={formProps.sumbitError ? '220px' : '188px'}
+                    height={'188px'}
                     jc="center"
                     d="column"
                     width="100%"
                     gap={20}
                     style={{ marginBottom: '90px', position: 'relative' }}
                 >
-                    <Form {...formProps} />
+                    <EmailInput
+                        onChange={(value) => {
+                            updateField({ id: 'email', value });
+                        }}
+                        value={values.email}
+                        required
+                        error={errors.email}
+                    />
+                    <PasswordInput
+                        placeholder="Enter your password"
+                        required
+                        error={errors.password}
+                        value={values.password}
+                        onChange={(e) => {
+                            updateField({
+                                id: 'password',
+                                value: e.currentTarget.value,
+                            });
+                        }}
+                    />
                     <Button
                         $height="10px"
                         className="forgot-password"
@@ -125,7 +117,7 @@ export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
                         loading={loading}
                         appearance="primary"
                         className="primary"
-                        onClick={onSumbit}
+                        onClick={onSubmit}
                     >
                         Login
                     </DefaultButton>

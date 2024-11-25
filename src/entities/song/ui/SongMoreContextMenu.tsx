@@ -6,6 +6,7 @@ import {
     IconPlaylistAdd,
     IconShare3,
     IconSquareRoundedPlus,
+    IconTrash,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { AddSongToPlaylistModal } from '../../../features/addSongToPlaylistModal';
@@ -22,12 +23,16 @@ import { TSong } from '../model/types';
 import { SongInfo } from './SongInfo';
 import { AuthorsModal } from './AuthorsModal';
 import { EditSongModal } from './EditSongModal';
+import { songModel } from '../new-model';
+import { toastModel } from '../../../layout/toast/model';
+import { createQueueObject } from '../lib/createQueueObject';
 
 type Props = {
     song: TSong | null | undefined;
+    onRemove?: (song: TSong) => void;
 };
 
-export const SongMoreContextMenu = ({ song }: Props) => {
+export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
     const [currentUser] = userModel.useUser();
     const [library] = userModel.useSongLibrary();
     const isLiked = library?.find((s) => s.id === song?.id);
@@ -92,8 +97,40 @@ export const SongMoreContextMenu = ({ song }: Props) => {
         }
     };
 
+    const handleAddToQueue = () => {
+        if (song) {
+            const queue = createQueueObject({
+                songs: [song],
+                name: 'Queue',
+                url: window.location.href,
+            });
+            songModel.queue.addToQueue(queue);
+            popupModel.events.close();
+            toastModel.events.add({
+                type: 'hint',
+                message: 'Added to queue',
+            });
+        }
+    };
+
     return (
         <DefaultContextMenuStyled>
+            {onRemove && (
+                <>
+                    <Button
+                        onClick={() => {
+                            if (song) {
+                                onRemove?.(song);
+                            }
+                        }}
+                        className="danger"
+                    >
+                        <IconTrash />
+                        Delete from playlist
+                    </Button>
+                    <Divider />
+                </>
+            )}
             {!isLiked ? (
                 <Button onClick={handleLike}>
                     <IconHeart size={20} />
@@ -109,9 +146,10 @@ export const SongMoreContextMenu = ({ song }: Props) => {
                 <IconSquareRoundedPlus size={20} />
                 Add to playlist
             </Button>
-            <Button>
+            <Divider />
+            <Button onClick={handleAddToQueue}>
                 <IconPlaylistAdd />
-                Add to queue
+                Next
             </Button>
             <Divider />
             <Button onClick={handleShare}>

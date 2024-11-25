@@ -11,6 +11,7 @@ import { SongCover } from '../../entities/song/ui/SongCover';
 import { useState } from 'react';
 import { ANIMATION_DURATION } from './constants';
 import { TChat } from '../../entities/chat/model/types';
+import getUID from '../../shared/funcs/getUID';
 
 export const ShareButton = () => {
     const [chats] = chatModel.useChats();
@@ -23,10 +24,12 @@ export const ShareButton = () => {
         return () => {
             if (currentUser && currentSong) {
                 setAnimation(index);
+                const messageId = getUID();
                 chatModel.events.sendMessage({
                     chats: [chat],
                     message: (chat) =>
                         createMessageObject({
+                            id: messageId,
                             sender: currentUser?.uid,
                             participants: chat.participants,
                             message: '',

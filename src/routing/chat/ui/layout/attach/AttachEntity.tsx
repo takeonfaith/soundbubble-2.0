@@ -22,6 +22,7 @@ type Props<T extends TEntity> = {
     library: T[];
     submitButtonText: string;
     orientation: TOrientation;
+    onEntityClick?: (items: TEntity[]) => void;
     onSubmit: (items: T[]) => void;
     customCheckButton?: (checked: boolean, entity: TEntity) => React.ReactNode;
 };
@@ -30,6 +31,7 @@ export const AttachEntity = <T extends TEntity>({
     library,
     submitButtonText,
     onSubmit,
+    onEntityClick,
     orientation,
     customCheckButton,
 }: Props<T>) => {
@@ -81,13 +83,22 @@ export const AttachEntity = <T extends TEntity>({
             entities={library}
             initiallyAddedItems={[]}
             onSearchValueChange={onSearchValueChange}
+            onAddItem={onEntityClick}
             inputPlaceholder={`Search for ${getEntityType(library[0])}s`}
             renderItem={(entity, checked, onClick, _, index) => {
                 const showTitle = index === 0;
+
+                const handleClick = (
+                    item: TEntity,
+                    e: Evt<'a'> | Evt<'div'>
+                ) => {
+                    onClick(item, e);
+                };
+
                 const item = getEntityItem(
                     entity,
                     createQueueObject({}),
-                    onClick,
+                    handleClick,
                     customCheckButton?.(checked, entity) ??
                         checkButton(checked),
                     orientation

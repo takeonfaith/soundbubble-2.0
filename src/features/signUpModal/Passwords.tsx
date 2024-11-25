@@ -7,6 +7,7 @@ import { ChoosingAuthors } from './ChoosingAuthors';
 import { useForm } from './model';
 import { PasswordStrength } from './PasswordStrength';
 import { SignUpModalStyled } from './styles';
+import { MIN_PASSWORD_LENGTH } from './constansts';
 
 export const PasswordRules = styled.div`
     background: ${({ theme }) => theme.colors.pageBackground2};
@@ -43,6 +44,7 @@ export const Passwords = () => {
                     onChange={onChange}
                     required
                     error={errors.password}
+                    maxLength={20}
                 />
                 <PasswordStrength value={values.password} />
             </Flex>
@@ -53,7 +55,11 @@ export const Passwords = () => {
                 >
                     Previous
                 </DefaultButton>
-                <DefaultButton appearance="primary" onClick={onSubmit}>
+                <DefaultButton
+                    disabled={values.password.length < MIN_PASSWORD_LENGTH}
+                    appearance="primary"
+                    onClick={onSubmit}
+                >
                     Next
                 </DefaultButton>
             </Flex>

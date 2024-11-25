@@ -47,12 +47,19 @@ export const PasswordStrength = ({ value }: Props) => {
             />
             {MANDATORY_RULES.map((rule) => {
                 return (
-                    <Flex gap={8}>
-                        <ColorCircle color={STRENGTH_DIC[rule.strength]} />
-                        <CheckIcon type="checkbox" checked={rule.test(value)} />
-                        <Subtext style={{ fontSize: '0.9rem' }}>
-                            {rule.text}
-                        </Subtext>
+                    <Flex width="100%" height="25px" jc="space-between">
+                        <Flex gap={8}>
+                            <ColorCircle color={STRENGTH_DIC[rule.strength]} />
+                            <Subtext style={{ fontSize: '0.9rem' }}>
+                                {rule.text}
+                            </Subtext>
+                        </Flex>
+                        {rule.test(value) && (
+                            <CheckIcon
+                                type="checkbox"
+                                checked={rule.test(value)}
+                            />
+                        )}
                     </Flex>
                 );
             })}

@@ -13,8 +13,8 @@ export class SearchHistory {
             if (!userId)
                 throw new Error('userId is required in getSearchHistory');
 
-            const historyIds = (await FB.getById('searchHistory', userId))
-                .history;
+            const historyIds =
+                (await FB.getById('searchHistory', userId))?.history ?? [];
 
             const q = query(
                 FB.get('search'),

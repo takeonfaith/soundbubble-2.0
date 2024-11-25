@@ -16,9 +16,10 @@ export const Email = () => {
         });
     };
 
-    const { values, errors, updateField, onSubmit } = useForm(handleNext, [
-        'email',
-    ]);
+    const { values, errors, updateField, onSubmit, loading } = useForm(
+        handleNext,
+        ['email']
+    );
 
     return (
         <SignUpModalStyled>
@@ -46,7 +47,11 @@ export const Email = () => {
                 >
                     Previous
                 </DefaultButton>
-                <DefaultButton appearance="primary" onClick={onSubmit}>
+                <DefaultButton
+                    loading={loading}
+                    appearance="primary"
+                    onClick={onSubmit}
+                >
                     Next
                 </DefaultButton>
             </Flex>

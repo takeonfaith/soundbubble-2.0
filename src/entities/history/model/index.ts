@@ -3,7 +3,7 @@ import { createGate, useGate, useUnit } from 'effector-react';
 import { Database } from '../../../database';
 import { getDataFromEffect } from '../../../shared/effector/getDataFromEffect';
 import { TSong } from '../../song/model/types';
-import { $user, logout } from '../../user/model';
+import { $user, logout } from '../../user/model/user';
 
 const loadListenHistoryFx = createEffect(async (userId: string) => {
     try {
@@ -19,6 +19,8 @@ const addToHistoryFx = createEffect(
         // Срабатывает два раза потому что я гавноед
         // Срабатывает в queue.watch и самом load
         // Надо это все переписать к чертовой бабушке
+        console.log('addToHistory', song);
+
         if (song) {
             await Database.History.addSongToHistory(userId, song.id);
             return song;
@@ -56,8 +58,7 @@ sample({
         return (
             !!song &&
             !!userId &&
-            listeningHistory &&
-            listeningHistory[0].id !== song.id
+            (!listeningHistory.length || listeningHistory[0].id !== song.id)
         );
     },
     fn: ({ userId }, song) => ({ userId: userId as string, song }),

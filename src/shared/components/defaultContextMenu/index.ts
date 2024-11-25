@@ -24,7 +24,7 @@ export const DefaultContextMenuStyled = styled.div`
         svg {
             width: 20px;
             height: 20px;
-            opacity: 0.4;
+            color: ${({ theme }) => theme.colors.greyText};
         }
     }
 `;

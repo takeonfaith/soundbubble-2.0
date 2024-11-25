@@ -77,14 +77,9 @@ export const AuthorPageTop = ({ author, queue }: Props) => {
 
         popupModel.events.open({
             e,
-            height: 208,
+            height: 96,
             content: (
                 <DefaultContextMenuStyled>
-                    <Button>
-                        <IconEdit />
-                        Edit
-                    </Button>
-                    <Divider />
                     <Button onClick={handleClickShare}>
                         <IconShare3 />
                         Share
@@ -92,11 +87,6 @@ export const AuthorPageTop = ({ author, queue }: Props) => {
                     <Button onClick={handleInfo}>
                         <IconInfoCircle />
                         Info
-                    </Button>
-                    <Divider />
-                    <Button color={theme.scheme.red.text}>
-                        <IconTrash />
-                        Delete
                     </Button>
                 </DefaultContextMenuStyled>
             ),
@@ -156,7 +146,7 @@ export const AuthorPageTop = ({ author, queue }: Props) => {
                 <LikeButton
                     entity={author}
                     isLiked={isLiked}
-                    likeColor={"#fff"}
+                    likeColor={'#fff'}
                     height="40px"
                     width="40px"
                     loading={performingAction}

@@ -66,7 +66,10 @@ export const PlaylistItem = ({
                 songIds: songs,
                 url,
             });
-            songModel.controls.loadAndPlay({ queue, currentSongIndex: 0 });
+            songModel.controls.loadSongsThenPlay({
+                queue,
+                currentSongIndex: 0,
+            });
         } else {
             toastModel.events.add({
                 type: 'info',

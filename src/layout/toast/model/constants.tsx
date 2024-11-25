@@ -2,7 +2,7 @@ import {
     IconCircleCheckFilled,
     IconExclamationCircle,
     IconInfoCircleFilled,
-    IconMessageCircle2Filled
+    IconMessageCircle2Filled,
 } from '@tabler/icons-react';
 import { TToastType } from './types';
 
@@ -15,4 +15,5 @@ export const TOAST_ICONS: Record<TToastType, React.ReactNode> = {
     error: <IconExclamationCircle />,
     info: <IconInfoCircleFilled />,
     chatMessage: <IconMessageCircle2Filled />,
+    hint: <IconInfoCircleFilled />,
 };

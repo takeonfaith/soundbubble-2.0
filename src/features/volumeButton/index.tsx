@@ -18,7 +18,7 @@ export const VolumeButton = () => {
     };
 
     return (
-        <VolumeButtonStyled>
+        <VolumeButtonStyled className='volume-button'>
             <SmallControlButton onClick={handleMute}>
                 {isMuted ? <IconVolumeOff /> : <IconVolume opacity={0.9} />}
             </SmallControlButton>

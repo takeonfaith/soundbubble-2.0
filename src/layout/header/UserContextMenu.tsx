@@ -2,26 +2,35 @@ import {
     IconChevronRight,
     IconCirclePlus,
     IconLogout,
+    IconPencil,
     IconSettings,
     IconSun,
     IconTrash,
+    IconUserMinus,
 } from '@tabler/icons-react';
+import { useUnit } from 'effector-react';
 import styled from 'styled-components';
 import { toggleTheme } from '../../app/theme';
+import { Settings } from '../../entities/settings/ui';
+import { LoadingOverlay } from '../../entities/song/ui/styles';
+import { getLastSeen } from '../../entities/user/lib/getLastSeen';
 import { userModel } from '../../entities/user/model';
+import { editUserFx } from '../../entities/user/model/edit-user';
 import { UserCover } from '../../entities/user/ui/UserCover';
+import { UserStatus } from '../../entities/user/ui/UserStatus';
 import { AddSongModal } from '../../features/addSongModal';
+import { EditPhotoModal } from '../../features/editPhotoModal';
 import { PlaylistName } from '../../routing/playlist/ui/layout/PlaylistName';
 import { Button } from '../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
 import { Divider } from '../../shared/components/divider';
 import { Flex } from '../../shared/components/flex';
+import { Subtext } from '../../shared/components/subtext';
 import { confirmModel } from '../confirm/model';
 import { modalModel } from '../modal/model';
 import { popupModel } from '../popup/model';
-import { UserStatus } from '../../entities/user/ui/UserStatus';
-import { getLastSeen } from '../../entities/user/lib/getLastSeen';
-import { Settings } from '../../entities/settings/ui';
+import { LoadingWrapper } from '../../shared/components/loadingWrapper';
+import { deleteAccountFx } from '../../entities/user/model/delete-account';
 
 const UserProfileModalStyled = styled.div`
     display: flex;
@@ -41,19 +50,26 @@ const UserProfileModalStyled = styled.div`
         svg {
             color: ${({ theme }) => theme.colors.greyText};
         }
+    }
+`;
 
-        &.danger {
-            color: ${({ theme }) => theme.scheme.red.main};
+const EditOverlayStyled = styled(LoadingOverlay)`
+    opacity: 0;
+    border-radius: 100%;
+    cursor: pointer;
+    transition: 0.2s opacity;
 
-            svg {
-                color: ${({ theme }) => theme.scheme.red.main};
-            }
-        }
+    &:hover {
+        opacity: 1;
     }
 `;
 
 const UserProfileModal = () => {
     const [currentUser] = userModel.useUser();
+    const [isLoadingEditing, isDeletingAccount] = useUnit([
+        editUserFx.pending,
+        deleteAccountFx.pending,
+    ]);
 
     const handleLogout = () => {
         confirmModel.events.open({
@@ -75,20 +91,71 @@ const UserProfileModal = () => {
         });
     };
 
+    const handleEditPhoto = () => {
+        modalModel.events.open({
+            title: 'Change profile photo',
+            content: (
+                <EditPhotoModal
+                    onSave={(newPhoto, imageColors, setLoading) => {
+                        console.log(newPhoto);
+
+                        userModel.events.editUser({
+                            update: {
+                                photoFile: newPhoto,
+                                imageColors: imageColors,
+                            },
+                            onSuccess: () => {
+                                modalModel.events.close();
+                                setLoading(false);
+                            },
+                        });
+                        // Update user's photo URL
+                    }}
+                    imageColors={currentUser?.imageColors ?? []}
+                    photo={currentUser?.photoURL ?? null}
+                />
+            ),
+        });
+    };
+
+    const handleDeleteAccount = () => {
+        confirmModel.events.open({
+            text: 'Are you sure you want to delete your account?',
+            onAccept: () => {
+                userModel.events.deleteAccount();
+            },
+            subtext: 'THIS ACTION CANNOT BE UNDONE!',
+            icon: <IconUserMinus />,
+            iconColor: 'red',
+        });
+    };
+
     return (
         <UserProfileModalStyled>
+            {isLoadingEditing || (isDeletingAccount && <LoadingWrapper />)}
+
             <Flex d="column" gap={20}>
                 <UserCover
                     src={currentUser?.photoURL}
                     size={'160px'}
                     colors={currentUser?.imageColors}
                     isAuthor={false}
-                />
-                <Flex d="column" gap={8}>
+                >
+                    <EditOverlayStyled onClick={handleEditPhoto}>
+                        <IconPencil size={50} color="#fff" />
+                    </EditOverlayStyled>
+                </UserCover>
+                <Flex d="column" gap={4}>
                     <PlaylistName
                         name={currentUser?.displayName}
                         isOwner={true}
-                        onUpdate={(newName) => {}}
+                        onUpdate={(newName) => {
+                            userModel.events.editUser({
+                                update: {
+                                    displayName: newName,
+                                },
+                            });
+                        }}
                         isEditing={false}
                         inputStyle={{
                             fontSize: '1.45rem',
@@ -104,6 +171,14 @@ const UserProfileModal = () => {
                         showLastSeen={true}
                         status={getLastSeen(currentUser?.online).status}
                     />
+                    {currentUser?.regDate && (
+                        <Subtext>
+                            Registred:{' '}
+                            {new Date(
+                                currentUser?.regDate.toDate()
+                            ).toLocaleDateString('en-US')}
+                        </Subtext>
+                    )}
                 </Flex>
             </Flex>
             <Flex d="column" width="100%" ai="flex-start" gap={4}>
@@ -118,6 +193,7 @@ const UserProfileModal = () => {
                     </Flex>
                     <IconChevronRight size={18} />
                 </Button>
+                <Divider />
                 <Button
                     onClick={handleLogout}
                     $width="100%"
@@ -126,11 +202,11 @@ const UserProfileModal = () => {
                     <IconLogout size={20} />
                     Log out
                 </Button>
-                <Divider />
                 <Button
                     className="danger"
                     $width="100%"
                     style={{ padding: '0 10px' }}
+                    onClick={handleDeleteAccount}
                 >
                     <IconTrash size={20} />
                     Delete account

@@ -1,4 +1,4 @@
-export type TToastType = 'success' | 'error' | 'info' | 'chatMessage';
+export type TToastType = 'success' | 'error' | 'info' | 'chatMessage' | 'hint';
 export type TToast = {
     id: string;
     title?: string;

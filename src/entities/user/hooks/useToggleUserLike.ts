@@ -4,9 +4,9 @@ import { useIsAuthorLiked } from '../../../shared/hooks/useIsAuthorLiked';
 import {
     addAuthorsToLibraryFx,
     removeAuthorsFromLibraryFx,
-    userModel,
-} from '../../user/model';
+} from '../../user/model/user';
 import { TUser } from '../model/types';
+import { userModel } from '../model';
 
 export const useToggleUserLike = (author: TUser | null | undefined) => {
     const [isAddingAuthor, isRemovingAuthor] = useUnit([

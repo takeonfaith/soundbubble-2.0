@@ -226,4 +226,18 @@ export class Songs {
             console.error(error);
         }
     }
+
+    static async getFrequencies(songId: string) {
+        try {
+            const frequencies = await FB.getById('frequencies', songId);
+            if (!frequencies) return [];
+
+            return frequencies.frequencyData;
+        } catch (error) {
+            console.error(error);
+            throw new Error(
+                ERRORS.operationFailed('Failed to load frequencies')
+            );
+        }
+    }
 }

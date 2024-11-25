@@ -68,8 +68,8 @@ export const SongItem = ({
         e.stopPropagation();
 
         popupModel.events.open({
-            content: <SongMoreContextMenu song={song} />,
-            height: 272.5,
+            content: <SongMoreContextMenu onRemove={onRemove} song={song} />,
+            height: onRemove ? 329 : 289,
             e,
         });
     };

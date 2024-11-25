@@ -1,6 +1,6 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { Database } from '../../../database';
-import { $searchHistory, $user, setSearchHistory } from '../../user/model';
+import { $searchHistory, $user, setSearchHistory } from '../../user/model/user';
 import { TEntity, TPlace, TSuggestion } from './types';
 import { TExtendedSuggestion } from '../../../features/searchWithHints/types';
 

@@ -8,14 +8,16 @@ export const VolumeButtonStyled = styled.div`
         top: 50%;
         transform: translateY(-50%);
         width: 150px;
-        left: 110%;
+        left: 100%;
         position: absolute;
         transition: 0.2s;
+        pointer-events: none;
     }
 
     &:hover {
         .song-slider {
             opacity: 1;
+            pointer-events: all;
         }
     }
 `;

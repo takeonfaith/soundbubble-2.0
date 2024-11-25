@@ -53,6 +53,7 @@ export const getEntityItem = (
                     user={item as TUser}
                     key={id}
                     onClick={onClick}
+                    showLikeButton={false}
                 >
                     {children}
                 </UserItem>

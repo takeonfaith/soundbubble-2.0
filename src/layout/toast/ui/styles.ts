@@ -19,7 +19,7 @@ export const ToastStyled = styled.div`
     gap: 30px;
     opacity: 0;
     padding-right: 50px;
-    z-index: 2000;
+    z-index: 10000;
 
     &.chatMessage {
         background: ${({ theme }) => theme.colors.pageTopButton};
@@ -156,6 +156,11 @@ export const ToastStyled = styled.div`
         & .progress-circle {
             stroke: ${({ theme }) => theme.scheme.blue.text};
         }
+    }
+
+    &.hint {
+        background: ${({ theme }) => theme.scheme.grey.mild};
+        color: ${({ theme }) => theme.colors.greyText2};
     }
 `;
 

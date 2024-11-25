@@ -189,7 +189,12 @@ export const PageTop = ({
                                 )}
                             </Flex>
                             <Flex gap={8} width="100%">
-                                <Authors authors={authors} isAuthor={false} />
+                                {authors && (
+                                    <Authors
+                                        authors={authors}
+                                        isAuthor={false}
+                                    />
+                                )}
                                 {isEditing && (
                                     <Button
                                         $width="60px"

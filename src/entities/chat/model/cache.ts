@@ -5,7 +5,7 @@ import {
     $library,
     $ownPlaylists,
     $user,
-} from '../../user/model';
+} from '../../user/model/user';
 import { TCache, THeavyMedia } from './types';
 import { convertToMap } from '../../../shared/funcs/convertToMap';
 

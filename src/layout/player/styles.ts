@@ -2,6 +2,7 @@ import { styled } from 'styled-components';
 import { BeautifulBackground } from '../../shared/components/beautifulBackground';
 import { hexToRgbA } from '../../shared/funcs/hexToRgba';
 import { ANIMATION_DURATION } from './constants';
+import { Button } from '../../shared/components/button';
 
 export const PlayerStyled = styled.div<{ $background: string }>`
     width: calc(100% - var(--sidebar-width) - var(--page-gap));
@@ -196,7 +197,18 @@ export const PlayerActionButtons = styled.div`
     min-width: 300px;
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 14px;
+
+    & .volume-button {
+        button {
+            color: ${({ theme }) => theme.colors.textColor};
+        }
+    }
+
+    & .volume-button:hover ~ button {
+        opacity: 0;
+        pointer-events: none;
+    }
 
     & .like-button.liked {
         filter: brightness(${({ theme }) => theme.colors.brightness});
@@ -236,9 +248,10 @@ export const FriendsList = styled.div`
     }
 `;
 
-export const ShareButtonStyled = styled.div`
+export const ShareButtonStyled = styled(Button)`
     display: flex;
     align-items: center;
+    width: 42px;
 
     &.has-hover {
         &:hover {

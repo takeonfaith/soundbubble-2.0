@@ -24,8 +24,9 @@ import { AddSongsButton } from './AddSongsButton';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 
 export const AlbumPage = () => {
-    const [{ currentPlaylist, currentPlaylistSongs, loading, error }] =
-        playlistModel.usePlaylist();
+    const [currentPlaylist, loading] = playlistModel.usePlaylist();
+    const [currentPlaylistSongs] = playlistModel.usePlaylistSongs();
+    const error = !loading && !currentPlaylist;
 
     const [currentUser] = userModel.useUser();
     const isOwner = !!currentPlaylist?.authors.find(

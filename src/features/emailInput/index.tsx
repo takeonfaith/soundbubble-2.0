@@ -29,6 +29,7 @@ export const EmailInput = (props: Props) => {
             disableCopyButton
             type="email"
             autoCapitalize="false"
+            maxLength={60}
             {...props}
         />
     );

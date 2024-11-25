@@ -7,13 +7,15 @@ export const createEffectWithToast = <Params, Done>(
 ): Effect<Params, Done, Error> => {
     const effect = createEffect<Params, Done, Error>();
 
-    effect.doneData.watch(() => {
-        toastModel.events.add({
-            message: successMessage,
-            type: 'success',
-            duration: 5000,
+    if (successMessage.length) {
+        effect.doneData.watch(() => {
+            toastModel.events.add({
+                message: successMessage,
+                type: 'hint',
+                duration: 5000,
+            });
         });
-    });
+    }
 
     effect.failData.watch((err) => {
         toastModel.events.add({

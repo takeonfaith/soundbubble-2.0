@@ -12,7 +12,8 @@ import { UserCoverBackground } from '../../entities/user/ui/UserCoverBackground'
 
 export const useAddedItemsList = <T extends TEntity>(
     list: T[],
-    initiallyAddedItems: T[] = []
+    initiallyAddedItems: T[] = [],
+    onAddItem?: (added: T[]) => void
 ) => {
     const [visibleItems, setVisibleItems] = useState(list);
     const [searchValue, setSearchValue] = useState('');
@@ -25,11 +26,15 @@ export const useAddedItemsList = <T extends TEntity>(
             (i) => getEntityId(i) === getEntityId(item)
         );
         if (isChosen) {
-            setAddedItems((prev) =>
-                prev.filter((i) => getEntityId(i) !== getEntityId(item))
+            const newList = addedItems.filter(
+                (i) => getEntityId(i) !== getEntityId(item)
             );
+            setAddedItems(newList);
+            onAddItem?.(newList);
         } else {
-            setAddedItems((prev) => [...prev, item]);
+            const newList = [...addedItems, item];
+            setAddedItems(newList);
+            onAddItem?.(newList);
             if (searchValue.length !== 0) {
                 setSearchValue('');
                 setVisibleItems(list);

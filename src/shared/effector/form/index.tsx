@@ -1,10 +1,8 @@
 import { createEvent, createStore, sample } from 'effector';
 import { useUnit } from 'effector-react';
+import { MIN_PASSWORD_LENGTH } from '../../../features/signUpModal/constansts';
 import { TForm } from './types';
-import {
-    MEDIUM_PASSWORD,
-    MIN_PASSWORD_LENGTH,
-} from '../../../features/signUpModal/constansts';
+import { useState } from 'react';
 
 export const effectorForm = <T extends TForm>(form: T) => {
     type FormType = {
@@ -26,7 +24,7 @@ export const effectorForm = <T extends TForm>(form: T) => {
         Object.keys(form).reduce((acc, key) => {
             acc[key as keyof T] = form[key].init;
             return acc;
-        }, {} as Record<keyof T, unknown>)
+        }, {} as Record<keyof T, T[string]['init']>)
     );
 
     const $errors = createStore<ErrorType>(
@@ -72,20 +70,29 @@ export const effectorForm = <T extends TForm>(form: T) => {
             validate?: (keyof T)[]
         ) => {
             const [values, errors] = useUnit([$form, $errors]);
+            const [loading, setLoading] = useState(false);
 
-            const validateFields = () => {
+            const validateFields = async () => {
                 let hasErrors = false;
+                const validationKeys = validate ?? Object.keys(form);
 
-                (validate ?? Object.keys(form)).forEach((key) => {
-                    const { required, validation, type } = form[key];
+                for (const key of validationKeys) {
+                    const { required, validation, type, asyncValidation } =
+                        form[key];
                     if (required && !values[key]) {
                         updateError({
                             id: key,
                             error: 'This field is required',
                         });
                         hasErrors = true;
-                    } else if (validation && !validation(values[key])) {
-                        updateError({ id: key, error: 'Invalid value' });
+                    } else if (
+                        validation &&
+                        !!validation(values[key] as never)
+                    ) {
+                        updateError({
+                            id: key,
+                            error: validation(values[key] as never),
+                        });
                         hasErrors = true;
                     } else if (
                         type === 'email' &&
@@ -98,7 +105,7 @@ export const effectorForm = <T extends TForm>(form: T) => {
                         });
                     } else if (
                         type === 'password' &&
-                        values[key].length < MIN_PASSWORD_LENGTH
+                        (values[key] as string).length < MIN_PASSWORD_LENGTH
                     ) {
                         hasErrors = true;
                         updateError({
@@ -108,23 +115,36 @@ export const effectorForm = <T extends TForm>(form: T) => {
                     } else if (
                         required &&
                         (type === 'authors' || type === 'stringArray') &&
-                        values[key].length === 0
+                        (values[key] as unknown[]).length === 0
                     ) {
                         hasErrors = true;
                         updateError({
                             id: key,
                             error: 'This field is required',
                         });
+                    } else if (asyncValidation) {
+                        setLoading(true);
+                        const error = await asyncValidation(
+                            values[key] as never
+                        );
+                        setLoading(false);
+                        if (error) {
+                            updateError({
+                                id: key,
+                                error,
+                            });
+                            hasErrors = true;
+                        }
                     } else {
                         updateError({ id: key, error: undefined });
                     }
-                });
+                }
 
                 return hasErrors;
             };
 
-            const onSubmit = () => {
-                const hasErrors = validateFields();
+            const onSubmit = async () => {
+                const hasErrors = await validateFields();
                 console.log(hasErrors, errors);
 
                 if (!hasErrors) {
@@ -143,6 +163,7 @@ export const effectorForm = <T extends TForm>(form: T) => {
                 onSubmit,
                 updateField,
                 onChange,
+                loading,
             };
         },
     };

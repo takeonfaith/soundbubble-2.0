@@ -4,10 +4,10 @@ import { useIsSongLiked } from '../../../shared/hooks/useIsSongLiked';
 import {
     addSongToLibraryFx,
     removeSongFromLibraryFx,
-    userModel,
-} from '../../user/model';
+} from '../../user/model/user';
 import { TSong } from '../model/types';
 import { ToggleLike } from '../../playlist/hooks/useTogglePlaylistLike';
+import { userModel } from '../../user/model';
 
 export const useToggleLike = (song: TSong | null | undefined): ToggleLike => {
     const [isAddingSong, isRemovingSong] = useUnit([

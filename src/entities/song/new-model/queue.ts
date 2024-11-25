@@ -1,34 +1,66 @@
-import { combine, createApi, createEvent, createStore, sample } from 'effector';
-import { LoopMode, TNextFrom, TQueue } from '../model/types';
+import {
+    combine,
+    createApi,
+    createEffect,
+    createEvent,
+    createStore,
+    sample,
+} from 'effector';
+import { LoopMode, TLastQueue, TNextFrom, TQueue, TSong } from '../model/types';
 import { $currentTime, currentTimeApi } from './current-time';
+import { Database } from '../../../database';
+
+const loadLastQueueFx = createEffect<
+    string,
+    { queue: TLastQueue | null; songs: TSong[] } | null
+>();
 
 export const next = createEvent<TNextFrom>();
 export const previous = createEvent();
 const pToEnd = createEvent();
+export const addToQueue = createEvent<TQueue>();
 
-export const $shuffleMode = createStore<boolean>(false);
+export const $shuffleMode = createStore<boolean>(
+    Boolean(localStorage.getItem('shuffle') ?? false)
+);
 export const $loopMode = createStore<LoopMode>(
-    (localStorage.getItem('loopMode') as LoopMode | null) ?? LoopMode.noloop
+    +(localStorage.getItem('loopMode') ?? 0) as LoopMode
 );
 
 export const { toggleLoopMode } = createApi($loopMode, {
     toggleLoopMode: (loopMode) => {
-        if (loopMode === LoopMode.noloop) return LoopMode.loopall;
+        let mode: number;
+        if (loopMode === LoopMode.noloop) mode = LoopMode.loopall;
+        else if (loopMode === LoopMode.loopall) mode = LoopMode.loopone;
+        else mode = LoopMode.noloop;
 
-        if (loopMode === LoopMode.loopall) return LoopMode.loopone;
-
-        return LoopMode.noloop;
+        localStorage.setItem('loopMode', mode.toString());
+        return mode;
     },
 });
 
 export const { toggleShuffleMode } = createApi($shuffleMode, {
     toggleShuffleMode: (shuffleMode) => {
+        localStorage.setItem('shuffle', (!shuffleMode).toString());
         return !shuffleMode;
     },
 });
 
 export const $queue = createStore<TQueue | null>(null);
 export const $currentSongIndex = createStore<number>(0);
+export const $isLastSongInQueue = combine(
+    $queue,
+    $currentSongIndex,
+    (queue, currentSongIndex) => {
+        const res = queue?.songs.length
+            ? (queue?.songs.length ?? 1) - 1 === currentSongIndex
+            : false;
+
+        console.log(res);
+
+        return res;
+    }
+);
 
 export const queueApi = createApi($currentSongIndex, {
     // primitives
@@ -56,26 +88,29 @@ sample({
 const filterNext = (
     {
         loopMode,
-        queue,
-        currentSongIndex,
-    }: { loopMode: LoopMode; queue: TQueue | null; currentSongIndex: number },
+        isLastSongInQueue,
+    }: { loopMode: LoopMode; isLastSongInQueue: boolean },
     nextFrom: TNextFrom
 ) => {
     const isEither =
         loopMode !== LoopMode.loopone ||
         (loopMode === LoopMode.loopone && nextFrom === 'from_next_button');
 
-    console.log(isEither && (queue?.songs.length ?? 1) - 1 > currentSongIndex);
-
-    return isEither && (queue?.songs.length ?? 1) - 1 > currentSongIndex;
+    return isEither && !isLastSongInQueue;
 };
 
 // // End of queue, loopall mode, go to start
 sample({
     clock: next,
-    source: { currentSongIndex: $currentSongIndex, queue: $queue },
-    filter: ({ currentSongIndex, queue }) => {
-        const res = (queue?.songs.length ?? 1) - 1 === currentSongIndex;
+    source: {
+        isLastSongInQueue: $isLastSongInQueue,
+        loopMode: $loopMode,
+    },
+    filter: ({ isLastSongInQueue, loopMode }, nextFrom) => {
+        const res =
+            isLastSongInQueue &&
+            (loopMode === LoopMode.loopall || nextFrom === 'from_next_button');
+        console.log(res);
 
         return res;
     },
@@ -87,8 +122,7 @@ sample({
     clock: next,
     source: {
         loopMode: $loopMode,
-        queue: $queue,
-        currentSongIndex: $currentSongIndex,
+        isLastSongInQueue: $isLastSongInQueue,
     },
     filter: filterNext,
     target: queueApi.pNext,
@@ -100,12 +134,12 @@ sample({
     source: {
         loopMode: $loopMode,
     },
-    filter: ({ loopMode }, nextFrom) =>
-        loopMode === LoopMode.loopone && nextFrom === 'from_end_track',
-    fn: () => {
-        console.log(
-            'Start track from beginning if loopMode === LoopMode.loopone'
-        );
+    filter: ({ loopMode }, nextFrom) => {
+        const res =
+            loopMode === LoopMode.loopone && nextFrom === 'from_end_track';
+        console.log(res);
+
+        return res;
     },
     target: previous,
 });
@@ -162,3 +196,27 @@ sample({
 });
 
 // #endregion
+
+sample({
+    clock: addToQueue,
+    source: $queue,
+    fn: (queue, newQueue) => {
+        const finalQueue = queue ?? newQueue;
+        return {
+            ...finalQueue,
+            songs: [...(queue?.songs ?? []), ...newQueue.songs],
+        } as TQueue;
+    },
+    target: $queue,
+});
+
+sample({
+    clock: loadLastQueueFx.doneData,
+    filter: (props) => props && !!props.queue,
+    fn: (props) => ({ ...props!.queue, songs: props!.songs }),
+    target: $queue,
+});
+
+loadLastQueueFx.use(async (userId) => {
+    return await Database.Songs.loadLastQueue(userId);
+});

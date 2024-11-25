@@ -49,5 +49,7 @@ sample({
 });
 
 addListeningFx.use(async ({ queue, currentSongIndex }) => {
+    console.log('adding listeting');
+    
     await Database.Songs.addListening(queue, currentSongIndex);
 });

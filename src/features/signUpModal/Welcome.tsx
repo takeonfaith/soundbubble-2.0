@@ -10,6 +10,10 @@ import { useUnit } from 'effector-react';
 import { signUpFx } from '../../entities/user/model/sign-up';
 
 const WelcomeStyled = styled(SignUpModalStyled)`
+    h3 {
+        font-weight: 400;
+    }
+
     .promo {
         width: 100%;
     }
@@ -34,7 +38,7 @@ export const Welcome = () => {
                 <LeftSide />
                 <Flex d="column" gap={10}>
                     <h3>Welcome to Soundbubble!</h3>
-                    <Subtext style={{ fontSize: '0.9rem' }}>
+                    <Subtext style={{ fontSize: '1rem' }}>
                         The only thing left is to click that blue button
                     </Subtext>
                 </Flex>

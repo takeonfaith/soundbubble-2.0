@@ -66,8 +66,8 @@ export const CompactUser = styled.div`
 `;
 
 export const ButtonWrapper = styled.div`
-    width: 100%;
-    position: sticky;
+    width: calc(100% - 40px);
+    position: absolute;
     bottom: 20px;
     background: ${({ theme }) => theme.colors.modal};
     outline: 25px solid ${({ theme }) => theme.colors.modal};

@@ -29,6 +29,7 @@ type Props<T extends TEntity> = {
         visibleItems: T[],
         setVisibleItems: React.Dispatch<React.SetStateAction<T[]>>
     ) => void;
+    onAddItem?: (item: T[]) => void;
 };
 
 export const AddEntitiesUI = <T extends TEntity>({
@@ -38,6 +39,7 @@ export const AddEntitiesUI = <T extends TEntity>({
     renderItem,
     renderButton,
     onSearchValueChange,
+    onAddItem,
     children,
     gap,
 }: Props<T>) => {
@@ -51,7 +53,7 @@ export const AddEntitiesUI = <T extends TEntity>({
         handleDeselectAll,
         setAddedItems,
         getItemImage,
-    } = useAddedItemsList(entities, initiallyAddedItems);
+    } = useAddedItemsList(entities, initiallyAddedItems, onAddItem);
 
     return (
         <>
@@ -81,7 +83,13 @@ export const AddEntitiesUI = <T extends TEntity>({
                 )}
             </Flex>
             {children}
-            <Flex d="column" width="100%" padding="0 0 150px 0" gap={gap} className='entities-list'>
+            <Flex
+                d="column"
+                width="100%"
+                padding="0 0 150px 0"
+                gap={gap}
+                className="entities-list"
+            >
                 {visibleItems.map((item, index) => {
                     const id = getEntityId(item);
                     const checked = !!addedItems.find(

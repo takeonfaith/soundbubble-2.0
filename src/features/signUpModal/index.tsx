@@ -52,6 +52,7 @@ export const SignUpModal = () => {
                     required
                     onChange={onChange}
                     error={errors.name}
+                    maxLength={30}
                 />
             </Flex>
 

@@ -1,16 +1,16 @@
 import { IconHistoryOff } from '@tabler/icons-react';
 import { historyModel } from '../../entities/history/model';
+import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { SongListSkeleton } from '../../entities/song/ui/SongListSkeleton';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { Header } from '../../layout/header';
+import { Flex } from '../../shared/components/flex';
 import { PageMessage } from '../../shared/components/pageMessage';
 import {
     ContentWrapper,
     PageWrapper,
 } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { createQueueObject } from '../../entities/song/lib/createQueueObject';
-import { Flex } from '../../shared/components/flex';
 
 export const HistoryPage = () => {
     const [history, loading] = historyModel.useHistory();
