@@ -37,6 +37,13 @@ export class Users {
         try {
             await FB.setById('users', user.uid, user);
             await FB.setById('search', user.uid, createDefaultSuggestion(user));
+            if (user.addedAuthors) {
+                await this.addAuthorToLibrary(
+                    user.uid,
+                    user.addedAuthors,
+                    false
+                );
+            }
         } catch (error) {
             console.error(error);
             throw new Error(ERRORS.operationFailed('Failed to create user'));
@@ -268,19 +275,21 @@ export class Users {
         }
     }
 
-    static async addAuthorToLibrary(userId: string, authorIds: string[]) {
+    static async addAuthorToLibrary(
+        userId: string,
+        authorIds: string[],
+        updateUser = true
+    ) {
         try {
-            await FB.updateById('users', userId, {
-                addedAuthors: arrayUnion(...authorIds),
-            });
-
-            const reqs = authorIds.map((id) => {
-                return FB.updateById('users', id, {
-                    subscribers: increment(1),
+            if (updateUser) {
+                await FB.updateById('users', userId, {
+                    addedAuthors: arrayUnion(...authorIds),
                 });
-            });
+            }
 
-            await Promise.all(reqs);
+            await FB.updateByIdsWithBatches('users', authorIds, {
+                subscribers: increment(1),
+            });
         } catch (error) {
             throw new Error(
                 `Failed to add author to library, ${(error as Error).message}`
@@ -288,19 +297,21 @@ export class Users {
         }
     }
 
-    static async removeAuthorFromLibrary(userId: string, authorIds: string[]) {
+    static async removeAuthorFromLibrary(
+        userId: string,
+        authorIds: string[],
+        updateUser = true
+    ) {
         try {
-            await FB.updateById('users', userId, {
-                addedAuthors: arrayRemove(...authorIds),
-            });
-
-            const reqs = authorIds.map((id) => {
-                return FB.updateById('users', id, {
-                    subscribers: increment(-1),
+            if (updateUser) {
+                await FB.updateById('users', userId, {
+                    addedAuthors: arrayRemove(...authorIds),
                 });
-            });
+            }
 
-            await Promise.all(reqs);
+            await FB.updateByIdsWithBatches('users', authorIds, {
+                subscribers: increment(-1),
+            });
         } catch (error) {
             throw new Error(
                 `Failed to add author to library, ${(error as Error).message}`
@@ -583,6 +594,14 @@ export class Users {
 
                 if (user.photoURL.length) {
                     await FB.deleteFile('usersImages', user.photoURL);
+                }
+
+                if (user.addedAuthors) {
+                    await this.removeAuthorFromLibrary(
+                        user.uid,
+                        user.addedAuthors,
+                        false
+                    );
                 }
 
                 await FB.deleteById('users', userCreds.uid);

@@ -1,7 +1,11 @@
 import { IconPlayerPlayFilled } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useUnit } from 'effector-react';
 import styled from 'styled-components';
 import { songModel } from '../../entities/song/new-model';
+import {
+    $analyser,
+    $audioData,
+} from '../../entities/song/new-model/frequencies';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
 import { MeshGradientBubblesWithAudio } from './Bubble';
@@ -44,13 +48,7 @@ const PlaybuttonStyled = styled.div`
 export const DiscoverPage = () => {
     const isOpen = songModel.useFullScreenPlayer();
     const { currentSong } = songModel.useSong();
-    const currentTime = songModel.useCurrentTime();
-    const [frequencies, setFrequencies] = useState<
-        {
-            frequencies: [number, number, number];
-            time: number;
-        }[]
-    >([]);
+    const [analyser, audioData] = useUnit([$analyser, $audioData]);
 
     return (
         <DiscoverPageStyled color={currentSong?.imageColors[0]}>
@@ -60,8 +58,8 @@ export const DiscoverPage = () => {
             {!isOpen && (
                 <MeshGradientBubblesWithAudio
                     colors={currentSong?.imageColors}
-                    analyser={null}
-                    audioData={new Uint8Array()}
+                    analyser={analyser}
+                    audioData={audioData}
                 />
             )}
             <PlaybuttonStyled>

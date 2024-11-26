@@ -160,7 +160,7 @@ export const ToastStyled = styled.div`
 
     &.hint {
         background: ${({ theme }) => theme.scheme.grey.mild};
-        color: ${({ theme }) => theme.colors.greyText2};
+        color: ${({ theme }) => theme.scheme.grey.text2};
     }
 `;
 

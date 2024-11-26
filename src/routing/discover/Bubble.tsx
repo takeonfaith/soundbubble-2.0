@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { hexToRgbA } from '../../shared/funcs/hexToRgba';
 
 interface Bubble {
@@ -12,13 +12,72 @@ interface Bubble {
     color: string;
 }
 
-export const MeshGradientBubblesWithAudio: React.FC<{
+type Props = {
     colors?: string[];
-}> = ({ colors }) => {
+    analyser: AnalyserNode | null;
+    audioData: Uint8Array | null;
+};
+
+const lerp = (a: number, b: number, t: number): number => a + (b - a) * t; // Linear interpolation
+
+const avg = (arr: number[]) => {
+    return (
+        arr.reduce((acc, el) => {
+            acc += el;
+            return acc;
+        }, 0) / arr.length
+    );
+};
+
+const updateBubble = (bubble: Bubble, beatStrength: number, color?: string) => {
+    bubble.targetRadius =
+        bubble.originalRadius + 300 * Math.pow(beatStrength, 10); // Stronger beat = larger size
+
+    // Smoothly interpolate the current radius towards the target size
+    bubble.radius = lerp(bubble.radius, bubble.targetRadius, 0.03); // Adjust interpolation speed (0.1) // Adjust interpolation speed (0.1)
+
+    // Orbit and wobble motion
+    bubble.angle += bubble.dx;
+    bubble.distance += bubble.dy;
+    if (color && bubble.color !== color) {
+        bubble.color = `rgba(${hexToRgbA(color)}, ${0.8})`;
+    }
+
+    // Restrict the wobble's range
+    if (bubble.distance < 100 || bubble.distance > 300) bubble.dy *= -1;
+};
+
+const drawBubble = (
+    canvas: HTMLCanvasElement,
+    ctx: CanvasRenderingContext2D,
+    bubble: Bubble
+) => {
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    ctx.save();
+    ctx.filter = 'blur(100px)';
+    ctx.globalAlpha = 0.8;
+    ctx.fillStyle = bubble.color;
+    ctx.beginPath();
+    ctx.arc(
+        centerX + bubble.distance * Math.cos(bubble.angle), // X coordinate based on orbit
+        centerY + bubble.distance * Math.sin(bubble.angle), // Y coordinate based on orbit
+        bubble.radius, // Current radius (interpolated size)
+        0,
+        Math.PI * 2
+    );
+    ctx.fill();
+    ctx.closePath();
+    ctx.restore();
+};
+
+export const MeshGradientBubblesWithAudio = ({
+    colors,
+    analyser,
+    audioData,
+}: Props) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const audioRef = useRef<HTMLAudioElement | null>(null); // Reference for audio element
-    const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
-    const [audioData, setAudioData] = useState<Uint8Array | null>(null);
 
     useEffect(() => {
         const canvas = canvasRef.current as HTMLCanvasElement;
@@ -63,55 +122,10 @@ export const MeshGradientBubblesWithAudio: React.FC<{
             });
         }
 
-        const lerp = (a: number, b: number, t: number): number =>
-            a + (b - a) * t; // Linear interpolation
-
-        const drawBubble = (bubble: Bubble) => {
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-
-            ctx.save();
-            ctx.filter = 'blur(100px)';
-            ctx.globalAlpha = 0.8;
-            ctx.fillStyle = bubble.color;
-            ctx.beginPath();
-            ctx.arc(
-                centerX + bubble.distance * Math.cos(bubble.angle), // X coordinate based on orbit
-                centerY + bubble.distance * Math.sin(bubble.angle), // Y coordinate based on orbit
-                bubble.radius, // Current radius (interpolated size)
-                0,
-                Math.PI * 2
-            );
-            ctx.fill();
-            ctx.closePath();
-            ctx.restore();
-        };
-
-        const updateBubble = (
-            bubble: Bubble,
-            beatStrength: number,
-            color?: string
-        ) => {
-            bubble.targetRadius = bubble.originalRadius + 150 * beatStrength; // Stronger beat = larger size
-
-            // Smoothly interpolate the current radius towards the target size
-            bubble.radius = lerp(bubble.radius, bubble.targetRadius, 0.05); // Adjust interpolation speed (0.1) // Adjust interpolation speed (0.1)
-
-            // Orbit and wobble motion
-            bubble.angle += bubble.dx;
-            bubble.distance += bubble.dy;
-            if (color && bubble.color !== color) {
-                bubble.color = `rgba(${hexToRgbA(color)}, ${0.8})`;
-            }
-
-            // Restrict the wobble's range
-            if (bubble.distance < 100 || bubble.distance > 300) bubble.dy *= -1;
-        };
-
-        const arr: number[] = [];
-
         const animate = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // ctx.globalCompositeOperation = 'difference'
 
             let beatStrength = 0;
 
@@ -120,15 +134,13 @@ export const MeshGradientBubblesWithAudio: React.FC<{
                 analyser.getByteFrequencyData(audioData); // Get frequency spectrum
 
                 const bassValues = Array.from(audioData.slice(0, 10)); // Focus on the bass frequencies
-                beatStrength = Math.min(...bassValues) / 255; // Normalize beat strength between 0 and 1
+                beatStrength = avg(bassValues) / 255; // Normalize beat strength between 0 and 1
             }
-
-            arr.push(beatStrength);
 
             // Update and draw each bubble
             bubbles.forEach((bubble, index) => {
                 updateBubble(bubble, beatStrength, colors?.[index % 3]);
-                drawBubble(bubble);
+                drawBubble(canvas, ctx, bubble);
             });
 
             animationId = requestAnimationFrame(animate);
@@ -143,48 +155,8 @@ export const MeshGradientBubblesWithAudio: React.FC<{
         };
     }, [audioData, analyser, colors]);
 
-    // Handle file input for audio playback
-    const handleAudioUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const audio = audioRef.current as HTMLAudioElement;
-            audio.src = URL.createObjectURL(file);
-            audio.play();
-
-            // Set up Web Audio API
-            const audioCtx = new AudioContext();
-            const analyserNode = audioCtx.createAnalyser();
-            const source = audioCtx.createMediaElementSource(audio);
-
-            source.connect(analyserNode);
-            analyserNode.connect(audioCtx.destination);
-
-            analyserNode.fftSize = 256; // Lower size for faster analysis
-            const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
-
-            setAnalyser(analyserNode);
-            setAudioData(dataArray);
-        }
-    };
-
     return (
         <div>
-            {/* File input for user audio */}
-            <input
-                type="file"
-                accept="audio/*"
-                onChange={handleAudioUpload}
-                style={{
-                    position: 'absolute',
-                    top: '10px',
-                    left: '10px',
-                    zIndex: 10,
-                    background: '#fff',
-                    padding: '5px',
-                    borderRadius: '5px',
-                }}
-            />
-            {/* Canvas for rendering */}
             <svg xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <filter id="goo">
@@ -196,7 +168,7 @@ export const MeshGradientBubblesWithAudio: React.FC<{
                         <feColorMatrix
                             in="blur"
                             mode="matrix"
-                            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -5"
+                            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -4"
                             result="goo"
                         />
                         <feBlend in="SourceGraphic" in2="goo" />
@@ -215,7 +187,6 @@ export const MeshGradientBubblesWithAudio: React.FC<{
                     filter: 'url(#goo)',
                 }}
             />
-            <audio ref={audioRef} />
         </div>
     );
 };

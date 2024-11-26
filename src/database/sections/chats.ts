@@ -226,7 +226,7 @@ export class Chats {
                     (p) => p !== message.sender
                 );
 
-                const isSuccessfull = await FB.updateByIdsWithBatches(
+                const isSuccessfull = await FB.updateDeepByIdsWithBatches(
                     'newChats',
                     [chat.id, 'unread'],
                     notYou,

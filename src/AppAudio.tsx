@@ -1,16 +1,40 @@
 import { isDefined } from '@shared/funcs/isDefined';
 import { useUnit } from 'effector-react';
 import React, { useEffect, useRef } from 'react';
-import { LoopMode } from './entities/song/model/types';
 import { songModel as songModelNew } from './entities/song/new-model';
 import { $isSliding } from './entities/song/new-model/current-time';
+import { useEffectOnce } from './shared/hooks/useEffectOnce';
 
 const useAppAudio = () => {
     const { state, lastTime } = songModelNew.useSong();
     const isSliding = useUnit($isSliding);
     const [volume, isMuted] = songModelNew.useVolume();
     const audioRef = useRef<HTMLAudioElement>(null);
-    console.log({ lastTime });
+
+    useEffectOnce(() => {
+        handleAudioUpload();
+    }, []);
+
+    const handleAudioUpload = () => {
+        if (audioRef.current) {
+            // Set up Web Audio API
+            audioRef.current.crossOrigin = 'anonymous';
+            const audioCtx = new AudioContext();
+            const analyserNode = audioCtx.createAnalyser();
+            const source = audioCtx.createMediaElementSource(audioRef.current);
+
+            source.connect(analyserNode);
+            analyserNode.connect(audioCtx.destination);
+
+            analyserNode.fftSize = 256; // Lower size for faster analysis
+            const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
+
+            songModelNew.frequency.setAnalyzerAndAudioData({
+                audioData: dataArray,
+                analyser: analyserNode,
+            });
+        }
+    };
 
     useEffect(() => {
         if (audioRef.current) {
@@ -60,7 +84,7 @@ const useAppAudio = () => {
 export const AppAudio = () => {
     const { audioRef, handleOnCanPlay, handlePlaying, handleEnded } =
         useAppAudio();
-    const { currentSong, loopMode } = songModelNew.useSong();
+    const { currentSong } = songModelNew.useSong();
 
     return (
         <audio

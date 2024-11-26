@@ -352,6 +352,28 @@ export class FB {
 
     static async updateByIdsWithBatches<T extends TCollections>(
         collectionType: T,
+        ids: string[],
+        data: DataType<T>
+    ): Promise<boolean> {
+        try {
+            const batch = writeBatch(this.firestore);
+
+            for (let i = 0; i < ids.length; i++) {
+                const id = ids[i];
+                const ref = doc(this.get(collectionType), id);
+
+                batch.update(ref, data);
+            }
+
+            await batch.commit();
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    static async updateDeepByIdsWithBatches<T extends TCollections>(
+        collectionType: T,
         path: [string, TSubcollection<T>],
         ids: string[],
         data: DeepDataType<T, TSubcollection<T>>

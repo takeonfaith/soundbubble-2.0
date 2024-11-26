@@ -35,6 +35,7 @@ import {
 import { $volume, $isMuted, volumeApi, isMutedApi } from './volume';
 import './add-listening';
 import { calculateCurrentLyric, nextCurrentLyric } from './lyrics';
+import { setAnalyzerAndAudioData } from './frequencies';
 
 export const songModel = {
     useSong: () =>
@@ -87,5 +88,8 @@ export const songModel = {
     volume: {
         ...volumeApi,
         ...isMutedApi,
+    },
+    frequency: {
+        setAnalyzerAndAudioData,
     },
 };

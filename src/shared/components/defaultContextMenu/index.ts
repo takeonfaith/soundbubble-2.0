@@ -21,6 +21,8 @@ export const DefaultContextMenuStyled = styled.div`
         border-radius: 0;
         /* opacity: 0.8; */
 
+        white-space: nowrap;
+
         svg {
             width: 20px;
             height: 20px;

@@ -31,6 +31,7 @@ import { modalModel } from '../modal/model';
 import { popupModel } from '../popup/model';
 import { LoadingWrapper } from '../../shared/components/loadingWrapper';
 import { deleteAccountFx } from '../../entities/user/model/delete-account';
+import { getShortString } from '../../shared/funcs/getShortString';
 
 const UserProfileModalStyled = styled.div`
     display: flex;
@@ -257,7 +258,7 @@ export const UserContextMenu = () => {
                     size={'20px'}
                     isAuthor={currentUser?.isAuthor}
                 />
-                Profile
+                {getShortString(currentUser?.displayName, 15)}
             </Button>
             <Divider />
             <Button onClick={handleUploadSong}>
