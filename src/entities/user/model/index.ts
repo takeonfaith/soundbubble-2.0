@@ -37,6 +37,7 @@ import {
 } from './user';
 import { login, loginFx } from './login';
 import { deleteAccount } from './delete-account';
+import { resetPassword } from './reset-password';
 
 export const userModel = {
     useUser: () => useUnit([$user, loadUserDataFx.pending, loginFx.pending]),
@@ -69,6 +70,7 @@ export const userModel = {
         createAuthor,
         editUser,
         deleteAccount,
+        resetPassword,
     },
     gates: {
         useLoadUser: () => useGate(userGate),
