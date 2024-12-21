@@ -1,22 +1,17 @@
+import { userModel } from '../../entities/user/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
-import { Form } from '../../shared/components/form';
 import { Message } from '../../shared/components/mesage';
-import { useForm } from '../../shared/hooks/useForm';
+import { EmailInput } from '../emailInput';
 import { SignUpModalStyled } from '../signUpModal/styles';
-
-const fields = [
-    {
-        id: 'email',
-        label: 'Email Address',
-        type: 'email',
-        placeholder: 'Enter your email address',
-        required: true,
-    },
-] as const;
+import { useForm } from './model/forgot-password';
 
 export const ForgotPasswordModal = () => {
-    const { formProps, onSumbit } = useForm({ fields });
+    const { values, errors, updateField, onSubmit, loading } = useForm(
+        (values) => {
+            userModel.events.resetPassword(values.email);
+        }
+    );
 
     return (
         <SignUpModalStyled>
@@ -28,17 +23,27 @@ export const ForgotPasswordModal = () => {
                 jc="center"
             >
                 <Message type="info">
-                    We will send you a new password to the email bellow
+                    We will send you a reset password email
                 </Message>
-                <Form {...formProps} />
+                <EmailInput
+                    onChange={(value) => {
+                        updateField({
+                            id: 'email',
+                            value,
+                        });
+                    }}
+                    value={values.email}
+                    required={true}
+                    error={errors.email}
+                />
             </Flex>
             <Flex width="100%">
                 <DefaultButton
-                    disabled={!formProps.valueObj.email.value.length}
+                    loading={loading}
                     appearance="primary"
-                    onClick={onSumbit}
+                    onClick={onSubmit}
                 >
-                    Send a code
+                    Send email
                 </DefaultButton>
             </Flex>
         </SignUpModalStyled>

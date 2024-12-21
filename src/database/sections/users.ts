@@ -698,4 +698,13 @@ export class Users {
             return false;
         }
     }
+
+    static async resetPassword(email: string) {
+        try {
+            await FB.resetPassword(email);
+        } catch (error) {
+            console.error(error);
+            throw new Error('Failed to reset password');
+        }
+    }
 }

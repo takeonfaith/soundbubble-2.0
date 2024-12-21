@@ -43,6 +43,7 @@ import {
     deleteFromFriends,
 } from './friends';
 import './update-online';
+import { resetPassword } from './reset-password';
 
 export const userModel = {
     useUser: () => useUnit([$user, loadUserDataFx.pending, loginFx.pending]),
@@ -82,6 +83,7 @@ export const userModel = {
         createAuthor,
         editUser,
         deleteAccount,
+        resetPassword,
     },
     gates: {
         useLoadUser: () => useGate(userGate),
