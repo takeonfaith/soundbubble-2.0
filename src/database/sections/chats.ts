@@ -238,7 +238,7 @@ export class Chats {
                 console.log('isSuccessfull', isSuccessfull);
 
                 if (!isSuccessfull) {
-                    await FB.setByIdsWithBatches(
+                    await FB.setDeepByIdsWithBatches(
                         'newChats',
                         [chat.id, 'unread'],
                         notYou,

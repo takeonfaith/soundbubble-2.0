@@ -82,6 +82,7 @@ const GENRES: TExtendedSuggestion[] = [
     { uid: 'world', fullName: 'World', place: 'users' },
     { uid: 'ambient', fullName: 'Ambient', place: 'users' },
     { uid: 'african', fullName: 'African', place: 'users' },
+    { uid: 'afro', fullName: 'Afro', place: 'users' },
 ];
 
 const LANGUAGES: TExtendedSuggestion[] = [

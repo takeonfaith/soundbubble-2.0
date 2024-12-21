@@ -80,6 +80,9 @@ export class Users {
             await FB.setById('history', newUser.uid, {
                 history: [],
             });
+            await FB.setById('searchHistory', newUser.uid, {
+                history: [],
+            });
 
             return newUser;
         } catch (error) {
@@ -243,6 +246,26 @@ export class Users {
         }
     }
 
+    // static async getFriends(userId: string) {
+    //     try {
+    //         const friendIds = await FB.getDeepAll('users', [userId, 'friends']);
+    //         const requestedIds = await FB.getDeepAll('users', [
+    //             userId,
+    //             'friendRequests',
+    //         ]);
+    //         const awaitingIds = await FB.getDeepAll('users', [
+    //             userId,
+    //             'friendAwaiting',
+    //         ]);
+            
+    //     } catch (error) {
+    //         console.log(error);
+    //         throw new Error('Failed to get friends');
+    //     }
+    // }
+
+    static async listenToFriends() {}
+
     static async addSongToLibrary(userId: string, songId: string) {
         try {
             await FB.updateById('users', userId, {
@@ -341,29 +364,7 @@ export class Users {
         }
     }
 
-    static async acceptFriendRequest(userId: string, friendId: string) {
-        try {
-            await FB.updateById('users', userId, {
-                friends: arrayUnion({
-                    uid: friendId,
-                    status: FriendStatus.added,
-                }),
-            });
-
-            await FB.updateById('users', friendId, {
-                friends: arrayUnion({
-                    uid: userId,
-                    status: FriendStatus.added,
-                }),
-            });
-        } catch (error) {
-            throw new Error(
-                `Failed to accept friend request, ${(error as Error).message}`
-            );
-        }
-    }
-
-    static async rejectFriendRequest(userId: string, friendId: string) {
+    static async cancelFriendRequest(userId: string, friendId: string) {
         try {
             await FB.updateById('users', userId, {
                 friends: arrayRemove({
@@ -380,7 +381,81 @@ export class Users {
             });
         } catch (error) {
             throw new Error(
+                `Failed to cancel friend request, ${(error as Error).message}`
+            );
+        }
+    }
+
+    static async acceptFriendRequest(userId: string, friendId: string) {
+        try {
+            await this.rejectFriendRequest(userId, friendId);
+
+            await FB.updateById('users', userId, {
+                friends: arrayUnion({
+                    uid: friendId,
+                    status: FriendStatus.added,
+                }),
+            });
+
+            await FB.updateById('users', friendId, {
+                friends: arrayUnion({
+                    uid: userId,
+                    status: FriendStatus.added,
+                }),
+            });
+        } catch (error) {
+            console.log(error);
+            throw new Error(
                 `Failed to accept friend request, ${(error as Error).message}`
+            );
+        }
+    }
+
+    static async rejectFriendRequest(userId: string, friendId: string) {
+        try {
+            await FB.updateById('users', userId, {
+                friends: arrayRemove({
+                    uid: friendId,
+                    status: FriendStatus.awaiting,
+                }),
+            });
+
+            await FB.updateById('users', friendId, {
+                friends: arrayRemove({
+                    uid: userId,
+                    status: FriendStatus.requested,
+                }),
+            });
+        } catch (error) {
+            console.log(error);
+
+            throw new Error(
+                `Failed to accept friend request, ${(error as Error).message}`
+            );
+        }
+    }
+
+    static async deleteFromFriends(userId: string, friendId: string) {
+        try {
+            await FB.updateById('users', userId, {
+                friends: arrayRemove({
+                    uid: friendId,
+                    status: FriendStatus.added,
+                }),
+            });
+
+            await FB.updateById('users', friendId, {
+                friends: arrayRemove({
+                    uid: userId,
+                    status: FriendStatus.added,
+                }),
+            });
+        } catch (error) {
+            console.log(error);
+            throw new Error(
+                `Failed to accept delete from friends, ${
+                    (error as Error).message
+                }`
             );
         }
     }

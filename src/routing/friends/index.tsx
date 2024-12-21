@@ -5,8 +5,6 @@ import { UserItem } from '../../entities/user/ui';
 import { UserListSkeleton } from '../../entities/user/ui/UserListSkeleton';
 import { Header } from '../../layout/header';
 import { Button } from '../../shared/components/button';
-import { DefaultButton } from '../../shared/components/button/DefaultButton';
-import { Divider } from '../../shared/components/divider';
 import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
 import { PageMessage } from '../../shared/components/pageMessage';
@@ -29,7 +27,7 @@ const FriendsWrapper = styled.div`
 
 export const FriendsPage = () => {
     const [currentUser] = userModel.useUser();
-    const [friends, , loading] = userModel.useFriends();
+    const [friends, , , loading] = userModel.useFriends();
 
     return (
         <PageWrapper>
@@ -40,9 +38,6 @@ export const FriendsPage = () => {
                             placeholder="Search for friends..."
                             icon={<IconSearch />}
                         />
-                        <DefaultButton width="200px" appearance="primary">
-                            Create group chat
-                        </DefaultButton>
                     </FriendsWrapper>
                 )}
             </Header>
@@ -52,7 +47,7 @@ export const FriendsPage = () => {
                         loading={loading}
                         skeleton={<UserListSkeleton orientation="horizontal" />}
                     >
-                        {!currentUser && (
+                        {!friends.length && (
                             <Flex
                                 height="100%"
                                 width="100%"
@@ -74,7 +69,6 @@ export const FriendsPage = () => {
                                 ai="flex-start"
                             >
                                 <FriendRequests />
-                                <Divider />
                                 {friends.map((friend) => {
                                     return (
                                         <UserItem

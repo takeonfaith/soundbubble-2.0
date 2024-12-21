@@ -5,18 +5,24 @@ import {
     IconUserPlus,
     IconUserX,
 } from '@tabler/icons-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { Database } from '../../database';
 import { getLastSeen } from '../../entities/user/lib/getLastSeen';
 import { userModel } from '../../entities/user/model';
-import { FriendStatus, TUser } from '../../entities/user/model/types';
+import { TUser } from '../../entities/user/model/types';
 import { UserCover } from '../../entities/user/ui/UserCover';
 import { confirmModel } from '../../layout/confirm/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
+import { Loading } from '../../shared/components/loading';
 import { Subtext } from '../../shared/components/subtext';
 import { UserButtons, UserInfo, UserInfoName, UserTopStyled } from './styles';
-import { Database } from '../../database';
-import { useState } from 'react';
-import { Loading } from '../../shared/components/loading';
-import { useNavigate } from 'react-router';
+import { useUnit } from 'effector-react';
+import {
+    cancelFriendRequestFx,
+    deleteFromFriendsFx,
+    friendRequestFx,
+} from '../../entities/user/model/friends';
 
 type Props = {
     user: TUser | null;
@@ -24,14 +30,26 @@ type Props = {
 
 export const UserTop = ({ user }: Props) => {
     const [currentUser] = userModel.useUser();
-    const friends = currentUser?.friends ?? [];
+    const [friends, friendRequests, awaiting] = userModel.useFriends();
     const friend = friends.find((friend) => friend.uid === user?.uid);
+    console.log(currentUser);
+
     const isOwner = user?.uid === currentUser?.uid;
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const [isRequesting, isCancelingFriendRequest, isDeletingFromFriends] =
+        useUnit([
+            friendRequestFx.pending,
+            cancelFriendRequestFx.pending,
+            deleteFromFriendsFx.pending,
+        ]);
+    const isLoadingFriendButton =
+        isRequesting || isCancelingFriendRequest || isDeletingFromFriends;
+
+    if (!user) return null;
 
     const getFriendButtonContent = () => {
-        if (friend?.status === FriendStatus.added)
+        if (friend)
             return {
                 text: (
                     <>
@@ -43,14 +61,16 @@ export const UserTop = ({ user }: Props) => {
                     confirmModel.events.open({
                         text: 'You sure you want to remove this friend from your friend list?',
                         subtext: 'You can add them again if you want',
-                        onAccept: () => null,
+                        onAccept: () => {
+                            userModel.events.deleteFromFriends(user);
+                        },
                         icon: <IconUserX />,
                         iconColor: 'red',
                     });
                 },
             };
 
-        if (friend?.status === FriendStatus.requested) {
+        if (friendRequests.find((u) => u.uid === user?.uid)) {
             return {
                 text: (
                     <>
@@ -61,7 +81,11 @@ export const UserTop = ({ user }: Props) => {
                 onClick: () => {
                     confirmModel.events.open({
                         text: 'You sure you want to cancel friends request?',
-                        onAccept: () => null,
+                        onAccept: () => {
+                            userModel.events.cancelFriendRequest({
+                                friendId: user.uid,
+                            });
+                        },
                         icon: <IconUserX />,
                         iconColor: 'red',
                     });
@@ -69,7 +93,7 @@ export const UserTop = ({ user }: Props) => {
             };
         }
 
-        if (friend?.status === FriendStatus.awaiting) {
+        if (awaiting.find((u) => u.uid === user?.uid)) {
             return {
                 text: (
                     <>
@@ -89,7 +113,7 @@ export const UserTop = ({ user }: Props) => {
             ),
             onClick: () => {
                 if (user) {
-                    userModel.events.friendRequest(user?.uid);
+                    userModel.events.friendRequest({ friend: user });
                 }
             },
         };
@@ -131,11 +155,12 @@ export const UserTop = ({ user }: Props) => {
                         <DefaultButton
                             width="100%"
                             onClick={friendButton.onClick}
+                            loading={isLoadingFriendButton}
                         >
                             {friendButton.text}
                         </DefaultButton>
                     )}
-                    {currentUser && friend?.status === 'added' && (
+                    {currentUser && friend && (
                         <DefaultButton width="100%" onClick={handleMessage}>
                             {loading ? <Loading /> : <IconMessage2 size={18} />}
                             Message

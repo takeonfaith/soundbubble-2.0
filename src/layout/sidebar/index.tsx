@@ -25,7 +25,7 @@ export const Sidebar = () => {
     const preparedRoutes = groupByField(menuRoutes, 'section');
     const { loggedIn } = usePrivateAction();
     const [ownPlaylists] = userModel.useOwnPlaylists();
-    const [, friendRequests] = userModel.useFriends();
+    const [, , awaiting] = userModel.useFriends();
     const [currentUser] = userModel.useUser();
     const [unreadMap] = chatModel.useUnread();
 
@@ -33,7 +33,7 @@ export const Sidebar = () => {
         chat: Object.keys(unreadMap).filter(
             (key) => unreadMap[key].unreadCount > 0
         ).length,
-        friends: friendRequests.length,
+        friends: awaiting.length,
     };
 
     const handleAddPlaylist = loggedIn(() => {

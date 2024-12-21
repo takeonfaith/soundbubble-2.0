@@ -1,13 +1,13 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import {
     $addedAuthors,
-    $friends,
     $library,
     $ownPlaylists,
     $user,
 } from '../../user/model/user';
 import { TCache, THeavyMedia } from './types';
 import { convertToMap } from '../../../shared/funcs/convertToMap';
+import { $friends } from '../../user/model/friends';
 
 export const getNotInCacheFx = createEffect<
     THeavyMedia & { cache: TCache },

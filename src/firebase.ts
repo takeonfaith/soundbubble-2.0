@@ -46,7 +46,11 @@ import {
 import { TPlaylist } from './entities/playlist/model/types';
 import { TSuggestion } from './entities/search/model/types';
 import { TLastQueue, TLyric, TSong } from './entities/song/model/types';
-import { TSearchHistory, TUser } from './entities/user/model/types';
+import {
+    FriendStatus,
+    TSearchHistory,
+    TUser,
+} from './entities/user/model/types';
 import { asyncRequests } from './shared/funcs/asyncRequests';
 import getUID from './shared/funcs/getUID';
 
@@ -83,7 +87,7 @@ export type TCollections =
     | 'newChats'
     | 'lyrics'
     | 'lastQueue'
-    | 'frequencies';
+    | 'newUsers';
 
 export type TDeepCollections = 'newChats/messages';
 
@@ -107,23 +111,42 @@ type TCollectionType<T extends TCollections> = T extends 'songs'
     ? TLastQueue
     : T extends 'chatWallpapers'
     ? TWallpaper
-    : T extends 'frequencies'
-    ? {
-          frequencyData: {
-              frequencies: [number, number, number];
-              time: number;
-          }[];
-      }
+    : T extends 'newUsers'
+    ? TUser
     : never;
 
 type TSubcollection<T extends TCollections> = T extends 'newChats'
     ? 'messages' | 'unread'
+    : T extends 'users'
+    ?
+          | 'friends'
+          | 'friendRequests'
+          | 'friendAwaiting'
+          | 'ownPlaylists'
+          | 'ownSongs'
+          | 'addedPlaylists'
+          | 'addedAuthors'
+          | 'addedSongs'
+          | 'lastQueue'
+          | 'chats'
     : never;
 
 type TSubcollectionDataType<
     K extends TCollections,
     T extends TSubcollection<K>
-> = T extends 'messages' ? TMessage : T extends 'unread' ? TUnread : never;
+> = T extends 'messages'
+    ? TMessage
+    : T extends 'unread'
+    ? TUnread
+    : T extends 'friends'
+    ? { id: string; time: number }
+    : T extends 'friendRequests'
+    ? { id: string; time: number }
+    : T extends 'friendAwaiting'
+    ? { id: string; time: number }
+    : T extends 'ownPlaylists'
+    ? { id: string; time: number }
+    : never;
 
 type TStorageFolder =
     | 'chatCovers'
@@ -234,6 +257,33 @@ export class FB {
         return data.data() as TSubcollectionDataType<T, TSubcollection<T>>;
     }
 
+    static async getDeepByIds<T extends TCollections>(
+        collectionType: T,
+        path: [string, TSubcollection<T>],
+        ids: string[]
+    ) {
+        const res = await asyncRequests(ids, (id) => {
+            return FB.getDeepById(collectionType, [...path, id]);
+        });
+
+        return res.filter((r) => r !== null) as TSubcollectionDataType<
+            T,
+            TSubcollection<T>
+        >[];
+    }
+
+    static async getDeepAll<T extends TCollections>(
+        collectionType: T,
+        path: [string, TSubcollection<T>]
+    ) {
+        const ref = collection(this.firestore, collectionType, ...path);
+        const querySnapshot = await getDocs(ref);
+
+        return getDataFromDoc<TSubcollectionDataType<T, TSubcollection<T>>>(
+            querySnapshot
+        );
+    }
+
     static async getByIds<T extends TCollections>(
         collectionType: T,
         ids: string[]
@@ -329,6 +379,28 @@ export class FB {
 
     static async setByIdsWithBatches<T extends TCollections>(
         collectionType: T,
+        ids: string[],
+        data: (id: string) => DataType<T>
+    ): Promise<boolean> {
+        try {
+            const batch = writeBatch(this.firestore);
+
+            for (let i = 0; i < ids.length; i++) {
+                const id = ids[i];
+                const ref = doc(this.get(collectionType), id);
+
+                batch.set(ref, data(id));
+            }
+
+            await batch.commit();
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    static async setDeepByIdsWithBatches<T extends TCollections>(
+        collectionType: T,
         path: [string, TSubcollection<T>],
         ids: string[],
         data: (id: string) => TSubcollectionDataType<T, TSubcollection<T>>
@@ -423,25 +495,51 @@ export class FB {
     }
 }
 
-// const addUnreadSubcollectionToAllChats = async () => {
-//     const allChats = await FB.getAll('newChats');
+// const setNewUsers = async () => {
+//     const allUsers = await FB.getAll('users');
 
-//     const updateAgain = async (chat: TChat) => {
-//         const lastMessage = chat.lastMessage;
-//         await FB.setByIdsWithBatches(
-//             'newChats',
-//             [chat.id, 'unread'],
-//             chat.participants,
-//             (userId) => ({
-//                 unreadCount: 0,
-//                 lastReadAt: lastMessage?.sentTime ?? null,
-//                 userId,
-//             })
+//     const setUser = async (user: TUser) => {
+//         const { friends } = user;
+
+//         const friendIds =
+//             friends
+//                 ?.filter((f) => f.status === FriendStatus.added)
+//                 .map((f) => f.uid) ?? [];
+
+//         await FB.setDeepByIdsWithBatches(
+//             'users',
+//             [user.uid, 'friends'],
+//             friendIds,
+//             (id) => ({ id, time: Date.now() })
+//         );
+
+//         const requestIds =
+//             friends
+//                 ?.filter((f) => f.status === FriendStatus.requested)
+//                 .map((f) => f.uid) ?? [];
+
+//         await FB.setDeepByIdsWithBatches(
+//             'users',
+//             [user.uid, 'friendRequests'],
+//             requestIds,
+//             (id) => ({ id, time: Date.now() })
+//         );
+
+//         const awaitingIds =
+//             friends
+//                 ?.filter((f) => f.status === FriendStatus.awaiting)
+//                 .map((f) => f.uid) ?? [];
+
+//         await FB.setDeepByIdsWithBatches(
+//             'users',
+//             [user.uid, 'friendAwaiting'],
+//             awaitingIds,
+//             (id) => ({ id, time: Date.now() })
 //         );
 //     };
 
-//     await asyncRequests(allChats, (chat) => {
-//         return updateAgain(chat);
+//     await asyncRequests(allUsers, (user) => {
+//         return setUser(user);
 //     });
 
 //     console.log(
@@ -449,4 +547,4 @@ export class FB {
 //     );
 // };
 
-// addUnreadSubcollectionToAllChats();
+// setNewUsers();

@@ -5,13 +5,14 @@ import { UserItem } from '../../entities/user/ui';
 import { confirmModel } from '../../layout/confirm/model';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
+import { Divider } from '../../shared/components/divider';
 
 export const FriendRequests = () => {
     const theme = useTheme();
 
-    const [, friendRequests] = userModel.useFriends();
+    const [, , awaiting] = userModel.useFriends();
 
-    if (!friendRequests.length) return null;
+    if (!awaiting.length) return null;
 
     return (
         <>
@@ -23,7 +24,7 @@ export const FriendRequests = () => {
             >
                 Friend requests
             </h3>
-            {friendRequests.map((user) => {
+            {awaiting.map((user) => {
                 return (
                     <UserItem user={user} orientation="horizontal">
                         <Flex gap={4}>
@@ -40,7 +41,7 @@ export const FriendRequests = () => {
                                         text: 'Are you sure you want to accept this friend request?',
                                         onAccept: () => {
                                             userModel.events.acceptFriendRequest(
-                                                user.uid
+                                                user
                                             );
                                         },
                                     });
@@ -66,7 +67,7 @@ export const FriendRequests = () => {
                                         text: 'Are you sure you want to reject this friend request?',
                                         onAccept: () => {
                                             userModel.events.rejectFriendRequest(
-                                                user.uid
+                                                user
                                             );
                                         },
                                     });
@@ -78,6 +79,7 @@ export const FriendRequests = () => {
                     </UserItem>
                 );
             })}
+            <Divider />
         </>
     );
 };
