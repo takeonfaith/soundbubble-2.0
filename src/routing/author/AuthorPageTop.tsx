@@ -2,37 +2,34 @@ import {
     IconArrowLeft,
     IconDiscountCheckFilled,
     IconDotsVertical,
-    IconEdit,
     IconHeadphones,
+    IconHeart,
     IconInfoCircle,
     IconShare3,
-    IconTrash,
-    IconUserPlus,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
-import { useTheme } from 'styled-components';
 import { TQueue } from '../../entities/song/model/types';
 import { useToggleUserLike } from '../../entities/user/hooks/useToggleUserLike';
 import { TUser } from '../../entities/user/model/types';
 import { UserCover } from '../../entities/user/ui/UserCover';
 import { UserInfo } from '../../entities/user/ui/UserInfo';
 import { UserStatus } from '../../entities/user/ui/UserStatus';
+import { ControlButtons } from '../../features/controlButtons';
 import { LikeButton } from '../../features/likeButton';
 import { ShareModal } from '../../features/shareModal';
 import { modalModel } from '../../layout/modal/model';
 import { popupModel } from '../../layout/popup/model';
 import { Button } from '../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
-import { Divider } from '../../shared/components/divider';
 import { Flex } from '../../shared/components/flex';
 import {
     PageTopStyled,
     TopLeftCorner,
     TopRightCorner,
 } from '../../shared/components/pageTop/styles';
+import Popover from '../../shared/components/popover';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
 import { ButtonsStyled } from './styles';
-import { ControlButtons } from '../../features/controlButtons';
 
 type Props = {
     author: TUser | null;
@@ -41,7 +38,6 @@ type Props = {
 
 export const AuthorPageTop = ({ author, queue }: Props) => {
     const navigate = useNavigate();
-    const theme = useTheme();
     const { handleToggleLike, isLiked, performingAction } =
         useToggleUserLike(author);
 
@@ -123,24 +119,38 @@ export const AuthorPageTop = ({ author, queue }: Props) => {
                     style={{ opacity: '0.8', fontWeight: '300' }}
                     className="stats"
                 >
-                    <Flex gap={4}>
-                        {formatBigNumber(numberOfListenersPerMonth)}
-                        <IconHeadphones size={16} />
-                    </Flex>
-                    <Flex gap={4}>
-                        {formatBigNumber(subscribers)}
-                        <IconUserPlus size={16} />
-                    </Flex>
+                    <Popover
+                        content={`${formatBigNumber(
+                            numberOfListenersPerMonth
+                        )} listeners`}
+                        position="top"
+                    >
+                        <Flex gap={4}>
+                            {formatBigNumber(numberOfListenersPerMonth)}
+                            <IconHeadphones size={16} />
+                        </Flex>
+                    </Popover>
+                    <Popover
+                        content={`${formatBigNumber(subscribers)} likes`}
+                        position="top"
+                    >
+                        <Flex gap={4}>
+                            {formatBigNumber(subscribers)}
+                            <IconHeart size={16} />
+                        </Flex>
+                    </Popover>
                 </Flex>
             </Flex>
             <TopLeftCorner>
-                <Button
-                    $height="40px"
-                    $width="40px"
-                    onClick={() => navigate(-1)}
-                >
-                    <IconArrowLeft size={20} />
-                </Button>
+                <Popover content={'Back'}>
+                    <Button
+                        $height="40px"
+                        $width="40px"
+                        onClick={() => navigate(-1)}
+                    >
+                        <IconArrowLeft size={20} />
+                    </Button>
+                </Popover>
             </TopLeftCorner>
             <TopRightCorner>
                 <LikeButton

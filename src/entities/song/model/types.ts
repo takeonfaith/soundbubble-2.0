@@ -11,6 +11,7 @@ export type TSong = {
     id: string;
     releaseDate: string;
     songSrc: string;
+    slowSrc?: string;
     listens: number;
     cover: string;
     authors: TAuthor[];

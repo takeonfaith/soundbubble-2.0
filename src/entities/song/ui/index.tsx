@@ -7,6 +7,7 @@ import {
     IconMenu2,
     IconPlayerPauseFilled,
     IconPlayerPlayFilled,
+    IconSparkles,
     IconSquareRoundedMinusFilled,
 } from '@tabler/icons-react';
 import { popupModel } from '../../../layout/popup/model';
@@ -17,6 +18,7 @@ import { formatBigNumber } from '../../../shared/funcs/formatBigNumber';
 import { useToggleLike } from '../hooks/useToggleLike';
 import { getHumanDuration } from '../lib/getHumanDuration';
 import { TSong } from '../model/types';
+import { useIsSlowVersion } from '../new-model/slow-songs';
 import { SongCover } from './SongCover';
 import { SongMoreContextMenu } from './SongMoreContextMenu';
 import {
@@ -28,6 +30,7 @@ import {
     PlayButton,
     PlayOverlay,
     SerialNumberStyled,
+    SlowVersionStyled,
     SongAuthors,
     SongButtons,
     SongInfo,
@@ -63,13 +66,14 @@ export const SongItem = ({
 }: Props) => {
     const { name, authors, imageColors, cover, listens, duration } = song;
     const { handleToggleLike, performingAction, isLiked } = useToggleLike(song);
+    const isSlowVersion = useIsSlowVersion(song.id);
 
     const handleMore: React.MouseEventHandler<HTMLButtonElement> = (e) => {
         e.stopPropagation();
 
         popupModel.events.open({
             content: <SongMoreContextMenu onRemove={onRemove} song={song} />,
-            height: onRemove ? 329 : 289,
+            height: onRemove ? 369 : 385.5,
             e,
         });
     };
@@ -90,6 +94,11 @@ export const SongItem = ({
                 performingAction ? 'disabled' : ''
             }`}
         >
+            {isSlowVersion && (
+                <SlowVersionStyled>
+                    <IconSparkles />
+                </SlowVersionStyled>
+            )}
             {showSerialNumber !== undefined && (
                 <SerialNumberStyled>
                     #{showSerialNumber + index + 1}

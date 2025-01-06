@@ -1,7 +1,6 @@
 import { Button } from '@components/button';
 import styled from 'styled-components';
 import { SONG_RADIUS } from '../constants';
-import { motion } from 'framer-motion';
 
 export const PlayButton = styled.div`
     border: none;
@@ -124,6 +123,7 @@ export const SongStyled = styled.div`
     container-type: size;
     transition: 0.1s background;
     user-select: none;
+    position: relative;
     --icon-size: 18px;
 
     &.disabled {
@@ -381,5 +381,20 @@ export const DeleteButton = styled(Button)`
     svg {
         color: ${({ theme }) => theme.scheme.red.action};
         z-index: 1;
+    }
+`;
+
+export const SlowVersionStyled = styled.div`
+    position: absolute;
+    top: 50%;
+    left: -18px;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+
+    svg {
+        width: 16px;
+        height: 16px;
+        color: ${({ theme }) => theme.scheme.purple.action};
     }
 `;

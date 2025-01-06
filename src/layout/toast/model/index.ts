@@ -33,17 +33,17 @@ sample({
     clock: add,
     source: $toasts,
     fn: (toasts, newToast) => {
-        const toastId = getUID();
+        const toastId = newToast.id ?? getUID();
         const toastDuration =
             newToast.duration ?? DEFAULT_TOAST_DURATION + 1000;
         const newToastObject: TToast = {
-            id: toastId,
             isShow: true,
             hideTimeout: setTimeout(() => {
                 hide(toastId);
             }, toastDuration),
             duration: toastDuration,
             ...newToast,
+            id: toastId,
         };
 
         return [newToastObject, ...toasts];

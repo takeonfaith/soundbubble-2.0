@@ -1,6 +1,6 @@
+import { TUser } from '../../../entities/user/model/types';
 import { effectorForm } from '../../../shared/effector/form';
 import { TForm } from '../../../shared/effector/form/types';
-import { TExtendedSuggestion } from '../../searchWithHints/types';
 
 export type FormType<T extends TForm> = {
     [key in keyof T]: T[key]['init'];
@@ -30,7 +30,7 @@ const initial = {
     authors: {
         type: 'authors',
         required: true,
-        init: [] as TExtendedSuggestion[],
+        init: [] as TUser[],
     },
     duration: {
         type: 'number',

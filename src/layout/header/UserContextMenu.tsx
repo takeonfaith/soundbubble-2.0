@@ -18,7 +18,7 @@ import { userModel } from '../../entities/user/model';
 import { editUserFx } from '../../entities/user/model/edit-user';
 import { UserCover } from '../../entities/user/ui/UserCover';
 import { UserStatus } from '../../entities/user/ui/UserStatus';
-import { AddSongModal } from '../../features/addSongModal';
+import { UploadSongModal } from '../../features/uploadSongModal';
 import { EditPhotoModal } from '../../features/editPhotoModal';
 import { PlaylistName } from '../../routing/playlist/ui/layout/PlaylistName';
 import { Button } from '../../shared/components/button';
@@ -235,7 +235,7 @@ export const UserContextMenu = () => {
     const handleUploadSong = () => {
         modalModel.events.open({
             title: 'Upload song',
-            content: <AddSongModal />,
+            content: <UploadSongModal />,
         });
         popupModel.events.close();
     };

@@ -6,7 +6,7 @@ import { Input } from '../../shared/components/input';
 import { PhotoInput } from '../../shared/components/photoInput';
 import { SignUpModalStyled } from '../signUpModal/styles';
 import { useForm } from './model/create-author';
-import { useForm as useSongForm } from './model/';
+import { useForm as useSongForm } from './model';
 import { createAuthorFx } from '../../entities/user/model/create-author';
 import { modalModel } from '../../layout/modal/model';
 import { createDefaultSuggestion } from '../../entities/search/lib/createDefaultSuggestion';

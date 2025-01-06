@@ -1,4 +1,11 @@
-export type TToastType = 'success' | 'error' | 'info' | 'chatMessage' | 'hint';
+export type TToastType =
+    | 'success'
+    | 'error'
+    | 'info'
+    | 'chatMessage'
+    | 'hint'
+    | 'loading';
+
 export type TToast = {
     id: string;
     title?: string;
@@ -24,7 +31,8 @@ export type TToast = {
 
 export type TExternalToast = Omit<
     TToast,
-    'isShow' | 'id' | 'hideTimeout' | 'duration'
+    'isShow' | 'hideTimeout' | 'id' | 'duration'
 > & {
+    id?: string;
     duration?: number;
 };

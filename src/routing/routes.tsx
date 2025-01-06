@@ -38,6 +38,7 @@ import { TrendsPageSongs } from './trends/ui/TrendsPageSongs';
 import { TrendsPageAuthors } from './trends/ui/TrendsPageAuthors';
 import { LikedAlbums } from './library/LikedAlbums';
 import { UserSongs } from './user/UserSongs';
+import { TestPage } from './test';
 
 type Section = 'features' | 'your activities' | 'your music';
 
@@ -50,6 +51,7 @@ export type TRoute = {
     icon?: React.ReactNode;
     private?: boolean;
     showTitle?: boolean;
+    admin?: boolean;
 };
 
 export const allRoutes: TRoute[] = [
@@ -271,6 +273,12 @@ export const allRoutes: TRoute[] = [
         component: <MePage />,
         section: 'your music',
         private: true,
+    },
+    {
+        url: 'test',
+        title: 'Test',
+        component: <TestPage />,
+        admin: true,
     },
 ] as const;
 

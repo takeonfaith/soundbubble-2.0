@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { songModel as songModelNew } from './entities/song/new-model';
 import { $isSliding } from './entities/song/new-model/current-time';
 import { useEffectOnce } from './shared/hooks/useEffectOnce';
+import { useIsSlowVersion } from './entities/song/new-model/slow-songs';
 
 const useAppAudio = () => {
     const { state, lastTime } = songModelNew.useSong();
@@ -85,11 +86,12 @@ export const AppAudio = () => {
     const { audioRef, handleOnCanPlay, handlePlaying, handleEnded } =
         useAppAudio();
     const { currentSong } = songModelNew.useSong();
+    const isSlowVersion = useIsSlowVersion(currentSong?.id);
 
     return (
         <audio
             onEnded={handleEnded}
-            src={currentSong?.songSrc}
+            src={isSlowVersion ? currentSong?.slowSrc : currentSong?.songSrc}
             ref={audioRef}
             // loop={loopMode === LoopMode.loopone}
             onTimeUpdate={handlePlaying}

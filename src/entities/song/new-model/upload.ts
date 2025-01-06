@@ -2,7 +2,7 @@ import { createEvent, sample } from 'effector';
 import { useUnit } from 'effector-react';
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
 import { Database } from '../../../database';
-import { AddSongFormType } from '../../../features/addSongModal/model';
+import { AddSongFormType } from '../../../features/uploadSongModal/model';
 
 const uploadSongFx = createEffectWithToast<AddSongFormType, void>(
     'Uploaded song successfully',

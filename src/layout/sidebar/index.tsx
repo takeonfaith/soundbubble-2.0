@@ -20,6 +20,7 @@ import {
     SidebarStyled,
 } from './styles';
 import { chatModel } from '../../entities/chat/model';
+import Popover from '../../shared/components/popover';
 
 export const Sidebar = () => {
     const preparedRoutes = groupByField(menuRoutes, 'section');
@@ -80,13 +81,14 @@ export const Sidebar = () => {
                             Your Playlists
                         </SidebarSectionTitle>
                     </NavigationTitle>
-
-                    <Button
-                        className="add-playlist"
-                        onClick={handleAddPlaylist}
-                    >
-                        <IconPlus />
-                    </Button>
+                    <Popover content="Create playlist" position="top">
+                        <Button
+                            className="add-playlist"
+                            onClick={handleAddPlaylist}
+                        >
+                            <IconPlus />
+                        </Button>
+                    </Popover>
                 </Flex>
                 <PlaylistsStyled>
                     {ownPlaylists.length === 0 && (

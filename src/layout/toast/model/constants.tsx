@@ -5,6 +5,7 @@ import {
     IconMessageCircle2Filled,
 } from '@tabler/icons-react';
 import { TToastType } from './types';
+import { Loading } from '../../../shared/components/loading';
 
 export const DEFAULT_TOAST_DURATION = 5000;
 export const DEFAULT_TOAST_ANIMATION_DURATION = 250;
@@ -16,4 +17,5 @@ export const TOAST_ICONS: Record<TToastType, React.ReactNode> = {
     info: <IconInfoCircleFilled />,
     chatMessage: <IconMessageCircle2Filled />,
     hint: <IconInfoCircleFilled />,
+    loading: <Loading />,
 };

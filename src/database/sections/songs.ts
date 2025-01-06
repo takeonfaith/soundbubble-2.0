@@ -19,7 +19,9 @@ import { ERRORS } from '../../shared/constants';
 import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import getUID from '../../shared/funcs/getUID';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
-import { AddSongFormType } from '../../features/addSongModal/model';
+import { AddSongFormType } from '../../features/uploadSongModal/model';
+import { Server } from '../../server';
+import { getAuthorsToString } from '../../entities/song/lib/getAuthorsToString';
 
 export class Songs {
     static ref = FB.get('songs');
@@ -93,6 +95,7 @@ export class Songs {
     };
 
     static async uploadSong(form: AddSongFormType) {
+        let songCreated = false;
         try {
             const {
                 coverFile,
@@ -147,18 +150,30 @@ export class Songs {
             );
             await FB.setById('search', id, createDefaultSuggestion(newSong));
 
+            songCreated = true;
+
             if (songLyrics !== null) {
                 await FB.setById('lyrics', newSong.id, {
                     id: newSong.id,
                     lyrics: songLyrics,
                 });
             }
+
+            if (songFile) {
+                await Server.uploadAudio(
+                    songFile,
+                    newSong.id,
+                    newSong.name,
+                    getAuthorsToString(newSong.authors)
+                );
+            }
         } catch (error) {
             console.log(error);
-
-            throw new Error(
-                `Failed to upload song, ${(error as Error).message}`
-            );
+            if (!songCreated) {
+                throw new Error(
+                    `Failed to upload song, ${(error as Error).message}`
+                );
+            }
         }
     }
 
@@ -224,20 +239,6 @@ export class Songs {
             });
         } catch (error) {
             console.error(error);
-        }
-    }
-
-    static async getFrequencies(songId: string) {
-        try {
-            const frequencies = await FB.getById('frequencies', songId);
-            if (!frequencies) return [];
-
-            return frequencies.frequencyData;
-        } catch (error) {
-            console.error(error);
-            throw new Error(
-                ERRORS.operationFailed('Failed to load frequencies')
-            );
         }
     }
 }

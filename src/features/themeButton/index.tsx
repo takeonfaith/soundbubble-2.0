@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { toggleTheme, useTheme } from '../../app/theme';
 import { settingsModel } from '../../entities/settings/model';
 import { Button } from '../../shared/components/button';
+import Popover from '../../shared/components/popover';
 
 const ThemeButtonStyled = styled(Button)`
     min-height: 35px;
@@ -52,22 +53,29 @@ const ThemeButtonIconStyled = styled.div`
 export const ThemeButton = () => {
     const { theme } = useTheme();
     const [themeValue] = settingsModel.useSettings();
+    const isLight =
+        themeValue.settings.items.appearance.children.theme.items.darkMode
+            .value;
 
     const handleTheme = () => {
         settingsModel.events.updateSettings({
             path: 'settings.items.appearance.children.theme.items.darkMode.value',
-            value: !themeValue.settings.items.appearance.children.theme.items
-                .darkMode.value,
+            value: !isLight,
         });
         toggleTheme();
     };
 
     return (
-        <ThemeButtonStyled $width="20px" onClick={handleTheme}>
-            <ThemeButtonIconStyled className={`theme ${theme.toString()}`}>
-                <IconSun size={20} />
-                <IconMoon size={20} />
-            </ThemeButtonIconStyled>
-        </ThemeButtonStyled>
+        <Popover
+            position="bottom"
+            content={`Change theme to ${isLight ? 'dark' : 'light'}`}
+        >
+            <ThemeButtonStyled $width="20px" onClick={handleTheme}>
+                <ThemeButtonIconStyled className={`theme ${theme.toString()}`}>
+                    <IconSun size={20} />
+                    <IconMoon size={20} />
+                </ThemeButtonIconStyled>
+            </ThemeButtonStyled>
+        </Popover>
     );
 };

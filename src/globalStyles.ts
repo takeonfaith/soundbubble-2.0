@@ -14,7 +14,7 @@ export const GlobalStyles = createGlobalStyle`
 		--page-gap: 10px;
 		--desktop-page-radius: 12px;
 		--player-size: 70px;
-		--sidebar-width: 280px;
+		--sidebar-width: 270px;
 		--header-height: 70px;
 
 

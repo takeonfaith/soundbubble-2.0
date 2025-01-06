@@ -148,7 +148,7 @@ export const ToastStyled = styled.div`
         }
     }
 
-    &.info {
+    &.info, &.loading {
         background: ${({ theme }) => theme.scheme.blue.mild};
         color: ${({ theme }) => theme.scheme.blue.text};
         border: 1px solid ${({ theme }) => theme.scheme.blue.transparent};
@@ -162,6 +162,8 @@ export const ToastStyled = styled.div`
         background: ${({ theme }) => theme.scheme.grey.mild};
         color: ${({ theme }) => theme.scheme.grey.text2};
     }
+
+
 `;
 
 export const ToastButton = styled(Button)`

@@ -1,22 +1,22 @@
 import { createEvent, sample } from 'effector';
 import { useUnit } from 'effector-react';
-import { TUploadSongForm } from '../../../features/addSongModal/model';
+import { AddSongFormType } from '../../../features/uploadSongModal/model';
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
 import { Database } from '../../../database';
 
-const uploadSongFx = createEffectWithToast<TUploadSongForm, void>(
+const uploadSongFx = createEffectWithToast<AddSongFormType, void>(
     'Uploaded song successfully',
     'Failed to upload song'
 );
 
-export const uploadSong = createEvent<TUploadSongForm>();
+export const uploadSong = createEvent<AddSongFormType>();
 
 sample({
     clock: uploadSong,
     target: uploadSongFx,
 });
 
-uploadSongFx.use(async (form: TUploadSongForm) => {
+uploadSongFx.use(async (form: AddSongFormType) => {
     await Database.Songs.uploadSong(form);
 });
 

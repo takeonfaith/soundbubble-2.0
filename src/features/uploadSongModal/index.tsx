@@ -7,7 +7,7 @@ import { SignUpModalStyled } from '../signUpModal/styles';
 import { useForm } from './model';
 import { SongNameAndAuthor } from './SongNameAndAuthor';
 
-export const AddSongModal = () => {
+export const UploadSongModal = () => {
     const handleNext = () => {
         modalModel.events.open({
             title: 'Name and author',
