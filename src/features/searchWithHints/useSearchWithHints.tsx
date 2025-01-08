@@ -4,6 +4,7 @@ import { Loading } from '../../shared/components/loading';
 import { normalizeString } from '../../shared/funcs/normalizeString';
 import { SearchSuggestionProps } from './types';
 import { useClickOutside } from '../../shared/hooks/useClickOutside';
+import { CSSProperties } from 'styled-components';
 
 export const useSearchWithHints = ({
     initialValue,
@@ -137,6 +138,23 @@ export const useSearchWithHints = ({
         }
     }, [focusOnLoad]);
 
+    const getHintsStyle = (): CSSProperties | undefined => {
+        if (!ref.current) return undefined;
+
+        const targetRect = ref.current.getBoundingClientRect();
+
+        return {
+            width: ref.current?.offsetWidth,
+            top: targetRect?.top + ref.current.offsetHeight,
+            left: targetRect?.left,
+            maxHeight:
+                window.innerHeight -
+                targetRect?.top +
+                ref.current.offsetHeight -
+                100,
+        };
+    };
+
     return {
         inputValue,
         selectedSuggestion,
@@ -152,5 +170,6 @@ export const useSearchWithHints = ({
         handleKeyDown,
         handleSubmit,
         handleChange,
+        getHintsStyle,
     };
 };

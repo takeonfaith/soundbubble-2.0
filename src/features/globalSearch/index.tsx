@@ -138,7 +138,6 @@ export const GlobalSearch = ({ queryValue, where, showTabs = true }: Props) => {
     return (
         <>
             <SearchWithHints
-                focusOnLoad
                 initialValue={queryValue ?? searchQuery}
                 suggestions={suggestions}
                 historySuggestions={searchHistory}

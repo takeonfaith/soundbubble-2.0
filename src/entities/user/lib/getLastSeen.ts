@@ -6,6 +6,9 @@ export const getLastSeen = (
 
     const fiveMinutesAgo = new Date().getTime() - 300_000;
     const fourHoursAgo = new Date().getTime() - 1_800_000 * 4;
+
+    console.log(online, fiveMinutesAgo);
+
     const isOnline = online > fiveMinutesAgo;
 
     if (isOnline) return { status: onlineStatusStr };

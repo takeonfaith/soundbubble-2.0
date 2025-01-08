@@ -187,30 +187,44 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                 </>
             )}
             {!isLiked ? (
-                <Button onClick={handleLike}>
-                    <IconHeart size={20} />
-                    Add to Liked
-                </Button>
+                <Popover
+                    content={
+                        !currentUser ? 'You need an account for that' : null
+                    }
+                >
+                    <Button disabled={!currentUser} onClick={handleLike}>
+                        <IconHeart size={20} />
+                        Add to Liked
+                    </Button>
+                </Popover>
             ) : (
                 <Button onClick={handleLike}>
                     <IconHeartBroken />
                     Remove from Liked
                 </Button>
             )}
-            <Button onClick={handleAddToPlaylist}>
-                <IconSquareRoundedPlus size={20} />
-                Add to playlist
-            </Button>
+            <Popover
+                content={!currentUser ? 'You need an account for that' : null}
+            >
+                <Button disabled={!currentUser} onClick={handleAddToPlaylist}>
+                    <IconSquareRoundedPlus size={20} />
+                    Add to playlist
+                </Button>
+            </Popover>
             <Divider />
             <Button onClick={handleAddToQueue}>
                 <IconPlaylistAdd />
                 Next
             </Button>
             <Divider />
-            <Button onClick={handleShare}>
-                <IconShare3 />
-                Share
-            </Button>
+            <Popover
+                content={!currentUser ? 'You need an account for that' : null}
+            >
+                <Button disabled={!currentUser} onClick={handleShare}>
+                    <IconShare3 />
+                    Share
+                </Button>
+            </Popover>
             <Button onClick={handleInfoModal}>
                 <IconInfoCircle />
                 Info

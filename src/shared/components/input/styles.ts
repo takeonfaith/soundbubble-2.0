@@ -24,6 +24,11 @@ const Icon = styled.div`
         opacity: 0.3;
     }
 
+    img {
+        width: 18px;
+        height: 18px;
+    }
+
     @media (max-width: 768px) {
         top: 10px;
     }

@@ -41,7 +41,7 @@ export const ControlButton = styled(Button)<{ $color: string }>`
 `;
 
 export const PlaylistStyled = styled(Link)<{ $color1: string }>`
-    --size: calc((100vw - var(--sidebar-width)) / 6 - 25.4px);
+    --size: calc((100vw - var(--sidebar-width)) / 6 - 27.5px);
 
     gap: 12px;
     display: flex;
@@ -131,13 +131,13 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
 
     @media (max-width: 1350px) {
         &.vertical {
-            --size: calc((100vw - var(--sidebar-width)) / 5 - 27.2px);
+            --size: calc((100vw - var(--sidebar-width)) / 5 - 30px);
         }
     }
 
     @media (max-width: 1200px) {
         &.vertical {
-            --size: calc((100vw - var(--sidebar-width)) / 4 - 30px);
+            --size: calc((100vw - var(--sidebar-width)) / 4 - 35px);
         }
     }
 

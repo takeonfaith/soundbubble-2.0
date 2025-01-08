@@ -8,9 +8,11 @@ export type FieldType =
     | 'date'
     | 'authors'
     | 'file'
+    | 'url'
+    | 'youtube-link'
     | 'stringArray';
 
-type TField<T extends FieldType, K> = {
+export type TField<T extends FieldType, K> = {
     type: T;
     init: K;
     required: boolean;
@@ -18,13 +20,22 @@ type TField<T extends FieldType, K> = {
     asyncValidation?: (value: K) => Promise<string | undefined>;
 };
 
-export type TFields =
-    | TField<'email' | 'date' | 'text' | 'password', string>
-    | TField<'file', File | null>
-    | TField<'authors', TUser[]>
-    | TField<'stringArray', string[]>
-    | TField<'number', number>;
+type StrType = 'email' | 'date' | 'text' | 'password' | 'url' | 'youtube-link';
+
+export type TFields<T extends FieldType> = T extends StrType
+    ? TField<StrType, string>
+    : T extends 'file'
+    ? TField<'file', File | null>
+    : T extends 'authors'
+    ? TField<'authors', TUser[]>
+    : T extends 'stringArray'
+    ? TField<'stringArray', string[]>
+    : T extends 'number'
+    ? TField<'number', number>
+    : never;
 
 export type TForm = {
-    [key: string]: TFields;
+    [key: string]: TFields<
+        StrType | 'file' | 'authors' | 'number' | 'stringArray'
+    >;
 };

@@ -7,6 +7,7 @@ import { Flex } from '../../../shared/components/flex';
 import { Subtext } from '../../../shared/components/subtext';
 import { formatBigNumber } from '../../../shared/funcs/formatBigNumber';
 import { hexToRgbA } from '../../../shared/funcs/hexToRgba';
+import { userModel } from '../../user/model';
 import { TPlaylist } from '../model/types';
 import { PlaylistCover } from './PlaylistCover';
 
@@ -39,6 +40,10 @@ const ShareButton = styled(Button)`
     color: #fff;
     filter: ${({ theme }) => theme.colors.brightness};
 
+    &:disabled {
+        opacity: 0.5;
+    }
+
     &.primary {
         background: ${({ color }) => color ?? 'grey'};
         box-shadow: none;
@@ -61,6 +66,7 @@ type Props = {
 };
 
 export const PlaylistInfo = ({ playlist }: Props) => {
+    const [currentUser] = userModel.useUser();
     if (!playlist) return null;
 
     const {
@@ -115,17 +121,19 @@ export const PlaylistInfo = ({ playlist }: Props) => {
                     </Flex>
                 </Flex>
 
-                <Flex gap={10}>
+                <Flex gap={10} d="column">
                     <Subtext style={{ fontSize: '0.95rem' }}>
                         Created: {formattedDate}
                     </Subtext>
                 </Flex>
             </Flex>
-            <Buttons>
+            <Buttons style={{ width: '100%' }}>
                 <ShareButton
                     className="primary"
                     color={imageColors[0]}
                     onClick={handleShare}
+                    disabled={!currentUser}
+                    $width="100%"
                 >
                     Share
                 </ShareButton>

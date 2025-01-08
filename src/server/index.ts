@@ -43,15 +43,28 @@ export class Server {
         formData.append('id', id);
 
         try {
-            for (const [key, value] of formData.entries()) {
-                console.log(`${key}: ${value}`);
-            }
-
             await this.api.post('/transform-by-id', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
+        } catch (error) {
+            console.error('Error transforming by id:', error);
+            throw new Error(`Error transforming by id: ${error}`);
+        }
+    }
+
+    static async youtubeLink(url: string) {
+        const formData = new FormData();
+        formData.append('youtubeLink', url);
+        try {
+            const res = await this.api.post('/youtube', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            return res.data();
         } catch (error) {
             console.error('Error transforming by id:', error);
             throw new Error(`Error transforming by id: ${error}`);

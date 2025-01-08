@@ -7,8 +7,7 @@ import { LoadingWrapper } from '../../shared/components/loadingWrapper';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { Subtext } from '../../shared/components/subtext';
-import { getTotalSongsDuration } from '../../shared/funcs/getTotalSongsDuration';
+import { PlaylistStatistics } from './ui/layout/PlaylistStatistics';
 import { SkeletonLoading } from './Skeleton';
 import {
     BottomPlaylist,
@@ -16,9 +15,9 @@ import {
     PlaylistPageStyled,
     PlaylistSimilar,
 } from './styles';
+import { AddSongsButton } from './ui/editing/AddSongsButton';
 import { PageTop } from './ui/layout/PageTop';
 import { SearchNotFoundError } from './ui/layout/SearchNotFoundError';
-import { AddSongsButton } from './ui/editing/AddSongsButton';
 
 type Props = {
     playlist: TPlaylist | null;
@@ -110,21 +109,11 @@ export const PlaylistPageContent = (props: Props) => {
                                 )}
                         </PlaylistPageSongs>
                         <BottomPlaylist>
-                            {(currentPlaylistSongs?.length ?? 0) > 0 &&
-                                searching?.value.length === 0 && (
-                                    <Subtext
-                                        style={{
-                                            fontSize: '0.85rem',
-                                            opacity: '0.4',
-                                        }}
-                                    >
-                                        {currentPlaylistSongs?.length ?? 0}{' '}
-                                        songs,{' '}
-                                        {getTotalSongsDuration(
-                                            currentPlaylistSongs
-                                        )}
-                                    </Subtext>
-                                )}
+                            {searching?.value.length === 0 && (
+                                <PlaylistStatistics
+                                    songs={currentPlaylistSongs}
+                                />
+                            )}
                         </BottomPlaylist>
                         <PlaylistSimilar></PlaylistSimilar>
                     </PlaylistPageStyled>

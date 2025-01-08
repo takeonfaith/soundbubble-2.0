@@ -11,7 +11,7 @@ export const GlobalStyles = createGlobalStyle<{ collapsed: boolean }>`
 
 	:root {
 		--page-padding: 30px;
-		--page-gap: 10px;
+		--page-gap: 8px;
 		--desktop-page-radius: 12px;
 		--player-size: 80px;
 		--sidebar-width: ${({ collapsed }) => (collapsed ? '90' : '260')}px;

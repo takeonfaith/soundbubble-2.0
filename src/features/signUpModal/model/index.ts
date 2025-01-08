@@ -1,5 +1,4 @@
 import { Database } from '../../../database';
-import { TUser } from '../../../entities/user/model/types';
 import { effectorForm } from '../../../shared/effector/form';
 
 export const { useForm } = effectorForm({
@@ -35,16 +34,13 @@ export const { useForm } = effectorForm({
         type: 'stringArray',
     },
     authors: {
-        init: [] as TUser[],
+        init: [],
         required: true,
         type: 'authors',
     },
     added: {
         init: [],
-        required: true,
+        required: false,
         type: 'stringArray',
-        validation: (added) => {
-            return added.length < 5 ? 'Should add at least 5' : undefined;
-        },
     },
 });

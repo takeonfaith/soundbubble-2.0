@@ -33,6 +33,7 @@ import { PlayPauseIcon } from '../../../../shared/components/playPauseIcon';
 import { AddSongsToPlaylistModal } from '../editing/AddSongsToPlaylistModal';
 import { Like } from './Like';
 import { PlaylistSearch } from './PlaylistSearch';
+import Popover from '../../../../shared/components/popover';
 
 type Props = {
     playlist: TPlaylist | null;
@@ -159,10 +160,21 @@ export const PlaylistControlButtons = ({
             content: (
                 <DefaultContextMenuStyled>
                     {!playlist?.isPrivate && (
-                        <Button onClick={handleShare}>
-                            <IconShare3 />
-                            Share
-                        </Button>
+                        <Popover
+                            content={
+                                !currentUser
+                                    ? 'You need an account for that'
+                                    : null
+                            }
+                        >
+                            <Button
+                                disabled={!currentUser}
+                                onClick={handleShare}
+                            >
+                                <IconShare3 />
+                                Share
+                            </Button>
+                        </Popover>
                     )}
                     <Button onClick={handleInfo}>
                         <IconInfoCircle />

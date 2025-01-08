@@ -33,6 +33,7 @@ export const AuthorsModal = ({ authors, isAuthor }: Props) => {
                     <UserItem
                         key={author.uid}
                         user={user}
+                        showLastSeen={false}
                         onClick={() => modalModel.events.close()}
                         orientation="horizontal"
                     />

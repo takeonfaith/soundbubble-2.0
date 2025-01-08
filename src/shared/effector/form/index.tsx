@@ -1,12 +1,14 @@
 import { createEvent, createStore, sample } from 'effector';
 import { useUnit } from 'effector-react';
-import { MIN_PASSWORD_LENGTH } from '../../../features/signUpModal/constansts';
-import { TForm } from './types';
 import { useState } from 'react';
+import { MIN_PASSWORD_LENGTH } from '../../../features/signUpModal/constansts';
+import { isValidHttpUrl } from '../../funcs/isValidHttpUrl';
+import { isValidYoutubeLink } from '../../funcs/isValidYoutubeLink';
+import { TFields, TForm } from './types';
 
 export const effectorForm = <T extends TForm>(form: T) => {
     type FormType = {
-        [key in keyof T]: (typeof form)[key]['init'];
+        [key in keyof T]: TFields<(typeof form)[key]['type']>['init'];
     };
     type ErrorType = Record<keyof T, string | undefined>;
 
@@ -86,6 +88,26 @@ export const effectorForm = <T extends TForm>(form: T) => {
                         });
                         hasErrors = true;
                     } else if (
+                        type === 'url' &&
+                        (values[key] as string).length !== 0 &&
+                        !isValidHttpUrl(values[key] as string)
+                    ) {
+                        hasErrors = true;
+                        updateError({
+                            id: key,
+                            error: 'Incorrect url format',
+                        });
+                    } else if (
+                        type === 'youtube-link' &&
+                        (values[key] as string).length !== 0 &&
+                        !isValidYoutubeLink(values[key] as string)
+                    ) {
+                        hasErrors = true;
+                        updateError({
+                            id: key,
+                            error: 'Incorrect youtube link',
+                        });
+                    } else if (
                         validation &&
                         !!validation(values[key] as never)
                     ) {
@@ -157,6 +179,14 @@ export const effectorForm = <T extends TForm>(form: T) => {
                 updateField({ id, value });
             };
 
+            const handleEnterKeyDown = (
+                e: React.KeyboardEvent<HTMLInputElement>
+            ) => {
+                if (e.key === 'Enter') {
+                    onSubmit();
+                }
+            };
+
             return {
                 values,
                 errors,
@@ -164,6 +194,7 @@ export const effectorForm = <T extends TForm>(form: T) => {
                 updateField,
                 onChange,
                 loading,
+                handleEnterKeyDown,
             };
         },
     };

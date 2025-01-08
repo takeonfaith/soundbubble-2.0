@@ -12,6 +12,7 @@ export const HintsStyled = styled.ul`
     min-height: 45px;
     max-height: 568px;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 4px;
     border-radius: ${({ theme }) => theme.borderRadius.mild};
     position: absolute;
@@ -21,7 +22,7 @@ export const HintsStyled = styled.ul`
     gap: 4px;
     color: ${({ theme }) => theme.colors.textColor};
     border-top: none;
-    z-index: 12;
+    z-index: 1300;
     box-shadow: ${({ theme }) => theme.colors.shadow};
     animation: hintsAppear 0.2s;
 
@@ -108,7 +109,7 @@ export const HintIcon = styled.div`
     justify-content: center;
     align-items: center;
 
-    svg {
+    svg, img {
         color: ${({ theme }) => theme.scheme.grey.text};
         width: 20px;
         height: 20px;

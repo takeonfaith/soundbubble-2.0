@@ -118,6 +118,8 @@ export const PlayerStyled = styled.div<{ $background: string }>`
         }
     }
 
+    @media (max-width: 1340px) {
+    }
 
     @media (max-width: 1000px) {
         padding: 6px;
@@ -161,6 +163,11 @@ export const SongStyled = styled.div`
     min-width: 300px;
     max-width: 300px;
     overflow: hidden;
+
+    @media (max-width: 1340px) {
+        min-width: 200px;
+        max-width: 200px;
+    }
 
     @media (max-width: 1000px) {
         min-width: calc(100% - 40px);

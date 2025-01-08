@@ -52,7 +52,7 @@ export const Player = () => {
                 <SongCover
                     colors={currentSong?.imageColors ?? ['grey']}
                     src={currentSong?.cover}
-                    size={'45px'}
+                    size={'50px'}
                 />
                 <Flex d="column" ai="flex-start">
                     <SongTitle>{currentSong?.name ?? 'Untitled'}</SongTitle>

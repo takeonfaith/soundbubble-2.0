@@ -26,9 +26,10 @@ export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
     title = 'Welcome back to Soundbubble',
 }: Props<T>) => {
     const [currentUser, _, loading] = userModel.useUser();
-    const { values, errors, onSubmit, updateField } = useForm((values) => {
-        userModel.events.login(values);
-    });
+    const { values, errors, onSubmit, updateField, handleEnterKeyDown } =
+        useForm((values) => {
+            userModel.events.login(values);
+        });
 
     const handleOpenSignUp = () => {
         modalModel.events.open({
@@ -89,6 +90,7 @@ export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
                                 value: e.currentTarget.value,
                             });
                         }}
+                        onKeyDown={handleEnterKeyDown}
                     />
                     <Button
                         $height="10px"

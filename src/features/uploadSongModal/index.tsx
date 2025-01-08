@@ -1,24 +1,37 @@
+import { IconBrandYoutubeFilled } from '@tabler/icons-react';
 import { getSongDuration } from '../../entities/song/lib/getSongDuration';
 import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
+import { Divider } from '../../shared/components/divider';
 import { Flex } from '../../shared/components/flex';
+import { Input } from '../../shared/components/input';
 import { SongInput } from '../../shared/components/songInput';
+import { Subtext } from '../../shared/components/subtext';
 import { SignUpModalStyled } from '../signUpModal/styles';
 import { useForm } from './model';
 import { SongNameAndAuthor } from './SongNameAndAuthor';
+import { Server } from '../../server';
 
 export const UploadSongModal = () => {
-    const handleNext = () => {
-        modalModel.events.open({
-            title: 'Name and author',
-            content: <SongNameAndAuthor />,
-            sizeX: 's',
-            sizeY: 's',
-        });
-    };
-    const { values, updateField, errors, onSubmit } = useForm(handleNext, [
-        'songFile',
-    ]);
+    const { values, updateField, errors, onSubmit, onChange } = useForm(
+        async (values) => {
+            if (values.youtubeLink) {
+                const res = await Server.youtubeLink(values.youtubeLink);
+
+                console.log(res);
+
+                return;
+            }
+
+            modalModel.events.open({
+                title: 'Name and author',
+                content: <SongNameAndAuthor />,
+                sizeX: 's',
+                sizeY: 's',
+            });
+        },
+        ['songFile', 'youtubeLink']
+    );
 
     const handleChange = (file: File | null) => {
         if (file === null) {
@@ -47,12 +60,32 @@ export const UploadSongModal = () => {
 
             updateField({ id: 'duration', value: res });
         });
-        handleNext();
+        // handleNext();
     };
 
     return (
         <SignUpModalStyled>
             <Flex d="column" gap={10} width="100%" jc="center" height="100%">
+                <Input
+                    placeholder="Enter youtube link..."
+                    value={values.youtubeLink}
+                    error={errors.youtubeLink}
+                    label="Youtube link"
+                    id="youtubeLink"
+                    onChange={onChange}
+                    icon={
+                        <IconBrandYoutubeFilled
+                            opacity={1}
+                            color="red"
+                            stroke="#ff0000"
+                        />
+                    }
+                />
+                <Flex width="100%" gap={20}>
+                    <Divider />
+                    <Subtext>Or</Subtext>
+                    <Divider />
+                </Flex>
                 <SongInput
                     error={errors.songFile}
                     onChange={handleChange}

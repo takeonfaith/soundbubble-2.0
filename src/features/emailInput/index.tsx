@@ -1,6 +1,7 @@
 import { IconAt } from '@tabler/icons-react';
 import { SearchWithHints } from '../searchWithHints';
 import { getSuggestions } from './getSuggestions';
+import { getEmailProviders } from './lib/getEmailProviders';
 
 type Props = {
     onChange: (value: string) => void;
@@ -13,6 +14,10 @@ type Props = {
 export const EmailInput = (props: Props) => {
     const { value, onChange, focusOnLoad } = props;
     const suggestions = getSuggestions(value);
+    const emailProviders = getEmailProviders();
+    const found = emailProviders.find((p) => value.includes(p.fullName));
+    const icon =
+        value.length !== 0 ? found ? found.icon : <IconAt /> : <IconAt />;
 
     return (
         <SearchWithHints
@@ -21,10 +26,9 @@ export const EmailInput = (props: Props) => {
             historySuggestions={[]}
             areSuggestionsLoading={false}
             onSumbit={(val) => onChange(val)}
-            icon={<IconAt />}
+            icon={icon}
             placeholder="Enter your email"
             label="Email"
-            hintIcon={null}
             initialValue={value}
             disableCopyButton
             type="email"

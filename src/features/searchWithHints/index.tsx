@@ -4,6 +4,7 @@ import { SuggestionList } from './SuggestionList';
 import { HintsStyled, SearchWithHintsStyled } from './styles';
 import { SearchSuggestionProps } from './types';
 import { useSearchWithHints } from './useSearchWithHints';
+import ReactDOM from 'react-dom';
 
 export const SearchWithHints = (props: SearchSuggestionProps) => {
     const {
@@ -20,6 +21,7 @@ export const SearchWithHints = (props: SearchSuggestionProps) => {
         handleFocus,
         handleCopyName,
         handleKeyDown,
+        getHintsStyle,
     } = useSearchWithHints(props);
     const { suggestions, hintIcon, disableCopyButton } = props;
 
@@ -42,28 +44,31 @@ export const SearchWithHints = (props: SearchSuggestionProps) => {
                 {...props}
                 onChange={handleChange}
             />
-            {showSuggestions && allSuggestions.length > 0 && (
-                <HintsStyled>
-                    <SuggestionList
-                        suggestions={visibleSearchHistory}
-                        selected={selectedSuggestion}
-                        handleCopyName={handleCopyName}
-                        handleSubmit={handleSubmit}
-                        isSearchHistory
-                        disableCopyButton={disableCopyButton}
-                        hintIcon={hintIcon}
-                    />
-                    <SuggestionList
-                        startIndex={visibleSearchHistory.length}
-                        suggestions={suggestions}
-                        selected={selectedSuggestion}
-                        handleCopyName={handleCopyName}
-                        handleSubmit={handleSubmit}
-                        disableCopyButton={disableCopyButton}
-                        hintIcon={hintIcon}
-                    />
-                </HintsStyled>
-            )}
+            {showSuggestions &&
+                allSuggestions.length > 0 &&
+                ReactDOM.createPortal(
+                    <HintsStyled style={getHintsStyle()}>
+                        <SuggestionList
+                            suggestions={visibleSearchHistory}
+                            selected={selectedSuggestion}
+                            handleCopyName={handleCopyName}
+                            handleSubmit={handleSubmit}
+                            isSearchHistory
+                            disableCopyButton={disableCopyButton}
+                            hintIcon={hintIcon}
+                        />
+                        <SuggestionList
+                            startIndex={visibleSearchHistory.length}
+                            suggestions={suggestions}
+                            selected={selectedSuggestion}
+                            handleCopyName={handleCopyName}
+                            handleSubmit={handleSubmit}
+                            disableCopyButton={disableCopyButton}
+                            hintIcon={hintIcon}
+                        />
+                    </HintsStyled>,
+                    document.body // Render in the body element
+                )}
         </SearchWithHintsStyled>
     );
 };

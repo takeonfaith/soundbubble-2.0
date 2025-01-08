@@ -13,6 +13,7 @@ import { SkeletonPageAnimation } from '../../shared/components/skeleton/Skeleton
 import { Subtext } from '../../shared/components/subtext';
 import { useForm } from './model';
 import { Welcome } from './Welcome';
+import { MIN_ADDED_AUTHORS } from './constants';
 
 const ChoosingAuthorsStyled = styled.div`
     width: 100%;
@@ -27,7 +28,6 @@ const AttachedStyled = styled.div`
     padding: 20px;
     padding-bottom: 80px;
     position: relative;
-    height: 100%;
 
     h3 {
         font-weight: 300;
@@ -144,21 +144,24 @@ export const ChoosingAuthors = () => {
                 skeleton={<SkeletonLoading />}
                 loading={loading}
             >
-                <Flex
-                    padding="0 8px 14px 8px"
-                    width="100%"
-                    gap={4}
-                    d="column"
-                    ai="flex-start"
-                >
-                    <Flex jc="space-between" width="100%">
-                        <h3 className={errors.added ? 'error' : ''}>
-                            Choose at least 5 artists you like{' '}
-                        </h3>
+                <Flex jc="space-between" width="100%" padding="0 8px 14px 8px">
+                    <Flex width="100%" gap={4} d="column" ai="flex-start">
+                        <Flex jc="space-between" width="100%">
+                            <h3 className={errors.added ? 'error' : ''}>
+                                Choose at least 5 artists you like{' '}
+                            </h3>
+                        </Flex>
+                        <Subtext style={{ fontSize: '1rem' }}>
+                            {errors.added ?? 'So we know your taste'}
+                        </Subtext>
                     </Flex>
-                    <Subtext style={{ fontSize: '1rem' }}>
-                        {errors.added ?? 'So we know your taste'}
-                    </Subtext>
+                    <Button
+                        $width="100px"
+                        className="secondary"
+                        onClick={onSubmit}
+                    >
+                        Skip
+                    </Button>
                 </Flex>
                 <AttachEntity
                     library={values.authors}
@@ -176,6 +179,9 @@ export const ChoosingAuthors = () => {
 
                         onSubmit();
                     }}
+                    submitButtonDisabled={(items) =>
+                        items.length < MIN_ADDED_AUTHORS
+                    }
                     orientation="vertical"
                     customCheckButton={(checked, user) => {
                         return (

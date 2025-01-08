@@ -58,6 +58,7 @@ export const UserItem = memo(
         const isVertical =
             orientation === 'vertical' || orientation === 'vertical-small';
         const status = getLastSeen(online).status;
+
         const link = isAuthor ? `/author/${uid}` : `/user/${uid}`;
 
         const handleClick = (e: Evt<'a'>) => {

@@ -1,16 +1,16 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
+import { createPlaylistObject } from '../../entities/playlist/lib/createPlaylistObject';
 import { playlistModel } from '../../entities/playlist/model';
+import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
 import { userModel } from '../../entities/user/model';
+import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
-import { Form } from '../../shared/components/form';
+import { Input } from '../../shared/components/input';
 import { PhotoInput } from '../../shared/components/photoInput';
-import { useForm } from '../../shared/hooks/useForm';
-import { createPlaylistObject } from '../../entities/playlist/lib/createPlaylistObject';
-import { useNavigate } from 'react-router';
-import { modalModel } from '../../layout/modal/model';
-import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
+import { useForm } from './model';
 
 const CreatePlaylistModalStyled = styled.div`
     padding: 20px;
@@ -23,25 +23,14 @@ const CreatePlaylistModalStyled = styled.div`
     gap: 20px;
 `;
 
-const fields = [
-    {
-        id: 'name',
-        label: 'Playlist Name',
-        type: 'text',
-        placeholder: 'Enter a Playlist Name',
-        required: true,
-    },
-] as const;
-
 export const CreatePlaylistModal = () => {
     const [currentUser] = userModel.useUser();
     const [loading] = playlistModel.useCreatePlaylist();
     const [colors, setColors] = useState<string[]>([]);
     const [photo, setPhoto] = useState<File | null>(null);
     const navigate = useNavigate();
-    const { formProps, onSumbit, areAllRequiredFieldFilled } = useForm({
-        fields,
-        handleSubmit: (obj) => {
+    const { values, errors, onSubmit, onChange, handleEnterKeyDown } = useForm(
+        (obj) => {
             const playlist = createPlaylistObject(
                 createAuthorObject(currentUser),
                 {
@@ -58,8 +47,8 @@ export const CreatePlaylistModal = () => {
                     modalModel.events.close();
                 },
             });
-        },
-    });
+        }
+    );
 
     if (!currentUser) return null;
 
@@ -77,11 +66,20 @@ export const CreatePlaylistModal = () => {
                 d="column"
                 gap={20}
                 jc="space-between"
+                onKeyDown={handleEnterKeyDown}
             >
-                <Form {...formProps} />
+                <Input
+                    placeholder="Enter a playlist name"
+                    label="Playlist Name"
+                    required
+                    value={values.name}
+                    id="name"
+                    error={errors.name}
+                    onChange={onChange}
+                />
                 <DefaultButton
-                    disabled={!areAllRequiredFieldFilled}
-                    onClick={onSumbit}
+                    onClick={onSubmit}
+                    disabled={values.name.length === 0}
                     appearance="primary"
                     loading={loading}
                 >

@@ -13,7 +13,7 @@ import { useSidebar } from './layout/sidebar/model';
 
 const AppStyled = styled.div`
     height: 100dvh;
-    background: ${({ theme }) => theme.colors.pageBackground3};
+    background: ${({ theme }) => theme.colors.pageBackground2};
     overflow: hidden;
     display: flex;
     flex-direction: column;

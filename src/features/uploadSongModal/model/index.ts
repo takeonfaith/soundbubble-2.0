@@ -1,16 +1,16 @@
 import { TUser } from '../../../entities/user/model/types';
 import { effectorForm } from '../../../shared/effector/form';
-import { TForm } from '../../../shared/effector/form/types';
 
-export type FormType<T extends TForm> = {
-    [key in keyof T]: T[key]['init'];
-};
-
-const initial = {
+export const { useForm } = effectorForm({
     songFile: {
         type: 'file',
         required: true,
         init: null as File | null,
+    },
+    youtubeLink: {
+        type: 'youtube-link',
+        required: false,
+        init: '',
     },
     imageColors: {
         type: 'stringArray',
@@ -67,8 +67,4 @@ const initial = {
         required: true,
         init: new Date().toLocaleDateString('fr-CA'),
     },
-} as const;
-
-export type AddSongFormType = FormType<typeof initial>;
-
-export const { useForm } = effectorForm(initial);
+});

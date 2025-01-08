@@ -45,8 +45,8 @@ export const HintItem = ({
                         <IconHistory />
                     </HintIcon>
                 )}
-                {!searchHistory && !showCover && !!hintIcon && (
-                    <HintIcon>{hintIcon}</HintIcon>
+                {!searchHistory && !showCover && (!!hintIcon || item.icon) && (
+                    <HintIcon>{hintIcon ?? item.icon}</HintIcon>
                 )}
                 <Flex d="column" ai="flex-start">
                     <HintName>{hintName}</HintName>

@@ -22,6 +22,7 @@ type Props<T extends TEntity> = {
     library: T[];
     submitButtonText: string;
     orientation: TOrientation;
+    submitButtonDisabled?: (items: TEntity[]) => boolean;
     onEntityClick?: (items: TEntity[]) => void;
     onSubmit: (items: T[]) => void;
     customCheckButton?: (checked: boolean, entity: TEntity) => React.ReactNode;
@@ -34,6 +35,7 @@ export const AttachEntity = <T extends TEntity>({
     onEntityClick,
     orientation,
     customCheckButton,
+    submitButtonDisabled = () => false,
 }: Props<T>) => {
     const [isSending] = useUnit([sendMessageFx.pending]);
     const [loading, setLoading] = useState(false);
@@ -118,6 +120,7 @@ export const AttachEntity = <T extends TEntity>({
                     <DefaultButton
                         appearance="primary"
                         loading={isSending}
+                        disabled={submitButtonDisabled(addedEntites)}
                         onClick={() => onSubmit(addedEntites as T[])}
                     >
                         {submitButtonText}

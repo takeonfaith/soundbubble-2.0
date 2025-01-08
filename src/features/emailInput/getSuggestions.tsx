@@ -1,16 +1,10 @@
 import { TExtendedSuggestion } from '../searchWithHints/types';
+import { getEmailProviders } from './lib/getEmailProviders';
 
 export const getSuggestions = (emailValue: string): TExtendedSuggestion[] => {
     if (emailValue.length === 0 || !emailValue.includes('@')) return [];
 
-    const emailProviders = [
-        { fullName: 'gmail.com' },
-        { fullName: 'yahoo.com' },
-        { fullName: 'outlook.com' },
-        { fullName: 'yandex.ru' },
-        { fullName: 'mail.ru' },
-        { fullName: 'temp.temp' },
-    ];
+    const emailProviders = getEmailProviders();
 
     const [mailName, emailValueProvider] = emailValue.split('@');
 
@@ -24,6 +18,7 @@ export const getSuggestions = (emailValue: string): TExtendedSuggestion[] => {
                     fullName: `${mailName}@${email.fullName}`,
                     place: 'songs',
                     uid: '',
+                    icon: email.icon,
                 };
             });
     }
@@ -33,6 +28,7 @@ export const getSuggestions = (emailValue: string): TExtendedSuggestion[] => {
             fullName: `${emailValue}@${email}`,
             place: 'songs',
             uid: '',
+            icon: email.icon,
         };
     });
 };
