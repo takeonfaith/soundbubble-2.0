@@ -17,7 +17,6 @@ type Props = {
 
 export const SearchNotFoundError = ({ searching, songs }: Props) => {
     const navigate = useNavigate();
-    console.log(songs?.length !== 0, searching?.value);
 
     if (songs?.length !== 0 || searching?.value.length === 0) {
         return null;

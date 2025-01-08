@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const UserItemStyled = styled(Link)<{ disabled?: boolean }>`
-    --size: calc((100vw - var(--sidebar-width)) / 8 - 37px);
+    --size: calc((100vw - var(--sidebar-width)) / 8 - 39px);
 
     display: flex;
     flex-direction: column;
@@ -129,15 +129,7 @@ export const UserItemStyled = styled(Link)<{ disabled?: boolean }>`
     }
 
     @media (max-width: 1500px) {
-        --size: calc((100vw - var(--sidebar-width)) / 6 - 39px);
-    }
-
-    @media (max-width: 1300px) {
-        --size: calc((100vw - var(--sidebar-width)) / 5 - 40px);
-    }
-
-    @media (max-width: 1150px) {
-        --size: calc((100vw - var(--sidebar-width)) / 5 - 45px);
+        --size: calc((100vw - var(--sidebar-width)) / 5 - 43px);
     }
 
     @media (max-width: 1000px) {

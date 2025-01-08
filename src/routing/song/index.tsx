@@ -8,7 +8,6 @@ import { PlaylistPageContent } from '../playlist/PlaylistPageContent';
 export const SongPage = () => {
     const [song, setSong] = useState<TSong | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const name = `${song?.name ?? ''} - Single`;
 
     const queue = createQueueObject({
@@ -24,24 +23,14 @@ export const SongPage = () => {
         onChangeId: (id) => {
             if (id) {
                 setLoading(true);
-                setError(null);
-                Database.Songs.getSongByUid(id)
-                    .then((song) => {
-                        console.log(song);
-                        setSong(song);
-                        setLoading(false);
-                        if (!song) {
-                            setError('Not found!');
-                        }
-                    })
-                    .catch((err) => setError(err));
+                Database.Songs.getSongByUid(id).then((song) => {
+                    console.log(song);
+                    setSong(song);
+                    setLoading(false);
+                });
             }
         },
     });
-
-    const handleLike = () => {
-        // Add your like logic here
-    };
 
     return (
         <PlaylistPageContent
@@ -51,15 +40,12 @@ export const SongPage = () => {
             loading={loading}
             imageUrl={song?.cover}
             imageColors={song?.imageColors}
-            error={error}
             queue={queue}
             name={name}
             isOwner={false}
             currentPlaylistSongs={null}
             isEditing={false}
-            handleRemoveSong={function (song: TSong): void {
-                throw new Error('Function not implemented.');
-            }}
+            handleRemoveSong={() => null}
         />
     );
 };

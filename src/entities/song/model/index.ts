@@ -1,11 +1,7 @@
-import {
-    createEffect,
-    createEvent,
-    createStore,
-    createWatch,
-    sample,
-} from 'effector';
+import { createEffect, createEvent, createStore, sample } from 'effector';
 import { useUnit } from 'effector-react';
+import { throttle } from 'patronum';
+import { Database } from '../../../database';
 import { addToHistory } from '../../history/model';
 import { DEFAULT_STORE } from './constants';
 import { useControls } from './controls';
@@ -13,7 +9,6 @@ import { close, open, useFullScreen } from './fullscreen';
 import {
     calculateCurrentLyric,
     nextCurrentLyric,
-    setCurrentLyricIndex,
     setLyrics,
     setShouldCalculateLyrics,
     useLyrics,
@@ -27,8 +22,6 @@ import {
 } from './playback';
 import { changeLoopMode, next, previous, setQueue, useQueue } from './queue';
 import { SongState, TQueueStore, TSong, TStore } from './types';
-import { throttle } from 'patronum';
-import { Database } from '../../../database';
 
 const addListeningFx = createEffect<TSong, Promise<void>>();
 

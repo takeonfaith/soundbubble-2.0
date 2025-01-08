@@ -9,6 +9,7 @@ import { userModel } from './entities/user/model';
 import { FB } from './firebase';
 import { GlobalStyles } from './globalStyles';
 import { CustomRouter } from './routing/CustomRouter';
+import { useSidebar } from './layout/sidebar/model';
 
 const AppStyled = styled.div`
     height: 100dvh;
@@ -25,6 +26,7 @@ const AppStyled = styled.div`
 
 function App() {
     const { themeParams } = useTheme();
+    const isCollapsed = useSidebar();
 
     useEffect(() => {
         FB.onAuthStateChanged(async (userCred) => {
@@ -34,7 +36,7 @@ function App() {
 
     return (
         <ThemeProvider theme={themeParams}>
-            <GlobalStyles />
+            <GlobalStyles collapsed={isCollapsed} />
             <HashRouter>
                 <CustomRouter>
                     <AppStyled>

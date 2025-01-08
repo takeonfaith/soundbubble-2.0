@@ -1,8 +1,10 @@
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { Outlet } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { chatModel } from '../entities/chat/model';
 import { TPlace } from '../entities/search/model/types';
+import { songModel } from '../entities/song/new-model';
 import { userModel } from '../entities/user/model';
 import { UserCover } from '../entities/user/ui/UserCover';
 import { GlobalSearch } from '../features/globalSearch';
@@ -11,6 +13,7 @@ import { ThemeButton } from '../features/themeButton';
 import { Button } from '../shared/components/button';
 import { Flex } from '../shared/components/flex';
 import { Logo } from '../shared/components/logo';
+import Popover from '../shared/components/popover';
 import { useMediaMetadata } from '../shared/hooks/useMediaMetadata';
 import { Confirm } from './confirm/ui';
 import { FullScreenFullScreenPlayer } from './fullScreenPlayer';
@@ -23,8 +26,8 @@ import { Player } from './player';
 import { Popup } from './popup';
 import { popupModel } from './popup/model';
 import { Sidebar } from './sidebar';
+import { sidebarApi, useSidebar } from './sidebar/model';
 import { Toast } from './toast/ui';
-import { songModel } from '../entities/song/new-model';
 
 export const LayoutStyled = styled.div`
     height: calc(100dvh - var(--player-size) - var(--page-gap) * 2 - 56px);
@@ -43,7 +46,7 @@ export const LayoutStyled = styled.div`
 `;
 
 const RightSide = styled.div`
-    width: calc(100% - var(--sidebar-width));
+    width: 100%;
     height: 100%;
     position: relative;
     /* box-shadow: ${({ theme }) => theme.colors.shadow}; */
@@ -64,6 +67,14 @@ const LayoutHeader = styled.div`
     padding: 16px 30px;
     padding-bottom: 0;
     gap: 92px;
+
+    .hide-sidebar-button {
+        opacity: 0;
+    }
+
+    &:hover .hide-sidebar-button {
+        opacity: 1;
+    }
 
     .general-cover {
         outline: 2px solid ${({ theme }) => theme.colors.pageBackground2};
@@ -96,6 +107,8 @@ export const Layout = () => {
     const [params] = useSearchParams();
     const queryValue = params.get('query') ?? '';
     const where = (params.get('where') ?? '') as TPlace | '';
+    const isCollapsed = useSidebar();
+
     useMediaMetadata();
 
     const handleOpenUserPopup = (e: Evt<'btn'>) => {
@@ -107,6 +120,10 @@ export const Layout = () => {
         });
     };
 
+    const handleHideSidebar = () => {
+        sidebarApi.toggle();
+    };
+
     return (
         <>
             <InitialLoading />
@@ -116,10 +133,39 @@ export const Layout = () => {
 
             <LayoutHeader>
                 <Flex gap={0}>
-                    <Flex width="calc(var(--sidebar-width) - 30px)">
-                        <Logo />
+                    <Flex
+                        width={
+                            isCollapsed
+                                ? '60px'
+                                : 'calc(var(--sidebar-width) - 30px)'
+                        }
+                        jc="space-between"
+                        padding={`0 ${isCollapsed ? 10 : 20}px 0 0`}
+                    >
+                        <Logo short={isCollapsed} />
+                        <Popover
+                            content={
+                                isCollapsed ? 'Unfold sidebar' : 'Hide sidebar'
+                            }
+                            position="right"
+                        >
+                            <Button
+                                onClick={handleHideSidebar}
+                                className="hide-sidebar-button"
+                                $width="30px"
+                                $height="30px"
+                            >
+                                {isCollapsed ? (
+                                    <IconChevronRight size={18} opacity={0.5} />
+                                ) : (
+                                    <IconChevronLeft size={20} opacity={0.5} />
+                                )}
+                            </Button>
+                        </Popover>
                     </Flex>
-                    <GlobalSearchWrapper>
+                    <GlobalSearchWrapper
+                        className={isCollapsed ? 'collapsed' : ''}
+                    >
                         <GlobalSearch
                             showTabs={false}
                             queryValue={queryValue}
@@ -144,8 +190,8 @@ export const Layout = () => {
                     <LoginButton />
                 </Flex>
             </LayoutHeader>
-            <LayoutStyled className={currentChat ? 'chat-page' : ''}>
-                <Sidebar />
+            <LayoutStyled className={`${currentChat ? 'chat-page' : ''} `}>
+                <Sidebar collapsed={isCollapsed} />
                 <RightSide>
                     <Outlet />
                 </RightSide>

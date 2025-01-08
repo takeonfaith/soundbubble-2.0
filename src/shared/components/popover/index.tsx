@@ -2,19 +2,25 @@ import React, { useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { SHIFT } from './constants';
 import { PopoverContainer, TargetElement } from './styles';
+import { TPopoverPosition } from './types';
+import { CSSProperties } from 'styled-components';
 
 interface PopoverProps {
     content: React.ReactNode;
     children: React.ReactNode;
     shift?: number;
-    position?: 'top' | 'right' | 'bottom' | 'left';
+    position?: TPopoverPosition;
+    style?: CSSProperties;
+    showTongue?: boolean;
 }
 
 const Popover: React.FC<PopoverProps> = ({
     content,
     children,
+    style,
     shift = SHIFT,
     position = 'top',
+    showTongue = false,
 }) => {
     const [isVisible, setIsVisible] = useState(false);
     const popoverRef = useRef<HTMLDivElement>(null);
@@ -50,7 +56,8 @@ const Popover: React.FC<PopoverProps> = ({
             },
         };
 
-        return positions[position] || positions['bottom'];
+        const res = positions[position] || positions['bottom'];
+        return { ...res, ...style };
     };
 
     return (
@@ -59,6 +66,7 @@ const Popover: React.FC<PopoverProps> = ({
                 ref={targetRef}
                 onMouseLeave={() => setIsVisible(false)}
                 onMouseEnter={() => setIsVisible(true)}
+                onClick={() => setIsVisible(false)}
                 onFocus={() => setIsVisible(true)}
                 onBlur={() => setIsVisible(false)}
             >
@@ -71,6 +79,10 @@ const Popover: React.FC<PopoverProps> = ({
                         ref={popoverRef}
                         isVisible={isVisible}
                         style={getPopoverStyle()}
+                        className={`${position} ${
+                            showTongue ? 'showTongue' : ''
+                        }`}
+                        tongueColor={style?.background?.toString()}
                     >
                         {content}
                     </PopoverContainer>,

@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
-export const GlobalStyles = createGlobalStyle`
+export const GlobalStyles = createGlobalStyle<{ collapsed: boolean }>`
 	* {
 		box-sizing: border-box;
 		margin: 0;
@@ -13,8 +13,9 @@ export const GlobalStyles = createGlobalStyle`
 		--page-padding: 30px;
 		--page-gap: 10px;
 		--desktop-page-radius: 12px;
-		--player-size: 70px;
-		--sidebar-width: 270px;
+		--player-size: 80px;
+		--sidebar-width: ${({ collapsed }) => (collapsed ? '90' : '260')}px;
+		--sidebar-width-collapsed: 80px;
 		--header-height: 70px;
 
 
@@ -28,7 +29,7 @@ export const GlobalStyles = createGlobalStyle`
 
 		@media (max-width: 1000px) {
 			--page-padding: 20px;
-			--sidebar-width: 0px;
+			--player-size: 70px
 		}
 	}
 

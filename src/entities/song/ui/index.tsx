@@ -73,7 +73,7 @@ export const SongItem = ({
 
         popupModel.events.open({
             content: <SongMoreContextMenu onRemove={onRemove} song={song} />,
-            height: onRemove ? 369 : 385.5,
+            height: onRemove ? 402 : 385.5,
             e,
         });
     };

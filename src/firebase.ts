@@ -46,11 +46,7 @@ import {
 import { TPlaylist } from './entities/playlist/model/types';
 import { TSuggestion } from './entities/search/model/types';
 import { TLastQueue, TLyric, TSong } from './entities/song/model/types';
-import {
-    FriendStatus,
-    TSearchHistory,
-    TUser,
-} from './entities/user/model/types';
+import { TSearchHistory, TUser } from './entities/user/model/types';
 import { asyncRequests } from './shared/funcs/asyncRequests';
 import getUID from './shared/funcs/getUID';
 

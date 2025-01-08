@@ -22,14 +22,10 @@ import { popupModel } from '../../layout/popup/model';
 import { Button } from '../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
 import { Flex } from '../../shared/components/flex';
-import {
-    PageTopStyled,
-    TopLeftCorner,
-    TopRightCorner,
-} from '../../shared/components/pageTop/styles';
 import Popover from '../../shared/components/popover';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
 import { ButtonsStyled } from './styles';
+import { PageTopStyled, TopLeftCorner, TopRightCorner } from '../album/styles';
 
 type Props = {
     author: TUser | null;

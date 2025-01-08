@@ -31,7 +31,7 @@ import {
     TopBackground,
     TopLeftCorner,
     TopRightCorner,
-} from '../../shared/components/pageTop/styles';
+} from './styles';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
 import { Wave } from '../../shared/images';
 import { ButtonsStyled } from '../author/styles';

@@ -180,6 +180,7 @@ export const RightSide = styled.div`
     scroll-padding-bottom: 700px;
     opacity: 0;
     animation: slide-appear 0.5s forwards reverse;
+    /* background: linear-gradient(270deg, #00000078 20%, transparent); */
 
     &.visible {
         animation: slide-appear 0.5s forwards;
@@ -211,6 +212,7 @@ export const LyricsStyled = styled.div`
     gap: 30px;
     color: #fff;
     font-size: 1.8rem;
+    position: relative;
 `;
 
 export const Lyric = styled.div`

@@ -17,7 +17,7 @@ export const useMediaMetadata = () => {
     }, [currentSong, currentTime]);
 
     function playSong() {
-        songModelNew.controls.play({});
+        songModelNew.controls.play();
     }
 
     function pauseSong() {

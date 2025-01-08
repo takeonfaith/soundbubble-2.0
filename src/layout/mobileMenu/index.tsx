@@ -1,12 +1,14 @@
 import { chatModel } from '../../entities/chat/model';
 import { mobileMenuRoutes } from '../../routing/routes';
+import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 import { MobileLinkItem } from './MobileLinkItem';
 import { LinksList, ListItem, MobileMenuStyled } from './styles';
 
 export const MobileMenu = () => {
-    const { currentChatId } = chatModel.useChats();
+    const [chat] = chatModel.useCurrentChat();
+    const { isMobile } = useCurrentDevice();
 
-    if (currentChatId) return null;
+    if (chat || !isMobile) return null;
 
     return (
         <MobileMenuStyled>
@@ -17,7 +19,7 @@ export const MobileMenu = () => {
                             <MobileLinkItem route={route} />
                         </ListItem>
                     );
-            })}
+                })}
             </LinksList>
         </MobileMenuStyled>
     );

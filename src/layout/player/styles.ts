@@ -67,7 +67,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
         position: relative;
         max-width: 1000px;
 
-        @media (max-width: 1270px) {
+        @media (max-width: 2270px) {
             flex-direction: column-reverse;
             gap: 6px;
         }
@@ -84,7 +84,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
             height: 10px;
         }
 
-        @media (max-width: 1270px) {
+        @media (max-width: 2270px) {
             width: 400px;
             margin-top: -4px;
             margin-right: 0;
@@ -103,7 +103,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
         opacity: 0.4;
         pointer-events: none;
 
-        @media (max-width: 1270px) {
+        @media (max-width: 2270px) {
             right: none;
             left: calc(50% + 2px);
             top: 40px;
@@ -118,9 +118,6 @@ export const PlayerStyled = styled.div<{ $background: string }>`
         }
     }
 
-    @media (max-width: 1900px) {
-        width: calc(100% - var(--page-gap) * 2);
-    }
 
     @media (max-width: 1000px) {
         padding: 6px;
@@ -140,7 +137,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
 export const PlayerMusicControls = styled.div`
     width: 100%;
 
-    @media (max-width: 1270px) {
+    @media (max-width: 2270px) {
         transform: translateY(-7px);
     }
 `;

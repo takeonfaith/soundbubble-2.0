@@ -11,7 +11,7 @@ import { CheckIcon } from '../../../../shared/components/checkIcon';
 import { Flex } from '../../../../shared/components/flex';
 
 export const AddFriendsToPlaylistModal = () => {
-    const [{ currentPlaylist }] = playlistModel.usePlaylist();
+    const [currentPlaylist] = playlistModel.usePlaylist();
     const [friends] = userModel.useFriends();
     const [currentUser] = userModel.useUser();
     const isOwner = currentPlaylist?.ownerId === currentUser?.uid;

@@ -52,29 +52,12 @@ export const Player = () => {
                 <SongCover
                     colors={currentSong?.imageColors ?? ['grey']}
                     src={currentSong?.cover}
-                    size={'40px'}
+                    size={'45px'}
                 />
                 <Flex d="column" ai="flex-start">
                     <SongTitle>{currentSong?.name ?? 'Untitled'}</SongTitle>
                     <Authors authors={currentSong?.authors} />
                 </Flex>
-                <LikeButton
-                    disabled={!currentSong}
-                    width="42px"
-                    isLiked={isLiked}
-                    entity={currentSong}
-                    onClick={handleToggleLike}
-                    loading={performingAction}
-                    likeColor={currentSong?.imageColors[0]}
-                />
-                <Button
-                    $width="42px"
-                    $height="42px"
-                    onClick={handleMore}
-                    disabled={!currentSong}
-                >
-                    <IconDots size={20} />
-                </Button>
             </SongStyled>
             <PlayerMusicControls onClick={(e) => e.stopPropagation()}>
                 <MusicControls {...controls} />
@@ -101,6 +84,15 @@ export const Player = () => {
                 </MobilePlayButton>
                 <PlayerActionButtons onClick={(e) => e.stopPropagation()}>
                     <VolumeButton />
+                    <LikeButton
+                        disabled={!currentSong}
+                        width="42px"
+                        isLiked={isLiked}
+                        entity={currentSong}
+                        onClick={handleToggleLike}
+                        loading={performingAction}
+                        likeColor={currentSong?.imageColors[0]}
+                    />
                     <Button
                         $width="42px"
                         $height="42px"
@@ -109,7 +101,6 @@ export const Player = () => {
                     >
                         <IconPlaylist size={20} />
                     </Button>
-                    <ShareButton />
                     <Button
                         $width="42px"
                         $height="42px"
@@ -117,6 +108,14 @@ export const Player = () => {
                         onClick={handleLyrics}
                     >
                         <IconQuote size={20} />
+                    </Button>
+                    <Button
+                        $width="42px"
+                        $height="42px"
+                        onClick={handleMore}
+                        disabled={!currentSong}
+                    >
+                        <IconDots size={20} />
                     </Button>
                 </PlayerActionButtons>
             </Flex>

@@ -2,33 +2,77 @@ import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { TTheme } from '../../shared/constants/theme';
 
-export const SidebarStyled = styled.aside`
-    min-width: var(--sidebar-width);
-    width: var(--sidebar-width);
-    height: 100dvh;
-    padding: 10px 18px;
-    /* background: ${({ theme }) => theme.colors.sidebar}; */
-    /* border-right: 1px solid ${({ theme }) => theme.colors.border}; */
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    padding-top: 30px;
+export const SidebarSectionTitle = styled.div`
+    font-size: 0.8rem;
+    opacity: 0.3;
+    color: ${({ theme }) => theme.colors.textColor};
+    padding: 4px 10px;
+    padding-right: 0px;
+    text-transform: uppercase;
+    transition: 0.2s opacity;
 
-    @media (max-width: 1100px) {
+    &.clickable {
+        cursor: pointer;
+
+        @media (hover: hover) {
+            &:hover {
+                opacity: 0.5;
+            }
+        }
     }
 
-    @media (max-width: 756px) {
+    @media (max-width: 1100px) {
         display: none;
     }
 `;
 
-export const LogoWrapper = styled.div`
-    padding: 10px;
-    padding-top: 20px;
+export const SidebarLink = styled(NavLink)`
+    text-decoration: none;
+    padding: 10px 10px;
+    border-radius: ${({ theme }) => theme.borderRadius.mild};
+    font-size: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    &:hover {
+        background: ${({ theme }) => theme.colors.hover};
+    }
+
+    &:active {
+        transform: scale(0.99);
+    }
+
+    svg {
+        opacity: 0.6;
+    }
+
+    &.active {
+        background: ${({ theme }) => theme.colors.pageBackground};
+        outline: 1px solid ${({ theme }) => theme.colors.border};
+        border-radius: 8px;
+
+        & > .icon-text {
+            opacity: 1;
+            color: ${({ theme }) => theme.scheme.blue.main};
+        }
+
+        svg {
+            opacity: 1;
+        }
+    }
+
+    @media (max-width: 1100px) {
+        display: flex;
+        justify-content: center;
+    }
+`;
+
+export const PlaylistsStyled = styled.div`
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 0 2px;
 `;
 
 export const SidebarSection = styled.div`
@@ -78,77 +122,73 @@ export const SidebarSection = styled.div`
     }
 `;
 
-export const SidebarLink = styled(NavLink)`
-    text-decoration: none;
-    padding: 10px 10px;
-    border-radius: ${({ theme }) => theme.borderRadius.mild};
-    font-size: 1rem;
+export const SidebarStyled = styled.aside`
+    min-width: var(--sidebar-width);
+    width: var(--sidebar-width);
+    height: 100dvh;
+    padding: 10px 18px;
+    /* background: ${({ theme }) => theme.colors.sidebar}; */
+    /* border-right: 1px solid ${({ theme }) => theme.colors.border}; */
+    position: relative;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 30px;
+    padding-top: 30px;
 
-    &:hover {
-        background: ${({ theme }) => theme.colors.hover};
-    }
+    &.collapsed {
 
-    &:active {
-        transform: scale(0.99);
-    }
+        gap: 10px;
 
-    svg {
-        opacity: 0.6;
-    }
-
-    &.active {
-        background: ${({ theme }) => theme.colors.pageBackground};
-        outline: 1px solid ${({ theme }) => theme.colors.border};
-        border-radius: 8px;
-
-        & > .icon-text {
-            opacity: 1;
-            color: ${({ theme }) => theme.scheme.blue.main};
+        ${SidebarSectionTitle} {
+            display: none;
+        }
+        ${SidebarLink} {
+            justify-content: center;
         }
 
-        svg {
-            opacity: 1;
+        ${SidebarLink} .text {
+            display: none;
         }
-    }
 
-    @media (max-width: 1100px) {
-        display: flex;
-        justify-content: center;
-    }
-`;
+        ${SidebarLink} .icon,
+        ${SidebarLink} .icon svg {
+            width: 22px;
+            height: 22px;
+        }
 
-export const SidebarSectionTitle = styled.div`
-    font-size: 0.8rem;
-    opacity: 0.3;
-    color: ${({ theme }) => theme.colors.textColor};
-    padding: 4px 10px;
-    padding-right: 0px;
-    text-transform: uppercase;
-    transition: 0.2s opacity;
+        ${PlaylistsStyled} .no-playlists {
+            display: none;
+        }
 
-    &.clickable {
-        cursor: pointer;
+        ${SidebarSection} {
+            gap: 10px;
 
-        @media (hover: hover) {
-            &:hover {
-                opacity: 0.5;
+            & .add-playlist {
+                width: 54px;
+                height: 42px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                svg {
+                    width: 22px;
+                    height: 22px;
+                }
             }
         }
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 756px) {
         display: none;
     }
 `;
 
-export const PlaylistsStyled = styled.div`
+export const LogoWrapper = styled.div`
+    padding: 10px;
+    padding-top: 20px;
     display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    padding: 0 2px;
+    align-items: center;
+    justify-content: space-between;
 `;
 
 export const NotificationBadge = styled.span<{

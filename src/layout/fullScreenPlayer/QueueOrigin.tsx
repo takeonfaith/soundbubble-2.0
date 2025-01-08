@@ -58,7 +58,13 @@ export const QueueOrigin = ({ queue }: Props) => {
             image: queue.imageUrl,
         });
 
-        return <PlaylistItem orientation="horizontal" playlist={playlist} />;
+        return (
+            <PlaylistItem
+                isAuthor
+                orientation="horizontal"
+                playlist={playlist}
+            />
+        );
     }
 
     if (queue.url?.includes('album')) {
@@ -70,7 +76,13 @@ export const QueueOrigin = ({ queue }: Props) => {
             isAlbum: true,
         });
 
-        return <PlaylistItem orientation="horizontal" playlist={playlist} />;
+        return (
+            <PlaylistItem
+                isAuthor
+                orientation="horizontal"
+                playlist={playlist}
+            />
+        );
     }
 
     if (queue.url?.includes('song')) {
