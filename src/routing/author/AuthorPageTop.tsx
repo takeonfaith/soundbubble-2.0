@@ -10,6 +10,7 @@ import {
 import { useNavigate } from 'react-router';
 import { TQueue } from '../../entities/song/model/types';
 import { useToggleUserLike } from '../../entities/user/hooks/useToggleUserLike';
+import { userModel } from '../../entities/user/model';
 import { TUser } from '../../entities/user/model/types';
 import { UserCover } from '../../entities/user/ui/UserCover';
 import { UserInfo } from '../../entities/user/ui/UserInfo';
@@ -24,8 +25,8 @@ import { DefaultContextMenuStyled } from '../../shared/components/defaultContext
 import { Flex } from '../../shared/components/flex';
 import Popover from '../../shared/components/popover';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
-import { ButtonsStyled } from './styles';
 import { PageTopStyled, TopLeftCorner, TopRightCorner } from '../album/styles';
+import { ButtonsStyled } from './styles';
 
 type Props = {
     author: TUser | null;
@@ -34,6 +35,7 @@ type Props = {
 
 export const AuthorPageTop = ({ author, queue }: Props) => {
     const navigate = useNavigate();
+    const [currentUser] = userModel.useUser();
     const { handleToggleLike, isLiked, performingAction } =
         useToggleUserLike(author);
 
@@ -72,10 +74,19 @@ export const AuthorPageTop = ({ author, queue }: Props) => {
             height: 96,
             content: (
                 <DefaultContextMenuStyled>
-                    <Button onClick={handleClickShare}>
-                        <IconShare3 />
-                        Share
-                    </Button>
+                    <Popover
+                        content={
+                            !currentUser ? 'You need an account for that' : null
+                        }
+                    >
+                        <Button
+                            disabled={!currentUser}
+                            onClick={handleClickShare}
+                        >
+                            <IconShare3 />
+                            Share
+                        </Button>
+                    </Popover>
                     <Button onClick={handleInfo}>
                         <IconInfoCircle />
                         Info

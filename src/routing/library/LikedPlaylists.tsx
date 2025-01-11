@@ -1,4 +1,5 @@
 import { IconPlaylistOff, IconPlus } from '@tabler/icons-react';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 import { createPlaylistObject } from '../../entities/playlist/lib/createPlaylistObject';
 import { PlaylistItem } from '../../entities/playlist/ui';
@@ -12,8 +13,7 @@ import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 import { PageGridStyled } from './styles';
-import { Flex } from '../../shared/components/flex';
-import { useMemo } from 'react';
+import { LoginButton } from '../../features/loginButton';
 
 const IconWrapper = styled.div`
     height: 35%;
@@ -84,28 +84,41 @@ export const LikedPlaylists = () => {
         });
     };
 
+    if (!currentUser) {
+        return (
+            <PageMessage
+                icon={IconPlaylistOff}
+                title={'Need to log in'}
+                description={'To create playlists and share them'}
+            >
+                <LoginButton />
+            </PageMessage>
+        );
+    }
+
+    if (!loading && !allPlaylists.length) {
+        return (
+            <PageMessage
+                icon={IconPlaylistOff}
+                title={'No playlists created'}
+                description={'They will appear here when you add them'}
+            >
+                <Button
+                    onClick={handleAddPlaylist}
+                    className="primary"
+                    $width="150px"
+                    color="#fff"
+                >
+                    <IconPlus size={20} />
+                    Add playlist
+                </Button>
+            </PageMessage>
+        );
+    }
+
     return (
         <ContentWrapper>
             {loading && <Loading />}
-            {!loading && !allPlaylists.length && (
-                <Flex height="100%" width="100%" jc="center" padding="20vh">
-                    <PageMessage
-                        icon={IconPlaylistOff}
-                        title={'No playlists created'}
-                        description={'They will appear here when you add them'}
-                    >
-                        <Button
-                            onClick={handleAddPlaylist}
-                            className="primary"
-                            $width="150px"
-                            color="#fff"
-                        >
-                            <IconPlus size={20} />
-                            Add playlist
-                        </Button>
-                    </PageMessage>
-                </Flex>
-            )}
             <PageGridStyled>
                 {!!allPlaylists.length && (
                     <PlaylistItem

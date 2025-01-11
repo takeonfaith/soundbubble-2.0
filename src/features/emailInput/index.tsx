@@ -15,7 +15,10 @@ export const EmailInput = (props: Props) => {
     const { value, onChange, focusOnLoad } = props;
     const suggestions = getSuggestions(value);
     const emailProviders = getEmailProviders();
-    const found = emailProviders.find((p) => value.includes(p.fullName));
+    const found = emailProviders.find(
+        (p) => value.replace(/[a-zA-Z].*@/, '') === p.fullName
+    );
+
     const icon =
         value.length !== 0 ? found ? found.icon : <IconAt /> : <IconAt />;
 

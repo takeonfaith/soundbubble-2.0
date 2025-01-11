@@ -10,6 +10,11 @@ export const ChatSearchStyled = styled.div`
 
 export const DesktopWrapperStyled = styled.div`
     display: block;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: ${({ theme }) => theme.colors.pageBackground};
+    padding-top: 20px;
 
     @media (max-width: 768px) {
         display: none;
@@ -27,7 +32,6 @@ export const ListOfChats = styled.div`
     background: ${({ theme }) => theme.colors.pageBackground};
     border-right: 1px solid ${({ theme }) => theme.colors.border};
     overflow-y: auto;
-    padding-top: 20px;
 
     @media (max-width: 768px) {
         width: 100%;

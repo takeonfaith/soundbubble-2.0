@@ -8,7 +8,7 @@ export const getSuggestions = (emailValue: string): TExtendedSuggestion[] => {
 
     const [mailName, emailValueProvider] = emailValue.split('@');
 
-    if (emailValue.includes('@')) {
+    if (emailValue.includes('@') && emailValue[0] !== '@') {
         return emailProviders
             .filter((provider) => {
                 return provider.fullName.includes(emailValueProvider);
@@ -23,12 +23,5 @@ export const getSuggestions = (emailValue: string): TExtendedSuggestion[] => {
             });
     }
 
-    return emailProviders.map((email) => {
-        return {
-            fullName: `${emailValue}@${email}`,
-            place: 'songs',
-            uid: '',
-            icon: email.icon,
-        };
-    });
+    return []
 };

@@ -3,9 +3,11 @@ import {
     IconMessagePlus,
     IconSearch,
 } from '@tabler/icons-react';
+import { useEffect } from 'react';
 import { Outlet } from 'react-router';
 import styled from 'styled-components';
 import { chatModel } from '../../entities/chat/model';
+import { userModel } from '../../entities/user/model';
 import { CreateChatModal } from '../../features/createChatModal';
 import { Header } from '../../layout/header';
 import { modalModel } from '../../layout/modal/model';
@@ -16,7 +18,7 @@ import { PageMessage } from '../../shared/components/pageMessage';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
 import { ChatList } from './ChatList';
-import { useEffect } from 'react';
+import { LoginButton } from '../../features/loginButton';
 
 const ChatPageStyled = styled.div`
     width: 100%;
@@ -51,6 +53,7 @@ const ChatContent = styled.div`
 
 export const ChatPage = () => {
     const [currentChat] = chatModel.useCurrentChat();
+    const [currentUser] = userModel.useUser();
     const [amITyping] = chatModel.useTyping();
 
     const handleCreateChatModal = () => {
@@ -77,6 +80,20 @@ export const ChatPage = () => {
             chatModel.events.canMoreBeLoaded(true);
         };
     }, []);
+
+    if (!currentUser)
+        return (
+            <>
+                <Header />
+                <PageMessage
+                    icon={IconMessageOff}
+                    title={'Need to log in '}
+                    description={'To share songs with your friends'}
+                >
+                    <LoginButton />
+                </PageMessage>
+            </>
+        );
 
     return (
         <PageWrapper>

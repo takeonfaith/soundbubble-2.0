@@ -4,37 +4,38 @@ import { useState } from 'react';
 import { MIN_PASSWORD_LENGTH } from '../../../features/signUpModal/constansts';
 import { isValidHttpUrl } from '../../funcs/isValidHttpUrl';
 import { isValidYoutubeLink } from '../../funcs/isValidYoutubeLink';
-import { TFields, TForm } from './types';
+import { ErrorType, FormType, TForm } from './types';
 
 export const effectorForm = <T extends TForm>(form: T) => {
-    type FormType = {
-        [key in keyof T]: TFields<(typeof form)[key]['type']>['init'];
-    };
-    type ErrorType = Record<keyof T, string | undefined>;
-
     const updateField = createEvent<{
         id: keyof T;
-        value: FormType[keyof T];
+        value: FormType<T>[keyof T];
     }>();
+
+    const reset = createEvent();
 
     const updateError = createEvent<{
         id: keyof T;
         error: string | undefined;
     }>();
 
-    const $form = createStore<FormType>(
+    const $form = createStore<FormType<T>>(
         Object.keys(form).reduce((acc, key) => {
             acc[key as keyof T] = form[key].init;
             return acc;
         }, {} as Record<keyof T, T[string]['init']>)
     );
 
-    const $errors = createStore<ErrorType>(
+    $form.reset(reset);
+
+    const $errors = createStore<ErrorType<T>>(
         Object.keys(form).reduce((acc, key) => {
             acc[key as keyof T] = undefined;
             return acc;
         }, {} as Record<keyof T, string | undefined>)
     );
+
+    $errors.reset(reset);
 
     sample({
         clock: updateField,
@@ -68,7 +69,10 @@ export const effectorForm = <T extends TForm>(form: T) => {
 
     return {
         useForm: (
-            handleSubmit: (values: FormType) => void,
+            handleSubmit: (
+                values: FormType<T>,
+                handleCleanForm: () => void
+            ) => void,
             validate?: (keyof T)[]
         ) => {
             const [values, errors] = useUnit([$form, $errors]);
@@ -165,12 +169,16 @@ export const effectorForm = <T extends TForm>(form: T) => {
                 return hasErrors;
             };
 
+            const handleCleanForm = () => {
+                reset();
+            };
+
             const onSubmit = async () => {
                 const hasErrors = await validateFields();
                 console.log(hasErrors, errors);
 
                 if (!hasErrors) {
-                    handleSubmit(values);
+                    handleSubmit(values, handleCleanForm);
                 }
             };
 

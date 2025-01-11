@@ -30,7 +30,7 @@ export const CreatePlaylistModal = () => {
     const [photo, setPhoto] = useState<File | null>(null);
     const navigate = useNavigate();
     const { values, errors, onSubmit, onChange, handleEnterKeyDown } = useForm(
-        (obj) => {
+        (obj, handleClean) => {
             const playlist = createPlaylistObject(
                 createAuthorObject(currentUser),
                 {
@@ -45,6 +45,7 @@ export const CreatePlaylistModal = () => {
                 onSuccess: () => {
                     navigate(`/playlist/${playlist.id}`);
                     modalModel.events.close();
+                    handleClean();
                 },
             });
         }
