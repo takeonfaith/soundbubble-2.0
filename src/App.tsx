@@ -10,6 +10,7 @@ import { FB } from './firebase';
 import { GlobalStyles } from './globalStyles';
 import { CustomRouter } from './routing/CustomRouter';
 import { useSidebar } from './layout/sidebar/model';
+import { useOnboarding } from './features/onboarding';
 
 const AppStyled = styled.div`
     height: 100dvh;
@@ -27,6 +28,8 @@ const AppStyled = styled.div`
 function App() {
     const { themeParams } = useTheme();
     const isCollapsed = useSidebar();
+
+    useOnboarding();
 
     useEffect(() => {
         FB.onAuthStateChanged(async (userCred) => {
