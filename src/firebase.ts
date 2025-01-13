@@ -125,6 +125,7 @@ type TSubcollection<T extends TCollections> = T extends 'newChats'
           | 'addedSongs'
           | 'lastQueue'
           | 'chats'
+          | 'history'
     : never;
 
 type TSubcollectionDataType<
@@ -491,56 +492,42 @@ export class FB {
     }
 }
 
-// const setNewUsers = async () => {
-//     const allUsers = await FB.getAll('users');
+const setNewUsers = async () => {
+    const allUsers = await FB.getAll('users');
 
-//     const setUser = async (user: TUser) => {
-//         const { friends } = user;
+    const setUser = async (user: TUser) => {
+        const MAX_HISTORY_ITEMS = 50;
+        const historyIds = await FB.getById('history', user.uid);
+        const hIds = (historyIds?.history ?? []).slice(0, MAX_HISTORY_ITEMS);
+        const ids = hIds.map(() => getUID()) ?? [];
 
-//         const friendIds =
-//             friends
-//                 ?.filter((f) => f.status === FriendStatus.added)
-//                 .map((f) => f.uid) ?? [];
+        if (user.isAuthor) return null;
+        
 
-//         await FB.setDeepByIdsWithBatches(
-//             'users',
-//             [user.uid, 'friends'],
-//             friendIds,
-//             (id) => ({ id, time: Date.now() })
-//         );
+        console.log({ user: user.displayName, ids, hIds });
 
-//         const requestIds =
-//             friends
-//                 ?.filter((f) => f.status === FriendStatus.requested)
-//                 .map((f) => f.uid) ?? [];
+        // const batch = writeBatch(FB.firestore);
 
-//         await FB.setDeepByIdsWithBatches(
-//             'users',
-//             [user.uid, 'friendRequests'],
-//             requestIds,
-//             (id) => ({ id, time: Date.now() })
-//         );
+        // for (let i = 0; i < ids.length; i++) {
+        //     const id = ids[i];
+        //     const ref = doc(FB.firestore, 'user', user.uid, 'history', id);
 
-//         const awaitingIds =
-//             friends
-//                 ?.filter((f) => f.status === FriendStatus.awaiting)
-//                 .map((f) => f.uid) ?? [];
+        //     batch.set(ref, {
+        //         songId: hIds[i],
+        //         time: Date.now(),
+        //     });
+        // }
 
-//         await FB.setDeepByIdsWithBatches(
-//             'users',
-//             [user.uid, 'friendAwaiting'],
-//             awaitingIds,
-//             (id) => ({ id, time: Date.now() })
-//         );
-//     };
+        // await batch.commit();
+    };
 
-//     await asyncRequests(allUsers, (user) => {
-//         return setUser(user);
-//     });
+    await asyncRequests(allUsers, (user) => {
+        return setUser(user);
+    });
 
-//     console.log(
-//         'ura!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-//     );
-// };
+    console.log(
+        'ura!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+    );
+};
 
 // setNewUsers();

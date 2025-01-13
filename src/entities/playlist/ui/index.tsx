@@ -24,6 +24,7 @@ type Props = {
     children?: React.ReactNode;
     as?: string;
     isAuthor: boolean;
+    imagePlaceholder?: React.ReactNode;
     onClick?: (playlist: TPlaylist, e: Evt<'a'>) => void;
 };
 
@@ -32,6 +33,7 @@ export const PlaylistItem = ({
     children,
     onClick,
     as,
+    imagePlaceholder,
     isAuthor,
     orientation = 'vertical',
 }: Props) => {
@@ -122,13 +124,17 @@ export const PlaylistItem = ({
                     loading={performingAction}
                 />
             )}
-            <PlaylistCover
-                size={undefined}
-                borderRadius={orientation === 'vertical' ? undefined : '3px'}
-                src={image}
-                colors={imageColors}
-                isAlbum={isAlbum}
-            />
+            {imagePlaceholder ?? (
+                <PlaylistCover
+                    size={undefined}
+                    borderRadius={
+                        orientation === 'vertical' ? undefined : '3px'
+                    }
+                    src={image}
+                    colors={imageColors}
+                    isAlbum={isAlbum}
+                />
+            )}
             <Flex width="100%" jc="space-between">
                 <Flex
                     d="column"

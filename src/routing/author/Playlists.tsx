@@ -44,15 +44,6 @@ export const Playlists = ({ title, uid }: Props) => {
                         />
                     );
                 })}
-                {/* {playlists.map((playlist) => (
-                    <PlaylistItem playlist={playlist} key={playlist.id} />
-                ))}
-                {playlists.map((playlist) => (
-                    <PlaylistItem playlist={playlist} key={playlist.id} />
-                ))}
-                {playlists.map((playlist) => (
-                    <PlaylistItem playlist={playlist} key={playlist.id} />
-                ))} */}
             </HorizontalList>
         </SectionStyled>
     );

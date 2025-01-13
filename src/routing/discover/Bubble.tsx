@@ -156,7 +156,15 @@ export const MeshGradientBubblesWithAudio = ({
     }, [audioData, analyser, colors]);
 
     return (
-        <div>
+        <div
+            style={{
+                height: '100%',
+                overflow: 'hidden',
+                background: `linear-gradient(180deg,${
+                    colors?.[0] ?? '#4f35b66d'
+                }, transparent)`,
+            }}
+        >
             <svg xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <filter id="goo">

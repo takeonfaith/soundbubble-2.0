@@ -12,12 +12,13 @@ import { useForm } from './model';
 
 export const Lyrics = () => {
     const navigate = useNavigate();
-    const { values, updateField, onSubmit } = useForm((form) => {
+    const { values, updateField, onSubmit } = useForm((form, cleanForm) => {
         uploadSong({
             form,
             onSuccess: () => {
                 modalModel.events.close();
                 navigate(`/author/${form.authors[0].uid}`);
+                cleanForm();
             },
         });
     });

@@ -9,17 +9,13 @@ import {
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
 import { MeshGradientBubblesWithAudio } from './Bubble';
+import { YearPlaylists } from './YearPlaylists';
 
 const DiscoverPageStyled = styled.div`
     position: relative;
     width: 100%;
     height: 100%;
     overflow: auto;
-    background: linear-gradient(
-        180deg,
-        ${({ theme, color }) =>
-            `${color ?? '#4f35b66d'}, ${theme.colors.pageBackground}`}
-    );
 
     .noise-layer {
         display: block;
@@ -73,6 +69,7 @@ export const DiscoverPage = () => {
                     </Flex>
                 </Button>
             </PlaybuttonStyled>
+            <YearPlaylists />
         </DiscoverPageStyled>
     );
 };
