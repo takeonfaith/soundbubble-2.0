@@ -159,8 +159,8 @@ export const allRoutes: TRoute[] = [
         private: true,
     },
     {
-        url: 'chat',
-        title: 'Chat',
+        url: 'chats',
+        title: 'Chats',
         icon: <IconMessage />,
         component: <ChatPage />,
         children: [
@@ -304,7 +304,7 @@ export const menuRoutes = getRoutes([
     'Trends',
     'Liked',
     'History',
-    'Chat',
+    'Chats',
     'Friends',
     'Settings',
 ]);
@@ -313,6 +313,6 @@ export const mobileMenuRoutes = getRoutes([
     'Wave',
     'Trends',
     'Liked',
-    'Chat',
+    'Chats',
     'Search',
 ]);

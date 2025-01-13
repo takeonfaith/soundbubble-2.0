@@ -19,9 +19,10 @@ export const SignUpModal = () => {
         });
     };
 
-    const { values, errors, onSubmit, onChange } = useForm(handleNext, [
-        'name',
-    ]);
+    const { values, errors, onSubmit, onChange, handleEnterKeyDown } = useForm(
+        handleNext,
+        ['name']
+    );
 
     return (
         <SignUpWrapper>
@@ -53,6 +54,7 @@ export const SignUpModal = () => {
                     onChange={onChange}
                     error={errors.name}
                     maxLength={30}
+                    onKeyDown={handleEnterKeyDown}
                 />
             </Flex>
 

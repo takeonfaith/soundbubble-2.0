@@ -98,6 +98,7 @@ export const $friendRequests = createStore<TUser[]>([]);
 export const $awaiting = createStore<TUser[]>([]);
 $friends.reset(logout);
 $friendRequests.reset(logout);
+$awaiting.reset(logout);
 
 logout.watch(() => {
     unsubscribe?.();

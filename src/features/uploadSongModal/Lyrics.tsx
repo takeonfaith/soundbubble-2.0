@@ -1,7 +1,9 @@
+import { useNavigate } from 'react-router';
 import {
     uploadSong,
     useUploadingSong,
 } from '../../entities/song/new-model/upload';
+import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { Textarea } from '../../shared/components/textarea';
@@ -9,12 +11,16 @@ import { SignUpModalStyled } from '../signUpModal/styles';
 import { useForm } from './model';
 
 export const Lyrics = () => {
-    const { values, updateField, onSubmit, errors } = useForm((val) => {
-        console.log({ val });
-
-        uploadSong(val);
+    const navigate = useNavigate();
+    const { values, updateField, onSubmit } = useForm((form) => {
+        uploadSong({
+            form,
+            onSuccess: () => {
+                modalModel.events.close();
+                navigate(`/author/${form.authors[0].uid}`);
+            },
+        });
     });
-    console.log(errors);
 
     const uploadingSong = useUploadingSong();
 

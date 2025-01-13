@@ -26,7 +26,7 @@ export const MessageStyled = styled.div`
     position: relative;
 
     &.new {
-        animation: messageAppear 0.3s forwards;
+        animation: messageAppear 0.15s forwards;
 
         @keyframes messageAppear {
             0% {

@@ -78,6 +78,7 @@ export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
                         value={values.email}
                         required
                         error={errors.email}
+                        focusOnLoad
                     />
                     <PasswordInput
                         placeholder="Enter your password"

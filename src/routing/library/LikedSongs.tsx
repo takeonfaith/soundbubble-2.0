@@ -42,6 +42,18 @@ export const LikedSongs = () => {
         }
     }, [library, searching.value]);
 
+    if (!currentUser) {
+        return (
+            <PageMessage
+                icon={IconMusicOff}
+                title={'Need to log in'}
+                description={'To listen to your favorite songs'}
+            >
+                <LoginButton />
+            </PageMessage>
+        );
+    }
+
     return (
         <ContentWrapper>
             <SkeletonPageAnimation
@@ -66,22 +78,7 @@ export const LikedSongs = () => {
                     />
                 )}
                 <VerticalSongsList queue={queue} />
-                {!currentUser && (
-                    <Flex
-                        height="100%"
-                        width="100%"
-                        jc="center"
-                        padding="20vh 0"
-                    >
-                        <PageMessage
-                            icon={IconMusicOff}
-                            title={'Need to log in'}
-                            description={'To listen to your favorite songs'}
-                        >
-                            <LoginButton />
-                        </PageMessage>
-                    </Flex>
-                )}
+
                 {currentUser && !library.length && (
                     <PageMessage
                         icon={IconMusicOff}

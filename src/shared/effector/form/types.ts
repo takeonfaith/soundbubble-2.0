@@ -39,3 +39,8 @@ export type TForm = {
         StrType | 'file' | 'authors' | 'number' | 'stringArray'
     >;
 };
+
+export type FormType<T extends TForm> = {
+    [key in keyof T]: TFields<T[key]['type']>['init'];
+};
+export type ErrorType<T extends TForm> = Record<keyof T, string | undefined>;

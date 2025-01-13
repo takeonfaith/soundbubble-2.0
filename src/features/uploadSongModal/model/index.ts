@@ -1,7 +1,8 @@
 import { TUser } from '../../../entities/user/model/types';
 import { effectorForm } from '../../../shared/effector/form';
+import { FormType } from '../../../shared/effector/form/types';
 
-export const { useForm } = effectorForm({
+const form = {
     songFile: {
         type: 'file',
         required: true,
@@ -67,4 +68,8 @@ export const { useForm } = effectorForm({
         required: true,
         init: new Date().toLocaleDateString('fr-CA'),
     },
-});
+} as const;
+
+export type AddSongFormType = FormType<typeof form>;
+
+export const { useForm } = effectorForm(form);

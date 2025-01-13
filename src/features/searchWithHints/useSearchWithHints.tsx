@@ -24,10 +24,7 @@ export const useSearchWithHints = ({
     const allSuggestions = [...visibleSearchHistory, ...suggestions];
     const ref = useRef<HTMLDivElement>(null);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const visibleInputValue =
-        selectedSuggestion !== null
-            ? allSuggestions[selectedSuggestion]?.fullName
-            : inputValue;
+    const visibleInputValue = inputValue;
 
     useEffect(() => {
         setInputValue(initialValue);
@@ -87,7 +84,11 @@ export const useSearchWithHints = ({
         onChange(newValue);
         setInputValue(newValue);
         setShowSuggestions(true);
-        setSelectedSuggestion(null);
+        if (suggestions.length === 1) {
+            setSelectedSuggestion(0);
+        } else {
+            setSelectedSuggestion(null);
+        }
     };
 
     const handleFocus = () => {
@@ -143,15 +144,17 @@ export const useSearchWithHints = ({
 
         const targetRect = ref.current.getBoundingClientRect();
 
+        const maxHeightInScreen =
+            window.innerHeight -
+            targetRect?.top +
+            ref.current.offsetHeight -
+            100;
+
         return {
             width: ref.current?.offsetWidth,
             top: targetRect?.top + ref.current.offsetHeight,
             left: targetRect?.left,
-            maxHeight:
-                window.innerHeight -
-                targetRect?.top +
-                ref.current.offsetHeight -
-                100,
+            maxHeight: Math.min(maxHeightInScreen, 565),
         };
     };
 
