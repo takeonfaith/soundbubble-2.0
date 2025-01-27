@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { createPlaylistObject } from '../../entities/playlist/lib/createPlaylistObject';
@@ -11,6 +10,8 @@ import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
 import { PhotoInput } from '../../shared/components/photoInput';
 import { useForm } from './model';
+import { useEffect, useRef } from 'react';
+import { PLAYLIST_DEFAULT_NAME } from './model/constants';
 
 const CreatePlaylistModalStyled = styled.div`
     padding: 20px;
@@ -26,40 +27,52 @@ const CreatePlaylistModalStyled = styled.div`
 export const CreatePlaylistModal = () => {
     const [currentUser] = userModel.useUser();
     const [loading] = playlistModel.useCreatePlaylist();
-    const [colors, setColors] = useState<string[]>([]);
-    const [photo, setPhoto] = useState<File | null>(null);
     const navigate = useNavigate();
-    const { values, errors, onSubmit, onChange, handleEnterKeyDown } = useForm(
-        (obj, handleClean) => {
-            const playlist = createPlaylistObject(
-                createAuthorObject(currentUser),
-                {
-                    name: obj.name,
-                    image: photo,
-                    imageColors: colors,
-                }
-            );
+    const nameRef = useRef<HTMLInputElement | null>(null);
+    const {
+        values,
+        errors,
+        onSubmit,
+        onChange,
+        updateField,
+        handleEnterKeyDown,
+    } = useForm((obj, handleClean) => {
+        const { name, photo, colors } = obj;
+        const playlist = createPlaylistObject(createAuthorObject(currentUser), {
+            name: name,
+            image: photo,
+            imageColors: colors,
+        });
 
-            playlistModel.events.createPlaylist({
-                playlist,
-                onSuccess: () => {
-                    navigate(`/playlist/${playlist.id}`);
-                    modalModel.events.close();
-                    handleClean();
-                },
-            });
-        }
-    );
+        playlistModel.events.createPlaylist({
+            playlist,
+            onSuccess: () => {
+                navigate(`/playlist/${playlist.id}`);
+                modalModel.events.close();
+                handleClean();
+            },
+        });
+    });
+
+    useEffect(() => {
+        nameRef.current?.select();
+
+        return () => {
+            updateField({ id: 'name', value: PLAYLIST_DEFAULT_NAME });
+        };
+    }, [updateField]);
 
     if (!currentUser) return null;
 
     return (
         <CreatePlaylistModalStyled>
             <PhotoInput
-                file={photo}
-                colors={colors}
-                onUpload={(photo) => setPhoto(photo)}
-                onColors={(colors) => setColors(colors)}
+                file={values.photo}
+                colors={values.colors}
+                onUpload={(photo) => updateField({ id: 'photo', value: photo })}
+                onColors={(colors) =>
+                    updateField({ id: 'colors', value: colors })
+                }
             />
             <Flex
                 height="100%"
@@ -76,6 +89,7 @@ export const CreatePlaylistModal = () => {
                     value={values.name}
                     id="name"
                     error={errors.name}
+                    ref={nameRef}
                     onChange={onChange}
                 />
                 <DefaultButton

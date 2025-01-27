@@ -56,6 +56,18 @@ export const Settings = ({ childrenSettings, path = '' }: Props) => {
                         path === '' ? '' : '.'
                     }${setting}` as Paths<typeof DEFAULT_SETTINGS>;
 
+                    console.log(
+                        'visible' in currentSetting,
+                            !currentSetting.visible?.(settings)
+                    );
+
+                    if (
+                        'visible' in currentSetting &&
+                        !currentSetting.visible?.(settings)
+                    ) {
+                        return null;
+                    }
+
                     if (type === 'link') {
                         const Icon = currentSetting.icon;
 
@@ -65,7 +77,6 @@ export const Settings = ({ childrenSettings, path = '' }: Props) => {
                                 children={currentSetting.children}
                                 icon={Icon !== undefined ? <Icon /> : null}
                                 color={currentSetting.color}
-                                // @ts-expect-error dadada
                                 path={`${updatePath}.children`}
                                 settings={settings}
                                 currentSetting={currentSetting}
@@ -105,6 +116,11 @@ export const Settings = ({ childrenSettings, path = '' }: Props) => {
                                 settings={settings}
                             />
                         );
+                    }
+
+                    if (type === 'component') {
+                        const Component = currentSetting.component;
+                        return <Component />;
                     }
                 })}
             </Flex>

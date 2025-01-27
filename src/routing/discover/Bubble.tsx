@@ -164,6 +164,7 @@ export const MeshGradientBubblesWithAudio = ({
                     colors?.[0] ?? '#4f35b66d'
                 }, transparent)`,
             }}
+            className='mesh-gradient'
         >
             <svg xmlns="http://www.w3.org/2000/svg">
                 <defs>

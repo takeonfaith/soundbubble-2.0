@@ -65,27 +65,38 @@ export const UploadSongModal = () => {
 
     return (
         <SignUpModalStyled>
-            <Flex d="column" gap={10} width="100%" jc="center" height="100%">
-                <Input
-                    placeholder="Enter youtube link..."
-                    value={values.youtubeLink}
-                    error={errors.youtubeLink}
-                    label="Youtube link"
-                    id="youtubeLink"
-                    onChange={onChange}
-                    icon={
-                        <IconBrandYoutubeFilled
-                            opacity={1}
-                            color="red"
-                            stroke="#ff0000"
-                        />
-                    }
-                />
-                <Flex width="100%" gap={20}>
-                    <Divider />
-                    <Subtext>Or</Subtext>
-                    <Divider />
-                </Flex>
+            <Flex
+                d="column"
+                gap={20}
+                width="100%"
+                jc="center"
+                height="100%"
+                padding="0 0 30px 0"
+            >
+                {!values.songFile && (
+                    <Input
+                        placeholder="Enter youtube link..."
+                        value={values.youtubeLink}
+                        error={errors.youtubeLink}
+                        label="Youtube link"
+                        id="youtubeLink"
+                        onChange={onChange}
+                        icon={
+                            <IconBrandYoutubeFilled
+                                opacity={1}
+                                color="red"
+                                stroke="#ff0000"
+                            />
+                        }
+                    />
+                )}
+                {!values.songFile && (
+                    <Flex width="100%" gap={20}>
+                        <Divider />
+                        <Subtext>Or</Subtext>
+                        <Divider />
+                    </Flex>
+                )}
                 <SongInput
                     error={errors.songFile}
                     onChange={handleChange}

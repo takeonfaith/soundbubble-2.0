@@ -1,15 +1,16 @@
+import { useEffect } from 'react';
+import { userModel } from '../../../entities/user/model';
 import { modalModel } from '../../../layout/modal/model';
-import { useEffectOnce } from '../../../shared/hooks/useEffectOnce';
 import { FirstScreen } from '../ui/FirstScreen';
-
-const ONBOARDING_KEY = 'onboarding';
+import { ONBOARDING_KEY } from '../constants';
 
 export const useOnboarding = () => {
-    const shouldShow = JSON.parse(
-        localStorage.getItem(ONBOARDING_KEY) ?? 'true'
-    ) as boolean;
+    const [currentUser] = userModel.useUser();
+    const shouldShow =
+        !!currentUser &&
+        !((JSON.parse(localStorage.getItem(ONBOARDING_KEY) ?? 'false') as boolean));
 
-    useEffectOnce(() => {
+    useEffect(() => {
         if (shouldShow) {
             modalModel.events.open({
                 title: '',

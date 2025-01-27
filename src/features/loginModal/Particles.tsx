@@ -41,12 +41,14 @@ const ParticlesStyles = styled.div`
         animation: shoot 3s ease-out infinite;
         animation-name: shoot, fade;
         border-radius: 2px;
+        opacity: 0;
 
         ${getParticles()}
     }
 
     @keyframes shoot {
         0% {
+            opacity: 1;
             transform: translate(200px, 200px);
         }
     }
@@ -60,13 +62,17 @@ const ParticlesStyles = styled.div`
 
 type Props = {
     quantity?: number; // Number of particles to display (default: 30)
+    particle?: React.ReactNode;
 };
 
-export const Particles = ({ quantity = PARTICLES_QUANTITY }: Props) => {
+export const Particles = ({
+    particle,
+    quantity = PARTICLES_QUANTITY,
+}: Props) => {
     return (
-        <ParticlesStyles>
+        <ParticlesStyles className="particles">
             {Array.from(Array(quantity)).map((_, index) => {
-                return <div className="particle" key={index} />;
+                return particle ?? <div className="particle" key={index} />;
             })}
         </ParticlesStyles>
     );

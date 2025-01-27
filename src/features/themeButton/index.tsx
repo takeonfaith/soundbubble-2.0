@@ -4,6 +4,7 @@ import { toggleTheme, useTheme } from '../../app/theme';
 import { settingsModel } from '../../entities/settings/model';
 import { Button } from '../../shared/components/button';
 import Popover from '../../shared/components/popover';
+import { ETheme } from '../../app/theme/types';
 
 const ThemeButtonStyled = styled(Button)`
     min-height: 35px;
@@ -59,8 +60,8 @@ export const ThemeButton = () => {
 
     const handleTheme = () => {
         settingsModel.events.updateSettings({
-            path: 'settings.items.appearance.children.theme.items.darkMode.value',
-            value: !isLight,
+            path: 'settings.items.appearance.children.theme.items.darkMode',
+            value: isLight === ETheme.dark ? ETheme.light : ETheme.dark,
         });
         toggleTheme();
     };

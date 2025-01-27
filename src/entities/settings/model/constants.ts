@@ -2,11 +2,14 @@ import {
     IconColorFilter,
     IconKeyframes,
     IconLanguage,
-    IconMoon,
     IconSettings,
     IconUserCircle,
 } from '@tabler/icons-react';
+import { ETheme } from '../../../app/theme/types';
 import { Logo } from '../../../shared/components/logo';
+import { ThemeSwitch } from '../ui/ThemeSwitch';
+import { TSettings } from './types';
+import { TimeRange } from '../ui/TimeRange';
 
 export const DEFAULT_SETTINGS = {
     settings: {
@@ -82,13 +85,17 @@ export const DEFAULT_SETTINGS = {
                         items: {
                             darkMode: {
                                 key: 'Dark Mode',
-                                icon: IconMoon,
-                                type: 'toggle',
-                                value: true,
+                                type: 'component',
+                                component: ThemeSwitch,
+                                value: ETheme.dark,
                             },
                             'auto-night-mode': {
                                 key: 'Auto-Dark mode',
                                 type: 'link',
+                                color: 'blue',
+                                visible: ({ settings }) =>
+                                    settings.items?.appearance?.children.theme
+                                        .items.darkMode.value === 'auto',
                                 children: {
                                     'auto-night-mode-list': {
                                         type: 'section',
@@ -98,12 +105,32 @@ export const DEFAULT_SETTINGS = {
                                                 type: 'select-list',
                                                 key: 'Auto-Night mode',
                                                 items: [
-                                                    { text: 'Disabled' },
-                                                    { text: 'System' },
-                                                    { text: 'Scheduled' },
-                                                    { text: 'Automatic' },
+                                                    {
+                                                        text: 'System',
+                                                        subtext:
+                                                            'The same as in your device',
+                                                    },
+                                                    {
+                                                        text: 'Scheduled',
+                                                        subtext:
+                                                            'Choose your own prefered time',
+                                                    },
                                                 ],
-                                                value: 'Disabled',
+                                                value: 'System',
+                                            },
+                                            'auto-night-time': {
+                                                type: 'component',
+                                                visible: ({ settings }) =>
+                                                    settings.items?.appearance
+                                                        ?.children.theme.items[
+                                                        'auto-night-mode'
+                                                    ].children[
+                                                        'auto-night-mode-list'
+                                                    ].items[
+                                                        'auto-night-model-link'
+                                                    ].value === 'Scheduled',
+                                                component: TimeRange,
+                                                value: '10:00 - 18:00',
                                             },
                                         },
                                     },

@@ -19,6 +19,7 @@ export const SwitchToggle = ({
             onClick={onClick}
             $width={WIDTH[size]}
             $height={HEIGHT[size]}
+            className='switch-toggle'
         >
             <input type="checkbox" checked={checked} onChange={onChange} />
             <div className="switchToggle">

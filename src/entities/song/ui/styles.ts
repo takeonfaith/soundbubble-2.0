@@ -35,7 +35,6 @@ export const MoreInfoButton = styled(Button)`
     color: ${({ theme }) => theme.colors.textColor};
     border: none;
     padding: 4px;
-    margin-right: 10px;
     border-radius: ${({ theme }) => theme.borderRadius.mild};
     cursor: pointer;
     opacity: 0;
@@ -47,6 +46,11 @@ export const MoreInfoButton = styled(Button)`
     svg {
         width: var(--icon-size);
         height: var(--icon-size);
+    }
+
+    &.current {
+        color: ${({ theme }) => theme.scheme.pink.action};
+        opacity: 1;
     }
 
     @container (max-width: 699px) {
@@ -284,7 +288,7 @@ export const Listens = styled.div`
     &.outside {
         @container (min-width: 700px) {
             display: flex;
-            min-width: 200px;
+            min-width: 160px;
         }
 
         @container (max-width: 699px) {
@@ -313,6 +317,7 @@ export const SongButtons = styled.div`
     display: flex;
     align-items: center;
     gap: 6px;
+    padding-right: 10px;
 
     & .like-button {
         display: none;

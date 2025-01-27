@@ -8,6 +8,7 @@ import {
     IconPlus,
     IconSearch,
     IconShare3,
+    IconSparkles,
     IconTrash,
     IconWorld,
 } from '@tabler/icons-react';
@@ -34,6 +35,15 @@ import { AddSongsToPlaylistModal } from '../editing/AddSongsToPlaylistModal';
 import { Like } from './Like';
 import { PlaylistSearch } from './PlaylistSearch';
 import Popover from '../../../../shared/components/popover';
+import { styled } from 'styled-components';
+import { slowSongsApi } from '../../../../entities/song/new-model/slow-songs';
+
+const MainButtonsWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    outline: 1px solid ${({ theme }) => theme.colors.border};
+    border-radius: 24px;
+`;
 
 type Props = {
     playlist: TPlaylist | null;
@@ -60,11 +70,12 @@ export const PlaylistControlButtons = ({
     const [currentUser] = userModel.useUser();
     const { state } = songModel.useSong();
     const navigate = useNavigate();
+    const [slowMode, setSlowMode] = useState(false);
 
     const noSongs = queue.songs.length === 0;
-    const [buttonType, setButtonType] = useState<'play' | 'shuffle' | null>(
-        null
-    );
+    const [buttonType, setButtonType] = useState<
+        'play' | 'shuffle' | 'slow' | null
+    >(null);
     const isAuthor = currentUser
         ? playlist?.authors.find((author) => author.uid === currentUser.uid)
         : false;
@@ -235,30 +246,72 @@ export const PlaylistControlButtons = ({
             )}
             {!noSongs && !isEditing && (
                 <Flex gap={10}>
-                    <Button
-                        $height="45px"
-                        $width="45px"
-                        style={{
-                            borderRadius: '30px',
-                            color: '#fff',
-                        }}
-                        $primaryColor={primaryColor}
-                        className="primary"
-                        onClick={() => {
-                            setButtonType('play');
-                            songModel.controls.playPauseQueue({
-                                queue,
-                                currentSongIndex: 0,
-                            });
-                        }}
-                        disabled={buttonsDisabled}
-                    >
-                        <PlayPauseIcon
-                            loading={buttonType === 'play'}
-                            playling={false}
-                            size={20}
-                        />
-                    </Button>
+                    <MainButtonsWrapper>
+                        <Button
+                            $height="45px"
+                            $width="45px"
+                            style={{
+                                borderRadius: '30px',
+                                color: !slowMode ? '#fff' : undefined,
+                            }}
+                            $primaryColor={primaryColor}
+                            className={!slowMode ? 'primary' : ''}
+                            onClick={() => {
+                                setButtonType('play');
+                                songModel.controls.playPauseQueue({
+                                    queue,
+                                    currentSongIndex: 0,
+                                });
+                                setSlowMode(false);
+                                slowSongsApi.reset();
+                            }}
+                            disabled={buttonsDisabled}
+                        >
+                            <PlayPauseIcon
+                                loading={buttonType === 'play'}
+                                playling={false}
+                                size={20}
+                            />
+                        </Button>
+                        <Popover content="Slow version">
+                            <Button
+                                style={{
+                                    color: slowMode ? '#fff' : undefined,
+                                    borderRadius: '100%',
+                                }}
+                                $width="45px"
+                                $height="45px"
+                                $primaryColor={primaryColor}
+                                className={slowMode ? 'primary' : ''}
+                                onClick={() => {
+                                    slowSongsApi.add(
+                                        queue.songs.reduce((acc, song) => {
+                                            if (song.slowSrc) {
+                                                acc.push(song.id);
+                                            }
+
+                                            return acc;
+                                        }, [] as string[])
+                                    );
+                                    if (!slowMode) {
+                                        setButtonType('slow');
+                                    }
+
+                                    setSlowMode(true);
+                                    songModel.controls.playPauseQueue({
+                                        queue,
+                                        currentSongIndex: 0,
+                                    });
+                                }}
+                            >
+                                {buttonType === 'slow' ? (
+                                    <Loading />
+                                ) : (
+                                    <IconSparkles />
+                                )}
+                            </Button>
+                        </Popover>
+                    </MainButtonsWrapper>
                     <Button
                         $width="45px"
                         $height="45px"

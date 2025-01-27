@@ -1,8 +1,10 @@
 import { IconDots, IconPlaylist, IconQuote } from '@tabler/icons-react';
 import { useTheme } from 'styled-components';
 import { chatModel } from '../../entities/chat/model';
+import { SongState } from '../../entities/song/model/types';
 import { SongCover } from '../../entities/song/ui/SongCover';
 import { LikeButton } from '../../features/likeButton';
+import { VolumeButton } from '../../features/volumeButton';
 import { Authors } from '../../shared/components/authors';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
@@ -10,7 +12,6 @@ import { MusicControls } from '../../shared/components/musicControls';
 import { MusicControlsStyled } from '../../shared/components/musicControls/styles';
 import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
 import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
-import { ShareButton } from './ShareButton';
 import {
     MobilePlayButton,
     PlayerActionButtons,
@@ -20,8 +21,6 @@ import {
     SongTitle,
 } from './styles';
 import { usePlayer } from './usePlayer';
-import { SongState } from '../../entities/song/model/types';
-import { VolumeButton } from '../../features/volumeButton';
 
 export const Player = () => {
     const {

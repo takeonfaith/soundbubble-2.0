@@ -153,6 +153,7 @@ export const PageTop = ({
                     icon={icon}
                     playlist={playlist}
                     imageUrl={imageUrl}
+                    isOwner={isOwner}
                 />
                 <Flex gap={30} d="column" ai="flex-start">
                     <Flex

@@ -10,7 +10,8 @@ export const Titles = styled.div`
     padding: 8px;
     grid-template-columns: 55px 1fr 1fr 200px 86px;
     color: ${({ theme }) => theme.colors.textColor};
-    position: relative;
+    position: sticky;
+    top: 70px;
     background: ${({ theme }) => theme.colors.pageBackground};
     z-index: 2;
 

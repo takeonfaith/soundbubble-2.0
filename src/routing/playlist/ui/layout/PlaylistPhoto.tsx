@@ -25,6 +25,7 @@ type Props = {
     icon: React.ReactNode;
     isEditing?: boolean;
     imageUrl?: string;
+    isOwner: boolean;
 };
 
 export const PlaylistPhoto = ({
@@ -32,6 +33,7 @@ export const PlaylistPhoto = ({
     icon,
     isEditing,
     imageUrl,
+    isOwner,
 }: Props) => {
     const [currentPlaylist] = playlistModel.usePlaylist();
 
@@ -44,8 +46,6 @@ export const PlaylistPhoto = ({
         imageColors: string[],
         setLoading: React.Dispatch<React.SetStateAction<boolean>>
     ) => {
-        console.log(newPhoto, imageColors);
-
         playlistModel.events.updatePlaylist({
             update: {
                 image: newPhoto,
@@ -68,23 +68,25 @@ export const PlaylistPhoto = ({
             colors={playlist?.imageColors}
             isAlbum={false}
         >
-            <EditPhotoOverlay
-                className={isEditing ? 'visible' : ''}
-                onClick={() =>
-                    modalModel.events.open({
-                        title: 'Edit playlist cover',
-                        content: (
-                            <EditPhotoModal
-                                onSave={handleUpdatePlaylistPhoto}
-                                imageColors={currentPlaylist.imageColors}
-                                photo={currentPlaylist.image}
-                            />
-                        ),
-                    })
-                }
-            >
-                <IconPencil color="#fff" size={50} />
-            </EditPhotoOverlay>
+            {isOwner && (
+                <EditPhotoOverlay
+                    className={isEditing ? 'visible' : ''}
+                    onClick={() =>
+                        modalModel.events.open({
+                            title: 'Edit playlist cover',
+                            content: (
+                                <EditPhotoModal
+                                    onSave={handleUpdatePlaylistPhoto}
+                                    imageColors={currentPlaylist.imageColors}
+                                    photo={currentPlaylist.image}
+                                />
+                            ),
+                        })
+                    }
+                >
+                    <IconPencil color="#fff" size={50} />
+                </EditPhotoOverlay>
+            )}
         </PlaylistCover>
     );
 };

@@ -4,6 +4,7 @@ import { THEMES } from '../../../app/theme/constants';
 type TSettingGeneral = {
     icon?: (props: TablerIconsProps) => JSX.Element;
     key: string;
+    visible?: (settings: TSettings) => boolean;
 };
 
 export type TSettingLink = TSettingGeneral & {
@@ -36,11 +37,18 @@ export type TSettingSelectList = TSettingGeneral & {
     type: 'select-list';
 };
 
+export type TSettingComponent = TSettingGeneral & {
+    component: () => JSX.Element;
+    value: string;
+    type: 'component';
+};
+
 export type TSettings = {
     [key: string]:
         | TSettingSection
         | TSettingLink
         | TSettingToggle
+        | TSettingComponent
         | TSettingSelect
         | TSettingSelectList;
 };

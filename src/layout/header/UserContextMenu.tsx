@@ -1,4 +1,5 @@
 import {
+    IconBook,
     IconChevronRight,
     IconCirclePlus,
     IconLogout,
@@ -32,6 +33,8 @@ import { popupModel } from '../popup/model';
 import { LoadingWrapper } from '../../shared/components/loadingWrapper';
 import { deleteAccountFx } from '../../entities/user/model/delete-account';
 import { getShortString } from '../../shared/funcs/getShortString';
+import { FirstScreen } from '../../features/onboarding/ui/FirstScreen';
+import { SecondScreen } from '../../features/onboarding/ui/SecondScreen';
 
 const UserProfileModalStyled = styled.div`
     display: flex;
@@ -131,6 +134,13 @@ const UserProfileModal = () => {
         });
     };
 
+    const handleOpenTutorial = () => {
+        modalModel.events.open({
+            title: '',
+            content: <SecondScreen />,
+        });
+    };
+
     return (
         <UserProfileModalStyled>
             {isLoadingEditing || (isDeletingAccount && <LoadingWrapper />)}
@@ -193,6 +203,16 @@ const UserProfileModal = () => {
                         Settings
                     </Flex>
                     <IconChevronRight size={18} />
+                </Button>
+                <Button
+                    onClick={handleOpenTutorial}
+                    $width="100%"
+                    style={{ padding: '0 10px' }}
+                >
+                    <Flex width="100%" gap={16}>
+                        <IconBook size={20} />
+                        Tutorial
+                    </Flex>
                 </Button>
                 <Divider />
                 <Button

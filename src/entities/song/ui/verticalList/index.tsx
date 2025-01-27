@@ -1,6 +1,6 @@
 import { TQueue, TSong } from '@song/model/types';
 import { PlaneSongList } from '../planeList';
-import { SongsVerticalListStyled, Title, Titles } from './styles';
+import { Title, Titles } from './styles';
 
 type Props = {
     queue: TQueue;
@@ -17,7 +17,7 @@ export const VerticalSongsList = (props: Props) => {
     } = props;
 
     return (
-        <SongsVerticalListStyled>
+        <>
             {!!songs.length && (
                 <Titles
                     className={
@@ -41,6 +41,6 @@ export const VerticalSongsList = (props: Props) => {
                 </Titles>
             )}
             <PlaneSongList {...props} />
-        </SongsVerticalListStyled>
+        </>
     );
 };

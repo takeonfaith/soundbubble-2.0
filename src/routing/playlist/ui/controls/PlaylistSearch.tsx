@@ -25,7 +25,7 @@ export const PlaylistSearch = ({ searching }: Props) => {
     }, []);
 
     return (
-        <Flex width="100%" gap={4}>
+        <Flex width="100%" gap={4} height='45px'>
             <Input
                 icon={<IconSearch />}
                 placeholder="Search for songs in this playlist..."
