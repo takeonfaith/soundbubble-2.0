@@ -28,7 +28,7 @@ export const usePlayer = () => {
 
         popupModel.events.open({
             content: <SongMoreContextMenu song={currentSong} />,
-            height: 329,
+            height: 345.5,
             e,
         });
     };

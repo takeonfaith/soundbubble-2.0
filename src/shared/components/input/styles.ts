@@ -25,8 +25,8 @@ const Icon = styled.div`
     }
 
     img {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
     }
 
     @media (max-width: 768px) {
@@ -42,6 +42,7 @@ export const InputFieldWrapper = styled.div`
 export const LeftIcon = styled(Icon)`
     left: 10px;
 `;
+
 export const RightIcon = styled(Icon)`
     right: 10px;
     cursor: pointer;

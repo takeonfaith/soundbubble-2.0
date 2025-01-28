@@ -1,4 +1,8 @@
-import { IconArrowsShuffle, IconPlayerPlayFilled } from '@tabler/icons-react';
+import {
+    IconArrowsShuffle,
+    IconPlayerPlayFilled,
+    IconSparkles,
+} from '@tabler/icons-react';
 import { PLAYLIST_RADIUS } from '../../entities/playlist/constants';
 import { SongSkeleton } from '../../entities/song/ui/Skeleton';
 import { Flex } from '../../shared/components/flex';
@@ -31,16 +35,35 @@ export const SkeletonLoading = () => {
             >
                 <Flex gap={10} ai="flex-start">
                     <SkeletonShape
-                        width="45px"
-                        height="45px"
-                        radius="100%"
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}
+                        height="fit-content"
+                        width="fit-content"
+                        style={{ borderRadius: '20px' }}
                     >
-                        <IconPlayerPlayFilled size={20} opacity={0.3} />
+                        <Flex>
+                            <SkeletonShape
+                                width="45px"
+                                height="45px"
+                                radius="100%"
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <IconPlayerPlayFilled size={20} opacity={0.3} />
+                            </SkeletonShape>
+                            <div
+                                style={{
+                                    width: '45px',
+                                    height: '45px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <IconSparkles opacity={0.3} />
+                            </div>
+                        </Flex>
                     </SkeletonShape>
                     <SkeletonShape
                         width="45px"
@@ -66,7 +89,7 @@ export const SkeletonLoading = () => {
                 <DesktopGridHeaderStyled
                     width="100%"
                     gap={20}
-                    style={{ marginTop: '4px', marginBottom: '14px' }}
+                    style={{ marginTop: '6px', marginBottom: '14px' }}
                 >
                     <div style={{ width: '40px' }} />
                     <div style={{ width: 'calc(25% - 4px)', height: '18px' }}>

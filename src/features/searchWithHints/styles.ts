@@ -3,6 +3,13 @@ import styled from 'styled-components';
 export const SearchWithHintsStyled = styled.div`
     width: 100%;
     position: relative;
+
+    & kbd {
+        position: absolute;
+        right: 10px;
+        top: 8px;
+        width: 30px;
+    }
 `;
 
 export const HintsStyled = styled.ul`
@@ -109,10 +116,15 @@ export const HintIcon = styled.div`
     justify-content: center;
     align-items: center;
 
-    svg, img {
+    svg {
         color: ${({ theme }) => theme.scheme.grey.text};
         width: 20px;
         height: 20px;
+    }
+
+    img {
+        width: 18px;
+        height: 18px;
     }
 
     @media (max-width: 768px) {

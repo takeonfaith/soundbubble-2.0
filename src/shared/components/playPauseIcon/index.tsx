@@ -10,11 +10,11 @@ type Props = {
     size?: number;
 };
 
-export const PlayPauseIcon = ({ loading, playling, size }: Props) => {
+export const PlayPauseIcon = ({ loading, playling, size = 20 }: Props) => {
     return (
         <>
             {loading ? (
-                <Loading />
+                <Loading size={size / 1.1} />
             ) : playling ? (
                 <IconPlayerPauseFilled size={size} />
             ) : (

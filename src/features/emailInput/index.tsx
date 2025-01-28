@@ -1,4 +1,4 @@
-import { IconAt } from '@tabler/icons-react';
+import { IconMail } from '@tabler/icons-react';
 import { SearchWithHints } from '../searchWithHints';
 import { getSuggestions } from './getSuggestions';
 import { getEmailProviders } from './lib/getEmailProviders';
@@ -20,7 +20,7 @@ export const EmailInput = (props: Props) => {
     );
 
     const icon =
-        value.length !== 0 ? found ? found.icon : <IconAt /> : <IconAt />;
+        value.length !== 0 ? found ? found.icon : <IconMail /> : <IconMail />;
 
     return (
         <SearchWithHints

@@ -14,6 +14,6 @@ export const PageMessageStyled = styled.div`
     }
 
     h3 {
-        font-weight: 400;
+        font-weight: 300;
     }
 `;

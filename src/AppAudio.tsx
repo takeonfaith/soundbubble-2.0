@@ -3,14 +3,15 @@ import { useUnit } from 'effector-react';
 import React, { useEffect, useRef } from 'react';
 import { songModel as songModelNew } from './entities/song/new-model';
 import { $isSliding } from './entities/song/new-model/current-time';
+import { $songSrc } from './entities/song/new-model/slow-songs';
 import { useEffectOnce } from './shared/hooks/useEffectOnce';
-import { useIsSlowVersion } from './entities/song/new-model/slow-songs';
 
 const useAppAudio = () => {
     const { state, lastTime } = songModelNew.useSong();
     const isSliding = useUnit($isSliding);
     const [volume, isMuted] = songModelNew.useVolume();
     const audioRef = useRef<HTMLAudioElement>(null);
+    const songSrc = useUnit($songSrc);
 
     useEffectOnce(() => {
         handleAudioUpload();
@@ -58,6 +59,7 @@ const useAppAudio = () => {
         songModelNew.queue.next('from_end_track');
     };
 
+    console.log(lastTime);
     useEffect(() => {
         if (audioRef.current && isDefined(lastTime) && !isNaN(lastTime ?? 0)) {
             audioRef.current.currentTime = lastTime;
@@ -79,19 +81,18 @@ const useAppAudio = () => {
         handleEnded,
         handlePlaying,
         handleOnCanPlay,
+        songSrc,
     };
 };
 
 export const AppAudio = () => {
-    const { audioRef, handleOnCanPlay, handlePlaying, handleEnded } =
+    const { audioRef, handleOnCanPlay, handlePlaying, handleEnded, songSrc } =
         useAppAudio();
-    const { currentSong } = songModelNew.useSong();
-    const isSlowVersion = useIsSlowVersion(currentSong?.id);
 
     return (
         <audio
             onEnded={handleEnded}
-            src={isSlowVersion ? currentSong?.slowSrc : currentSong?.songSrc}
+            src={songSrc}
             ref={audioRef}
             // loop={loopMode === LoopMode.loopone}
             onTimeUpdate={handlePlaying}

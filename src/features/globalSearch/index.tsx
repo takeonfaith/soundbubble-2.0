@@ -144,6 +144,8 @@ export const GlobalSearch = ({ queryValue, where, showTabs = true }: Props) => {
                 areSuggestionsLoading={isLoadingSuggestions}
                 onChange={handleChange}
                 onSumbit={onSumbit}
+                className="global-search"
+                hotkey={<kbd>/</kbd>}
             />
             {showTabs && (
                 <TabsWrapper>

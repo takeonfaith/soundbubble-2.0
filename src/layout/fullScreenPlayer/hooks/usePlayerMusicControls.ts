@@ -1,11 +1,12 @@
+import { useUnit } from 'effector-react';
 import { useCallback, useEffect } from 'react';
 import { songModel as songModelNew } from '../../../entities/song/new-model';
-import { useIsSlowVersion } from '../../../entities/song/new-model/slow-songs';
+import { $currentSongDuration } from '../../../entities/song/new-model/duration';
 
 export const usePlayerMusicControls = () => {
     const { currentSong, state, loopMode, shuffleMode } =
         songModelNew.useSong();
-    const isSlowVersion = useIsSlowVersion(currentSong?.id);
+    const duration = useUnit($currentSongDuration);
     const currentTime = songModelNew.useCurrentTime();
 
     const disableNextSongButton = false;
@@ -59,9 +60,7 @@ export const usePlayerMusicControls = () => {
 
     return {
         currentTime,
-        duration: isSlowVersion
-            ? (currentSong?.duration ?? 0) / 0.75
-            : currentSong?.duration ?? 0,
+        duration,
         colors: currentSong?.imageColors,
         state,
         loopMode,

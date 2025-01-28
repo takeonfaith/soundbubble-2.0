@@ -22,8 +22,9 @@ export const SearchWithHints = (props: SearchSuggestionProps) => {
         handleCopyName,
         handleKeyDown,
         getHintsStyle,
+        handleBlur,
     } = useSearchWithHints(props);
-    const { suggestions, hintIcon, disableCopyButton } = props;
+    const { suggestions, hintIcon, disableCopyButton, hotkey } = props;
 
     return (
         <SearchWithHintsStyled onKeyDown={handleKeyDown}>
@@ -41,9 +42,11 @@ export const SearchWithHints = (props: SearchSuggestionProps) => {
                 onRightIconClick={handleReset}
                 enterKeyHint="done"
                 type="text"
+                onBlur={handleBlur}
                 {...props}
                 onChange={handleChange}
             />
+            {hotkey}
             {showSuggestions &&
                 allSuggestions.length > 0 &&
                 ReactDOM.createPortal(

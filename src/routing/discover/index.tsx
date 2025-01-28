@@ -1,15 +1,18 @@
-import { IconPlayerPlayFilled } from '@tabler/icons-react';
+import { IconSparkles } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
 import styled from 'styled-components';
+import { SongState } from '../../entities/song/model/types';
 import { songModel } from '../../entities/song/new-model';
 import {
     $analyser,
     $audioData,
 } from '../../entities/song/new-model/frequencies';
+import { $isSlowWave, playWaveFx } from '../../entities/song/new-model/wave';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
+import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
+import { SwitchToggle } from '../../shared/components/switchToggle';
 import { MeshGradientBubblesWithAudio } from './Bubble';
-import { YearPlaylists } from './YearPlaylists';
 
 const DiscoverPageStyled = styled.div`
     position: relative;
@@ -39,12 +42,58 @@ const PlaybuttonStyled = styled.div`
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    height: 300px;
+
+    &:hover {
+        .slow-btn {
+            opacity: 1;
+        }
+    }
+
+    .slow-btn {
+        background: #2a2a2a4f;
+        padding: 10px 14px;
+        border-radius: 20px;
+        opacity: 0;
+        position: absolute;
+        width: 205px;
+        transition: 0.2s transform, 0.1s opacity;
+        transform: translateY(60px);
+        gap: 10px;
+        display: flex;
+        align-items: center;
+        color: #fff;
+
+        &:hover {
+            background: #2a2a2a33;
+        }
+    }
 `;
 
 export const DiscoverPage = () => {
     const isOpen = songModel.useFullScreenPlayer();
-    const { currentSong } = songModel.useSong();
+    const { currentSong, state, queue } = songModel.useSong();
     const [analyser, audioData] = useUnit([$analyser, $audioData]);
+    const [isLoadingQueue, isSlow] = useUnit([playWaveFx.pending, $isSlowWave]);
+    const isWave = queue?.url === '/discover';
+    const isLoading =
+        isLoadingQueue ||
+        state === SongState.loading ||
+        state === SongState.loadingThenPlay;
+
+    const handleSlow = (e: Evt<'input' | 'btn'>) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        songModel.wave.toggleSlow();
+    };
+    const isPlaying = isWave && state === SongState.playing;
 
     return (
         <DiscoverPageStyled color={currentSong?.imageColors[0]}>
@@ -62,14 +111,40 @@ export const DiscoverPage = () => {
                 <Button
                     $width="260px"
                     style={{ fontSize: '2rem', minHeight: '60px' }}
+                    onClick={() => {
+                        songModel.wave.playWave();
+                    }}
+                    className="play-wave-btn"
                 >
                     <Flex gap={10}>
-                        <IconPlayerPlayFilled size={40} />
-                        Play Wave
+                        <Flex width="40px" height="40px" jc="center">
+                            <PlayPauseIcon
+                                loading={isLoading}
+                                playling={isPlaying}
+                                size={35}
+                            />
+                        </Flex>
+                        {!isWave || !state || state === SongState.pause
+                            ? 'Play Wave'
+                            : "Wave vibin'"}
+                    </Flex>
+                </Button>
+                <Button className="slow-btn" onClick={handleSlow}>
+                    <Flex width="100%" jc="space-between">
+                        <Flex gap={10}>
+                            <IconSparkles size={22} />
+                            Slow version
+                        </Flex>
+                        <SwitchToggle
+                            onChange={handleSlow}
+                            size="s"
+                            checked={isSlow}
+                            primaryColor={currentSong?.imageColors[3]}
+                        />
                     </Flex>
                 </Button>
             </PlaybuttonStyled>
-            <YearPlaylists />
+            {/* <YearPlaylists /> */}
         </DiscoverPageStyled>
     );
 };

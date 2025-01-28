@@ -16,6 +16,7 @@ export type SearchSuggestionProps = Omit<InputProps, 'onChange'> & {
     hintIcon?: React.ReactNode;
     disableCopyButton?: boolean;
     focusOnLoad?: boolean;
+    hotkey?: React.ReactNode;
     onChange: (value: string) => void;
     onSumbit: (value: string, suggestion: TExtendedSuggestion | null) => void;
 };

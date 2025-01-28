@@ -1,10 +1,9 @@
 import { IconX } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
+import { CSSProperties } from 'styled-components';
 import { Loading } from '../../shared/components/loading';
 import { normalizeString } from '../../shared/funcs/normalizeString';
 import { SearchSuggestionProps } from './types';
-import { useClickOutside } from '../../shared/hooks/useClickOutside';
-import { CSSProperties } from 'styled-components';
 
 export const useSearchWithHints = ({
     initialValue,
@@ -46,9 +45,11 @@ export const useSearchWithHints = ({
         );
     }, [historySuggestions, inputValue]);
 
-    useClickOutside(ref, () => {
+    const handleBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
+        if (event.relatedTarget?.nodeName === 'LI') return;
+
         setShowSuggestions(false);
-    });
+    };
 
     const handleReset = () => {
         onChange('');
@@ -174,5 +175,6 @@ export const useSearchWithHints = ({
         handleSubmit,
         handleChange,
         getHintsStyle,
+        handleBlur,
     };
 };

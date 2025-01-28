@@ -6,11 +6,13 @@ import { AppRouter } from 'routing/AppRouter';
 import styled, { ThemeProvider } from 'styled-components';
 import { useTheme } from './app/theme';
 import { userModel } from './entities/user/model';
+import { useOnboarding } from './features/onboarding';
 import { FB } from './firebase';
 import { GlobalStyles } from './globalStyles';
-import { CustomRouter } from './routing/CustomRouter';
 import { useSidebar } from './layout/sidebar/model';
-import { useOnboarding } from './features/onboarding';
+import { CustomRouter } from './routing/CustomRouter';
+import { useGetAppHotKeys } from './shared/hooks/useGetAppHotKeys';
+import useHotkeys from './shared/hooks/useHotKeys';
 
 const AppStyled = styled.div`
     height: 100dvh;
@@ -28,8 +30,11 @@ const AppStyled = styled.div`
 function App() {
     const { themeParams } = useTheme();
     const isCollapsed = useSidebar();
+    const hotkeys = useGetAppHotKeys();
 
     useOnboarding();
+
+    useHotkeys(hotkeys);
 
     useEffect(() => {
         FB.onAuthStateChanged(async (userCred) => {

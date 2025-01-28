@@ -36,6 +36,8 @@ import { $volume, $isMuted, volumeApi, isMutedApi } from './volume';
 import './add-listening';
 import { calculateCurrentLyric, nextCurrentLyric } from './lyrics';
 import { setAnalyzerAndAudioData } from './frequencies';
+import { playWave, toggleSlow } from './wave';
+import { setPercent } from './duration-current-time';
 
 export const songModel = {
     useSong: () =>
@@ -79,6 +81,8 @@ export const songModel = {
     },
     playback: {
         setCurrentTime: currentTimeApi.set,
+        addCurrentTime: currentTimeApi.add,
+        setPercent: setPercent,
         setIsSliding: slidingApi.setIsSliding,
         setLastRangeValue,
     },
@@ -91,5 +95,9 @@ export const songModel = {
     },
     frequency: {
         setAnalyzerAndAudioData,
+    },
+    wave: {
+        playWave,
+        toggleSlow,
     },
 };

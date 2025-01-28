@@ -1,9 +1,18 @@
 import { IconSearch } from '@tabler/icons-react';
+import { useEffect, useRef } from 'react';
+import styled from 'styled-components';
 import { playlistModel } from '../../../../entities/playlist/model';
 import { Button } from '../../../../shared/components/button';
-import { Flex } from '../../../../shared/components/flex';
 import { Input } from '../../../../shared/components/input';
-import { useEffect, useRef } from 'react';
+
+const PlaylistSearchStyled = styled.div`
+    width: 100%;
+    max-width: 500px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+`;
 
 type Props = {
     searching: {
@@ -25,7 +34,7 @@ export const PlaylistSearch = ({ searching }: Props) => {
     }, []);
 
     return (
-        <Flex width="100%" gap={4} height='45px'>
+        <PlaylistSearchStyled>
             <Input
                 icon={<IconSearch />}
                 placeholder="Search for songs in this playlist..."
@@ -40,6 +49,6 @@ export const PlaylistSearch = ({ searching }: Props) => {
             <Button $width="120px" className="outline" onClick={handleCancel}>
                 Cancel
             </Button>
-        </Flex>
+        </PlaylistSearchStyled>
     );
 };

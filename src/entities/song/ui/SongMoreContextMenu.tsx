@@ -1,6 +1,5 @@
 import {
     IconEditCircle,
-    IconFlare,
     IconHeart,
     IconHeartBroken,
     IconInfoCircle,
@@ -153,7 +152,7 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
         if (isSlowVersion) {
             slowSongsApi.remove(song.id);
         } else {
-            slowSongsApi.add(song.id);
+            slowSongsApi.add([song.id]);
         }
     };
 
@@ -262,7 +261,7 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                             disabled={!song.slowSrc}
                         >
                             <Flex gap={16}>
-                                <IconFlare />
+                                <IconSparkles />
                                 Slow version
                             </Flex>
                             <SwitchToggle

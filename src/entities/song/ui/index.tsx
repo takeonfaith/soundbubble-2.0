@@ -39,6 +39,7 @@ import {
     SongNameAndListens,
     SongStyled,
 } from './styles';
+import { SLOW_SONGS_FACTOR } from '../../../shared/constants';
 
 type Props = {
     song: TSong;
@@ -73,7 +74,7 @@ export const SongItem = ({
 
         popupModel.events.open({
             content: <SongMoreContextMenu onRemove={onRemove} song={song} />,
-            height: onRemove ? 402 : 385.5,
+            height: onRemove ? 402 : 345.5,
             e,
         });
     };
@@ -189,7 +190,7 @@ export const SongItem = ({
                 )}
                 <Subtext className="duration">
                     {getHumanDuration(
-                        isSlowVersion ? duration / 0.75 : duration
+                        isSlowVersion ? duration / SLOW_SONGS_FACTOR : duration
                     )}
                 </Subtext>
                 {children ??

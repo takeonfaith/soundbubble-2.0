@@ -67,9 +67,18 @@ export const GlobalStyles = createGlobalStyle<{ collapsed: boolean }>`
 	}
 
 	kbd {
-		display: inline-block;
-		padding: 1px 4px;
-		border-radius: 2px;
-		background: ${({ theme }) => theme.colors.pageBackground4};
+		font-weight: 300;
+		min-width: 30px;
+		min-height: 20px;
+		padding: 4px;
+		font-family: monospace;
+		white-space: nowrap;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 4px;
+		border: 1px solid ${({ theme }) => theme.colors.border};
+		background: ${({ theme }) => theme.colors.input};
+		border-radius: 6px;
 	}
 `;

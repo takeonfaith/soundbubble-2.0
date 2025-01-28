@@ -57,7 +57,7 @@ const PlaylistControlButtonsStyled = styled.div`
     padding: 12px 0 0px 8px;
     margin-bottom: 28px;
     z-index: 11;
-    width: fit-content;
+    width: 100%;
     background: ${({ theme }) => theme.colors.pageBackground};
 `;
 

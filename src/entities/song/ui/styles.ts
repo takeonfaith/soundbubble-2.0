@@ -55,7 +55,6 @@ export const MoreInfoButton = styled(Button)`
 
     @container (max-width: 699px) {
         opacity: 1;
-        margin-right: 0px;
     }
 `;
 

@@ -22,6 +22,8 @@ import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { AddSongFormType } from '../../features/uploadSongModal/model';
 import { Server } from '../../server';
 import { getAuthorsToString } from '../../entities/song/lib/getAuthorsToString';
+import { TUser } from '../../entities/user/model/types';
+import { shuffleArray } from '../../entities/song/lib/shuffleArray';
 
 export class Songs {
     static ref = FB.get('songs');
@@ -239,6 +241,53 @@ export class Songs {
             });
         } catch (error) {
             console.error(error);
+        }
+    }
+
+    static async getTopSongsBySongIds(ids: string[], topQuantity = 3) {
+        try {
+            const snapshot = await getDocs(
+                query(
+                    this.ref,
+                    where('id', 'in', ids),
+                    orderBy('listens', 'desc'),
+                    limit(topQuantity)
+                )
+            );
+            return getDataFromDoc<TSong>(snapshot);
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    static async getWave(authors: TUser[]): Promise<TSong[]> {
+        try {
+            const getTop3SongsFromAuthor = async (author: TUser) => {
+                if (!author.ownSongs) return await Promise.resolve(null);
+
+                return await this.getTopSongsBySongIds(author.ownSongs);
+            };
+
+            if (authors.length < 3) {
+                const songs = [
+                    ...(await this.getTopSongs(20)),
+                    ...(await asyncRequests(authors, getTop3SongsFromAuthor))
+                        .flat()
+                        .filter((s) => s !== null),
+                ];
+                return shuffleArray(songs);
+            }
+
+            const songs = (await asyncRequests(authors, getTop3SongsFromAuthor))
+                .flat()
+                .filter((s) => s !== null);
+
+            return shuffleArray(songs);
+        } catch (error) {
+            console.error(error);
+            throw new Error('Failed to get wave: ' + (error as Error).message);
+            return [];
         }
     }
 }

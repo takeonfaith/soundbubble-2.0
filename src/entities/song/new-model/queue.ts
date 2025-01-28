@@ -9,6 +9,7 @@ import {
 import { LoopMode, TLastQueue, TNextFrom, TQueue, TSong } from '../model/types';
 import { $currentTime, currentTimeApi } from './current-time';
 import { Database } from '../../../database';
+import { createQueueObject } from '../lib/createQueueObject';
 
 const loadLastQueueFx = createEffect<
     string,
@@ -212,8 +213,11 @@ sample({
 
 sample({
     clock: loadLastQueueFx.doneData,
-    filter: (props) => props && !!props.queue,
-    fn: (props) => ({ ...props!.queue, songs: props!.songs }),
+    filter: (props) => !!props && !!props.queue,
+    fn: (props) => ({
+        ...createQueueObject(props!.queue!),
+        songs: props!.songs,
+    }),
     target: $queue,
 });
 

@@ -14,6 +14,7 @@ export const slidingApi = createApi($isSliding, {
 export const currentTimeApi = createApi($currentTime, {
     reset: () => 0,
     set: (_, value: number) => value,
+    add: (time, val: number) => time + val,
 });
 
 sample({
@@ -24,6 +25,13 @@ sample({
 sample({
     clock: currentTimeApi.reset,
     fn: () => 0,
+    target: $lastTime,
+});
+
+sample({
+    clock: currentTimeApi.add,
+    source: $currentTime,
+    fn: (time) => time,
     target: $lastTime,
 });
 

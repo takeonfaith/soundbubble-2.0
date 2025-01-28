@@ -37,8 +37,9 @@ import { PlaylistSearch } from './PlaylistSearch';
 import Popover from '../../../../shared/components/popover';
 import { styled } from 'styled-components';
 import { slowSongsApi } from '../../../../entities/song/new-model/slow-songs';
+import { PlayingAnimation } from '../../../../shared/components/playingAnimation';
 
-const MainButtonsWrapper = styled.div`
+export const MainButtonsWrapper = styled.div`
     display: flex;
     align-items: center;
     outline: 1px solid ${({ theme }) => theme.colors.border};
@@ -79,8 +80,9 @@ export const PlaylistControlButtons = ({
     const isAuthor = currentUser
         ? playlist?.authors.find((author) => author.uid === currentUser.uid)
         : false;
-
+    const isCurrent = queue.id === playlist?.id;
     const isOwner = playlist?.ownerId === currentUser?.uid;
+    const isSlowPlaying = slowMode && state === SongState.playing;
 
     const buttonsDisabled =
         queue.songs.length === 0 ||
@@ -118,8 +120,9 @@ export const PlaylistControlButtons = ({
             confirmModel.events.open({
                 icon: <IconTrash />,
                 iconColor: 'red',
-                text: 'Are you sure you want to delete this playlist',
-                subtext: 'This action is irreversible',
+                text: 'Are you sure you want to delete this playlist?',
+                subtext:
+                    'This action is irreversible, you will not be able to restore it after deleting',
                 onAccept: () => {
                     playlistModel.events.deletePlaylist({
                         playlist,
@@ -205,7 +208,10 @@ export const PlaylistControlButtons = ({
                                     Make public
                                 </Button>
                             )}
-                            <Button onClick={handleDeletePlaylist}>
+                            <Button
+                                className="danger"
+                                onClick={handleDeletePlaylist}
+                            >
                                 <IconTrash />
                                 Delete
                             </Button>
@@ -257,7 +263,9 @@ export const PlaylistControlButtons = ({
                             $primaryColor={primaryColor}
                             className={!slowMode ? 'primary' : ''}
                             onClick={() => {
-                                setButtonType('play');
+                                if (!isCurrent) {
+                                    setButtonType('play');
+                                }
                                 songModel.controls.playPauseQueue({
                                     queue,
                                     currentSongIndex: 0,
@@ -269,11 +277,21 @@ export const PlaylistControlButtons = ({
                         >
                             <PlayPauseIcon
                                 loading={buttonType === 'play'}
-                                playling={false}
+                                playling={
+                                    !slowMode &&
+                                    isCurrent &&
+                                    state === SongState.playing
+                                }
                                 size={20}
                             />
                         </Button>
-                        <Popover content="Slow version">
+                        <Popover
+                            content={
+                                isSlowPlaying
+                                    ? 'Pause slow version'
+                                    : 'Play slow version'
+                            }
+                        >
                             <Button
                                 style={{
                                     color: slowMode ? '#fff' : undefined,
@@ -306,29 +324,36 @@ export const PlaylistControlButtons = ({
                             >
                                 {buttonType === 'slow' ? (
                                     <Loading />
+                                ) : isSlowPlaying ? (
+                                    <PlayingAnimation
+                                        playing={true}
+                                        color={'#fff'}
+                                    />
                                 ) : (
                                     <IconSparkles />
                                 )}
                             </Button>
                         </Popover>
                     </MainButtonsWrapper>
-                    <Button
-                        $width="45px"
-                        $height="45px"
-                        className="outline"
-                        style={{ borderRadius: '30px' }}
-                        onClick={() => {
-                            setButtonType('shuffle');
-                            songModel.controls.shufflePlayPause({ queue });
-                        }}
-                        disabled={buttonsDisabled}
-                    >
-                        {buttonType === 'shuffle' ? (
-                            <Loading />
-                        ) : (
-                            <IconArrowsShuffle size={20} />
-                        )}
-                    </Button>
+                    <Popover content="Shuffle">
+                        <Button
+                            $width="45px"
+                            $height="45px"
+                            className="outline"
+                            style={{ borderRadius: '30px' }}
+                            onClick={() => {
+                                setButtonType('shuffle');
+                                songModel.controls.shufflePlayPause({ queue });
+                            }}
+                            disabled={buttonsDisabled}
+                        >
+                            {buttonType === 'shuffle' ? (
+                                <Loading />
+                            ) : (
+                                <IconArrowsShuffle size={20} />
+                            )}
+                        </Button>
+                    </Popover>
                 </Flex>
             )}
             {isAuthor && !isEditing && noSongs && (

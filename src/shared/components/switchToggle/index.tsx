@@ -5,6 +5,7 @@ type Props = {
     checked: boolean;
     onChange: (e: Evt<'input'>) => void;
     onClick?: (e: Evt<'label'>) => void;
+    primaryColor?: string;
     size?: TSize;
 };
 
@@ -12,6 +13,7 @@ export const SwitchToggle = ({
     checked,
     onChange,
     onClick,
+    primaryColor,
     size = 'm',
 }: Props) => {
     return (
@@ -19,7 +21,8 @@ export const SwitchToggle = ({
             onClick={onClick}
             $width={WIDTH[size]}
             $height={HEIGHT[size]}
-            className='switch-toggle'
+            className="switch-toggle"
+            $primaryColor={primaryColor}
         >
             <input type="checkbox" checked={checked} onChange={onChange} />
             <div className="switchToggle">

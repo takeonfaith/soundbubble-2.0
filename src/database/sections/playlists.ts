@@ -133,7 +133,7 @@ export class Playlists {
         try {
             if (!playlist) throw new Error('Playlist is not specified');
 
-            let imageUrl = ''
+            let imageUrl = '';
 
             if (
                 'image' in update &&
@@ -165,10 +165,7 @@ export class Playlists {
             if ('name' in update && update.name !== playlist.name) {
                 const variantsOfName = getVariantsOfName(update.name);
 
-                if (
-                    playlist.isPrivate === false &&
-                    update.isPrivate === false
-                ) {
+                if (playlist.isPrivate === false) {
                     await FB.updateById('search', playlist.id, {
                         variantsOfName,
                         fullName: update.name,

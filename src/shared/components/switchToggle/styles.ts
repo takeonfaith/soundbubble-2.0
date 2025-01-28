@@ -3,6 +3,7 @@ import { styled } from 'styled-components';
 export const SwitchToggleStyled = styled.label<{
     $width: number;
     $height: number;
+    $primaryColor?: string;
 }>`
     input[type='checkbox'] {
         display: none;
@@ -21,7 +22,7 @@ export const SwitchToggleStyled = styled.label<{
     .circle {
         width: calc(${({ $height }) => $height}px - 4px);
         height: calc(${({ $height }) => $height}px - 4px);
-        background: ${({ theme }) => theme.colors.pageBackground};
+        background: #fff;
 
         border-radius: 100%;
         position: absolute;
@@ -38,6 +39,7 @@ export const SwitchToggleStyled = styled.label<{
     }
 
     input:checked + .switchToggle {
-        background: ${({ theme }) => theme.scheme.blue.action};
+        background: ${({ theme, $primaryColor }) =>
+            $primaryColor ?? theme.scheme.blue.action};
     }
 `;

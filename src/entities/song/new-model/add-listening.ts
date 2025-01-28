@@ -12,6 +12,7 @@ import {
 import { SongState, TQueue } from '../model/types';
 import { Database } from '../../../database';
 import { $songState, play, shufflePlayPause } from './song-state';
+import { $currentSongDuration } from './duration';
 
 const addListeningFx = createEffect<
     { queue: TQueue | null; currentSongIndex: number },
@@ -20,13 +21,11 @@ const addListeningFx = createEffect<
 
 const triggerAddListeting = createEvent();
 
-const $currentSongDuration = $currentSong.map((song) => {
-    if (!song) return 0;
+const $addListetingThreshold = $currentSongDuration.map(
+    (duration) => (duration / 2) * 1000
+);
 
-    return (song.duration / 2) * 1000;
-});
-
-const addListening = debounce(triggerAddListeting, $currentSongDuration);
+const addListening = debounce(triggerAddListeting, $addListetingThreshold);
 
 // Trigger add listeting on this events
 sample({
@@ -50,6 +49,6 @@ sample({
 
 addListeningFx.use(async ({ queue, currentSongIndex }) => {
     console.log('adding listeting');
-    
+
     await Database.Songs.addListening(queue, currentSongIndex);
 });

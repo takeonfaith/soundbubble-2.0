@@ -1,4 +1,4 @@
-import { IconEye, IconEyeClosed, IconPassword } from '@tabler/icons-react';
+import { IconEye, IconEyeClosed, IconLock } from '@tabler/icons-react';
 import { useState } from 'react';
 import { Input } from '../../shared/components/input';
 
@@ -22,7 +22,7 @@ export const PasswordInput = (props: Props) => {
             rightIcon={rightIcon}
             onRightIconClick={handleShowPassword}
             type={localType}
-            icon={<IconPassword />}
+            icon={<IconLock />}
             {...props}
         />
     );
