@@ -9,6 +9,7 @@ import { ColorExtractor } from 'react-color-extractor';
 import { Button } from '../button';
 import { DefaultButton } from '../button/DefaultButton';
 import { Flex } from '../flex';
+import { InputError } from '../input/styles';
 import {
     BackgroundPreview,
     CenterButton,
@@ -16,7 +17,6 @@ import {
     InputWrapper,
     PhotoInputStyled,
 } from './styles';
-import { InputError } from '../input/styles';
 
 type Props = {
     file: File | string | null;
@@ -37,6 +37,7 @@ export const PhotoInput = ({
 }: Props) => {
     const [preview, setPreview] = useState<string | null>(null);
     const [showColors, setShowColors] = useState(false);
+    const [dragActive, setDragActive] = useState(false);
 
     const getColors = (colors: string[]) => {
         onColors(colors);
@@ -50,8 +51,11 @@ export const PhotoInput = ({
         }
     }, [file]);
 
-    const handleFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event?.target?.files?.[0];
+    const handleFile = (
+        event?: React.ChangeEvent<HTMLInputElement>,
+        outsideFile?: File
+    ) => {
+        const file = outsideFile ?? event?.target?.files?.[0];
         if (file) {
             onUpload(file);
             setPreview(URL.createObjectURL(file));
@@ -64,10 +68,43 @@ export const PhotoInput = ({
         setPreview(null);
     };
 
+    // handle drag events
+    const handleDrag = (
+        e: React.DragEvent<HTMLDivElement | HTMLFormElement>
+    ) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log(e.type);
+
+        if (e.type === 'dragenter' || e.type === 'dragover') {
+            setDragActive(true);
+        } else if (e.type === 'dragleave') {
+            setDragActive(false);
+        }
+    };
+
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragActive(false);
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleFile(undefined, e.dataTransfer.files[0]);
+        }
+        setDragActive(false);
+    };
+
     return (
         <>
             {error && <InputError>{error}</InputError>}
-            <InputWrapper className={error ? 'error' : ''}>
+            <InputWrapper
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+                className={`${dragActive ? 'dragActive' : ''}${
+                    error ? 'error' : ''
+                }`}
+            >
                 {preview && <BackgroundPreview $colors={colors} />}
                 <PhotoInputStyled>
                     <input

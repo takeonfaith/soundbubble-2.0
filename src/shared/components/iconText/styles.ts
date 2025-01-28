@@ -5,7 +5,6 @@ export const IconTextStyled = styled.div`
     align-items: center;
     gap: 16px;
     color: ${({ theme }) => theme.colors.textColor};
-    opacity: 0.7;
 `;
 
 export const Icon = styled.div`

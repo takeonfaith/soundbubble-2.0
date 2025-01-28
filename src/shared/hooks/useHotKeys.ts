@@ -2,28 +2,20 @@ import { useEffect, useCallback } from 'react';
 
 type TKeys =
     | 'Escape'
-    | ' '
+    | 'Space'
     | 'ArrowLeft'
     | 'Shift+ArrowLeft'
     | 'Shift+ArrowRight'
     | 'ArrowRight'
     | 'ArrowUp'
     | 'ArrowDown'
-    | 'm'
-    | 'n'
-    | 't'
-    | 'f'
-    | '/'
-    | '0'
-    | '1'
-    | '2'
-    | '3'
-    | '4'
-    | '5'
-    | '6'
-    | '7'
-    | '8'
-    | '9';
+    | 'Meta+Comma'
+    | 'KeyM'
+    | 'KeyN'
+    | 'KeyT'
+    | 'KeyF'
+    | 'Slash'
+    | 'Digits';
 
 export type THotKeys = Partial<{
     [keyCombo in TKeys]: {
@@ -38,8 +30,13 @@ const useHotkeys = (hotkeys: THotKeys) => {
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
             const target = event.target;
+            const isDigit = event.code.includes('Digit');
+            const keyCode = isDigit ? 'Digits' : event.code;
+            console.log(keyCode);
 
             const excludeOfTyping = ['Escape'];
+
+            const forbiddenWhileClick = [' ', 'Enter'];
 
             const isTyping =
                 target &&
@@ -49,6 +46,13 @@ const useHotkeys = (hotkeys: THotKeys) => {
                     target.nodeName === 'TEXTAREA' ||
                     target.isContentEditable);
 
+            const isClickable =
+                target && 'nodeName' in target && target.nodeName === 'BUTTON';
+
+            if (isClickable && forbiddenWhileClick.includes(event.key)) {
+                return;
+            }
+
             if (isTyping && !excludeOfTyping.includes(event.key)) {
                 return; // Ignore hotkeys if the user is typing
             }
@@ -56,9 +60,9 @@ const useHotkeys = (hotkeys: THotKeys) => {
             // Identify if a modifier key + main key combination exists
             const keyCombo = `${event.metaKey ? 'Meta+' : ''}${
                 event.ctrlKey ? 'Control+' : ''
-            }${event.shiftKey ? 'Shift+' : ''}${event.altKey ? 'Alt+' : ''}${
-                event.key
-            }` as keyof THotKeys;
+            }${event.shiftKey ? 'Shift+' : ''}${
+                event.altKey ? 'Alt+' : ''
+            }${keyCode}` as keyof THotKeys;
 
             // Example: If `Cmd + P` is pressed, the keyCombo will be `Meta+P`.
 

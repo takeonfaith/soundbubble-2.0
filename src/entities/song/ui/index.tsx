@@ -4,17 +4,16 @@ import { LikeButton } from '@features/likeButton';
 import {
     IconDots,
     IconHeadphones,
-    IconMenu2,
     IconPlayerPauseFilled,
     IconPlayerPlayFilled,
     IconSparkles,
     IconSquareRoundedMinusFilled,
 } from '@tabler/icons-react';
 import { popupModel } from '../../../layout/popup/model';
-import { Button } from '../../../shared/components/button';
 import { PlayingAnimation } from '../../../shared/components/playingAnimation';
 import Popover from '../../../shared/components/popover';
 import { Subtext } from '../../../shared/components/subtext';
+import { SLOW_SONGS_FACTOR } from '../../../shared/constants';
 import { formatBigNumber } from '../../../shared/funcs/formatBigNumber';
 import { useToggleLike } from '../hooks/useToggleLike';
 import { getHumanDuration } from '../lib/getHumanDuration';
@@ -39,7 +38,6 @@ import {
     SongNameAndListens,
     SongStyled,
 } from './styles';
-import { SLOW_SONGS_FACTOR } from '../../../shared/constants';
 
 type Props = {
     song: TSong;
@@ -193,13 +191,12 @@ export const SongItem = ({
                         isSlowVersion ? duration / SLOW_SONGS_FACTOR : duration
                     )}
                 </Subtext>
-                {children ??
-                    (!isEditing && (
-                        <MoreInfoButton onClick={handleMore}>
-                            <IconDots />
-                        </MoreInfoButton>
-                    ))}
-                {isEditing && (
+                {children ?? (
+                    <MoreInfoButton onClick={handleMore}>
+                        <IconDots />
+                    </MoreInfoButton>
+                )}
+                {/* {isEditing && (
                     <Button
                         $width="45px"
                         $height="35px"
@@ -207,7 +204,7 @@ export const SongItem = ({
                     >
                         <IconMenu2 opacity={0.5} size={18} />
                     </Button>
-                )}
+                )} */}
             </SongButtons>
         </SongStyled>
     );

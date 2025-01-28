@@ -5,11 +5,9 @@ import { THotKeys } from '../../shared/hooks/useHotKeys';
 
 const HotkeysListStyled = styled.div`
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: repeat(10, 1fr);
+    grid-template-columns: 1fr 1fr;
     column-gap: 20px;
     padding: 20px 25px;
-    grid-auto-flow: column;
 
     .hotkey {
         border-bottom: 1px solid ${({ theme }) => theme.colors.border};

@@ -39,6 +39,10 @@ export const InputWrapper = styled.div`
     overflow: hidden;
     border: 3px dashed ${({ theme }) => theme.colors.border};
 
+    &.dragActive {
+        border: 3px dashed ${({ theme }) => theme.scheme.blue.action};
+    }
+
     &.error {
         border: 3px dashed ${({ theme }) => theme.scheme.red.action};
     }

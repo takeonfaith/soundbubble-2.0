@@ -140,6 +140,7 @@ export const UserProfileModal = () => {
             title: 'Hot keys',
             content: <HotkeysList />,
             sizeX: 'l',
+            sizeY: 's',
         });
     };
 
@@ -147,7 +148,7 @@ export const UserProfileModal = () => {
         <UserProfileModalStyled>
             {isLoadingEditing || (isDeletingAccount && <LoadingWrapper />)}
 
-            <Flex d="column" gap={20}>
+            <Flex d="column" gap={20} height='100%' jc='center'>
                 <UserCover
                     src={currentUser?.photoURL}
                     size={'160px'}

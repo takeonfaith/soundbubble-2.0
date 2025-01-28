@@ -12,7 +12,7 @@ export const GlobalStyles = createGlobalStyle<{ collapsed: boolean }>`
 	:root {
 		--page-padding: 30px;
 		--page-gap: 8px;
-		--desktop-page-radius: 12px;
+		--desktop-page-radius: 10px;
 		--player-size: 80px;
 		--sidebar-width: ${({ collapsed }) => (collapsed ? '90' : '260')}px;
 		--sidebar-width-collapsed: 80px;
@@ -70,10 +70,11 @@ export const GlobalStyles = createGlobalStyle<{ collapsed: boolean }>`
 		font-weight: 300;
 		min-width: 30px;
 		min-height: 20px;
+		width: fit-content;
 		padding: 4px;
 		font-family: monospace;
 		white-space: nowrap;
-		display: flex;
+		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		gap: 4px;

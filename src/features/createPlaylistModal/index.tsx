@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { createPlaylistObject } from '../../entities/playlist/lib/createPlaylistObject';
@@ -10,8 +11,6 @@ import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
 import { PhotoInput } from '../../shared/components/photoInput';
 import { useForm } from './model';
-import { useEffect, useRef } from 'react';
-import { PLAYLIST_DEFAULT_NAME } from './model/constants';
 
 const CreatePlaylistModalStyled = styled.div`
     padding: 20px;
@@ -36,6 +35,7 @@ export const CreatePlaylistModal = () => {
         onChange,
         updateField,
         handleEnterKeyDown,
+        reset,
     } = useForm((obj, handleClean) => {
         const { name, photo, colors } = obj;
         const playlist = createPlaylistObject(createAuthorObject(currentUser), {
@@ -58,9 +58,9 @@ export const CreatePlaylistModal = () => {
         nameRef.current?.select();
 
         return () => {
-            updateField({ id: 'name', value: PLAYLIST_DEFAULT_NAME });
+            reset();
         };
-    }, [updateField]);
+    }, [reset]);
 
     if (!currentUser) return null;
 

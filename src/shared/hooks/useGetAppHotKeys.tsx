@@ -3,6 +3,7 @@ import {
     IconArrowLeft,
     IconArrowRight,
     IconArrowUp,
+    IconCommand,
 } from '@tabler/icons-react';
 import { toggleTheme } from '../../app/theme';
 import { songModel } from '../../entities/song/new-model';
@@ -10,6 +11,7 @@ import { CreatePlaylistModal } from '../../features/createPlaylistModal';
 import { modalModel } from '../../layout/modal/model';
 import { popupModel } from '../../layout/popup/model';
 import { THotKeys } from './useHotKeys';
+import { Settings } from '../../entities/settings/ui';
 
 export const useGetAppHotKeys = () => {
     const [modals] = modalModel.useModal();
@@ -42,7 +44,7 @@ export const useGetAppHotKeys = () => {
             name: 'Esc',
             description: 'Close modal',
         },
-        ' ': {
+        Space: {
             action: () => {
                 songModel.controls.togglePlayPause();
             },
@@ -75,16 +77,16 @@ export const useGetAppHotKeys = () => {
                 songModel.volume.increase(-0.1);
             },
             name: <IconArrowDown />,
-            description: 'Increase volume',
+            description: 'Decrease volume',
         },
-        m: {
+        KeyM: {
             action: () => {
                 songModel.volume.toggle();
             },
             name: 'm',
             description: 'Toggle mute',
         },
-        n: {
+        KeyN: {
             action: (e) => {
                 if (modals.length === 0) {
                     e.preventDefault();
@@ -97,12 +99,26 @@ export const useGetAppHotKeys = () => {
             name: 'n',
             description: 'Create playlist',
         },
-        f: {
+        KeyF: {
             action: () => {
-                songModel.fullscreenPlayer.open();
+                if (modals.length === 0) {
+                    songModel.fullscreenPlayer.open();
+                }
             },
             name: 'f',
             description: 'Toggle full screen',
+        },
+        Slash: {
+            action: (event) => {
+                const searchInput: HTMLInputElement | null =
+                    document.querySelector('.global-search');
+                if (searchInput) {
+                    event.preventDefault();
+                    searchInput.focus();
+                }
+            },
+            name: '/',
+            description: 'Toggle search bar',
         },
         'Shift+ArrowLeft': {
             action: () => {
@@ -128,84 +144,38 @@ export const useGetAppHotKeys = () => {
             ),
             description: 'Next track ',
         },
-        '/': {
-            action: (event) => {
-                const searchInput: HTMLInputElement | null =
-                    document.querySelector('.global-search');
-                if (searchInput) {
-                    event.preventDefault();
-                    searchInput.focus();
-                }
-            },
-            name: '/',
-            description: 'Toggle search bar',
-        },
-        t: {
+
+        KeyT: {
             action: () => {
                 toggleTheme();
             },
             name: 't',
             description: 'Toggle theme',
         },
-        '0': {
-            action: () => {
-                songModel.playback.setPercent(0);
+        'Meta+Comma': {
+            action: (event) => {
+                if (modals.length === 0) {
+                    event.preventDefault();
+                    modalModel.events.open({
+                        title: 'Settings',
+                        content: <Settings />,
+                    });
+                }
             },
-            description: 'Jump to the beginning of the song',
+            name: (
+                <>
+                    <IconCommand />,
+                </>
+            ),
+            description: 'Open settings',
         },
-        '1': {
-            action: () => {
-                songModel.playback.setPercent(0.1);
+        Digits: {
+            name: '0-9',
+            action: (event) => {
+                const num = +event.key;
+                songModel.playback.setPercent(num / 10);
             },
-            description: 'Jump to 10% of the song',
-        },
-        '2': {
-            action: () => {
-                songModel.playback.setPercent(0.2);
-            },
-            description: 'Jump to 20% of the song',
-        },
-        '3': {
-            action: () => {
-                songModel.playback.setPercent(0.3);
-            },
-            description: 'Jump to 30% of the song',
-        },
-        '4': {
-            action: () => {
-                songModel.playback.setPercent(0.4);
-            },
-            description: 'Jump to 40% of the song',
-        },
-        '5': {
-            action: () => {
-                songModel.playback.setPercent(0.5);
-            },
-            description: 'Jump to 50% of the song',
-        },
-        '6': {
-            action: () => {
-                songModel.playback.setPercent(0.6);
-            },
-            description: 'Jump to 60% of the song',
-        },
-        '7': {
-            action: () => {
-                songModel.playback.setPercent(0.7);
-            },
-            description: 'Jump to 70% of the song',
-        },
-        '8': {
-            action: () => {
-                songModel.playback.setPercent(0.8);
-            },
-            description: 'Jump to 80% of the song',
-        },
-        '9': {
-            action: () => {
-                songModel.playback.setPercent(0.9);
-            },
-            description: 'Jump to 90% of the song',
+            description: 'Jump from 0% to 90% of a playback',
         },
     };
 

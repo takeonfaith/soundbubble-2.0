@@ -43,22 +43,21 @@ export const SidebarLink = styled(NavLink)`
         transform: scale(0.99);
     }
 
-    svg {
+    & > .icon-text {
         opacity: 0.6;
     }
 
     &.active {
-        background: ${({ theme }) => theme.colors.pageBackground};
+        background: ${({ theme }) => theme.colors.pageTopButton};
         outline: 1px solid ${({ theme }) => theme.colors.border};
         border-radius: 8px;
 
         & > .icon-text {
             opacity: 1;
-            color: ${({ theme }) => theme.scheme.blue.main};
         }
 
         svg {
-            opacity: 1;
+            color: ${({ theme }) => theme.scheme.blue.action};
         }
     }
 
@@ -136,7 +135,6 @@ export const SidebarStyled = styled.aside`
     padding-top: 30px;
 
     &.collapsed {
-
         gap: 10px;
 
         ${SidebarSectionTitle} {
@@ -154,6 +152,7 @@ export const SidebarStyled = styled.aside`
         ${SidebarLink} .icon svg {
             width: 22px;
             height: 22px;
+            opacity: 1;
         }
 
         ${PlaylistsStyled} .no-playlists {

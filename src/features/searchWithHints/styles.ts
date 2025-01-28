@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const SearchWithHintsStyled = styled.div`
     width: 100%;
     position: relative;
+    transition: 0.2s;
 
     & kbd {
         position: absolute;
@@ -23,7 +24,7 @@ export const HintsStyled = styled.ul`
     padding: 4px;
     border-radius: ${({ theme }) => theme.borderRadius.mild};
     position: absolute;
-    transform: translateY(4px);
+    transform: translateY(6px);
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -40,7 +41,7 @@ export const HintsStyled = styled.ul`
         }
         100% {
             opacity: 1;
-            transform: translateY(4px);
+            transform: translateY(6px);
         }
     }
 

@@ -43,6 +43,10 @@ export const MoreInfoButton = styled(Button)`
         background: ${({ theme }) => theme.colors.hover};
     }
 
+    &:focus {
+        opacity: 1;
+    }
+
     svg {
         width: var(--icon-size);
         height: var(--icon-size);

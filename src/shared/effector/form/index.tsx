@@ -206,6 +206,7 @@ export const effectorForm = <T extends TForm>(form: T) => {
                 onChange,
                 loading,
                 handleEnterKeyDown,
+                reset,
             };
         },
     };

@@ -92,11 +92,12 @@ const LayoutHeader = styled.div`
 `;
 
 const GlobalSearchWrapper = styled.div`
-    width: 480px;
     max-width: 100%;
 
     input {
-        border-radius: 14px;
+        width: 450px;
+        border-radius: 8px;
+        outline: 1px solid ${({ theme }) => theme.colors.border};
     }
 `;
 
