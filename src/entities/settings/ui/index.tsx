@@ -56,11 +56,6 @@ export const Settings = ({ childrenSettings, path = '' }: Props) => {
                         path === '' ? '' : '.'
                     }${setting}` as Paths<typeof DEFAULT_SETTINGS>;
 
-                    console.log(
-                        'visible' in currentSetting,
-                            !currentSetting.visible?.(settings)
-                    );
-
                     if (
                         'visible' in currentSetting &&
                         !currentSetting.visible?.(settings)

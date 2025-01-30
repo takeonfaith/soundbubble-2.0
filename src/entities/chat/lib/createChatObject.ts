@@ -19,7 +19,7 @@ export const createChatObject = (
                   participants,
                   message: `Group ${props.chatName} was created`,
               })
-            : undefined);
+            : null);
 
     const admins = props.admins ?? isGroup ? [participants[0]] : [];
 

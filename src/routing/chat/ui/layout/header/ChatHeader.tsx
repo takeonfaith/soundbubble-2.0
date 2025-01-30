@@ -52,7 +52,7 @@ export const ChatHeader = () => {
                         size={20}
                         onClick={(e) => {
                             e.stopPropagation();
-                            navigate('/chat');
+                            navigate('/chats');
                         }}
                     />
                 </Button>

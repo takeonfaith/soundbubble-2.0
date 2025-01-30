@@ -142,8 +142,6 @@ export const setSearchHistoryFx = createEffect(
 );
 
 export const loadUserDataFx = createEffect(async (user: User | null) => {
-    console.log({ user });
-
     if (!user) return null;
 
     return await Database.Users.getUserById(user.uid);

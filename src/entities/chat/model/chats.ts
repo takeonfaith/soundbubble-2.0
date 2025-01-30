@@ -8,15 +8,11 @@ import {
 } from 'effector';
 import { Unsubscribe } from 'firebase/firestore';
 import { Database } from '../../../database';
-import { $user, logout, setUser } from '../../user/model/user';
 import { TUser } from '../../user/model/types';
+import { $user, logout, setUser } from '../../user/model/user';
 import { getHeavyMediaIdsFromChats } from '../lib/getHeavyMediaIdsFromChats';
-import { $cache } from './cache';
-import { showNotificationFx } from './chat-notifications';
 import { loadHeavyMedia } from './heavy-media';
 import { TChat } from './types';
-
-type UpdateTypingProps = { userId: string; chatId: string; isTyping: boolean };
 
 let unsubscribe: Unsubscribe | null = null;
 
@@ -24,10 +20,8 @@ const $initialLoad = createStore(true);
 
 export const subscribeToChatsFx = createEffect<string, void, Error>();
 export const initialChatLoadFx = createEffect<TUser, TChat[], Error>();
-const updateIsTypingFx = createEffect<UpdateTypingProps, void, Error>();
 
 export const updateChats = createEvent<TChat[]>();
-export const updateIsTyping = createEvent<boolean>();
 export const insertChats = createEvent<TChat[]>();
 
 export const $currentChatId = createStore<string | undefined | null>('');
@@ -47,8 +41,6 @@ export const $currentChat = combine(
     { skipVoid: false }
 );
 
-export const $amITyping = createStore(false);
-
 export const currentChatIdApi = createApi($currentChatId, {
     setCurrentChatId: (_, id: string | null | undefined) => id,
 });
@@ -58,8 +50,6 @@ logout.watch(() => {
     unsubscribe?.();
     unsubscribe = null;
 });
-
-$chats.reset(logout);
 
 sample({
     clock: setUser,
@@ -91,36 +81,10 @@ sample({
 
 sample({
     clock: updateChats,
-    source: {
-        chats: $chats,
-        user: $user,
-        currentChatId: $currentChatId,
-        cache: $cache,
-        initialLoad: $initialLoad,
-    },
-    filter: ({ chats, user, currentChatId, initialLoad }, newChats) => {
-        return (
-            !initialLoad &&
-            chats[0]?.lastMessage?.id !== newChats[0]?.lastMessage?.id &&
-            !!user &&
-            !currentChatId &&
-            !!chats[0].lastMessage &&
-            newChats[0].lastMessage?.sender !== user.uid
-        );
-    },
-    fn: ({ cache }, chats) => {
-        return {
-            chat: chats[0],
-            cache,
-        };
-    },
-    target: showNotificationFx,
-});
-
-sample({
-    clock: updateChats,
     source: { user: $user },
     filter: ({ user }, newChats) => {
+        console.log(user);
+
         const ifTheOnlyDifferenceIsMeTyping =
             newChats[0].typing.length === 1 &&
             newChats[0].typing[0] === user?.uid;
@@ -140,25 +104,10 @@ sample({
     target: loadHeavyMedia,
 });
 
-sample({
-    clock: updateIsTyping,
-    target: $amITyping,
-});
-
-sample({
-    clock: updateIsTyping,
-    source: { user: $user, chatId: $currentChatId },
-    filter: ({ user, chatId }) => !!user && !!chatId,
-    fn: ({ user, chatId }, isTyping) => ({
-        userId: user!.uid,
-        chatId: chatId!,
-        isTyping,
-    }),
-    target: updateIsTypingFx,
-});
-
 initialChatLoadFx.use(async (user: TUser) => {
     const chats = await Database.Chats.getChatsByIds(user.uid);
+    console.log(chats);
+
     return chats;
 });
 
@@ -166,11 +115,9 @@ subscribeToChatsFx.use(async (userId: string) => {
     unsubscribe = await Database.Chats.subscribeToChatsWithUserId(
         userId,
         (chats) => {
+            console.log(chats);
+
             insertChats(chats);
         }
     );
-});
-
-updateIsTypingFx.use(async ({ userId, chatId, isTyping }) => {
-    await Database.Chats.updateIsTyping(userId, chatId, isTyping);
 });

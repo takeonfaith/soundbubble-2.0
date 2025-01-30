@@ -55,7 +55,7 @@ export const CreateChatModal = () => {
                 chatModel.events.createChat({
                     chat,
                     onSuccess: (chat) => {
-                        navigate(`/chat/${chat.id}`);
+                        navigate(`/chats/${chat.id}`);
                         modalModel.events.close();
                     },
                 });

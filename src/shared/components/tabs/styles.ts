@@ -87,7 +87,7 @@ export const CurrentTabItem = styled.div<{
     border-radius: 16px;
     background: ${({ theme }) => theme.colors.context};
     position: absolute;
-    transition: 0.2s;
+    transition: 0.2s transform;
     transform: translateX(${({ $shift }) => $shift});
     left: 4px;
     top: 4px;

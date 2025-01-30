@@ -27,7 +27,7 @@ const FriendsWrapper = styled.div`
 
 export const FriendsPage = () => {
     const [currentUser] = userModel.useUser();
-    const [friends, , , loading] = userModel.useFriends();
+    const [friends, , awaiting, loading] = userModel.useFriends();
 
     return (
         <PageWrapper>
@@ -47,7 +47,7 @@ export const FriendsPage = () => {
                         loading={loading}
                         skeleton={<UserListSkeleton orientation="horizontal" />}
                     >
-                        {!friends.length && (
+                        {!(friends.length || awaiting.length) && (
                             <Flex
                                 height="100%"
                                 width="100%"
@@ -61,7 +61,7 @@ export const FriendsPage = () => {
                                 />
                             </Flex>
                         )}
-                        {friends.length > 0 && (
+                        {(friends.length || awaiting.length) > 0 && (
                             <Flex
                                 d="column"
                                 gap={4}

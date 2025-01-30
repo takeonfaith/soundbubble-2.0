@@ -28,7 +28,7 @@ showNotificationFx.use(({ chat, cache }) => {
             type: 'chatMessage',
             onClick: () => {
                 const navigate = globalNavigate();
-                navigate(`/chat/${chat.id}`);
+                navigate(`/chats/${chat.id}`);
             },
             photo: sender.photoURL,
         });

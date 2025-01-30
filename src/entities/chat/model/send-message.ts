@@ -57,6 +57,7 @@ sample({
     target: insertChats,
 });
 
+// Reset unread message whem you send a message
 sample({
     clock: sendMessage,
     source: {
@@ -98,8 +99,11 @@ sample({
     filter: ({ currentChat }) => !!currentChat,
     fn: ({ currentChatMessages, currentChat }, { params }) => {
         const newMessages = [...currentChatMessages];
-        for (let index = currentChatMessages.length - 1; index > 0; index--) {
+
+        for (let index = currentChatMessages.length - 1; index >= 0; index--) {
             const message = currentChatMessages[index];
+            console.log(message.id, params.message(currentChat!).id);
+
             if (message.id === params.message(currentChat!).id) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { status, ...messageWithoutPendingStatus } = message;

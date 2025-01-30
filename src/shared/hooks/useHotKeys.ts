@@ -32,10 +32,7 @@ const useHotkeys = (hotkeys: THotKeys) => {
             const target = event.target;
             const isDigit = event.code.includes('Digit');
             const keyCode = isDigit ? 'Digits' : event.code;
-            console.log(keyCode);
-
             const excludeOfTyping = ['Escape'];
-
             const forbiddenWhileClick = [' ', 'Enter'];
 
             const isTyping =

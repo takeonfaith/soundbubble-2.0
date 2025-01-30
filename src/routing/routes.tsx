@@ -171,16 +171,6 @@ export const allRoutes: TRoute[] = [
                 component: <ChatDialog />,
                 section: 'your activities',
                 private: true,
-                children: [
-                    {
-                        url: ':id',
-                        title: 'Chat',
-                        icon: <IconMessage />,
-                        component: <ChatDialog />,
-                        section: 'your activities',
-                        private: true,
-                    },
-                ],
             },
         ],
         section: 'your activities',

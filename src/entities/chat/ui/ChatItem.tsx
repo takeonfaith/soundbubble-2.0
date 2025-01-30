@@ -86,7 +86,7 @@ export const ChatItem = ({
     return (
         <ChatItemStyled
             onClick={handleClick}
-            to={`/chat/${chat.id}`}
+            to={`/chats/${chat.id}`}
             className={`chat-item ${isSelected ? 'selected' : ''}`}
         >
             <UserCover

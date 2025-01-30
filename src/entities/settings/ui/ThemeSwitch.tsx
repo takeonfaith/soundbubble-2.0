@@ -1,8 +1,7 @@
 import { styled } from 'styled-components';
+import { THEMES } from '../../../app/theme/constants';
 import { Flex } from '../../../shared/components/flex';
 import { settingsModel } from '../model';
-import { THEMES } from '../../../app/theme/constants';
-import Popover from '../../../shared/components/popover';
 
 const ThemeSwitchStyled = styled.div`
     display: flex;
@@ -125,8 +124,6 @@ export const ThemeSwitch = () => {
     const value =
         themeValue.settings.items.appearance.children.theme.items.darkMode
             .value;
-
-    console.log(value);
 
     return (
         <ThemeSwitchStyled>

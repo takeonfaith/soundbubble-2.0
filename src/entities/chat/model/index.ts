@@ -7,12 +7,10 @@ import {
     toggleIsEditing,
 } from './chat-editing';
 import {
-    $amITyping,
     $chats,
     $currentChat,
     currentChatIdApi,
     subscribeToChatsFx,
-    updateIsTyping,
 } from './chats';
 import { createChat } from './create-chat';
 import { loadHeavyMediaFx } from './heavy-media';
@@ -34,6 +32,7 @@ import {
     updateUnread,
 } from './unread';
 import { $wallpapers, loadWallpapers, loadWallpapersFx } from './wallpapers';
+import { $amITyping, updateIsTyping } from './typing';
 export * from './chats-update';
 
 export const chatModel = {

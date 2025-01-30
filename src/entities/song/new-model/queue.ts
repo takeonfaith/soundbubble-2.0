@@ -10,6 +10,7 @@ import { LoopMode, TLastQueue, TNextFrom, TQueue, TSong } from '../model/types';
 import { $currentTime, currentTimeApi } from './current-time';
 import { Database } from '../../../database';
 import { createQueueObject } from '../lib/createQueueObject';
+import { logout } from '../../user/model/user';
 
 const loadLastQueueFx = createEffect<
     string,
@@ -47,8 +48,8 @@ export const { toggleShuffleMode } = createApi($shuffleMode, {
     },
 });
 
-export const $queue = createStore<TQueue | null>(null);
-export const $currentSongIndex = createStore<number>(0);
+export const $queue = createStore<TQueue | null>(null).reset(logout);
+export const $currentSongIndex = createStore<number>(0).reset(logout);
 export const $isLastSongInQueue = combine(
     $queue,
     $currentSongIndex,

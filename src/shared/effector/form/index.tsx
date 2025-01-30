@@ -26,8 +26,6 @@ export const effectorForm = <T extends TForm>(form: T) => {
         }, {} as Record<keyof T, T[string]['init']>)
     );
 
-    $form.watch((f) => console.log(f));
-
     $form.reset(reset);
 
     const $errors = createStore<ErrorType<T>>(

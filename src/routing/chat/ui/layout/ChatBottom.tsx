@@ -1,4 +1,4 @@
-import { IconPaperclip } from '@tabler/icons-react';
+import { IconArrowUp, IconPaperclip } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { ChatButtons, ChatInputArea, ChatTextArea, SendButton } from './styles';
@@ -65,9 +65,13 @@ export const ChatBottom = () => {
         setValue(value);
         const isTyping = value.length > 0;
         if (currentUser) {
+            console.log(isTyping, !amITyping);
+
             if (isTyping && !amITyping) {
                 chatModel.events.updateIsTyping(true);
             } else if (!isTyping && amITyping) {
+                console.log('');
+
                 chatModel.events.updateIsTyping(false);
             }
         }
@@ -165,7 +169,7 @@ export const ChatBottom = () => {
                     onClick={handleSendMessage}
                     className="primary"
                 >
-                    Send
+                    <IconArrowUp size={20}/>
                 </SendButton>
             </ChatButtons>
         </ChatInputArea>

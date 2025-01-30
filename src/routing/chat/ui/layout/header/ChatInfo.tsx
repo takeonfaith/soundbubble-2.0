@@ -6,7 +6,7 @@ import {
     IconTrash,
     IconUserCircle,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { useChatInfo } from '../../../../../entities/chat/hooks/useChatInfo';
@@ -28,6 +28,7 @@ import { PlaylistName } from '../../../../playlist/ui/layout/PlaylistName';
 import { AddUserButton } from './AddUserButton';
 import { ChatPhoto } from './ChatPhoto';
 import { ChatStatus } from './ChatStatus';
+import { toastModel } from '../../../../../layout/toast/model';
 
 const ChatInfoStyled = styled.div`
     display: flex;
@@ -122,17 +123,48 @@ export const ChatInfo = ({ cache }: Props) => {
 
         popupModel.events.open({
             e,
-            height: 96,
+            height: isAdmin ? 96 : 56,
             content: (
                 <DefaultContextMenuStyled>
-                    <Button onClick={() => null}>
+                    <Button
+                        onClick={() => {
+                            if (chat && currentUser) {
+                                confirmModel.events.open({
+                                    text: 'Are you sure you want to leave chat?',
+                                    onAccept: () => {
+                                        chatModel.events.editChat({
+                                            chat,
+                                            update: {
+                                                participants:
+                                                    chat.participants.filter(
+                                                        (p) =>
+                                                            p !==
+                                                            currentUser.uid
+                                                    ),
+                                            },
+                                            onSuccess: () => {
+                                                toastModel.events.add({
+                                                    type: 'success',
+                                                    message:
+                                                        'You left the chat',
+                                                    duration: 10000,
+                                                });
+                                            },
+                                        });
+                                    },
+                                });
+                            }
+                        }}
+                    >
                         <IconLogout />
                         Leave chat
                     </Button>
-                    <Button onClick={() => null}>
-                        <IconTrash />
-                        Delete chat
-                    </Button>
+                    {isAdmin && (
+                        <Button className="danger" onClick={() => null}>
+                            <IconTrash />
+                            Delete chat
+                        </Button>
+                    )}
                 </DefaultContextMenuStyled>
             ),
         });
@@ -158,6 +190,14 @@ export const ChatInfo = ({ cache }: Props) => {
             });
         }
     };
+
+    useEffect(() => {
+        return () => {
+            if (isEditingMode) {
+                chatModel.events.toggleIsEditing();
+            }
+        };
+    }, [isEditingMode]);
 
     if (!chat) return null;
 

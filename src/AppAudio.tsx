@@ -59,7 +59,6 @@ const useAppAudio = () => {
         songModelNew.queue.next('from_end_track');
     };
 
-    console.log(lastTime);
     useEffect(() => {
         if (audioRef.current && isDefined(lastTime) && !isNaN(lastTime ?? 0)) {
             audioRef.current.currentTime = lastTime;

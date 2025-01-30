@@ -50,6 +50,7 @@ export class Chats {
         try {
             const q = query(this.ref, ...this.ownChatsQuery(userId));
             const snapshot = await getDocs(q);
+
             return getDataFromDoc<TChat>(snapshot);
         } catch (error) {
             throw new Error('Failed to get chats by user id: ' + userId);
@@ -226,7 +227,7 @@ export class Chats {
                     (p) => p !== message.sender
                 );
 
-                const isSuccessfull = await FB.updateDeepByIdsWithBatches(
+                await FB.updateDeepByIdsWithBatches(
                     'newChats',
                     [chat.id, 'unread'],
                     notYou,
@@ -234,21 +235,6 @@ export class Chats {
                         unreadCount: increment(1),
                     }
                 );
-
-                console.log('isSuccessfull', isSuccessfull);
-
-                if (!isSuccessfull) {
-                    await FB.setDeepByIdsWithBatches(
-                        'newChats',
-                        [chat.id, 'unread'],
-                        notYou,
-                        (userId) => ({
-                            unreadCount: 1,
-                            lastReadAt: null,
-                            userId,
-                        })
-                    );
-                }
             };
 
             await asyncRequests(chats, (chat) => {
@@ -281,6 +267,19 @@ export class Chats {
             await FB.setById('newChats', chat.id, chat);
             const messageId = getUID();
 
+            await FB.setDeepByIdsWithBatches(
+                'newChats',
+                [chat.id, 'unread'],
+                chat.participants,
+                (userId) => {
+                    return {
+                        lastReadAt: null,
+                        unreadCount: 0,
+                        userId,
+                    };
+                }
+            );
+
             // If chat is group chat, first message should be about creation
             if (isGroupChat) {
                 await this.sendMessage([chat], () =>
@@ -305,6 +304,7 @@ export class Chats {
 
             return chat;
         } catch (error) {
+            console.error(error);
             throw new Error(
                 'Failed to create chat' + (error as Error).toString()
             );

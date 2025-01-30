@@ -210,11 +210,12 @@ export class FB {
     static async setDeepByIds<T extends TCollections>(
         collectionType: T,
         path: [string, TSubcollection<T>, string],
-        data: DeepDataType<T, TSubcollection<T>>
+        data: DeepDataType<T, TSubcollection<T>>,
+        merge?: boolean
     ): Promise<void> {
         const ref = doc(this.get(collectionType), ...path);
 
-        await setDoc<DocumentData, DocumentData>(ref, data);
+        await setDoc<DocumentData, DocumentData>(ref, data, { merge });
     }
 
     static async getById<T extends TCollections>(
@@ -328,7 +329,6 @@ export class FB {
         const q = query(this.get(collectionType), constraint, ...c);
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const data = getDataFromDoc<TCollectionType<T>>(querySnapshot);
-            console.log('changed data');
 
             callback(data);
         });
@@ -400,7 +400,8 @@ export class FB {
         collectionType: T,
         path: [string, TSubcollection<T>],
         ids: string[],
-        data: (id: string) => TSubcollectionDataType<T, TSubcollection<T>>
+        data: (id: string) => TSubcollectionDataType<T, TSubcollection<T>>,
+        merge?: boolean
     ): Promise<boolean> {
         try {
             const batch = writeBatch(this.firestore);
@@ -409,7 +410,7 @@ export class FB {
                 const id = ids[i];
                 const ref = doc(this.firestore, collectionType, ...path, id);
 
-                batch.set(ref, data(id));
+                batch.set(ref, data(id), { merge });
             }
 
             await batch.commit();
@@ -502,7 +503,6 @@ const setNewUsers = async () => {
         const ids = hIds.map(() => getUID()) ?? [];
 
         if (user.isAuthor) return null;
-        
 
         console.log({ user: user.displayName, ids, hIds });
 

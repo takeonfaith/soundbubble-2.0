@@ -15,6 +15,7 @@ import { areDatesEqual } from '../../../../shared/funcs/areDatesEqual';
 import { prepareMessages } from '../../lib/prepareMessages';
 import { LoadingMoreMessages } from './LoadingMoreMessages';
 import { MessageList } from './MessageList';
+import { NoMessagesText } from './NoMessagesText';
 import {
     AvatarSection,
     ChatMessagesStyled,
@@ -117,6 +118,10 @@ export const ChatMessages = () => {
                         setShouldScrollToBottom={setShouldScrollToBottom}
                         shouldScrollBottom={shouldScrollToBottom}
                     />
+                )}
+
+                {!loading && preparedMessages.length === 0 && (
+                    <NoMessagesText />
                 )}
 
                 {!loading &&

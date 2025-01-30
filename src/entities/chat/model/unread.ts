@@ -49,6 +49,8 @@ $userLastReadAt.reset(logout);
 $maxSeenAtInCurrentChat.reset(logout);
 $messagesReadCount.reset(logout);
 
+// Read messages with a delay so that it doesn't spam the server
+// while reading a bunch of unread messages
 debounce(updateUnread, READ_MESSAGES_COOLDOWN).watch(() => {
     updateLastReadAt();
 });

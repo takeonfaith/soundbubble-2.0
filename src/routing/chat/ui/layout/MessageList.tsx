@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { getSendStatus } from '../../../../entities/chat/lib/getSendStatus';
 import { TCache, TMessage } from '../../../../entities/chat/model/types';
 import { TUser } from '../../../../entities/user/model/types';
@@ -14,48 +15,52 @@ type Props = {
     handleSeenMessage: (sentTime: number) => void;
 };
 
-export const MessageList = ({
-    chatId,
-    messages,
-    currentUser,
-    cache,
-    handleSeenMessage,
-    maxSeenAtInCurrentChat,
-    myLastReadAt,
-}: Props) => {
-    if (!currentUser) return null;
+export const MessageList = memo(
+    ({
+        chatId,
+        messages,
+        currentUser,
+        cache,
+        handleSeenMessage,
+        maxSeenAtInCurrentChat,
+        myLastReadAt,
+    }: Props) => {
+        if (!currentUser) return null;
 
-    console.log({
-        maxSeenAtInCurrentChat: new Date(maxSeenAtInCurrentChat ?? 0),
-        myLastReadAt: new Date(myLastReadAt ?? 0),
-    });
+        console.log({
+            maxSeenAtInCurrentChat: new Date(maxSeenAtInCurrentChat ?? 0),
+            myLastReadAt: new Date(myLastReadAt ?? 0),
+        });
 
-    return (
-        <>
-            {messages.map((message, i) => {
-                const isMine = message.sender === currentUser?.uid;
+        return (
+            <>
+                {messages.map((message, i) => {
+                    const isMine = message.sender === currentUser?.uid;
 
-                const sendStatus = getSendStatus(
-                    message,
-                    isMine,
-                    maxSeenAtInCurrentChat,
-                    myLastReadAt
-                );
+                    const sendStatus = getSendStatus(
+                        message,
+                        isMine,
+                        maxSeenAtInCurrentChat,
+                        myLastReadAt
+                    );
 
-                return (
-                    <MessageItem
-                        sendStatus={sendStatus}
-                        chatId={chatId}
-                        isFirst={i === 0}
-                        cache={cache}
-                        key={message.id}
-                        isPrevByTheSameSender={i !== messages.length - 1}
-                        message={message}
-                        isMine={isMine}
-                        onSeen={handleSeenMessage}
-                    />
-                );
-            })}
-        </>
-    );
-};
+                    return (
+                        <MessageItem
+                            sendStatus={sendStatus}
+                            chatId={chatId}
+                            isFirst={i === 0}
+                            cache={cache}
+                            key={message.id}
+                            isPrevByTheSameSender={i !== messages.length - 1}
+                            message={message}
+                            isMine={isMine}
+                            onSeen={handleSeenMessage}
+                        />
+                    );
+                })}
+            </>
+        );
+    }
+);
+
+MessageList.displayName = 'MessageList';

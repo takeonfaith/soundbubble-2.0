@@ -113,7 +113,6 @@ export class Users {
                 throw new Error(ERRORS.loginFailed('UID must be provided'));
 
             const res = await FB.getById('users', uid);
-            console.log(res);
 
             return res;
         } catch (error) {
@@ -257,7 +256,7 @@ export class Users {
     //             userId,
     //             'friendAwaiting',
     //         ]);
-            
+
     //     } catch (error) {
     //         console.log(error);
     //         throw new Error('Failed to get friends');

@@ -11,7 +11,6 @@ export const TimeRange = () => {
         ].children['auto-night-mode-list'].items['auto-night-time'].value.split(
             ' - '
         );
-    console.log(start, finish);
 
     return (
         <Flex padding="10px" jc="flex-end" width="100%">

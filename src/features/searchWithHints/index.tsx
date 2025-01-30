@@ -1,10 +1,10 @@
 import { Input } from '@components/input';
 import { IconSearch } from '@tabler/icons-react';
+import ReactDOM from 'react-dom';
 import { SuggestionList } from './SuggestionList';
 import { HintsStyled, SearchWithHintsStyled } from './styles';
 import { SearchSuggestionProps } from './types';
 import { useSearchWithHints } from './useSearchWithHints';
-import ReactDOM from 'react-dom';
 
 export const SearchWithHints = (props: SearchSuggestionProps) => {
     const {

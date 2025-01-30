@@ -3,6 +3,8 @@ import { Database } from '../../../database';
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
 import { $cache } from './cache';
 import { TCache, TChat, TUploadChat } from './types';
+import { $user } from '../../user/model/user';
+import { $chats } from './chats';
 
 type EditChatProps = {
     chat: TChat;
@@ -14,7 +16,7 @@ export const editChatFx = createEffectWithToast<
     EditChatProps & {
         cache: TCache;
     },
-    void
+    { update: TUploadChat; chat: TChat }
 >('Chat edited successfully', 'Failed to edit chat');
 
 export const editChat = createEvent<EditChatProps>();
@@ -32,7 +34,20 @@ sample({
     target: editChatFx,
 });
 
+// If you left the chat - remove it from the list
+sample({
+    clock: editChatFx.doneData,
+    source: { user: $user, chats: $chats },
+    filter: ({ user }, { update }) =>
+        !!user &&
+        'participants' in update &&
+        !update?.participants?.includes(user.uid),
+    fn: ({ chats }, { chat }) => chats.filter((c) => c.id !== chat.id),
+    target: $chats,
+});
+
 editChatFx.use(async ({ chat, update, cache, onSuccess }) => {
     const res = await Database.Chats.editChat(chat, update, cache);
     onSuccess?.(res);
+    return { chat, update };
 });

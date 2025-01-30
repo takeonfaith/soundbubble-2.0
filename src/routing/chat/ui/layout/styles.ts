@@ -26,7 +26,7 @@ export const MessageStyled = styled.div`
     position: relative;
 
     &.new {
-        animation: messageAppear 0.15s forwards;
+        animation: messageAppear 0.1s forwards;
 
         @keyframes messageAppear {
             0% {
@@ -348,9 +348,13 @@ export const AttachmentStyled = styled.div`
 
 export const SendButton = styled(Button)`
     min-width: 35px;
-    width: 85px;
     height: 35px;
+    min-height: 35px;
     color: #fff;
+
+    &:disabled {
+        opacity: 0.5;
+    }
 `;
 
 export const ScrollToChatBottomButton = styled(Button)`

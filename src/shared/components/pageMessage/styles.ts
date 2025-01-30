@@ -6,7 +6,7 @@ export const PageMessageStyled = styled.div`
     align-items: center;
     justify-content: center;
     gap: 20px;
-    height: calc(100% - var(--header-height) * 2);
+    height: calc(100% - var(--header-height));
     min-height: 250px;
 
     svg {

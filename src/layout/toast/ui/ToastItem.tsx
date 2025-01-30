@@ -61,7 +61,7 @@ export const ToastItem = ({ toast, index }: Props) => {
             }}
             onClick={handleClick}
         >
-            {photo && (
+            {photo !== undefined && (
                 <UserCover
                     src={photo}
                     size={'40px'}

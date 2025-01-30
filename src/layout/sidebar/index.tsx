@@ -36,7 +36,7 @@ export const Sidebar = ({ collapsed }: Props) => {
     const [unreadMap] = chatModel.useUnread();
 
     const notificationsDic: Record<string, number> = {
-        chat: Object.keys(unreadMap).filter(
+        chats: Object.keys(unreadMap).filter(
             (key) => unreadMap[key].unreadCount > 0
         ).length,
         friends: awaiting.length,
@@ -67,7 +67,7 @@ export const Sidebar = ({ collapsed }: Props) => {
                                             text={link.title}
                                         />
                                         {!!notificationsDic[link.url] && (
-                                            <NotificationBadge>
+                                            <NotificationBadge background="blue">
                                                 {notificationsDic[link.url]}
                                             </NotificationBadge>
                                         )}

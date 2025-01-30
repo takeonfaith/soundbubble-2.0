@@ -1,11 +1,13 @@
+import { TIME_IN_MS } from '../../../shared/constants/time';
+
 export const getLastSeen = (
     online: number | undefined,
     onlineStatusStr = 'online'
 ) => {
     if (!online) return { status: 'offline' };
 
-    const fiveMinutesAgo = new Date().getTime() - 300_000;
-    const fourHoursAgo = new Date().getTime() - 1_800_000 * 4;
+    const fiveMinutesAgo = new Date().getTime() - TIME_IN_MS.minute * 5;
+    const tooLongAgo = new Date().getTime() - TIME_IN_MS.hour * 12;
 
     const isOnline = online > fiveMinutesAgo;
 
@@ -22,7 +24,7 @@ export const getLastSeen = (
                 : 'hours'
             : 'minutes';
 
-    if (online > fourHoursAgo)
+    if (online > tooLongAgo)
         return { status: `last seen ${lastOnline} ${lastSeenWord} ago` };
 
     return {

@@ -39,7 +39,7 @@ export type TChat = {
     chatName: string;
     chatImage: string;
     admins?: string[];
-    lastMessage?: TMessage;
+    lastMessage?: TMessage | null;
     updateTime?: number;
 };
 

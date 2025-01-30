@@ -64,7 +64,7 @@ export const ChatPage = () => {
     };
 
     useUrlParamId({
-        page: 'chat',
+        page: 'chats',
         onChangeId: (id) => {
             chatModel.events.setCurrentChatId(id === undefined ? null : id);
             chatModel.events.canMoreBeLoaded(true);

@@ -126,7 +126,7 @@ export const UserTop = ({ user }: Props) => {
                 (chat) => {
                     setLoading(false);
                     if (chat) {
-                        navigate(`/chat/${chat.id}`);
+                        navigate(`/chats/${chat.id}`);
                     }
                 }
             );

@@ -1,9 +1,12 @@
 import { sample } from 'effector';
-import { $user } from '../../user/model/user';
-import { insertChats, $chats, $currentChat } from './chats';
-import { insertChatsSorted } from '../lib/insertChatsSorted';
-import { $unreadCountMap } from './unread';
 import { updateDeepObject } from '../../../shared/funcs/updateDeepObject';
+import { $user } from '../../user/model/user';
+import { insertChatsSorted } from '../lib/insertChatsSorted';
+import { notOnlyTyping } from '../lib/notOnlyTyping';
+import { $cache } from './cache';
+import { showNotificationFx } from './chat-notifications';
+import { $chats, $currentChat, insertChats } from './chats';
+import { $unreadCountMap } from './unread';
 
 sample({
     clock: insertChats,
@@ -13,18 +16,10 @@ sample({
         chats: $chats,
         chatTotalUnreadCountMap: $unreadCountMap,
     },
-    filter: ({ user, currentChat, chats }, insertingChats) => {
-        const first = insertingChats[0];
-        const chatIndex = chats.findIndex((c) => c.id === first.id);
-
-        return (
-            !!user &&
-            chats[chatIndex]?.lastMessage?.sender !== user.uid &&
-            (!currentChat || first.id !== currentChat.id) &&
-            chats[chatIndex]?.lastMessage?.id !== first.lastMessage?.id
-        );
-    },
+    filter: notOnlyTyping,
     fn: ({ chatTotalUnreadCountMap }, chat) => {
+        console.log({ chat });
+
         return updateDeepObject(
             chatTotalUnreadCountMap,
             `${chat[0].id}.unreadCount`,
@@ -32,6 +27,22 @@ sample({
         );
     },
     target: $unreadCountMap,
+});
+
+sample({
+    clock: insertChats,
+    source: {
+        user: $user,
+        currentChat: $currentChat,
+        chats: $chats,
+        chatTotalUnreadCountMap: $unreadCountMap,
+        cache: $cache,
+    },
+    filter: notOnlyTyping,
+    fn: ({ cache }, chats) => {
+        return { chat: chats[0], cache };
+    },
+    target: showNotificationFx,
 });
 
 sample({

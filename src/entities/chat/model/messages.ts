@@ -117,7 +117,10 @@ sample({
         user: $user,
     },
     filter: ({ initial, user, messages }, message) => {
+        if (!messages.length) return false;
+
         const lastMessage = messages[messages.length - 1];
+
         return (
             (!initial &&
                 user?.uid !== message.sender &&
