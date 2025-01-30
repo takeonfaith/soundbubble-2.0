@@ -1,4 +1,9 @@
-import { IconDots, IconPlaylist, IconQuote } from '@tabler/icons-react';
+import {
+    IconDots,
+    IconPlaylist,
+    IconQuote,
+    IconSparkles,
+} from '@tabler/icons-react';
 import { useTheme } from 'styled-components';
 import { chatModel } from '../../entities/chat/model';
 import { SongState } from '../../entities/song/model/types';
@@ -17,10 +22,13 @@ import {
     PlayerActionButtons,
     PlayerMusicControls,
     PlayerStyled,
+    SlowVersionButton,
+    SongInfoStyled,
     SongStyled,
     SongTitle,
 } from './styles';
 import { usePlayer } from './usePlayer';
+import Popover from '../../shared/components/popover';
 
 export const Player = () => {
     const {
@@ -32,7 +40,9 @@ export const Player = () => {
         performingAction,
         handleShowQueue,
         handleMore,
-        handleopen,
+        handleOpen,
+        isSlowVersion,
+        handleSlow,
     } = usePlayer();
     const theme = useTheme();
 
@@ -44,7 +54,7 @@ export const Player = () => {
 
     return (
         <PlayerStyled
-            onClick={handleopen}
+            onClick={handleOpen}
             $background={currentSong?.imageColors[0] ?? theme.colors.player}
         >
             <SongStyled>
@@ -53,10 +63,19 @@ export const Player = () => {
                     src={currentSong?.cover}
                     size={'50px'}
                 />
-                <Flex d="column" ai="flex-start">
+                <SongInfoStyled>
                     <SongTitle>{currentSong?.name ?? 'Untitled'}</SongTitle>
                     <Authors authors={currentSong?.authors} />
-                </Flex>
+                </SongInfoStyled>
+                <LikeButton
+                    width="40px"
+                    disabled={!currentSong}
+                    isLiked={isLiked}
+                    entity={currentSong}
+                    onClick={handleToggleLike}
+                    loading={performingAction}
+                    likeColor={currentSong?.imageColors[0]}
+                />
             </SongStyled>
             <PlayerMusicControls onClick={(e) => e.stopPropagation()}>
                 <MusicControls {...controls} />
@@ -83,15 +102,16 @@ export const Player = () => {
                 </MobilePlayButton>
                 <PlayerActionButtons onClick={(e) => e.stopPropagation()}>
                     <VolumeButton />
-                    <LikeButton
-                        disabled={!currentSong}
-                        width="42px"
-                        isLiked={isLiked}
-                        entity={currentSong}
-                        onClick={handleToggleLike}
-                        loading={performingAction}
-                        likeColor={currentSong?.imageColors[0]}
-                    />
+                    <SlowVersionButton
+                        $width="42px"
+                        $height="42px"
+                        disabled={!currentSong || !currentSong.slowSrc}
+                        $color={currentSong?.imageColors[0]}
+                        onClick={handleSlow}
+                        className={`${isSlowVersion ? 'slow' : ''}`}
+                    >
+                        <IconSparkles size={20} />
+                    </SlowVersionButton>
                     <Button
                         $width="42px"
                         $height="42px"

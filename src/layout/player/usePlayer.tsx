@@ -10,6 +10,10 @@ import { modalModel } from '../modal/model';
 import { popupModel } from '../popup/model';
 import { CompactLyrics } from './CompactLyrics';
 import { SongsQueue } from './SongsQueue';
+import {
+    slowSongsApi,
+    useIsSlowVersion,
+} from '../../entities/song/new-model/slow-songs';
 
 export const usePlayer = () => {
     const { currentSong } = songModelNew.useSong();
@@ -18,8 +22,9 @@ export const usePlayer = () => {
     const isLiked = !!library.find((s) => s.id === currentSong?.id);
     const { loggedIn } = usePrivateAction();
     const { handleToggleLike, performingAction } = useToggleLike(currentSong);
+    const isSlowVersion = useIsSlowVersion(currentSong?.id);
 
-    const handleopen = () => {
+    const handleOpen = () => {
         songModelNew.fullscreenPlayer.open();
     };
 
@@ -59,6 +64,16 @@ export const usePlayer = () => {
         });
     };
 
+    const handleSlow = () => {
+        if (currentSong) {
+            if (isSlowVersion) {
+                slowSongsApi.remove(currentSong.id);
+                return;
+            }
+            slowSongsApi.add([currentSong.id]);
+        }
+    };
+
     return {
         currentSong,
         controls,
@@ -69,6 +84,8 @@ export const usePlayer = () => {
         handleAddToPlaylist,
         handleMore,
         handleShowQueue,
-        handleopen,
+        handleOpen,
+        handleSlow,
+        isSlowVersion,
     };
 };

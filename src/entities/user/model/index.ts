@@ -1,49 +1,51 @@
 import { useGate, useUnit } from 'effector-react';
-import { createAuthor } from './create-author';
-import { editUser } from './edit-user';
-import { signUp } from './sign-up';
 import {
-    $user,
+    getAuthorPageById,
+    loadSimilarAuthors,
+    resetUserPage,
+    authorPage,
+} from './author-page';
+import { createAuthor } from './create-author';
+import { deleteAccount } from './delete-account';
+import { editUser } from './edit-user';
+import {
+    $awaiting,
+    $friendRequests,
+    $friends,
+    acceptFriendRequest,
+    cancelFriendRequest,
+    deleteFromFriends,
+    friendRequest,
+    rejectFriendRequest,
+    subscribeToFriendsFx,
+    updateFriends,
+} from './friends';
+import { login, loginFx } from './login';
+import { resetPassword } from './reset-password';
+import { signUp } from './sign-up';
+import './update-online';
+import {
+    $addedAuthors,
+    $addedPlaylists,
     $library,
     $ownPlaylists,
-    $addedAuthors,
     $searchHistory,
-    logout,
-    setUser,
+    $user,
     addOwnPlaylistToLibrary,
-    userGate,
-    getUserPage,
-    loadSimilarAuthors,
-    loadUserData,
-    resetUserPage,
-    toggleAuthorLiked,
-    $addedPlaylists,
     loadAddedAuthorsFx,
     loadAddedPlaylistsFx,
     loadLibraryFx,
     loadOwnPlaylistsFx,
-    loadUserPageFx,
-    $userPage,
+    loadUserData,
     loadUserDataFx,
-    toggleSongLiked,
+    logout,
+    setUser,
+    toggleAuthorLiked,
     toggleOtherPlaylistLiked,
+    toggleSongLiked,
+    userGate,
 } from './user';
-import { login, loginFx } from './login';
-import { deleteAccount } from './delete-account';
-import {
-    $friends,
-    $friendRequests,
-    updateFriends,
-    friendRequest,
-    subscribeToFriendsFx,
-    $awaiting,
-    cancelFriendRequest,
-    acceptFriendRequest,
-    rejectFriendRequest,
-    deleteFromFriends,
-} from './friends';
-import './update-online';
-import { resetPassword } from './reset-password';
+import { getUserPageById, userPage } from './user-page';
 
 export const userModel = {
     useUser: () => useUnit([$user, loadUserDataFx.pending, loginFx.pending]),
@@ -53,7 +55,8 @@ export const userModel = {
         useUnit([$addedPlaylists, loadAddedPlaylistsFx.pending]),
     useAddedAuthors: () => useUnit([$addedAuthors, loadAddedAuthorsFx.pending]),
     useSearchHistory: () => useUnit($searchHistory),
-    useUserPage: () => useUnit([$userPage, loadUserPageFx.pending]),
+    authorPage,
+    userPage,
     useFriends: () =>
         useUnit([
             $friends,
@@ -67,7 +70,8 @@ export const userModel = {
         loadSimilarAuthors,
         signUp,
         setUser,
-        getUserPage,
+        getUserPageById,
+        getAuthorPageById,
         resetUserPage,
         updateFriends,
         addOwnPlaylistToLibrary,

@@ -54,6 +54,10 @@ export const MoreInfoButton = styled(Button)`
 
     &.current {
         color: ${({ theme }) => theme.scheme.pink.action};
+
+        svg {
+            fill: ${({ theme }) => theme.scheme.pink.action};
+        }
         opacity: 1;
     }
 

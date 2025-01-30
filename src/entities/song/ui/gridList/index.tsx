@@ -10,17 +10,18 @@ import { GridSongListStyled, GridWrapper } from './styles';
 type Props = {
     queue: TQueue;
     children?: (songs: TSong[]) => React.ReactNode;
+    maxSongs?: number;
 };
 
 export const GridSongList = (props: Props) => {
-    const { queue, children } = props;
+    const { queue, children, maxSongs } = props;
     const { isMobile } = useCurrentDevice();
     const maxGridRows = isMobile ? 4 : 3;
     const { songs } = queue;
     const songProps = useSongPlay({ queue });
     const items = children?.(songs) ?? (
         <>
-            {songs.map((song, index) => {
+            {songs.slice(0, maxSongs).map((song, index) => {
                 return (
                     <SongItem
                         index={index}

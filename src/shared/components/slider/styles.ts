@@ -54,9 +54,9 @@ export const SliderStyled = styled.input<{ color: string | undefined }>`
         transform: scaleY(2);
         border-radius: 30px;
 
-        /* &::-webkit-slider-thumb {
-		  display: block;
-	 } */
+        &::-webkit-slider-thumb {
+            display: block;
+        }
     }
 
     &:focus {

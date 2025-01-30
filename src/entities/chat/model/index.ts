@@ -1,5 +1,5 @@
 import { useUnit } from 'effector-react';
-import { $cache } from './cache';
+import { $cache } from '../../cache';
 import {
     $isEditingMode,
     editChat,

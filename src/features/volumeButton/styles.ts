@@ -5,13 +5,14 @@ export const VolumeButtonStyled = styled.div`
 
     .song-slider {
         opacity: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 150px;
+        top: calc(50% + 2px);
+        transform: translate(0px, -50%);
         left: 100%;
         position: absolute;
         transition: 0.2s;
         pointer-events: none;
+        max-width: 200px;
+        box-sizing: content-box;
     }
 
     &:hover {

@@ -86,7 +86,7 @@ export const AddEntitiesUI = <T extends TEntity>({
             <Flex
                 d="column"
                 width="100%"
-                padding="0 0 150px 0"
+                padding="10px 0 150px 0"
                 gap={gap}
                 className="entities-list"
             >

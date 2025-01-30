@@ -18,16 +18,19 @@ export const VolumeButton = () => {
     };
 
     return (
-        <VolumeButtonStyled className='volume-button'>
+        <VolumeButtonStyled className="volume-button">
             <SmallControlButton onClick={handleMute}>
-                {isMuted ? <IconVolumeOff /> : <IconVolume opacity={0.9} />}
+                {isMuted || volume === 0 ? (
+                    <IconVolumeOff />
+                ) : (
+                    <IconVolume opacity={0.9} />
+                )}
             </SmallControlButton>
             <Slider
                 value={isMuted ? 0 : volume * 100}
                 duration={100}
                 onChangeTime={handleChange}
                 onMouseUp={() => null}
-                color="#fff"
             />
         </VolumeButtonStyled>
     );

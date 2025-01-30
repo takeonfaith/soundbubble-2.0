@@ -1,3 +1,4 @@
+import { TPlaylist } from '../../entities/playlist/model/types';
 import { PlaylistItem } from '../../entities/playlist/ui';
 import { userModel } from '../../entities/user/model';
 import { HorizontalList } from '../../shared/components/horizontalList';
@@ -8,13 +9,13 @@ import { MAX_PLAYLISTS } from './constants';
 type Props = {
     uid: string | undefined;
     title?: string;
+    playlists: TPlaylist[];
 };
 
-export const Playlists = ({ title, uid }: Props) => {
-    const [{ playlists }] = userModel.useUserPage();
+export const Playlists = ({ title, uid, playlists }: Props) => {
     const [currentUser] = userModel.useUser();
 
-    if (playlists.length === 0) {
+    if (!playlists || playlists.length === 0) {
         return null;
     }
 
@@ -29,18 +30,16 @@ export const Playlists = ({ title, uid }: Props) => {
                 </NavigationTitle>
             </div>
             <HorizontalList>
-                {playlists.slice(0, MAX_PLAYLISTS).map((playlist) => {
+                {playlists.slice(0, MAX_PLAYLISTS).map((album) => {
                     const isAuthor =
                         !!currentUser &&
-                        !!playlist.authors.find(
-                            (a) => a.uid === currentUser.uid
-                        );
+                        !!album.authors.find((a) => a.uid === currentUser.uid);
 
                     return (
                         <PlaylistItem
                             isAuthor={isAuthor}
-                            playlist={playlist}
-                            key={playlist.id}
+                            playlist={album}
+                            key={album.id}
                         />
                     );
                 })}

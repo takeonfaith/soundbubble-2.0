@@ -20,9 +20,9 @@ export const VerticalSongsList = (props: Props) => {
         <>
             {!!songs.length && (
                 <Titles
-                    className={
+                    className={`titles ${
                         showSerialNumber || isEditing ? 'showSerialNumber' : ''
-                    }
+                    } `}
                 >
                     <Title
                         style={{

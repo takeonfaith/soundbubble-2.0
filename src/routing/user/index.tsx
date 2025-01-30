@@ -24,24 +24,28 @@ type Props = {
 };
 
 export const UserPage = ({ data, loadingUser }: Props) => {
-    const [{ user: currentPageUser, songs, lastSongPlayed, friends }, loading] =
-        userModel.useUserPage();
+    const [currentPageUser, loading] = userModel.userPage.useUserData();
+    const [songs] = userModel.userPage.useTopSongs();
+    const [playlists] = userModel.userPage.usePlaylists();
+    const [lastSongPlayed] = userModel.userPage.useLastSongPlayed();
+    const [friends] = userModel.userPage.useFriends();
     const userPageData = data ?? currentPageUser;
-    const loadingData = loadingUser || loading;
-
-    useUrlParamId({
+    const id = useUrlParamId({
         page: 'user',
         onChangeId: (id) => {
             if (id) {
                 if (!data) {
-                    userModel.events.getUserPage({
+                    userModel.events.getUserPageById({
                         userId: id,
-                        sortSongs: false,
                     });
                 }
             }
         },
     });
+
+    const loadingData = loadingUser || loading || id !== currentPageUser?.uid;
+
+    console.log(playlists);
 
     useEffect(() => {
         return () => {
@@ -96,7 +100,11 @@ export const UserPage = ({ data, loadingUser }: Props) => {
                         <GridSongList queue={queue} />
                     </SectionStyled>
                 )}
-                <Playlists title="Playlists" uid={userPageData?.uid} />
+                <Playlists
+                    playlists={playlists}
+                    title="Playlists"
+                    uid={userPageData?.uid}
+                />
                 <SectionStyled>
                     <div className="title">
                         <NavigationTitle

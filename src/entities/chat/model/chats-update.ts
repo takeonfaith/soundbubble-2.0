@@ -3,7 +3,7 @@ import { updateDeepObject } from '../../../shared/funcs/updateDeepObject';
 import { $user } from '../../user/model/user';
 import { insertChatsSorted } from '../lib/insertChatsSorted';
 import { notOnlyTyping } from '../lib/notOnlyTyping';
-import { $cache } from './cache';
+import { $cache } from '../../cache';
 import { showNotificationFx } from './chat-notifications';
 import { $chats, $currentChat, insertChats } from './chats';
 import { $unreadCountMap } from './unread';

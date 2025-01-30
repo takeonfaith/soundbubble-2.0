@@ -1,8 +1,7 @@
 import { Skeleton } from '@components/skeleton';
 import styled from 'styled-components';
 
-export const SongsVerticalListStyled = styled.div`
-`;
+export const SongsVerticalListStyled = styled.div``;
 
 export const Titles = styled.div`
     width: 100%;

@@ -3,27 +3,24 @@ import { createGate } from 'effector-react';
 import { User } from 'firebase/auth';
 import { throttle } from 'patronum';
 import { Database } from '../../../database';
-import { Playlists, Users } from '../../../database/sections';
+import { Playlists } from '../../../database/sections';
 import { TExtendedSuggestion } from '../../../features/searchWithHints/types';
 import { confirmModel } from '../../../layout/confirm/model';
 import { toastModel } from '../../../layout/toast/model';
-import { errorEffect } from '../../../shared/effector/errorEffect';
 import { getDataFromEffect } from '../../../shared/effector/getDataFromEffect';
-import { loadingEffect } from '../../../shared/effector/loadingEffect';
 import { filterOneArrayWithAnother } from '../../../shared/funcs/filterOneArrayWithAnother';
 import { tryWrapper } from '../../../shared/funcs/trywrapper';
 import { TPlaylist } from '../../playlist/model/types';
 import { getAuthorsToString } from '../../song/lib/getAuthorsToString';
 import { TSong } from '../../song/model/types';
 import {
-    DEFAULT_PAGE_STORE,
     DEFAULT_SIGN_UP_DATA,
     DEFAULT_USER_STORE,
     MAX_SEARCH_HISTORY_QUANTITY,
     REMOVE_FROM_LIBRARY_TIMEOUT,
 } from './constants';
 import { signUpFx } from './sign-up';
-import { TPageStore, TUser } from './types';
+import { TUser } from './types';
 
 export const logoutFx = createEffect(() => {
     return tryWrapper(async () => {
@@ -65,23 +62,6 @@ export const loadAddedPlaylistsFx = createEffect(async (store: TUser) => {
         return addedPlaylists;
     } catch (error) {
         throw new Error('Failed to load added playlists');
-    }
-});
-
-export const loadUserPageFx = createEffect(
-    async ({ userId, sortSongs }: { userId: string; sortSongs: boolean }) => {
-        const props = await Database.Users.getUserPageById(userId, sortSongs);
-
-        return props;
-    }
-);
-
-export const loadSimilarAuthorsFx = createEffect(async (songs: TSong[]) => {
-    try {
-        const authors = await Users.getSimilarAuthorsBySongs(songs);
-        return authors;
-    } catch (error) {
-        throw new Error('Failed to load similar authors');
     }
 });
 
@@ -158,12 +138,6 @@ loadUserDataFx.failData.watch((err) => {
 
 export const logout = createEvent();
 export const setUser = createEvent<TUser>();
-export const getUserPage = createEvent<{
-    userId: string;
-    sortSongs: boolean;
-}>();
-export const loadSimilarAuthors = createEvent<TSong[]>();
-export const resetUserPage = createEvent();
 
 export const loadUserData = createEvent<User | null>();
 
@@ -217,10 +191,6 @@ $addedPlaylists.reset(logout);
 
 export const $searchHistory = createStore<TExtendedSuggestion[]>([]);
 $searchHistory.reset(logout);
-
-export const $userPage =
-    createStore<TPageStore>(DEFAULT_PAGE_STORE).reset(resetUserPage);
-$userPage.reset(logout);
 
 export const $addedAuthors = createStore<TUser[]>([]);
 
@@ -294,35 +264,6 @@ sample({
     fn: (currentPlaylist, playlist) =>
         currentPlaylist.filter((p) => p.id !== playlist.id),
     target: $ownPlaylists,
-});
-
-sample({
-    clock: getUserPage,
-    target: loadUserPageFx,
-});
-
-loadingEffect(loadUserPageFx, $userPage, 'loading');
-errorEffect(loadUserPageFx, $userPage);
-
-sample({
-    clock: loadUserPageFx.doneData,
-    source: $userPage,
-    fn: (store, data) => ({ ...store, ...data, similarAuthors: [] }),
-    target: $userPage,
-});
-
-sample({
-    clock: loadSimilarAuthors,
-    target: loadSimilarAuthorsFx,
-});
-
-loadingEffect(loadSimilarAuthorsFx, $userPage, 'similarAuthorsLoading');
-
-sample({
-    clock: loadSimilarAuthorsFx.doneData,
-    source: $userPage,
-    fn: (store, similarAuthors) => ({ ...store, similarAuthors }),
-    target: $userPage,
 });
 
 sample({

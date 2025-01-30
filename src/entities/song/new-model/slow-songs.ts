@@ -16,7 +16,7 @@ export const $isCurrentSongSlow = combine(
     ([currentSong, slowSongs]) => {
         if (!currentSong) return false;
 
-        return slowSongs.includes(currentSong.id);
+        return slowSongs.includes(currentSong.id) && !!currentSong.slowSrc;
     }
 );
 
@@ -38,6 +38,9 @@ sample({
     target: loadAndPlay,
 });
 
+// BUG: when switching from one song to another when the first song
+// was slow, and the second isnt't - this sample activates
+// causing the second song to start not from 0
 sample({
     clock: [$isCurrentSongSlow],
     source: {

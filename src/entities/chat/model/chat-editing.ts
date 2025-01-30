@@ -1,7 +1,7 @@
 import { createApi, createEvent, createStore, sample } from 'effector';
 import { Database } from '../../../database';
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
-import { $cache } from './cache';
+import { $cache } from '../../cache';
 import { TCache, TChat, TUploadChat } from './types';
 import { $user } from '../../user/model/user';
 import { $chats } from './chats';

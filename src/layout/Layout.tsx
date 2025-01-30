@@ -1,4 +1,8 @@
-import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import {
+    IconChevronDown,
+    IconChevronLeft,
+    IconChevronRight,
+} from '@tabler/icons-react';
 import { Outlet } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { styled } from 'styled-components';
@@ -28,6 +32,7 @@ import { popupModel } from './popup/model';
 import { Sidebar } from './sidebar';
 import { sidebarApi, useSidebar } from './sidebar/model';
 import { Toast } from './toast/ui';
+import { UserStatus } from '../entities/user/ui/UserStatus';
 
 export const LayoutStyled = styled.div`
     height: calc(100dvh - var(--player-size) - var(--page-gap) * 2 - 56px);
@@ -66,7 +71,9 @@ const LayoutHeader = styled.div`
     align-items: center;
     padding: 16px 30px;
     padding-bottom: 0;
+    padding-right: var(--page-gap);
     gap: 92px;
+    max-height: 56px;
 
     .hide-sidebar-button {
         opacity: 0;
@@ -88,6 +95,22 @@ const LayoutHeader = styled.div`
 
     @media (max-width: 768px) {
         display: none;
+    }
+`;
+
+const UserButton = styled(Button)`
+    border-radius: 20px;
+    padding: 4px;
+    padding-right: 14px;
+    max-width: 220px;
+    width: fit-content;
+    justify-content: space-between;
+
+    .name {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        font-size: 0.8rem;
     }
 `;
 
@@ -178,15 +201,24 @@ export const Layout = () => {
                     <ThemeButton />
 
                     {currentUser && (
-                        <Button $width="40px" onClick={handleOpenUserPopup}>
-                            {currentUser.isAdmin && <AdminCircle />}
-                            <UserCover
-                                colors={currentUser?.imageColors}
-                                src={currentUser?.photoURL}
-                                size={'30px'}
-                                isAuthor={currentUser?.isAuthor}
-                            />
-                        </Button>
+                        <UserButton
+                            className="outline"
+                            onClick={handleOpenUserPopup}
+                        >
+                            <Flex gap={8}>
+                                {currentUser.isAdmin && <AdminCircle />}
+                                <UserCover
+                                    colors={currentUser?.imageColors}
+                                    src={currentUser?.photoURL}
+                                    size={'30px'}
+                                    isAuthor={currentUser?.isAuthor}
+                                />
+                                {/* <span className="name">
+                                    {currentUser.displayName}
+                                </span> */}
+                            </Flex>
+                            <IconChevronDown size={14} />
+                        </UserButton>
                     )}
                     <LoginButton />
                 </Flex>

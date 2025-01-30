@@ -508,18 +508,34 @@ export class Users {
         }
     }
 
-    static async getUserPageById(userId: string, sortSongs = false) {
+    static async getAllAuthorSongs(userId: string) {
+        try {
+            const user = await this.getUserById(userId);
+
+            if (!user) return [];
+
+            const userSongs = user?.ownSongs?.length
+                ? user?.ownSongs
+                : user?.addedSongs ?? [];
+
+            const songs = await Songs.getSongsByUids(userSongs, true);
+
+            return songs;
+        } catch (error) {
+            return [];
+            throw new Error('Failed to get author songs');
+        }
+    }
+
+    static async getAuthorPageById(userId: string, sortSongs = false) {
         try {
             const user = await this.getUserById(userId);
 
             if (!user) return null;
 
-            const userSongs = user?.ownSongs?.length
-                ? user?.ownSongs
-                : user?.addedSongs ?? [];
-            const userPlaylists = user?.ownPlaylists?.length
-                ? user?.ownPlaylists
-                : user?.addedPlaylists ?? [];
+            const userSongs = user?.ownSongs ?? [];
+
+            const userPlaylists = user?.ownPlaylists;
 
             const songs = await Songs.getSongsByUids(
                 userSongs.reverse(),
@@ -528,9 +544,29 @@ export class Users {
 
             const playlists = await Playlists.getPlaylistsByUids(userPlaylists);
 
-            const lastQueue = !user.isAuthor
-                ? await Songs.loadLastQueue(user.uid)
-                : null;
+            return {
+                user,
+                songs,
+                playlists,
+            };
+        } catch (error) {
+            console.log('Failed to get user page', error);
+
+            throw new Error('Failed to get user page');
+        }
+    }
+
+    static async getUserPageById(userId: string) {
+        try {
+            const user = await this.getUserById(userId);
+
+            if (!user) return null;
+
+            const lastQueue = await Songs.loadLastQueue(userId);
+
+            const songs = await Songs.getSongsByUids(
+                (user.addedSongs ?? []).reverse()
+            );
 
             const friends = await this.getUsersByUids(
                 user.friends
@@ -538,15 +574,12 @@ export class Users {
                     .map((u) => u.uid)
             );
 
-            return {
-                user,
-                songs,
-                playlists,
-                lastSongPlayed: lastQueue?.queue
-                    ? lastQueue?.songs[lastQueue.queue.currentSongIndex]
-                    : null,
-                friends,
-            };
+            const playlists = await Playlists.getPlaylistsByUids([
+                ...user.ownPlaylists,
+                ...user.addedPlaylists,
+            ]);
+
+            return { user, songs, friends, lastQueue, playlists };
         } catch (error) {
             console.log('Failed to get user page', error);
 

@@ -12,11 +12,14 @@ import { modalModel } from '../../layout/modal/model';
 import { popupModel } from '../../layout/popup/model';
 import { THotKeys } from './useHotKeys';
 import { Settings } from '../../entities/settings/ui';
+import { sidebarApi } from '../../layout/sidebar/model';
+import { confirmModel } from '../../layout/confirm/model';
 
 export const useGetAppHotKeys = () => {
     const [modals] = modalModel.useModal();
     const { isOpen } = popupModel.usePopup();
     const fullScreen = songModel.useFullScreenPlayer();
+    const { isOpen: isConfirmOpen } = confirmModel.useConfirm();
 
     const escapeAction = (event: KeyboardEvent) => {
         console.log('escape action');
@@ -25,6 +28,10 @@ export const useGetAppHotKeys = () => {
 
         if (isOpen) {
             popupModel.events.close();
+        }
+
+        if (isConfirmOpen) {
+            confirmModel.events.close();
         }
 
         if (fullScreen) {
@@ -107,6 +114,13 @@ export const useGetAppHotKeys = () => {
             },
             name: 'f',
             description: 'Toggle full screen',
+        },
+        KeyC: {
+            action: () => {
+                sidebarApi.toggle();
+            },
+            name: 'c',
+            description: 'Collapse/open menu',
         },
         Slash: {
             action: (event) => {

@@ -11,7 +11,7 @@ export const createEffectWithToast = <Params, Done>(
         effect.doneData.watch(() => {
             toastModel.events.add({
                 message: successMessage,
-                type: 'hint',
+                type: 'success',
                 duration: 5000,
             });
         });

@@ -43,7 +43,7 @@ export const AddSongToPlaylistModal = ({ song }: Props) => {
                     return (
                         <PlaylistItem
                             isAuthor={false}
-                            as="div"
+                            as="button"
                             playlist={playlist}
                             onClick={onClick}
                             key={playlist.id}

@@ -94,7 +94,11 @@ export const Sidebar = ({ collapsed }: Props) => {
                     </NavigationTitle>
 
                     <Popover
-                        content="Create playlist"
+                        content={
+                            <>
+                                Create playlist <kbd>n</kbd>
+                            </>
+                        }
                         position={collapsed ? 'right' : 'top'}
                     >
                         <Button

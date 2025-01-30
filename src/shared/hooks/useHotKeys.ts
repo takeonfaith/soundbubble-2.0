@@ -14,6 +14,7 @@ type TKeys =
     | 'KeyN'
     | 'KeyT'
     | 'KeyF'
+    | 'KeyC'
     | 'Slash'
     | 'Digits';
 

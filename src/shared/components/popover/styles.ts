@@ -20,6 +20,13 @@ export const PopoverContainer = styled.div<{
 
     animation: appear 0.2s forwards;
 
+    kbd {
+        margin-left: 4px;
+        min-width: 20px;
+        min-height: 14px;
+        padding: 2px;
+    }
+
     --tongue-size: 6px;
     --tongue-border: ${({ tongueColor, theme }) =>
         tongueColor ?? theme.colors.border};

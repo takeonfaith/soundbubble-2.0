@@ -20,7 +20,9 @@ type Props = {
 };
 
 export const AuthorPage = ({ userData }: Props) => {
-    const [{ user: currentPageUser, songs }, loading] = userModel.useUserPage();
+    const [currentPageUser, loading] = userModel.authorPage.useAuthorPage();
+    const [songs] = userModel.authorPage.useTopSongs();
+    const [albums] = userModel.authorPage.useAlbums();
     const userPageData = userData ?? currentPageUser;
     const lastSongs = useMemo(() => {
         return songs.filter((s) => {
@@ -35,7 +37,9 @@ export const AuthorPage = ({ userData }: Props) => {
         page: 'author',
         onChangeId: (id) => {
             if (id) {
-                userModel.events.getUserPage({ userId: id, sortSongs: true });
+                userModel.events.getAuthorPageById({
+                    userId: id,
+                });
             }
         },
     });
@@ -70,7 +74,7 @@ export const AuthorPage = ({ userData }: Props) => {
                 skeleton={<SkeletonLoading />}
             >
                 <AuthorPageTop author={userPageData} queue={queue} />
-                <Flex width="100%" height="100%" gap={40} d="column">
+                <Flex width="100%" height="100%" gap={0} d="column">
                     {!!lastSongs.length && (
                         <SongsStyled>
                             <div className="title">
@@ -90,9 +94,13 @@ export const AuthorPage = ({ userData }: Props) => {
                             </NavigationTitle>
                         </div>
 
-                        <GridSongList queue={queue} />
+                        <GridSongList queue={queue} maxSongs={MAX_SONGS} />
                     </SongsStyled>
-                    <Playlists uid={userPageData?.uid} title="Top Albums" />
+                    <Playlists
+                        playlists={albums}
+                        uid={userPageData?.uid}
+                        title="Top Albums"
+                    />
                     {!loading && (
                         <SimilarAuthors
                             songs={songs}

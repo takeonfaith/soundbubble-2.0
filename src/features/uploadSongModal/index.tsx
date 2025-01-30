@@ -73,7 +73,7 @@ export const UploadSongModal = () => {
                 height="100%"
                 padding="0 0 30px 0"
             >
-                {!values.songFile && (
+                {/* {!values.songFile && (
                     <Input
                         placeholder="Enter youtube link..."
                         value={values.youtubeLink}
@@ -96,7 +96,7 @@ export const UploadSongModal = () => {
                         <Subtext>Or</Subtext>
                         <Divider />
                     </Flex>
-                )}
+                )} */}
                 <SongInput
                     error={errors.songFile}
                     onChange={handleChange}

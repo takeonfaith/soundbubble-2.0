@@ -160,8 +160,8 @@ export const SongStyled = styled.div`
     display: flex;
     align-items: center;
     gap: 16px;
-    min-width: 300px;
-    max-width: 300px;
+    min-width: 340px;
+    max-width: 340px;
     overflow: hidden;
 
     @media (max-width: 1340px) {
@@ -198,7 +198,7 @@ export const MobilePlayButton = styled.div`
 `;
 
 export const PlayerActionButtons = styled.div`
-    min-width: 300px;
+    min-width: 340px;
     display: flex;
     justify-content: flex-end;
     gap: 14px;
@@ -221,6 +221,13 @@ export const PlayerActionButtons = styled.div`
     @media (max-width: 1000px) {
         display: none;
     }
+`;
+
+export const SongInfoStyled = styled.div`
+    max-width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 `;
 
 export const FriendsList = styled.div`
@@ -328,6 +335,18 @@ export const SendAnimationStyled = styled.div`
                 transform: translate(-110px, 0);
                 opacity: 0;
             }
+        }
+    }
+`;
+
+export const SlowVersionButton = styled(Button)<{ $color?: string }>`
+    &.slow {
+        background: ${({ theme }) => theme.colors.skeleton};
+
+        svg {
+            color: ${({ $color }) => $color};
+            filter: brightness(${({ theme }) => theme.colors.brightness});
+            fill: ${({ $color }) => $color};
         }
     }
 `;

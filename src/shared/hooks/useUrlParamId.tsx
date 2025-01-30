@@ -13,4 +13,6 @@ export const useUrlParamId = ({ page, onChangeId }: Props) => {
     useEffect(() => {
         onChangeId(match?.params.id);
     }, [match?.params.id]);
+
+    return match?.params.id;
 };

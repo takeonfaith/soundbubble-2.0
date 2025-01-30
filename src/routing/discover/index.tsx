@@ -50,12 +50,6 @@ const PlaybuttonStyled = styled.div`
     height: 300px;
     height: 300px;
 
-    &:hover {
-        .slow-btn {
-            opacity: 1;
-        }
-    }
-
     .slow-btn {
         background: #2a2a2a4f;
         padding: 10px 14px;
@@ -72,6 +66,20 @@ const PlaybuttonStyled = styled.div`
 
         &:hover {
             background: #2a2a2a33;
+        }
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            .slow-btn {
+                opacity: 1;
+            }
+        }
+    }
+
+    @media (hover: none) {
+        .slow-btn {
+            opacity: 1;
         }
     }
 `;

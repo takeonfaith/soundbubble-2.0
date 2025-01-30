@@ -1,6 +1,6 @@
 import { createEffect, createEvent, sample } from 'effector';
 import { Database } from '../../../database';
-import { $cache, getNotInCacheFx, saveInCache } from './cache';
+import { $cache, getNotInCacheFx, saveInCache } from '../../cache';
 import { TCache, THeavyMedia } from './types';
 
 export const loadHeavyMediaFx = createEffect<THeavyMedia, TCache, Error>();

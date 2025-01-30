@@ -19,7 +19,8 @@ type Props = {
 export const SimilarAuthors = ({ songs, currentPageUser }: Props) => {
     const ref = useRef<HTMLDivElement>(null);
     const theme = useTheme();
-    const [{ similarAuthors, similarAuthorsLoading }] = userModel.useUserPage();
+    const [similarAuthors, similarAuthorsLoading] =
+        userModel.authorPage.useSimilarAuthors();
     useIsOnScreen(ref, () => {
         if (similarAuthors.length === 0) {
             userModel.events.loadSimilarAuthors(songs);

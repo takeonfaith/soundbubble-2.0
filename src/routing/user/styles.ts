@@ -3,8 +3,6 @@ import { SongsStyled } from '../author/styles';
 import { hexToRgbA } from '../../shared/funcs/hexToRgba';
 
 export const SectionStyled = styled(SongsStyled)`
-    padding: 16px 0;
-
     h3 {
         font-weight: 400;
     }
