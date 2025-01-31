@@ -22,23 +22,28 @@ export const useGetAppHotKeys = () => {
     const { isOpen: isConfirmOpen } = confirmModel.useConfirm();
 
     const escapeAction = (event: KeyboardEvent) => {
-        console.log('escape action');
-
-        if (modals.length > 0) modalModel.events.close();
+        if (modals.length > 0) {
+            event.preventDefault();
+            modalModel.events.close();
+        }
 
         if (isOpen) {
+            event.preventDefault();
             popupModel.events.close();
         }
 
         if (isConfirmOpen) {
+            event.preventDefault();
             confirmModel.events.close();
         }
 
         if (fullScreen) {
+            event.preventDefault();
             songModel.fullscreenPlayer.close();
         }
 
         if (event.target instanceof HTMLInputElement) {
+            event.preventDefault();
             event.target.blur();
         }
 

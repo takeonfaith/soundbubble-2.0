@@ -1,5 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { hexToRgbA } from '../../shared/funcs/hexToRgba';
+import { Browsers, getBrowserName } from '../../shared/funcs/getBrowserName';
+
+const browserName = getBrowserName();
 
 interface Bubble {
     radius: number;
@@ -56,7 +59,9 @@ const drawBubble = (
     const centerY = canvas.height / 2;
 
     ctx.save();
-    ctx.filter = 'blur(100px)';
+    if (browserName !== Browsers.Safari) {
+        ctx.filter = 'blur(100px)';
+    }
     ctx.globalAlpha = 0.8;
     ctx.fillStyle = bubble.color;
     ctx.beginPath();
@@ -164,26 +169,28 @@ export const MeshGradientBubblesWithAudio = ({
                     colors?.[0] ?? '#4f35b66d'
                 }, transparent)`,
             }}
-            className='mesh-gradient'
+            className="mesh-gradient"
         >
-            <svg xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <filter id="goo">
-                        <feGaussianBlur
-                            in="SourceGraphic"
-                            stdDeviation="120"
-                            result="blur"
-                        />
-                        <feColorMatrix
-                            in="blur"
-                            mode="matrix"
-                            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -4"
-                            result="goo"
-                        />
-                        <feBlend in="SourceGraphic" in2="goo" />
-                    </filter>
-                </defs>
-            </svg>
+            {browserName !== Browsers.Safari && (
+                <svg xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="goo">
+                            <feGaussianBlur
+                                in="SourceGraphic"
+                                stdDeviation="120"
+                                result="blur"
+                            />
+                            <feColorMatrix
+                                in="blur"
+                                mode="matrix"
+                                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -4"
+                                result="goo"
+                            />
+                            <feBlend in="SourceGraphic" in2="goo" />
+                        </filter>
+                    </defs>
+                </svg>
+            )}
             <canvas
                 ref={canvasRef}
                 style={{
@@ -193,7 +200,10 @@ export const MeshGradientBubblesWithAudio = ({
                     left: 0,
                     width: '100%',
                     height: '100%',
-                    filter: 'url(#goo)',
+                    filter:
+                        browserName !== Browsers.Safari
+                            ? 'url(#goo)'
+                            : 'blur(50px)',
                 }}
             />
         </div>

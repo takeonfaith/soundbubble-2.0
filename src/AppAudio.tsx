@@ -6,6 +6,19 @@ import { $isSliding } from './entities/song/new-model/current-time';
 import { $songSrc } from './entities/song/new-model/slow-songs';
 import { useEffectOnce } from './shared/hooks/useEffectOnce';
 
+const audioCtx = new AudioContext();
+const analyserNode = audioCtx.createAnalyser();
+
+const resumeCtx = () => {
+    audioCtx.resume();
+};
+
+if (audioCtx.state === 'suspended') {
+    document.addEventListener('click', resumeCtx);
+} else if (audioCtx.state === 'running') {
+    document.removeEventListener('click', resumeCtx);
+}
+
 const useAppAudio = () => {
     const { state, lastTime } = songModelNew.useSong();
     const isSliding = useUnit($isSliding);
@@ -21,8 +34,6 @@ const useAppAudio = () => {
         if (audioRef.current) {
             // Set up Web Audio API
             audioRef.current.crossOrigin = 'anonymous';
-            const audioCtx = new AudioContext();
-            const analyserNode = audioCtx.createAnalyser();
             const source = audioCtx.createMediaElementSource(audioRef.current);
 
             source.connect(analyserNode);
@@ -68,7 +79,12 @@ const useAppAudio = () => {
     useEffect(() => {
         if (audioRef.current) {
             if (state === 'playing') {
-                audioRef.current.play();
+                audioRef.current
+                    .play()
+                    .then(() => {})
+                    .catch((err) => {
+                        console.log(err);
+                    });
             } else {
                 audioRef.current?.pause();
             }

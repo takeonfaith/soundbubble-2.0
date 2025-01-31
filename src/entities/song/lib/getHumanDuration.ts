@@ -6,6 +6,8 @@ export const getHumanDuration = (
 ) => {
     if (duration === undefined) return '';
 
+    if (duration < 0) return `${get2DigitNumber(0)}:${get2DigitNumber(0)}`;
+
     const hours = Math.floor(duration / 3600);
     const minutes = Math.floor((duration % 3600) / 60);
     const seconds = Math.floor(duration % 60);
