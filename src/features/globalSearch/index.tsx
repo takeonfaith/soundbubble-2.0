@@ -146,6 +146,7 @@ export const GlobalSearch = ({ queryValue, where, showTabs = true }: Props) => {
                 onSumbit={onSumbit}
                 className="global-search"
                 hotkey={<kbd>/</kbd>}
+                placeholder='Search for songs, albums, authors...'
             />
             {showTabs && (
                 <TabsWrapper>

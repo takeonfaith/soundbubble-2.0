@@ -16,6 +16,7 @@ const COLOR_SCHEME_DARK = {
     pink: {
         action: '#e365d4',
         main: '#d38eff',
+        mild: '#2c1829',
         text: '#d38eff',
         transparent: '#d38eff40',
     },
@@ -107,8 +108,9 @@ const COLOR_SCHEME_LIGHT = {
         transparent: '#9332d134',
     },
     pink: {
-        action: '#a665e3',
+        action: '#e365d0',
         main: '#9332d1',
+        mild: '#ffeffd',
         text: '#9332d1',
         transparent: '#9332d134',
     },

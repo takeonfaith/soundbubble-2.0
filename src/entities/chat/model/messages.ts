@@ -12,7 +12,8 @@ import { getHeavyMediaIdsFromMessages } from '../lib/getHeavyMediaIdsFromMessage
 import { $currentChatId } from './chats';
 import { MAX_MESSAGES_PER_LOAD } from './constants';
 import { loadHeavyMedia } from './heavy-media';
-import { TMessage } from './types';
+import { TCache, TMessage } from './types';
+import { $cache, saveInCache } from '../../cache';
 
 let unsubscribe: Unsubscribe | null;
 
@@ -23,7 +24,7 @@ export const subscribeToCurrentChatMessagesFx = createEffect<
 >();
 
 export const initiallyLoadChatMessagesFx = createEffect<
-    { chatId: string; userId: string },
+    { chatId: string; userId: string; cache: TCache },
     { messages: TMessage[]; firstUnreadMessage: TMessage | null },
     Error
 >();
@@ -72,10 +73,10 @@ sample({
 
 sample({
     clock: [$currentChatId, $user],
-    source: { chatId: $currentChatId, user: $user },
+    source: { chatId: $currentChatId, user: $user, cache: $cache },
     filter: ({ chatId, user }) => !!chatId && !!user,
-    fn: ({ chatId, user }) => {
-        return { chatId: chatId!, userId: user!.uid };
+    fn: ({ chatId, user, cache }) => {
+        return { chatId: chatId!, userId: user!.uid, cache };
     },
     target: [initiallyLoadChatMessagesFx],
 });
@@ -194,13 +195,31 @@ sample({
     target: $currentChatMessages,
 });
 
+// Saving chat messages to cache
+sample({
+    clock: initiallyLoadChatMessagesFx.doneData,
+    source: $currentChatId,
+    filter: (id) => !!id,
+    fn: (id, { messages }) => ({ [id!]: messages }),
+    target: saveInCache,
+});
+
 $currentChatId.watch((id) => {
     if (!id) {
         unsubscribe?.();
     }
 });
 
-initiallyLoadChatMessagesFx.use(async ({ chatId, userId }) => {
+initiallyLoadChatMessagesFx.use(async ({ chatId, userId, cache }) => {
+    // POTENTIAL BUG: because I for some reason 
+    // set firstUnreadMessage to null
+    if (cache[chatId]) {
+        return {
+            messages: cache[chatId] as TMessage[],
+            firstUnreadMessage: null,
+        };
+    }
+
     const res = await Database.Chats.getChatMessagesByChatId(
         chatId,
         userId,

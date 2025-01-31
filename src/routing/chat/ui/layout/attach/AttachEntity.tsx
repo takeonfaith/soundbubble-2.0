@@ -107,7 +107,10 @@ export const AttachEntity = <T extends TEntity>({
                 );
 
                 return (
-                    <div className={checked ? 'checked' : ''}>
+                    <div
+                        className={checked ? 'checked' : ''}
+                        style={{ width: '100%' }}
+                    >
                         {showTitle && (
                             <h4 className="list-title">{listTitle}</h4>
                         )}

@@ -2,7 +2,7 @@ import { getTime } from '../../../routing/chat/lib/getTime';
 import { TIME_IN_MS } from '../../../shared/constants/time';
 import { TMessage } from '../model/types';
 
-export const getLastMessageDate = (lastMessage: TMessage | undefined) => {
+export const getLastMessageDate = (lastMessage: Nullable<TMessage>) => {
     if (!lastMessage?.sentTime) return null;
 
     const timeDiff =

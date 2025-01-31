@@ -4,7 +4,7 @@ import { TCache, TMessage } from '../model/types';
 export const SYSTEM_MESSAGE_SENDER = 'soundbubble';
 
 export const getLastMessageSender = (
-    lastMessage: TMessage | undefined,
+    lastMessage: Nullable<TMessage>,
     isGroupChat: boolean,
     cache: TCache,
     currentUser: TUser | null

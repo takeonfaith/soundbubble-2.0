@@ -22,7 +22,7 @@ export const ChatBackgroundStyled = styled.div<{
 `;
 
 type Props = {
-    name: string | undefined | null;
+    name: Nullable<string>;
     width?: string;
     borderRadius?: string;
 };

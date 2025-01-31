@@ -12,7 +12,8 @@ export const AddedItemsListStyled = styled.div`
     padding-bottom: 4px;
     z-index: 10;
     background: ${({ theme }) => theme.colors.modal};
-    padding: 0 8px;
+    padding: 0 6px;
+    padding-top: 1px;
 
     input {
         width: 100%;

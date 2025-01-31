@@ -36,6 +36,8 @@ declare global {
           }
         : T;
 
+    type Nullable<T> = T | null | undefined;
+
     interface Window {
         // for safari compatibility
         webkitAudioContext: typeof AudioContext;

@@ -1,15 +1,14 @@
 import styled from 'styled-components';
-import { userModel } from '../../../../../entities/user/model';
-import { AttachEntity } from './AttachEntity';
-import { Tabs } from '../../../../../shared/components/tabs';
-import { Flex } from '../../../../../shared/components/flex';
-import { TEntity } from '../../../../../entities/search/model/types';
-import { chatModel } from '../../../../../entities/chat/model';
 import { createMessageObject } from '../../../../../entities/chat/lib/createMessageObject';
+import { chatModel } from '../../../../../entities/chat/model';
+import { TEntity } from '../../../../../entities/search/model/types';
+import { userModel } from '../../../../../entities/user/model';
 import { getEntityId } from '../../../../../features/searchWithHints/lib/getDividedEntity';
 import { getEntityType } from '../../../../../features/searchWithHints/lib/getEntityType';
 import { modalModel } from '../../../../../layout/modal/model';
+import { Flex } from '../../../../../shared/components/flex';
 import getUID from '../../../../../shared/funcs/getUID';
+import { AttachEntity } from './AttachEntity';
 
 const AttachEntityToChatModalStyled = styled.div`
     padding: 0px 20px;
@@ -75,13 +74,6 @@ export const AttachEntityToChatModal = () => {
 
     return (
         <AttachEntityToChatModalStyled>
-            <Tabs
-                tabs={[
-                    { title: 'Songs', url: '' },
-                    { title: 'Albums', url: '' },
-                    { title: 'Authors', url: '' },
-                ]}
-            />
             <Flex width="100%" d="column">
                 <AttachEntity
                     library={library}

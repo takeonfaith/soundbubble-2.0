@@ -47,7 +47,7 @@ export type TUploadChat = Omit<Partial<TChat>, 'chatImage'> & {
     chatImage?: File | null;
 };
 
-export type TCache = Record<string, TEntity>;
+export type TCache = Record<string, TEntity | TMessage[]>;
 
 export type TGeneralChatData = {
     [chatId: string]: {

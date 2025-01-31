@@ -137,7 +137,7 @@ export const ChatMessages = () => {
                             m[0].sender === SYSTEM_MESSAGE_SENDER;
                         const date = new Date(
                             arr[i][0]?.sentTime ?? ''
-                        ).toLocaleDateString('ru-RU', {
+                        ).toLocaleDateString('en-US', {
                             day: '2-digit',
                             month: 'long',
                             year: 'numeric',

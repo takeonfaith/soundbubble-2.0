@@ -2,26 +2,20 @@ import { NotificationBadge } from '../../../layout/sidebar/styles';
 import { ChatTypingIndicator } from '../../../routing/chat/ui/layout/ChatTypingIndicator';
 import { MessageSentStatus } from '../../../routing/chat/ui/message/MessageSentStatus';
 import { Flex } from '../../../shared/components/flex';
-import { ENTITIES_ICONS } from '../../../shared/constants/icons';
-import { TPlaylist } from '../../playlist/model/types';
-import { TSong } from '../../song/model/types';
 import { userModel } from '../../user/model';
-import { TUser } from '../../user/model/types';
 import { UserCover } from '../../user/ui/UserCover';
 import { UserCoverBackground } from '../../user/ui/UserCoverBackground';
 import { UserStatus } from '../../user/ui/UserStatus';
 import { OnlineIndicator } from '../../user/ui/styles';
 import { useChatInfo } from '../hooks/useChatInfo';
 import { getLastMessageDate } from '../lib/getLastMessageDate';
-import { getLastMessageSender } from '../lib/getLastMessageSender';
 import { LocalSendStatus, TCache, TChat } from '../model/types';
+import { LastMessage } from './LastMessage';
 import {
     ChatItemStyled,
     ChatTitle,
-    LastMessageAttachmentStyled,
     LastMessageSentTimeStyled,
     LastMessageStyled,
-    LastMessageTextStyled,
 } from './styles';
 
 type Props = {
@@ -57,27 +51,7 @@ export const ChatItem = ({
         currentUser
     );
     const lastMessage = chat.lastMessage;
-
-    const { sender } = getLastMessageSender(
-        lastMessage,
-        isGroupChat,
-        cache,
-        currentUser
-    );
     const lastMessageDate = getLastMessageDate(lastMessage);
-    const song =
-        lastMessage?.attachedSongs.length !== 0
-            ? (cache[lastMessage?.attachedSongs[0] ?? ''] as TSong)?.name
-            : null;
-    const author =
-        lastMessage?.attachedAuthors.length !== 0
-            ? (cache[lastMessage?.attachedAuthors[0] ?? ''] as TUser)
-                  ?.displayName
-            : null;
-    const album =
-        lastMessage?.attachedAlbums.length !== 0
-            ? (cache[lastMessage?.attachedAlbums[0] ?? ''] as TPlaylist)?.name
-            : null;
 
     const handleClick = (e: Evt<'a'>) => {
         onClick?.(chat, e);
@@ -144,31 +118,12 @@ export const ChatItem = ({
                                     showLastSeen
                                 />
                             )}
-                            <LastMessageTextStyled>
-                                {sender && `${sender}:`}{' '}
-                                {lastMessage?.message.substring(0, 70)}{' '}
-                                {(lastMessage?.message?.length ?? 0) > 70
-                                    ? '...'
-                                    : ''}
-                                {song && (
-                                    <LastMessageAttachmentStyled>
-                                        {ENTITIES_ICONS.song}
-                                        {song}
-                                    </LastMessageAttachmentStyled>
-                                )}
-                                {author && (
-                                    <LastMessageAttachmentStyled>
-                                        {ENTITIES_ICONS.author}
-                                        {author}
-                                    </LastMessageAttachmentStyled>
-                                )}
-                                {album && (
-                                    <LastMessageAttachmentStyled>
-                                        {ENTITIES_ICONS.album}
-                                        {album}
-                                    </LastMessageAttachmentStyled>
-                                )}
-                            </LastMessageTextStyled>
+                            <LastMessage
+                                cache={cache}
+                                lastMessage={lastMessage}
+                                isGroupChat={isGroupChat}
+                                currentUser={currentUser}
+                            />
                         </LastMessageStyled>
                     </ChatTypingIndicator>
                     {!!unreadCount && (

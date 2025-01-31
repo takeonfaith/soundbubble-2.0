@@ -24,7 +24,7 @@ export const initialChatLoadFx = createEffect<TUser, TChat[], Error>();
 export const updateChats = createEvent<TChat[]>();
 export const insertChats = createEvent<TChat[]>();
 
-export const $currentChatId = createStore<string | undefined | null>('');
+export const $currentChatId = createStore<Nullable<string>>('');
 
 $currentChatId.reset(logout);
 
@@ -71,6 +71,24 @@ sample({
     clock: initialChatLoadFx.doneData,
     fn: (chats) => chats,
     target: $chats,
+});
+
+// Load media when chats are first loaded
+sample({
+    clock: initialChatLoadFx.doneData,
+    filter: (chats) => {
+        return !!chats[0].lastMessage;
+    },
+    fn: (chats) => {
+        const chat = chats[0];
+
+        return {
+            songIds: chat.lastMessage!.attachedSongs,
+            playlistIds: chat.lastMessage!.attachedAlbums,
+            userIds: chat.lastMessage!.attachedAuthors,
+        };
+    },
+    target: loadHeavyMedia,
 });
 
 sample({

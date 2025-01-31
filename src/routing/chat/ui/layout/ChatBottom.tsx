@@ -1,53 +1,14 @@
 import { IconArrowUp, IconPaperclip } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-import { ChatButtons, ChatInputArea, ChatTextArea, SendButton } from './styles';
 import { createMessageObject } from '../../../../entities/chat/lib/createMessageObject';
 import { chatModel } from '../../../../entities/chat/model';
 import { userModel } from '../../../../entities/user/model';
-import { popupModel } from '../../../../layout/popup/model';
-import { Button } from '../../../../shared/components/button';
-import { DefaultContextMenuStyled } from '../../../../shared/components/defaultContextMenu';
-import { Flex } from '../../../../shared/components/flex';
-import { ENTITIES_ICONS } from '../../../../shared/constants/icons';
-import getUID from '../../../../shared/funcs/getUID';
 import { modalModel } from '../../../../layout/modal/model';
+import { Button } from '../../../../shared/components/button';
+import { Flex } from '../../../../shared/components/flex';
+import getUID from '../../../../shared/funcs/getUID';
 import { AttachEntityToChatModal } from './attach/AttachEntityToChatModal';
-
-const AttachmentContextMenuStyled = styled(DefaultContextMenuStyled)`
-    gap: 4px;
-    display: flex;
-    flex-direction: column;
-    background: ${({ theme }) => theme.colors.pageBackground3};
-
-    button {
-        gap: 10px;
-
-        svg {
-            opacity: 1;
-            width: 18px;
-            height: 18px;
-        }
-
-        &.blue {
-            svg {
-                color: ${({ theme }) => theme.scheme.blue.action};
-            }
-        }
-
-        &.red {
-            svg {
-                color: ${({ theme }) => theme.scheme.red.action};
-            }
-        }
-
-        &.purple {
-            svg {
-                color: ${({ theme }) => theme.scheme.purple.action};
-            }
-        }
-    }
-`;
+import { ChatButtons, ChatInputArea, ChatTextArea, SendButton } from './styles';
 
 export const ChatBottom = () => {
     const [currentChat] = chatModel.useCurrentChat();
@@ -106,34 +67,10 @@ export const ChatBottom = () => {
 
     const handleClickClip = (e: Evt<'btn'>) => {
         e.stopPropagation();
-        popupModel.events.open({
-            e,
-            content: (
-                <AttachmentContextMenuStyled>
-                    <Button
-                        className="blue"
-                        onClick={() =>
-                            modalModel.events.open({
-                                title: '',
-                                content: <AttachEntityToChatModal />,
-                                sizeY: 'l',
-                            })
-                        }
-                    >
-                        {ENTITIES_ICONS.song}
-                        Songs
-                    </Button>
-                    <Button className="red">
-                        {ENTITIES_ICONS.album}
-                        Album
-                    </Button>
-                    <Button className="purple">
-                        {ENTITIES_ICONS.author}
-                        Author
-                    </Button>
-                </AttachmentContextMenuStyled>
-            ),
-            height: 144,
+        modalModel.events.open({
+            title: 'Attach',
+            content: <AttachEntityToChatModal />,
+            sizeY: 'l',
         });
     };
 
@@ -169,7 +106,7 @@ export const ChatBottom = () => {
                     onClick={handleSendMessage}
                     className="primary"
                 >
-                    <IconArrowUp size={20}/>
+                    <IconArrowUp size={20} />
                 </SendButton>
             </ChatButtons>
         </ChatInputArea>
