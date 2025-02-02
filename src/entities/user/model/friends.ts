@@ -205,7 +205,6 @@ subscribeToFriendListFx.use(async (user) => {
         [user.uid],
         async (updatedUser) => {
             if (updatedUser[0].friends !== undefined) {
-                console.log(updatedUser);
                 const friends = await Database.Users.getUsersByUids(
                     updatedUser[0].friends?.map((f) => f.uid)
                 );

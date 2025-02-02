@@ -31,7 +31,10 @@ export const useSongPlay = (props: Props) => {
     };
 
     const getPlaying = (song: TSong) => {
-        const isCurrent = song.id === currentSong?.id;
+        // TODO: && queue?.id === currentQueue?.id;
+        // doesn't work when click on the same song 
+        // in other queue
+        const isCurrent = song.id === currentSong?.id; 
 
         return isCurrent && state === SongState.playing;
     };

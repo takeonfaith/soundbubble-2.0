@@ -1,58 +1,89 @@
-import { IconHistoryOff } from '@tabler/icons-react';
-import { historyModel } from '../../entities/history/model';
+import { IconHistoryOff, IconUserOff } from '@tabler/icons-react';
+import { useUnit } from 'effector-react';
+import { $history, historyPaginationModel } from '../../entities/history/model';
+import { deleteHistoryFx } from '../../entities/history/model/delete-history';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
-import { SongListSkeleton } from '../../entities/song/ui/SongListSkeleton';
-import { VerticalSongsList } from '../../entities/song/ui/verticalList';
+import { TSong } from '../../entities/song/model/types';
+import { PlaneSongList } from '../../entities/song/ui/planeList';
+import { LoginButton } from '../../features/loginButton';
+import { PaginationList } from '../../features/paginationList';
 import { Header } from '../../layout/header';
-import { Flex } from '../../shared/components/flex';
+import { Divider } from '../../shared/components/divider';
+import { LoadingWrapper } from '../../shared/components/loadingWrapper';
 import { PageMessage } from '../../shared/components/pageMessage';
-import {
-    ContentWrapper,
-    PageWrapper,
-} from '../../shared/components/pageWrapper';
-import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
+import { ContentWrapper } from '../../shared/components/pageWrapper';
+import { convertToMapArray } from '../../shared/funcs/convertToMap';
+import { HistoryPageWrapper } from './styles';
+import { DeleteHistoryButton } from './DeleteHistoryButton';
+import { getHistoryDate } from '../../entities/history/lib/getHistoryDate';
 
 export const HistoryPage = () => {
-    const [history, loading] = historyModel.useHistory();
-
-    historyModel.useLoadHistory();
-
-    const queue = createQueueObject({
-        name: 'History',
-        songs: history,
-        url: '/history',
-    });
+    const [history, isDeletingHistory] = useUnit([
+        $history,
+        deleteHistoryFx.pending,
+    ]);
 
     return (
-        <PageWrapper>
-            <Header />
+        <HistoryPageWrapper>
+            {isDeletingHistory && <LoadingWrapper />}
+            <Header right={<DeleteHistoryButton history={history} />} />
             <ContentWrapper>
-                <SkeletonPageAnimation
-                    color=""
-                    loading={loading}
-                    skeleton={
-                        <SongListSkeleton padding="var(--page-padding)" />
-                    }
-                >
-                    <VerticalSongsList queue={queue} />
-                    {history.length === 0 && (
-                        <Flex
-                            height="100%"
-                            width="100%"
-                            jc="center"
-                            padding="20vh 0"
+                <PaginationList
+                    noAccountStub={
+                        <PageMessage
+                            icon={IconUserOff}
+                            title={'Need to log in to see history'}
+                            description={''}
                         >
-                            <PageMessage
-                                icon={IconHistoryOff}
-                                title={'No History Found'}
-                                description={
-                                    'But at some point it will appear...'
-                                }
-                            />
-                        </Flex>
-                    )}
-                </SkeletonPageAnimation>
+                            <LoginButton />
+                        </PageMessage>
+                    }
+                    paginationModel={historyPaginationModel}
+                >
+                    {(data, isLoading) => {
+                        if (!data.length && !isLoading)
+                            return (
+                                <PageMessage
+                                    icon={IconHistoryOff}
+                                    title="No history yet"
+                                    description="Songs that you listen will be here"
+                                >
+                                    <LoginButton />
+                                </PageMessage>
+                            );
+
+                        const converted = convertToMapArray(
+                            data,
+                            'time',
+                            (time) => getHistoryDate(time)
+                        );
+
+                        return Object.keys(converted).map((date, index) => {
+                            const queue = createQueueObject({
+                                songs: converted[date] as TSong[],
+                                name: 'History',
+                                url: '/history',
+                            });
+                            return (
+                                <div>
+                                    {index !== 0 && (
+                                        <Divider
+                                            style={{
+                                                margin: '20px 8px',
+                                                width: 'calc(100% - 16px)',
+                                            }}
+                                        />
+                                    )}
+                                    <div className="title">
+                                        <h3>{date}</h3>
+                                    </div>
+                                    <PlaneSongList queue={queue} />
+                                </div>
+                            );
+                        });
+                    }}
+                </PaginationList>
             </ContentWrapper>
-        </PageWrapper>
+        </HistoryPageWrapper>
     );
 };

@@ -10,7 +10,6 @@ import {
     next,
     previous,
 } from './queue';
-import { historyModel } from '../../history/model';
 import { shuffleArray } from '../lib/shuffleArray';
 import { Database } from '../../../database';
 
@@ -102,14 +101,6 @@ sample({
     source: $songState,
     filter: (songState) => songState === SongState.loadingThenPlay,
     target: play,
-});
-
-sample({
-    clock: loaded,
-    source: $currentSong,
-    filter: Boolean,
-    fn: (song) => song,
-    target: historyModel.events.addToHistory,
 });
 
 sample({

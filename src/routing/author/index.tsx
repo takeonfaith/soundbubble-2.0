@@ -84,7 +84,14 @@ export const AuthorPage = ({ userData }: Props) => {
                             <GridSongList queue={lastSongsQueue} />
                         </SongsStyled>
                     )}
-                    <SongsStyled>
+                    <SongsStyled
+                        style={{
+                            marginBottom:
+                                albums.length === 0 && !loading
+                                    ? 'var(--page-padding)'
+                                    : '',
+                        }}
+                    >
                         <div className="title">
                             <NavigationTitle
                                 showNavigation={songs.length > MAX_SONGS}

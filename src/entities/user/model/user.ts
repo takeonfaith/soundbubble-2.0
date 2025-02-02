@@ -137,6 +137,13 @@ loadUserDataFx.failData.watch((err) => {
 });
 
 export const logout = createEvent();
+logout.watch(() => {
+    toastModel.events.add({
+        type: 'info',
+        message: 'You have been logged out',
+        duration: 2000,
+    });
+});
 export const setUser = createEvent<TUser>();
 
 export const loadUserData = createEvent<User | null>();

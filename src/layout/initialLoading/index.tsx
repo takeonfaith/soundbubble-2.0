@@ -29,7 +29,7 @@ export const InitialLoading = () => {
             }
         }, TIMEOUTS.fullStop);
 
-        if(currentUser) {
+        if (currentUser) {
             setShowSlowInternetMessage(false);
             setTimeoutError(false);
             clearTimeout(timeout1);

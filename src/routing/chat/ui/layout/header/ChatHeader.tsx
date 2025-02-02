@@ -47,14 +47,12 @@ export const ChatHeader = () => {
                     $width="35px"
                     $height="35px"
                     style={{ borderRadius: '100%' }}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        navigate('/chats');
+                    }}
                 >
-                    <IconArrowLeft
-                        size={20}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            navigate('/chats');
-                        }}
-                    />
+                    <IconArrowLeft size={20} />
                 </Button>
                 <Flex gap={10}>
                     {!!Object.keys(cache).length && (

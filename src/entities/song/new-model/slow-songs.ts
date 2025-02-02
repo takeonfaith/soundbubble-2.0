@@ -30,7 +30,8 @@ export const $songSrc = combine(
         }
 
         return currentSong.songSrc;
-    }
+    },
+    { skipVoid: false }
 );
 
 sample({

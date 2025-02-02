@@ -1,18 +1,96 @@
-import { arrayUnion } from 'firebase/firestore';
+import {
+    DocumentData,
+    getDocs,
+    limit,
+    orderBy,
+    query,
+    QueryConstraint,
+    QueryDocumentSnapshot,
+    startAfter,
+    where,
+} from 'firebase/firestore';
+import {
+    MAX_HISTORY_ITEMS_PER_LOAD,
+    PERIOD_TIMES,
+} from '../../entities/history/model/constants';
+import { DeleteHistoryPeriod } from '../../entities/history/model/types';
 import { FB } from '../../firebase';
+import { asyncRequests } from '../../shared/funcs/asyncRequests';
+import getUID from '../../shared/funcs/getUID';
+import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { Songs } from './songs';
 
 export class History {
     static ref = FB.get('history');
+    static lastVisible: QueryDocumentSnapshot<
+        DocumentData,
+        DocumentData
+    > | null = null;
+
+    static async deleteHistory(userId: string, period: DeleteHistoryPeriod) {
+        try {
+            const timestamp = Date.now() - PERIOD_TIMES[period];
+
+            const q = query(
+                FB.getSubCollection('users', `${userId}/history`),
+                where('time', '>=', timestamp)
+            );
+
+            const docs = await getDocs(q);
+            const history = docs.docs.map((d) => d.id);
+
+            await FB.deleteDeepByIdsWithBatches(
+                'users',
+                [userId, 'history'],
+                history
+            );
+        } catch (error) {
+            console.error(error);
+            throw new Error('Failed to delete history');
+        }
+    }
 
     static async getHistoryByUserId(userId: string) {
         try {
-            const historyIds = await FB.getById('history', userId);
+            const c: QueryConstraint[] = [limit(MAX_HISTORY_ITEMS_PER_LOAD)];
 
-            if (!historyIds) return [];
+            if (this.lastVisible) {
+                c.push(startAfter(this.lastVisible));
+            }
 
-            const songs = await Songs.getSongsByUids(historyIds.history);
-            return songs.reverse();
+            const q = query(
+                FB.getSubCollection('users', `${userId}/history`),
+                orderBy('time', 'desc'),
+                ...c
+            );
+
+            const docs = await getDocs(q);
+            const history = getDataFromDoc<{ time: number; songId: string }>(
+                docs
+            );
+
+            const getSong = async (time: number, songId: string) => {
+                const song = await Songs.getSongByUid(songId);
+                if (!song) {
+                    return {
+                        time,
+                        song: null,
+                    };
+                }
+
+                return {
+                    time,
+                    song,
+                };
+            };
+
+            const songObj = await asyncRequests(history, ({ time, songId }) => {
+                return getSong(time, songId);
+            });
+
+            this.lastVisible = docs.docs[docs.docs.length - 1];
+
+            return songObj;
         } catch (error) {
             throw new Error('Failed to get history for user');
         }
@@ -20,8 +98,9 @@ export class History {
 
     static async addSongToHistory(userId: string, songId: string) {
         try {
-            await FB.updateById('history', userId, {
-                history: arrayUnion(songId),
+            await FB.setDeepByIds('users', [userId, 'history', getUID()], {
+                songId,
+                time: Date.now(),
             });
         } catch (error) {
             throw new Error('Failed to add song to history');

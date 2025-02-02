@@ -1,8 +1,6 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { useUnit } from 'effector-react';
 import { throttle } from 'patronum';
-import { Database } from '../../../database';
-import { addToHistory } from '../../history/model';
 import { DEFAULT_STORE } from './constants';
 import { useControls } from './controls';
 import { close, open, useFullScreen } from './fullscreen';
@@ -84,12 +82,6 @@ sample({
 });
 
 sample({
-    clock: load,
-    fn: (old) => old.song,
-    target: addToHistory,
-});
-
-sample({
     clock: addListening,
     fn: (songId) => songId,
     target: addListeningFx,
@@ -105,10 +97,6 @@ sample({
         currentSong: song,
     }),
     target: $songStore,
-});
-
-addListeningFx.use(async (song) => {
-    Database.Songs.addListening(song);
 });
 
 export const songModel = {

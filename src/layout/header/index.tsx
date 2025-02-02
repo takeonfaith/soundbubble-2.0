@@ -53,11 +53,12 @@ function getCurrentRoute(routes: TRoute[], currentUrl: string): TRoute | null {
 
 type Props = {
     children?: React.ReactNode;
+    right?: React.ReactNode;
     hide?: boolean;
     className?: string;
 };
 
-export const Header = ({ children, hide, className }: Props) => {
+export const Header = ({ children, hide, className, right }: Props) => {
     const [currentUser] = userModel.useUser();
     const location = useLocation();
     const { isMobile } = useCurrentDevice();
@@ -91,6 +92,7 @@ export const Header = ({ children, hide, className }: Props) => {
                 </HeaderPageTitle>
                 <DesktopChildren>{children}</DesktopChildren>
                 <Flex width="350px" gap={20} jc="flex-end">
+                    {right}
                     {isMobile && (
                         <>
                             {currentUser && (

@@ -1,7 +1,7 @@
 import { Authors } from '@components/authors';
 import { Flex } from '@components/flex';
 import { songModel as songModelNew } from '@song/new-model';
-import { songModel } from '@song/model';
+import { songModel } from '@song/new-model';
 import { IconPlaylist, IconQuote } from '@tabler/icons-react';
 import { SongCover } from '../../entities/song/ui/SongCover';
 
@@ -35,7 +35,7 @@ export const FullScreenPlayerLeftSide = ({
     const { handleToggleLike, isLiked, performingAction } =
         useToggleLike(currentSong);
 
-    const onAuthorsClick = () => songModel.fullscreen.close();
+    const onAuthorsClick = () => songModel.fullscreenPlayer.close();
 
     return (
         <LeftSide>

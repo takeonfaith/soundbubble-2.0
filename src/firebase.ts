@@ -137,6 +137,8 @@ type TSubcollectionDataType<
     ? TUnread
     : T extends 'friends'
     ? { id: string; time: number }
+    : T extends 'history'
+    ? { songId: string; time: number }
     : T extends 'friendRequests'
     ? { id: string; time: number }
     : T extends 'friendAwaiting'
@@ -395,6 +397,26 @@ export class FB {
             return false;
         }
     }
+    static async deleteByIdsWithBatches<T extends TCollections>(
+        collectionType: T,
+        ids: string[]
+    ): Promise<boolean> {
+        try {
+            const batch = writeBatch(this.firestore);
+
+            for (let i = 0; i < ids.length; i++) {
+                const id = ids[i];
+                const ref = doc(this.get(collectionType), id);
+
+                batch.delete(ref);
+            }
+
+            await batch.commit();
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
 
     static async setDeepByIdsWithBatches<T extends TCollections>(
         collectionType: T,
@@ -411,6 +433,28 @@ export class FB {
                 const ref = doc(this.firestore, collectionType, ...path, id);
 
                 batch.set(ref, data(id), { merge });
+            }
+
+            await batch.commit();
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    static async deleteDeepByIdsWithBatches<T extends TCollections>(
+        collectionType: T,
+        path: [string, TSubcollection<T>],
+        ids: string[]
+    ): Promise<boolean> {
+        try {
+            const batch = writeBatch(this.firestore);
+
+            for (let i = 0; i < ids.length; i++) {
+                const id = ids[i];
+                const ref = doc(this.firestore, collectionType, ...path, id);
+
+                batch.delete(ref);
             }
 
             await batch.commit();
@@ -493,41 +537,40 @@ export class FB {
     }
 }
 
-const setNewUsers = async () => {
-    const allUsers = await FB.getAll('users');
+// const setNewUsers = async () => {
+//     const allUsers = await FB.getAll('users');
 
-    const setUser = async (user: TUser) => {
-        const MAX_HISTORY_ITEMS = 50;
-        const historyIds = await FB.getById('history', user.uid);
-        const hIds = (historyIds?.history ?? []).slice(0, MAX_HISTORY_ITEMS);
-        const ids = hIds.map(() => getUID()) ?? [];
+//     const setUser = async (user: TUser) => {
+//         const historyIds = await FB.getById('history', user.uid);
+//         const hIds = historyIds?.history ?? [];
+//         const ids = hIds.map(() => getUID()) ?? [];
 
-        if (user.isAuthor) return null;
+//         if (user.isAuthor) return null;
 
-        console.log({ user: user.displayName, ids, hIds });
+//         console.log({ user: user.displayName, ids, hIds });
 
-        // const batch = writeBatch(FB.firestore);
+//         const batch = writeBatch(FB.firestore);
 
-        // for (let i = 0; i < ids.length; i++) {
-        //     const id = ids[i];
-        //     const ref = doc(FB.firestore, 'user', user.uid, 'history', id);
+//         for (let i = 0; i < ids.length; i++) {
+//             const id = ids[i];
+//             const ref = doc(FB.firestore, 'users', user.uid, 'history', id);
 
-        //     batch.set(ref, {
-        //         songId: hIds[i],
-        //         time: Date.now(),
-        //     });
-        // }
+//             batch.set(ref, {
+//                 songId: hIds[i],
+//                 time: Date.now(),
+//             });
+//         }
 
-        // await batch.commit();
-    };
+//         await batch.commit();
+//     };
 
-    await asyncRequests(allUsers, (user) => {
-        return setUser(user);
-    });
+//     await asyncRequests(allUsers, (user) => {
+//         return setUser(user);
+//     });
 
-    console.log(
-        'ura!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-    );
-};
+//     console.log(
+//         'ura!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+//     );
+// };
 
 // setNewUsers();

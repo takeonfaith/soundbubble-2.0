@@ -9,15 +9,13 @@ import { useEffectOnce } from './shared/hooks/useEffectOnce';
 const audioCtx = new AudioContext();
 const analyserNode = audioCtx.createAnalyser();
 
+console.log(audioCtx.state);
+
 const resumeCtx = () => {
+    console.log('resume');
+
     audioCtx.resume();
 };
-
-if (audioCtx.state === 'suspended') {
-    document.addEventListener('click', resumeCtx);
-} else if (audioCtx.state === 'running') {
-    document.removeEventListener('click', resumeCtx);
-}
 
 const useAppAudio = () => {
     const { state, lastTime } = songModelNew.useSong();
@@ -28,6 +26,14 @@ const useAppAudio = () => {
 
     useEffectOnce(() => {
         handleAudioUpload();
+    }, []);
+
+    useEffect(() => {
+        if (audioCtx.state === 'suspended') {
+            document.addEventListener('click', resumeCtx);
+        } else if (audioCtx.state === 'running') {
+            document.removeEventListener('click', resumeCtx);
+        }
     }, []);
 
     const handleAudioUpload = () => {

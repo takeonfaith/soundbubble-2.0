@@ -57,7 +57,8 @@ export const useGetAppHotKeys = () => {
             description: 'Close modal',
         },
         Space: {
-            action: () => {
+            action: (event) => {
+                event.preventDefault();
                 songModel.controls.togglePlayPause();
             },
             name: 'Space',
