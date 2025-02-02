@@ -10,17 +10,26 @@ import {
 import { useUnit } from 'effector-react';
 import { TUser } from '../../entities/user/model/types';
 import { $user, logout } from '../../entities/user/model/user';
+import {
+    QueryDocumentSnapshot,
+    DocumentData,
+    QueryConstraint,
+    QuerySnapshot,
+    startAfter,
+} from 'firebase/firestore';
 
 type TPaginationProps<T extends object> = {
     defaultPage?: number;
     quantity: number;
     dataPlace: 'start' | 'end';
+    initialLoadQuantity?: number;
     onLoadMore: (
         page: number,
         quantity: number,
         user: TUser
     ) => Promise<T[] | undefined>;
     loadMoreButton?: boolean;
+    maxElements?: number;
 };
 
 type LoadMoreFxProps = {
@@ -52,11 +61,31 @@ export type TPaginationModel<T extends object> = {
     loadMoreFx: Effect<LoadMoreFxProps, LoadMoreFxResult<T>, Error>;
 };
 
+export class Pagination {
+    lastVisible: QueryDocumentSnapshot<DocumentData, DocumentData> | null =
+        null;
+    constraints: QueryConstraint[] = [];
+
+    constructor() {}
+
+    saveLastVisible(docs: QuerySnapshot<DocumentData, DocumentData>) {
+        this.lastVisible = docs.docs[docs.docs.length - 1];
+    }
+
+    initialize() {
+        if (this.lastVisible) {
+            this.constraints.push(startAfter(this.lastVisible));
+        }
+    }
+}
+
 export const createPagitation = <T extends object>({
     quantity,
     defaultPage = 0,
     dataPlace,
     onLoadMore,
+    initialLoadQuantity = quantity,
+    maxElements = Infinity,
     loadMoreButton = false,
 }: TPaginationProps<T>): TPaginationModel<T> => {
     const $currentPage = createStore(defaultPage);
@@ -90,7 +119,7 @@ export const createPagitation = <T extends object>({
         },
         fn: ({ user }) => ({
             page: 0,
-            quantity,
+            quantity: initialLoadQuantity,
             user: user!,
             isInitialLoad: true,
         }),
@@ -117,15 +146,6 @@ export const createPagitation = <T extends object>({
         target: loadMoreFx,
     });
 
-    // Can't load more if data came
-    // less than desired quantity
-    sample({
-        clock: loadMoreFx.doneData,
-        filter: ({ data }) => !data || data.length < quantity,
-        fn: () => false,
-        target: $canLoadMore,
-    });
-
     sample({
         clock: loadMoreFx.doneData,
         source: $data,
@@ -145,6 +165,32 @@ export const createPagitation = <T extends object>({
         source: $currentPage,
         fn: (currentPage) => currentPage + 1,
         target: $currentPage,
+    });
+
+    sample({
+        clock: $isInitiallyLoaded,
+        source: $data,
+        filter: (list, initiallyLoaded) => {
+            return initiallyLoaded && list.length >= maxElements;
+        },
+        fn: () => false,
+        target: $canLoadMore,
+    });
+
+    // Can't load more if data came
+    // less than desired quantity
+    sample({
+        clock: loadMoreFx.doneData,
+        source: $data,
+        filter: (list, { data }) => {
+            console.log(list.length, maxElements ?? Infinity);
+
+            return (
+                !data || data.length < quantity || list.length >= maxElements
+            );
+        },
+        fn: () => false,
+        target: $canLoadMore,
     });
 
     loadMoreFx.use(async ({ page, quantity, user, isInitialLoad }) => {

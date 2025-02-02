@@ -1,20 +1,11 @@
-import {
-    DocumentData,
-    getDocs,
-    limit,
-    orderBy,
-    query,
-    QueryConstraint,
-    QueryDocumentSnapshot,
-    startAfter,
-    where,
-} from 'firebase/firestore';
+import { getDocs, limit, orderBy, query, where } from 'firebase/firestore';
 import {
     MAX_HISTORY_ITEMS_PER_LOAD,
     PERIOD_TIMES,
 } from '../../entities/history/model/constants';
 import { DeleteHistoryPeriod } from '../../entities/history/model/types';
 import { FB } from '../../firebase';
+import { Pagination } from '../../shared/effector/createPagination';
 import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import getUID from '../../shared/funcs/getUID';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
@@ -22,10 +13,7 @@ import { Songs } from './songs';
 
 export class History {
     static ref = FB.get('history');
-    static lastVisible: QueryDocumentSnapshot<
-        DocumentData,
-        DocumentData
-    > | null = null;
+    static pagination = new Pagination();
 
     static async deleteHistory(userId: string, period: DeleteHistoryPeriod) {
         try {
@@ -52,16 +40,13 @@ export class History {
 
     static async getHistoryByUserId(userId: string) {
         try {
-            const c: QueryConstraint[] = [limit(MAX_HISTORY_ITEMS_PER_LOAD)];
-
-            if (this.lastVisible) {
-                c.push(startAfter(this.lastVisible));
-            }
+            this.pagination.initialize();
 
             const q = query(
                 FB.getSubCollection('users', `${userId}/history`),
                 orderBy('time', 'desc'),
-                ...c
+                limit(MAX_HISTORY_ITEMS_PER_LOAD),
+                ...this.pagination.constraints
             );
 
             const docs = await getDocs(q);
@@ -88,7 +73,7 @@ export class History {
                 return getSong(time, songId);
             });
 
-            this.lastVisible = docs.docs[docs.docs.length - 1];
+            this.pagination.saveLastVisible(docs);
 
             return songObj;
         } catch (error) {

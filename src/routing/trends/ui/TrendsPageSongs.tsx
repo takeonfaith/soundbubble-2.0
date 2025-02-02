@@ -1,27 +1,23 @@
 import { IconChartBarOff } from '@tabler/icons-react';
 import { createQueueObject } from '../../../entities/song/lib/createQueueObject';
 import { VerticalSongsList } from '../../../entities/song/ui/verticalList';
+import { PaginationList } from '../../../features/paginationList';
 import { Flex } from '../../../shared/components/flex';
 import { PageMessage } from '../../../shared/components/pageMessage';
 import { ContentWrapper } from '../../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../../shared/components/skeleton/SkeletonPageAnimation';
-import { trendsModel } from '../model';
+import { trendingSongsPaginationModel } from '../model';
 import { Skeleton } from './Skeleton';
 import { TopPlates } from './styles';
 import { TopPlate } from './TopPlate';
 
 export const TrendsPageSongs = () => {
-    const [songs, loading] = trendsModel.useSongs();
-
-    const queue = createQueueObject({
-        name: 'Trends',
-        url: '/trends',
-        songs: songs.slice(3),
-    });
+    const { data: songs, isLoading } =
+        trendingSongsPaginationModel.usePagination();
 
     return (
         <ContentWrapper>
-            <SkeletonPageAnimation loading={loading} skeleton={<Skeleton />}>
+            <SkeletonPageAnimation loading={isLoading} skeleton={<Skeleton />}>
                 {!!songs.length && (
                     <TopPlates>
                         <TopPlate index={1} entity={songs[0]} />
@@ -29,7 +25,23 @@ export const TrendsPageSongs = () => {
                         <TopPlate index={3} entity={songs[2]} />
                     </TopPlates>
                 )}
-                <VerticalSongsList queue={queue} showSerialNumber={3} />
+                <PaginationList paginationModel={trendingSongsPaginationModel}>
+                    {(songs) => {
+                        const queue = createQueueObject({
+                            name: 'Trends',
+                            url: '/trends',
+                            songs: songs.slice(3),
+                        });
+
+                        return (
+                            <VerticalSongsList
+                                queue={queue}
+                                showSerialNumber={3}
+                            />
+                        );
+                    }}
+                </PaginationList>
+
                 {!songs.length && (
                     <Flex
                         height="100%"

@@ -32,7 +32,6 @@ import { popupModel } from './popup/model';
 import { Sidebar } from './sidebar';
 import { sidebarApi, useSidebar } from './sidebar/model';
 import { Toast } from './toast/ui';
-import { UserStatus } from '../entities/user/ui/UserStatus';
 
 export const LayoutStyled = styled.div`
     height: calc(100dvh - var(--player-size) - var(--page-gap) * 2 - 56px);

@@ -28,7 +28,6 @@ import {
     SongTitle,
 } from './styles';
 import { usePlayer } from './usePlayer';
-import Popover from '../../shared/components/popover';
 
 export const Player = () => {
     const {
@@ -108,7 +107,7 @@ export const Player = () => {
                         disabled={!currentSong || !currentSong.slowSrc}
                         $color={currentSong?.imageColors[0]}
                         onClick={handleSlow}
-                        className={`${isSlowVersion ? 'slow' : ''}`}
+                        className={`${isSlowVersion ? 'slow' : ''} order3`}
                     >
                         <IconSparkles size={20} />
                     </SlowVersionButton>
@@ -117,6 +116,7 @@ export const Player = () => {
                         $height="42px"
                         disabled={!currentSong}
                         onClick={handleShowQueue}
+                        className="order2"
                     >
                         <IconPlaylist size={20} />
                     </Button>
@@ -125,6 +125,7 @@ export const Player = () => {
                         $height="42px"
                         disabled={!currentSong?.hasLyrics}
                         onClick={handleLyrics}
+                        className="order1"
                     >
                         <IconQuote size={20} />
                     </Button>

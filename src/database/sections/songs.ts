@@ -13,17 +13,17 @@ import { Database } from '..';
 import { createDefaultSuggestion } from '../../entities/search/lib/createDefaultSuggestion';
 import { createLyricsObject } from '../../entities/song/lib/createLyricsObject';
 import { createSongObject } from '../../entities/song/lib/createSongObject';
+import { getAuthorsToString } from '../../entities/song/lib/getAuthorsToString';
+import { shuffleArray } from '../../entities/song/lib/shuffleArray';
 import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
+import { TUser } from '../../entities/user/model/types';
+import { AddSongFormType } from '../../features/uploadSongModal/model';
 import { FB } from '../../firebase';
+import { Server } from '../../server';
 import { ERRORS } from '../../shared/constants';
 import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import getUID from '../../shared/funcs/getUID';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
-import { AddSongFormType } from '../../features/uploadSongModal/model';
-import { Server } from '../../server';
-import { getAuthorsToString } from '../../entities/song/lib/getAuthorsToString';
-import { TUser } from '../../entities/user/model/types';
-import { shuffleArray } from '../../entities/song/lib/shuffleArray';
 
 export class Songs {
     static ref = FB.get('songs');

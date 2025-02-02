@@ -4,17 +4,19 @@ import { Flex } from '../../../shared/components/flex';
 import { PageMessage } from '../../../shared/components/pageMessage';
 import { ContentWrapper } from '../../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../../shared/components/skeleton/SkeletonPageAnimation';
-import { trendsModel } from '../model';
+import { trendingAlbumsPaginationModel } from '../model';
 import { Skeleton } from './Skeleton';
 import { TopPlates } from './styles';
 import { TopPlate } from './TopPlate';
+import { PaginationList } from '../../../features/paginationList';
 
 export const TrendsPageAlbums = () => {
-    const [albums, loading] = trendsModel.useAlbums();
+    const { data: albums, isLoading } =
+        trendingAlbumsPaginationModel.usePagination();
 
     return (
         <ContentWrapper>
-            <SkeletonPageAnimation loading={loading} skeleton={<Skeleton />}>
+            <SkeletonPageAnimation loading={isLoading} skeleton={<Skeleton />}>
                 {!!albums.length && (
                     <TopPlates>
                         <TopPlate index={1} entity={albums[0]} />
@@ -22,16 +24,20 @@ export const TrendsPageAlbums = () => {
                         <TopPlate index={3} entity={albums[2]} />
                     </TopPlates>
                 )}
-                {albums.slice(3).map((album) => {
-                    return (
-                        <PlaylistItem
-                            isAuthor={false}
-                            playlist={album}
-                            key={album.id}
-                            orientation="horizontal"
-                        />
-                    );
-                })}
+                <PaginationList paginationModel={trendingAlbumsPaginationModel}>
+                    {(albums) =>
+                        albums.slice(3).map((album) => {
+                            return (
+                                <PlaylistItem
+                                    isAuthor={false}
+                                    playlist={album}
+                                    key={album.id}
+                                    orientation="horizontal"
+                                />
+                            );
+                        })
+                    }
+                </PaginationList>
                 {!albums.length && (
                     <Flex
                         height="100%"

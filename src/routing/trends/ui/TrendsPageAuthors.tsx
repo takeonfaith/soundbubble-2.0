@@ -4,17 +4,19 @@ import { Flex } from '../../../shared/components/flex';
 import { PageMessage } from '../../../shared/components/pageMessage';
 import { ContentWrapper } from '../../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../../shared/components/skeleton/SkeletonPageAnimation';
-import { trendsModel } from '../model';
 import { Skeleton } from './Skeleton';
 import { TopPlates } from './styles';
 import { TopPlate } from './TopPlate';
+import { trendingAuthorsPaginationModel } from '../model';
+import { PaginationList } from '../../../features/paginationList';
 
 export const TrendsPageAuthors = () => {
-    const [authors, loading] = trendsModel.useAuthors();
+    const { data: authors, isLoading } =
+        trendingAuthorsPaginationModel.usePagination();
 
     return (
         <ContentWrapper>
-            <SkeletonPageAnimation loading={loading} skeleton={<Skeleton />}>
+            <SkeletonPageAnimation loading={isLoading} skeleton={<Skeleton />}>
                 {!!authors.length && (
                     <TopPlates>
                         <TopPlate index={1} entity={authors[0]} />
@@ -22,15 +24,22 @@ export const TrendsPageAuthors = () => {
                         <TopPlate index={3} entity={authors[2]} />
                     </TopPlates>
                 )}
-                {authors.slice(3).map((author) => {
-                    return (
-                        <UserItem
-                            user={author}
-                            orientation="horizontal"
-                            key={author.uid}
-                        />
-                    );
-                })}
+                <PaginationList
+                    paginationModel={trendingAuthorsPaginationModel}
+                >
+                    {(authors) =>
+                        authors.slice(3).map((author) => {
+                            return (
+                                <UserItem
+                                    user={author}
+                                    orientation="horizontal"
+                                    key={author.uid}
+                                />
+                            );
+                        })
+                    }
+                </PaginationList>
+
                 {!authors.length && (
                     <Flex
                         height="100%"
