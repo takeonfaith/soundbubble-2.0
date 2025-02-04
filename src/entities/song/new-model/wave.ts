@@ -50,14 +50,15 @@ sample({
 
 sample({
     clock: $isSlowWave,
-    filter: (isSlow) => !isSlow,
+    source: $queue,
+    filter: (queue, isSlow) => !isSlow && !!queue && queue.url === '/discover',
     target: slowSongsApi.reset,
 });
 
 sample({
     clock: $isSlowWave,
     source: $queue,
-    filter: (queue, isSlow) => !!queue && isSlow,
+    filter: (queue, isSlow) => !!queue && queue.url === '/discover' && isSlow,
     fn: (queue) => queue!.songs.map((s) => s.id),
     target: slowSongsApi.add,
 });

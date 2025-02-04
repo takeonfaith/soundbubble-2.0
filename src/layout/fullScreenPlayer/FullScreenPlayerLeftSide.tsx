@@ -59,6 +59,7 @@ export const FullScreenPlayerLeftSide = ({
                         <Flex gap={8}>
                             <LikeButton
                                 isLiked={isLiked}
+                                disabled={!currentSong}
                                 height="30px"
                                 entity={currentSong}
                                 loading={performingAction}
@@ -78,6 +79,7 @@ export const FullScreenPlayerLeftSide = ({
                                         ),
                                     });
                                 }}
+                                disabled={!currentSong}
                                 $width="30px"
                                 $height="30px"
                             >

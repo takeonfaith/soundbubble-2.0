@@ -20,18 +20,15 @@ import {
     $currentSongIndex,
     $loopMode,
     $queue,
-    $shuffleMode,
     addToQueue,
     next,
     previous,
     toggleLoopMode,
-    toggleShuffleMode,
 } from './queue';
 import {
     $songState,
     load,
     loadAndPlay,
-    loadAndShuffle,
     loaded,
     loadSongsThenPlay,
     pause,
@@ -42,6 +39,7 @@ import {
 } from './song-state';
 import { $isMuted, $volume, isMutedApi, volumeApi } from './volume';
 import { playWave, toggleSlow } from './wave';
+import { $shuffleMode, toggleShuffleMode } from './shuffle';
 
 export const songModel = {
     useSong: () =>
@@ -65,7 +63,6 @@ export const songModel = {
         pause,
         stop,
         loadAndPlay,
-        loadAndShuffle,
         loadSongsThenPlay,
     },
     state: {

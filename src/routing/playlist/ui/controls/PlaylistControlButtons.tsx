@@ -80,7 +80,7 @@ export const PlaylistControlButtons = ({
     const isAuthor = currentUser
         ? playlist?.authors.find((author) => author.uid === currentUser.uid)
         : false;
-    const isCurrent = currentQueue?.id === playlist?.id;
+    const isCurrent = currentQueue?.id === queue?.id;
     const isOwner = playlist?.ownerId === currentUser?.uid;
     const isSlowPlaying = slowMode && state === SongState.playing;
 

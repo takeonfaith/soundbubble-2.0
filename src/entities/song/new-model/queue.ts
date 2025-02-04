@@ -6,11 +6,11 @@ import {
     createStore,
     sample,
 } from 'effector';
+import { Database } from '../../../database';
+import { logout } from '../../user/model/user';
+import { createQueueObject } from '../lib/createQueueObject';
 import { LoopMode, TLastQueue, TNextFrom, TQueue, TSong } from '../model/types';
 import { $currentTime, currentTimeApi } from './current-time';
-import { Database } from '../../../database';
-import { createQueueObject } from '../lib/createQueueObject';
-import { logout } from '../../user/model/user';
 
 const loadLastQueueFx = createEffect<
     string,
@@ -22,9 +22,6 @@ export const previous = createEvent();
 const pToEnd = createEvent();
 export const addToQueue = createEvent<TQueue>();
 
-export const $shuffleMode = createStore<boolean>(
-    Boolean(localStorage.getItem('shuffle') ?? false)
-);
 export const $loopMode = createStore<LoopMode>(
     +(localStorage.getItem('loopMode') ?? 0) as LoopMode
 );
@@ -38,13 +35,6 @@ export const { toggleLoopMode } = createApi($loopMode, {
 
         localStorage.setItem('loopMode', mode.toString());
         return mode;
-    },
-});
-
-export const { toggleShuffleMode } = createApi($shuffleMode, {
-    toggleShuffleMode: (shuffleMode) => {
-        localStorage.setItem('shuffle', (!shuffleMode).toString());
-        return !shuffleMode;
     },
 });
 

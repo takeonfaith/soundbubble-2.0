@@ -72,7 +72,7 @@ export const ControlButtons = ({ queue, buttonColor }: Props) => {
                     if (shouldLoadSongs) {
                         songModel.controls.loadAndShuffle({ queue });
                     } else {
-                        songModel.controls.shufflePlay({ queue });
+                        songModel.controls.shufflePlayPause({ queue });
                     }
                 }}
                 style={style}

@@ -158,6 +158,10 @@ export const LeftSide = styled.div`
         background: #ffffff3b !important;
     }
 
+    & button:disabled {
+        opacity: 0.4;
+    }
+
     @media (max-width: 768px) {
         padding-bottom: 40px;
     }

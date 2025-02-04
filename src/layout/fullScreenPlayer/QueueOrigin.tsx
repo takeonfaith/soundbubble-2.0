@@ -94,8 +94,6 @@ export const QueueOrigin = ({ queue }: Props) => {
     }
 
     const route = allRoutes.find((route) => {
-        console.log(route.url, queue.url, route.url.includes(queue.url));
-
         return queue.url.split('/').includes(route.url);
     });
 

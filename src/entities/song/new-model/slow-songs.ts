@@ -11,6 +11,12 @@ import { $songState, loadAndPlay } from './song-state';
 
 const $slowSongs = createStore<string[]>([]);
 
+export const slowSongsApi = createApi($slowSongs, {
+    add: (store, id: string[]) => [...store, ...id],
+    remove: (store, id: string) => store.filter((s) => s !== id),
+    reset: () => [],
+});
+
 export const $isCurrentSongSlow = combine(
     [$currentSong, $slowSongs],
     ([currentSong, slowSongs]) => {
@@ -39,16 +45,22 @@ sample({
     target: loadAndPlay,
 });
 
-// BUG: when switching from one song to another when the first song
-// was slow, and the second isnt't - this sample activates
-// causing the second song to start not from 0
+// Recalculate current time based on if song is slow
+// so that is when switching between slow and current
+// it continues from the same spot
 sample({
-    clock: [$isCurrentSongSlow],
+    clock: [slowSongsApi.add, slowSongsApi.remove],
     source: {
         lastTime: $currentTime,
         songState: $songState,
         isCurrentSongSlow: $isCurrentSongSlow,
+        currentSong: $currentSong,
     },
+    filter: ({ currentSong }, id) =>
+        !!currentSong &&
+        (typeof id === 'string'
+            ? currentSong.id === id
+            : id[0] === currentSong.id),
     fn: ({ lastTime, isCurrentSongSlow }) => {
         if (isCurrentSongSlow) {
             return lastTime / SLOW_SONGS_FACTOR;
@@ -57,12 +69,6 @@ sample({
         return lastTime * SLOW_SONGS_FACTOR;
     },
     target: [setLastRangeValue, currentTimeApi.set],
-});
-
-export const slowSongsApi = createApi($slowSongs, {
-    add: (store, id: string[]) => [...store, ...id],
-    remove: (store, id: string) => store.filter((s) => s !== id),
-    reset: () => [],
 });
 
 export const useIsSlowVersion = (songId: string | undefined) => {
