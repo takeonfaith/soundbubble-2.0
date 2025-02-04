@@ -163,6 +163,30 @@ export const SongTitle = styled.h1`
     }
 `;
 
+export const HoverIcon = styled.div`
+    background: ${({ theme }) => theme.colors.overlay};
+    color: #fff;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    opacity: 0;
+    transition: 0.1s opacity, 0.1s transform;
+    cursor: pointer;
+
+    &:hover {
+        svg {
+            transform: scale(1.1);
+        }
+    }
+`;
+
 export const SongStyled = styled.div`
     display: flex;
     align-items: center;
@@ -170,6 +194,10 @@ export const SongStyled = styled.div`
     min-width: 340px;
     max-width: 340px;
     overflow: hidden;
+
+    &:hover ${HoverIcon} {
+        opacity: 1;
+    }
 
     @media (max-width: 1170px) {
         min-width: 208px;

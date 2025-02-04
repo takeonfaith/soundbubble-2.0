@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import { TEntity } from '../../entities/search/model/types';
 
 export const convertToMap = <T extends TEntity>(arr: T[]) => {
@@ -14,17 +12,19 @@ export const convertToMap = <T extends TEntity>(arr: T[]) => {
     }, {} as Record<string, T>);
 };
 
-export const convertToMapArray = <T extends object>(
+export const convertToMapArray = <T extends object, K extends keyof T>(
     arr: T[],
-    field: keyof T,
-    fieldFn?: (item: T) => string
+    field: K,
+    fieldFn?: (item: T[K]) => string
 ) => {
     return arr.reduce((acc, item) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { [field]: _, ...newObj } = item;
-        const key = Object.keys(newObj)[0] as keyof T;
+        const key = Object.keys(newObj)[0] as keyof Omit<T, K>;
         const finalObj = newObj[key];
-        const fieldId = fieldFn ? fieldFn(item[field]) : item[field];
+        const fieldId = fieldFn
+            ? fieldFn(item[field])
+            : (item[field] as string);
 
         if (acc[fieldId]) {
             acc[fieldId].push(finalObj);
@@ -33,5 +33,5 @@ export const convertToMapArray = <T extends object>(
         }
 
         return acc;
-    }, {} as Record<unknown, Omit<T, keyof T>[]>);
+    }, {} as Record<string, Array<T[keyof Omit<T, K>]>>);
 };

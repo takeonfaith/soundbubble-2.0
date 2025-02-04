@@ -48,6 +48,7 @@ export const LikedSongs = () => {
                 icon={IconMusicOff}
                 title={'Need to log in'}
                 description={'To listen to your favorite songs'}
+                className="with-header"
             >
                 <LoginButton />
             </PageMessage>
@@ -78,14 +79,6 @@ export const LikedSongs = () => {
                     />
                 )}
                 <VerticalSongsList queue={queue} />
-
-                {currentUser && !library.length && (
-                    <PageMessage
-                        icon={IconMusicOff}
-                        title="No songs added to library"
-                        description="You can add them from search!"
-                    />
-                )}
             </SkeletonPageAnimation>
             {/* <AddButton /> */}
         </ContentWrapper>

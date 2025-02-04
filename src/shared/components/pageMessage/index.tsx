@@ -9,16 +9,18 @@ type Props = {
     title: string;
     description: string;
     children?: React.ReactNode;
+    className?: string;
 };
 
 export const PageMessage = ({
     icon: Icon,
+    children,
+    className,
     title = 'Error',
     description = 'Error description',
-    children,
 }: Props) => {
     return (
-        <PageMessageStyled>
+        <PageMessageStyled className={className}>
             <Icon size={90} opacity={0.3} />
             <Flex d="column" gap={8}>
                 <h3>{title}</h3>

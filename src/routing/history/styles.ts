@@ -19,12 +19,18 @@ export const HistoryPageWrapper = styled(PageWrapper)`
         background: ${({ theme }) => theme.colors.pageBackground};
         width: 100%;
         height: fit-content;
-        margin-bottom: 20px;
-        margin-left: 6px;
+        padding-bottom: 10px;
+        padding-left: 6px;
         z-index: 10;
 
         h3 {
             font-weight: 400;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .title {
+            margin-left: 0;
         }
     }
 `;

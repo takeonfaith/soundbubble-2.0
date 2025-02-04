@@ -84,7 +84,6 @@ export const ChatPage = () => {
     if (!currentUser)
         return (
             <>
-                <Header />
                 <PageMessage
                     icon={IconMessageOff}
                     title={'Need to log in '}

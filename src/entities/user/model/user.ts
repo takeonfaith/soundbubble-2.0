@@ -141,7 +141,7 @@ logout.watch(() => {
     toastModel.events.add({
         type: 'info',
         message: 'You have been logged out',
-        duration: 2000,
+        duration: 5000,
     });
 });
 export const setUser = createEvent<TUser>();

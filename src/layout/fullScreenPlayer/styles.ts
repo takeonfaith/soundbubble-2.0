@@ -154,6 +154,10 @@ export const LeftSide = styled.div`
         height: 100%;
     }
 
+    & button:hover {
+        background: #ffffff3b !important;
+    }
+
     @media (max-width: 768px) {
         padding-bottom: 40px;
     }
@@ -211,8 +215,12 @@ export const LyricsStyled = styled.div`
     flex-direction: column;
     gap: 30px;
     color: #fff;
-    font-size: 1.8rem;
+
     position: relative;
+
+    .lyric-item {
+        font-size: 1.8rem;
+    }
 `;
 
 export const Lyric = styled.div`
@@ -374,4 +382,20 @@ export const QueueStyled = styled.div`
     & > * {
         color: #fff !important;
     } */
+`;
+
+export const ToggleButtonStyled = styled.label`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 8px;
+    width: fit-content;
+    cursor: pointer;
+
+    @media (hover: hover) {
+        &:hover {
+            background: #ffffff3d;
+        }
+    }
 `;

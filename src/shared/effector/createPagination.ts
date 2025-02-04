@@ -100,6 +100,8 @@ export const createPagitation = <T extends object>({
     const $isInitiallyLoaded = createStore(false).reset(logout);
     const $data = createStore<T[]>([]).reset(logout);
 
+    $data.watch(d=>console.log(d));
+
     sample({
         clock: loadMoreFx.doneData,
         filter: ({ isInitialLoad }) => isInitialLoad,

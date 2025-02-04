@@ -5,17 +5,22 @@ import { Flex } from '../../shared/components/flex';
 import { Loading } from '../../shared/components/loading';
 import { TPaginationModel } from '../../shared/effector/createPagination';
 import { useIsOnScreen } from '../../shared/hooks/useIsOnScreen';
+import { TUser } from '../../entities/user/model/types';
 
 type Props<T extends object> = {
     paginationModel: TPaginationModel<T>;
     children: (data: T[], isLoading: boolean) => React.ReactNode;
-    noAccountStub?: React.ReactNode;
+    getStub?: (
+        currentUser: TUser | null,
+        data: T[],
+        isLoading: boolean
+    ) => React.ReactNode;
 };
 
 export const PaginationList = <T extends object>({
     paginationModel,
     children,
-    noAccountStub,
+    getStub,
 }: Props<T>) => {
     const {
         isLoading,
@@ -41,10 +46,12 @@ export const PaginationList = <T extends object>({
         }
     }, [isOnScreen, loadMore, loadMoreButton]);
 
-    if (!currentUser) return noAccountStub;
+    if (!isLoading && (!currentUser || !data.length)) {
+        return getStub?.(currentUser, data, isLoading);
+    }
 
     return (
-        <div className="pagination">
+        <>
             {children(data, isLoading)}
 
             <Flex ref={loadMoreRef} jc="center" width="100%" padding="20px">
@@ -60,6 +67,6 @@ export const PaginationList = <T extends object>({
                 )}
                 {canLoadMore && !loadMoreButton && <Loading />}
             </Flex>
-        </div>
+        </>
     );
 };

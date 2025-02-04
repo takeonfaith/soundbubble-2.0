@@ -1,5 +1,6 @@
 import {
     IconDots,
+    IconMaximize,
     IconPlaylist,
     IconQuote,
     IconSparkles,
@@ -18,6 +19,7 @@ import { MusicControlsStyled } from '../../shared/components/musicControls/style
 import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
 import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 import {
+    HoverIcon,
     MobilePlayButton,
     PlayerActionButtons,
     PlayerMusicControls,
@@ -61,7 +63,11 @@ export const Player = () => {
                     colors={currentSong?.imageColors ?? ['grey']}
                     src={currentSong?.cover}
                     size={'50px'}
-                />
+                >
+                    <HoverIcon>
+                        <IconMaximize />
+                    </HoverIcon>
+                </SongCover>
                 <SongInfoStyled>
                     <SongTitle>{currentSong?.name ?? 'Untitled'}</SongTitle>
                     <Authors authors={currentSong?.authors} />

@@ -41,8 +41,6 @@ sample({
     source: $user,
     filter: Boolean,
     fn: (user, song) => {
-        console.log('I need to add song to history');
-
         return { userId: user.uid, song };
     },
     target: addSongToHistoryFx,

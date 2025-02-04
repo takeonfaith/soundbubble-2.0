@@ -80,7 +80,7 @@ export const InputStyled = styled.input<{
     border: none;
     background: ${({ theme }) => theme.colors.input};
     padding: 10px 10px;
-    border-radius: ${({ theme }) => theme.borderRadius.big};
+    border-radius: ${({ theme }) => theme.borderRadius.middle};
     color: ${({ theme }) => theme.colors.textColor};
     height: 40px;
     font-size: 0.9rem;

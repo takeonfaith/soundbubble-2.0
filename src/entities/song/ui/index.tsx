@@ -50,6 +50,7 @@ type Props = {
     isEditing?: boolean;
     onClick: (song: TSong, e: Evt<'div'>, index: number) => void;
     onRemove?: (song: TSong) => void;
+    leftContent?: React.ReactNode;
 };
 
 export const SongItem = ({
@@ -62,6 +63,7 @@ export const SongItem = ({
     isEditing,
     onClick,
     onRemove,
+    leftContent,
 }: Props) => {
     const { name, authors, imageColors, cover, listens, duration } = song;
     const { handleToggleLike, performingAction, isLiked } = useToggleLike(song);
@@ -108,6 +110,9 @@ export const SongItem = ({
                         <IconSquareRoundedMinusFilled />
                     </DeleteButton>
                 </SerialNumberStyled>
+            )}
+            {leftContent && (
+                <SerialNumberStyled>{leftContent}</SerialNumberStyled>
             )}
             <SongLeft $color1={imageColors[0]}>
                 <SongCover size="35px" src={cover} colors={imageColors}>

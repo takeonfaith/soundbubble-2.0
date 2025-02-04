@@ -10,6 +10,7 @@ import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import getUID from '../../shared/funcs/getUID';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { Songs } from './songs';
+import { TSong } from '../../entities/song/model/types';
 
 export class History {
     static ref = FB.get('history');
@@ -75,7 +76,9 @@ export class History {
 
             this.pagination.saveLastVisible(docs);
 
-            return songObj;
+            // If in the future I will support deleted tracks
+            // fix this place
+            return songObj as { time: number; song: TSong }[];
         } catch (error) {
             throw new Error('Failed to get history for user');
         }

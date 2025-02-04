@@ -12,12 +12,15 @@ import { TopPlates } from './styles';
 import { TopPlate } from './TopPlate';
 
 export const TrendsPageSongs = () => {
-    const { data: songs, isLoading } =
+    const { data: songs, isInitiallyLoaded } =
         trendingSongsPaginationModel.usePagination();
 
     return (
         <ContentWrapper>
-            <SkeletonPageAnimation loading={isLoading} skeleton={<Skeleton />}>
+            <SkeletonPageAnimation
+                loading={!isInitiallyLoaded}
+                skeleton={<Skeleton />}
+            >
                 {!!songs.length && (
                     <TopPlates>
                         <TopPlate index={1} entity={songs[0]} />

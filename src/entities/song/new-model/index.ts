@@ -1,43 +1,47 @@
 import { useUnit } from 'effector-react';
+import './add-listening';
 import {
-    $lastTime,
     $currentTime,
+    $lastTime,
     currentTimeApi,
-    slidingApi,
     setLastRangeValue,
+    slidingApi,
 } from './current-time';
+import { setPercent } from './duration-current-time';
+import { setAnalyzerAndAudioData } from './frequencies';
 import { $fullscreenPlayer, fullscreenPlayerApi } from './fullscreen-player';
 import {
-    $loopMode,
+    calculateCurrentLyric,
+    isLyricsVisibleNowApi,
+    nextCurrentLyric,
+} from './lyrics';
+import {
     $currentSong,
-    $queue,
     $currentSongIndex,
+    $loopMode,
+    $queue,
     $shuffleMode,
+    addToQueue,
     next,
+    previous,
     toggleLoopMode,
     toggleShuffleMode,
-    previous,
-    addToQueue,
 } from './queue';
 import {
     $songState,
-    shufflePlayPause,
+    load,
     loadAndPlay,
     loadAndShuffle,
-    load,
     loaded,
+    loadSongsThenPlay,
     pause,
     play,
     playPauseQueue,
+    shufflePlayPause,
     togglePlayPause,
-    loadSongsThenPlay,
 } from './song-state';
-import { $volume, $isMuted, volumeApi, isMutedApi } from './volume';
-import './add-listening';
-import { calculateCurrentLyric, nextCurrentLyric } from './lyrics';
-import { setAnalyzerAndAudioData } from './frequencies';
+import { $isMuted, $volume, isMutedApi, volumeApi } from './volume';
 import { playWave, toggleSlow } from './wave';
-import { setPercent } from './duration-current-time';
 
 export const songModel = {
     useSong: () =>
@@ -78,6 +82,7 @@ export const songModel = {
     lyrics: {
         calculateCurrentLyric,
         nextCurrentLyric,
+        isLyricsVisibleNowApi,
     },
     playback: {
         setCurrentTime: currentTimeApi.set,

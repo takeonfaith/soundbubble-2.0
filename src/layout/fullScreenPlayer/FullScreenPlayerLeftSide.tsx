@@ -2,7 +2,7 @@ import { Authors } from '@components/authors';
 import { Flex } from '@components/flex';
 import { songModel as songModelNew } from '@song/new-model';
 import { songModel } from '@song/new-model';
-import { IconPlaylist, IconQuote } from '@tabler/icons-react';
+import { IconDots, IconPlaylist, IconQuote } from '@tabler/icons-react';
 import { SongCover } from '../../entities/song/ui/SongCover';
 
 import { LikeButton } from '@features/likeButton';
@@ -19,6 +19,9 @@ import {
     PlayerWrapper,
 } from './styles';
 import { TRightSideType } from './types';
+import { Button } from '../../shared/components/button';
+import { popupModel } from '../popup/model';
+import { SongMoreContextMenu } from '../../entities/song/ui/SongMoreContextMenu';
 
 type Props = {
     type: TRightSideType;
@@ -53,14 +56,34 @@ export const FullScreenPlayerLeftSide = ({
                         <PlayerTitle>
                             {currentSong?.name ?? 'Untitled'}
                         </PlayerTitle>
-                        <LikeButton
-                            isLiked={isLiked}
-                            height="30px"
-                            entity={currentSong}
-                            loading={performingAction}
-                            onClick={handleToggleLike}
-                            likeColor={currentSong?.imageColors[1]}
-                        />
+                        <Flex gap={8}>
+                            <LikeButton
+                                isLiked={isLiked}
+                                height="30px"
+                                entity={currentSong}
+                                loading={performingAction}
+                                onClick={handleToggleLike}
+                                likeColor={currentSong?.imageColors[1]}
+                            />
+                            <Button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    popupModel.events.open({
+                                        e,
+                                        height: 400,
+                                        content: (
+                                            <SongMoreContextMenu
+                                                song={currentSong}
+                                            />
+                                        ),
+                                    });
+                                }}
+                                $width="30px"
+                                $height="30px"
+                            >
+                                <IconDots size={20} color="#fff" />
+                            </Button>
+                        </Flex>
                     </Flex>
                     <Authors
                         authors={currentSong?.authors}

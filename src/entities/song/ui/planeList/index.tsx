@@ -10,11 +10,12 @@ type Props = {
     children?: React.ReactNode;
     onClick?: (item: TSong, e: Evt<'div'>) => void;
     onRemove?: (song: TSong) => void;
+    leftContent?: (song: TSong) => React.ReactNode;
 };
 
 export const PlaneSongList = (props: Props) => {
     const songProps = useSongPlay(props);
-    const { queue, children } = props;
+    const { queue, children, leftContent } = props;
 
     if (!queue) return null;
 
@@ -30,6 +31,7 @@ export const PlaneSongList = (props: Props) => {
                         song={song}
                         playing={songProps.getPlaying(song)}
                         loading={songProps.getLoading(song)}
+                        leftContent={leftContent?.(song)}
                         {...songProps}
                     >
                         {children}

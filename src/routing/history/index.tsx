@@ -1,21 +1,21 @@
 import { IconHistoryOff, IconUserOff } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
+import { getHistoryDate } from '../../entities/history/lib/getHistoryDate';
 import { $history, historyPaginationModel } from '../../entities/history/model';
 import { deleteHistoryFx } from '../../entities/history/model/delete-history';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
-import { TSong } from '../../entities/song/model/types';
 import { PlaneSongList } from '../../entities/song/ui/planeList';
 import { LoginButton } from '../../features/loginButton';
 import { PaginationList } from '../../features/paginationList';
 import { Header } from '../../layout/header';
 import { Divider } from '../../shared/components/divider';
+import { Flex } from '../../shared/components/flex';
 import { LoadingWrapper } from '../../shared/components/loadingWrapper';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { convertToMapArray } from '../../shared/funcs/convertToMap';
-import { HistoryPageWrapper } from './styles';
 import { DeleteHistoryButton } from './DeleteHistoryButton';
-import { getHistoryDate } from '../../entities/history/lib/getHistoryDate';
+import { HistoryPageWrapper } from './styles';
 
 export const HistoryPage = () => {
     const [history, isDeletingHistory] = useUnit([
@@ -29,29 +29,32 @@ export const HistoryPage = () => {
             <Header right={<DeleteHistoryButton history={history} />} />
             <ContentWrapper>
                 <PaginationList
-                    noAccountStub={
-                        <PageMessage
-                            icon={IconUserOff}
-                            title={'Need to log in to see history'}
-                            description={''}
+                    getStub={(user) => (
+                        <Flex
+                            width="100%"
+                            height="calc(100vh - 340px)"
+                            jc="center"
                         >
-                            <LoginButton />
-                        </PageMessage>
-                    }
+                            <PageMessage
+                                icon={user ? IconHistoryOff : IconUserOff}
+                                title={
+                                    user
+                                        ? 'No history yet'
+                                        : 'Need to log in to see history'
+                                }
+                                description={
+                                    user
+                                        ? 'Songs that you listen end up here'
+                                        : ''
+                                }
+                            >
+                                <LoginButton />
+                            </PageMessage>
+                        </Flex>
+                    )}
                     paginationModel={historyPaginationModel}
                 >
-                    {(data, isLoading) => {
-                        if (!data.length && !isLoading)
-                            return (
-                                <PageMessage
-                                    icon={IconHistoryOff}
-                                    title="No history yet"
-                                    description="Songs that you listen will be here"
-                                >
-                                    <LoginButton />
-                                </PageMessage>
-                            );
-
+                    {(data) => {
                         const converted = convertToMapArray(
                             data,
                             'time',
@@ -60,10 +63,11 @@ export const HistoryPage = () => {
 
                         return Object.keys(converted).map((date, index) => {
                             const queue = createQueueObject({
-                                songs: converted[date] as TSong[],
+                                songs: converted[date],
                                 name: 'History',
                                 url: '/history',
                             });
+
                             return (
                                 <div>
                                     {index !== 0 && (
