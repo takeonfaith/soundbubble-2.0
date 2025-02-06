@@ -79,6 +79,13 @@ export const LikedSongs = () => {
                     />
                 )}
                 <VerticalSongsList queue={queue} />
+                {currentUser && !library.length && (
+                    <PageMessage
+                        icon={IconMusicOff}
+                        title="No songs added to library"
+                        description="You can add them from search!"
+                    />
+                )}
             </SkeletonPageAnimation>
             {/* <AddButton /> */}
         </ContentWrapper>

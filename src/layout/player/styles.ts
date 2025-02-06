@@ -48,6 +48,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
             transform: scale(0.9);
 
             &.selected {
+                outline: 1px solid ${({ theme }) => theme.colors.border};
                 background: ${({ theme }) => theme.colors.hover};
 
                 & svg {
@@ -175,7 +176,7 @@ export const HoverIcon = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    border-radius: 6px;
     opacity: 0;
     transition: 0.1s opacity, 0.1s transform;
     cursor: pointer;

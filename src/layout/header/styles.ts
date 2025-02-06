@@ -71,9 +71,10 @@ export const HeaderPageTitle = styled.h2`
 
 export const AdminCircle = styled.div`
     position: absolute;
-    width: calc(100% - 2px);
-    height: calc(100% - 2px);
+    width: 38px;
+    height: 38px;
+    left: 0px;
     border-radius: 100%;
     background: ${({ theme: { scheme } }) =>
-        `linear-gradient(45deg, ${scheme.blue.action}, ${scheme.purple.main}, ${scheme.red.main})`};
+        `linear-gradient(45deg, ${scheme.blue.action}, ${scheme.purple.main}, ${scheme.pink.main})`};
 `;

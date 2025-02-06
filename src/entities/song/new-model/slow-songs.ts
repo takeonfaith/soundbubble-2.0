@@ -8,13 +8,24 @@ import {
 } from './current-time';
 import { $currentSong } from './queue';
 import { $songState, loadAndPlay } from './song-state';
+import { filterOneArrayWithAnother } from '../../../shared/funcs/filterOneArrayWithAnother';
 
 const $slowSongs = createStore<string[]>([]);
 
 export const slowSongsApi = createApi($slowSongs, {
     add: (store, id: string[]) => [...store, ...id],
     remove: (store, id: string) => store.filter((s) => s !== id),
-    reset: () => [],
+    reset: (store, ids?: string[]) => {
+        if (ids)
+            return filterOneArrayWithAnother(
+                store,
+                ids,
+                (id) => id,
+                (s) => s
+            );
+
+        return [];
+    },
 });
 
 export const $isCurrentSongSlow = combine(
@@ -49,18 +60,25 @@ sample({
 // so that is when switching between slow and current
 // it continues from the same spot
 sample({
-    clock: [slowSongsApi.add, slowSongsApi.remove],
+    clock: [slowSongsApi.add, slowSongsApi.remove, slowSongsApi.reset],
     source: {
         lastTime: $currentTime,
         songState: $songState,
         isCurrentSongSlow: $isCurrentSongSlow,
         currentSong: $currentSong,
     },
-    filter: ({ currentSong }, id) =>
-        !!currentSong &&
-        (typeof id === 'string'
-            ? currentSong.id === id
-            : id[0] === currentSong.id),
+    filter: ({ currentSong }, id) => {
+        if (!(typeof id === 'string' || Array.isArray(id))) {
+            return false;
+        }
+
+        return (
+            !!currentSong &&
+            (typeof id === 'string'
+                ? currentSong.id === id
+                : id.includes(currentSong.id))
+        );
+    },
     fn: ({ lastTime, isCurrentSongSlow }) => {
         if (isCurrentSongSlow) {
             return lastTime / SLOW_SONGS_FACTOR;

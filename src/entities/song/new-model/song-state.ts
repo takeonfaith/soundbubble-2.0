@@ -1,7 +1,7 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { Database } from '../../../database';
 import { LoopMode, SongState, TLoadQueue, TQueue, TSong } from '../model/types';
-import { currentTimeApi } from './current-time';
+import { $loadedPercent, currentTimeApi } from './current-time';
 import {
     $currentSong,
     $currentSongIndex,
@@ -42,6 +42,7 @@ export const loaded = createEvent();
 
 export const loadAndPlay = createEvent();
 
+export const loadSongsThenShuffle = createEvent<TLoadSongsThenPlay>();
 export const loadSongsThenPlay = createEvent<TLoadSongsThenPlay>();
 
 const initialize = createEvent<PlayProps>();
@@ -129,6 +130,12 @@ sample({
 });
 
 sample({
+    clock: $currentSong,
+    fn: () => 0,
+    target: $loadedPercent,
+});
+
+sample({
     clock: loadAndPlay,
     fn: () => SongState.loadingThenPlay,
     target: $songState,
@@ -208,6 +215,20 @@ sample({
 
 sample({
     clock: loadSongsThenPlay,
+    target: loadSongsFx,
+});
+
+sample({
+    clock: loadSongsThenShuffle,
+    filter: ({ queue }) => {
+        console.log('queue', queue);
+
+        return queue.songIds.length > 0;
+    },
+    fn: ({ queue, ...props }) => ({
+        queue: { ...queue, songIds: shuffleArray(queue.songIds) },
+        ...props,
+    }),
     target: loadSongsFx,
 });
 

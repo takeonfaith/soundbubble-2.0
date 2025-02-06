@@ -36,6 +36,21 @@ export const isLyricsVisibleNowApi = createApi($isLyricsVisibleNow, {
 });
 
 sample({
+    clock: $currentSong,
+    source: $isLyricsVisibleNow,
+    filter: (isLyricsVisibleNow) => isLyricsVisibleNow,
+    target: loadLyrics,
+});
+
+sample({
+    clock: $currentSong,
+    source: $isLyricsVisibleNow,
+    filter: (isLyricsVisibleNow) => isLyricsVisibleNow,
+    fn: () => [],
+    target: $lyrics,
+});
+
+sample({
     clock: loadLyrics,
     source: $currentSong,
     filter: (song) => !!song,

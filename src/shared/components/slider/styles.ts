@@ -1,6 +1,17 @@
 import styled from 'styled-components';
 import { SLIDER_VALUE_BUBBLE_WIDTH } from './constants';
 
+export const LoadedStripe = styled.div`
+    height: var(--slider-size);
+    background: ${({ theme }) => theme.colors.skeleton};
+    border-radius: 020px;
+    pointer-events: none;
+    border-radius: 4px;
+    position: absolute;
+    left: 0;
+    transition: 0.2s width, 0.2s height;
+`;
+
 export const SliderValueBubbleStyled = styled.div`
     width: ${SLIDER_VALUE_BUBBLE_WIDTH}px;
     height: 20px;
@@ -21,84 +32,63 @@ export const SliderValueBubbleStyled = styled.div`
 `;
 
 export const SliderWrapper = styled.div`
+    --slider-size: 4px;
+
     position: relative;
     width: 100%;
     display: flex;
     align-items: center;
+    height: 10px;
+    transition: 0.1s transform;
+    border-radius: 4px;
 
-    &:hover ${SliderValueBubbleStyled} {
-        transition: 0.2s opacity;
-        opacity: 1;
+    & .progress {
+        width: 100%;
+        height: var(--slider-size);
+        border-radius: 4px;
+        transition: 0.2s filter, 0.2s transform;
+        cursor: pointer;
+        filter: brightness(${({ theme }) => theme.colors.brightness});
+        padding: 0;
+        outline: none;
+        background: ${({ theme }) => theme.colors.skeleton};
+        transition: 0.2s height, 0.2s filter;
+        overflow: hidden;
+
+        & > div {
+            transition: none;
+            width: 0;
+            border-radius: 4px;
+        }
+
+        &:focus {
+            outline: none;
+        }
+
+        &:active {
+            filter: brightness(
+                calc(
+                    ${({ theme }) =>
+                        theme.colors.brightness + theme.colors.brightnessDiff}
+                )
+            );
+        }
     }
-`;
-
-export const SliderStyled = styled.input<{ color: string | undefined }>`
-    -webkit-appearance: none;
-    appearance: none;
-    height: 4px;
-    width: 100%;
-    border-radius: 10px;
-    background: ${({ theme }) => theme.colors.skeleton};
-    background-image: linear-gradient(
-        90deg,
-        ${({ color, theme }) => color ?? theme.colors.textColor} 100%,
-        white 50%
-    );
-    background-repeat: no-repeat;
-    background-size: 0%;
-    transition: 0.2s filter, 0.2s transform;
-    cursor: pointer;
-    filter: brightness(${({ theme }) => theme.colors.brightness});
 
     &:hover {
-        transform: scaleY(2);
-        border-radius: 30px;
+        --slider-size: 10px;
 
-        &::-webkit-slider-thumb {
-            display: block;
+        ${SliderValueBubbleStyled} {
+            transition: 0.2s opacity;
+            opacity: 1;
         }
-    }
 
-    &:focus {
-        outline: none;
-    }
-
-    &:active {
-        filter: brightness(1.1);
-    }
-
-    &::-webkit-slider-thumb {
-        height: 16px;
-        width: 16px;
-        border-radius: 50%;
-        cursor: pointer;
-        box-shadow: ${({ theme }) => theme.colors.shadow};
-        background: ${({ color, theme }) =>
-            color ?? theme.colors.pageBackground};
-        transition: 0.2s;
-        opacity: 0;
-
-        &:hover {
-            box-shadow: 0 0 0px 10px ${({ theme }) => theme.colors.hover};
+        & .progress {
+            height: var(--slider-size);
         }
-    }
-
-    &::-webkit-slider-runnable-track {
-        -webkit-appearance: none;
-        box-shadow: none;
-        border: none;
-        background: transparent;
     }
 
     @media (max-width: 768px) {
-        height: 5px;
+        --slider-size: 8px;
     }
-`;
-
-export const HoverStripe = styled.div`
-    height: 8px;
-    position: absolute;
-    background: ${({ theme }) => theme.colors.skeleton};
-    border-radius: 20px 0 0 20px;
-    pointer-events: none;
 `;

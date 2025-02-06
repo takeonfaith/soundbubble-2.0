@@ -56,6 +56,7 @@ export const DARK_THEME = {
     },
     colors: {
         brightness: 2.2,
+        brightnessDiff: -0.5,
         pageTopButton: '#171717',
         skeleton: '#ffffff1f',
         playerDarkening: '#000000cb',
@@ -150,6 +151,7 @@ export const LIGHT_THEME: TTheme = {
     },
     colors: {
         brightness: 0.7,
+        brightnessDiff: 0.5,
         pageTopButton: '#fff',
         skeleton: '#0000001a',
         playerDarkening: '#f1f1f1c9',

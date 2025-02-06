@@ -10,14 +10,17 @@ export const SongInputStyled = styled.form`
     justify-content: center;
     border-radius: 10px;
     overflow: hidden;
-    border: 3px dashed ${({ theme }) => theme.colors.border};
     flex-direction: column;
     gap: 20px;
     cursor: pointer;
+    background-image: ${({ theme }) =>
+        `url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='14' ry='14' stroke='%23${theme.colors.border.replace('#', '')}' stroke-width='4' stroke-dasharray='8' stroke-dashoffset='54' stroke-linecap='square'/%3e%3c/svg%3e")`};
+    border-radius: 14px;
 
     &.dragActive {
-        border: 3px dashed ${({ theme }) => theme.scheme.blue.action};
-        background: ${({ theme }) => theme.scheme.blue.transparent};
+        background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='14' ry='14' stroke='%237BA2FFFF' stroke-width='4' stroke-dasharray='8' stroke-dashoffset='54' stroke-linecap='square'/%3e%3c/svg%3e");
+        border-radius: 14px;
+        background-color: ${({ theme }) => theme.scheme.blue.transparent};
     }
 
     &.error {

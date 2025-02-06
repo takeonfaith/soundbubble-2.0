@@ -7,13 +7,12 @@ import {
     IconRepeat,
     IconRepeatOnce,
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
 import { getHumanDuration } from '../../../entities/song/lib/getHumanDuration';
 import { PlayPauseIcon } from '../playPauseIcon';
 import { Slider } from '../slider';
+import { Duration } from './Duration';
 import {
     ControlButton,
-    DurationText,
     MusicControlsStyled,
     SmallControlButton,
 } from './styles';
@@ -26,13 +25,14 @@ type Props = {
     loopMode: LoopMode;
     shuffle: boolean;
     disableNextSongButton: boolean;
+    loadedPercent: number;
     handleShuffle: () => void;
     handleLoopMode: () => void;
     onPlay: () => void;
     onPrev: () => void;
     onNext: () => void;
-    handleChangeTime: React.ChangeEventHandler<HTMLInputElement>;
-    handleMouseUp: React.MouseEventHandler<HTMLInputElement>;
+    handleChangeTime: (time: number) => void;
+    handleMouseUp: (time: number) => void;
 };
 
 export const MusicControls = ({
@@ -50,20 +50,14 @@ export const MusicControls = ({
     onPrev,
     handleChangeTime,
     handleMouseUp,
+    loadedPercent,
 }: Props) => {
-    const { currentTimeStr, durationStr } = useMemo(
-        () => ({
-            currentTimeStr: getHumanDuration(currentTime),
-            durationStr: getHumanDuration(duration),
-        }),
-        [duration, currentTime]
-    );
-
     const buttonColor = colors?.[0];
 
     return (
         <MusicControlsStyled className="music-controls">
             <Slider
+                loadedPercent={loadedPercent}
                 value={currentTime}
                 duration={duration}
                 onChangeTime={handleChangeTime}
@@ -73,10 +67,7 @@ export const MusicControls = ({
                     getHumanDuration(value * duration)
                 }
             />
-            <Flex jc="space-between" width="100%" className="duration-numbers">
-                <DurationText>{currentTimeStr}</DurationText>
-                <DurationText>{durationStr}</DurationText>
-            </Flex>
+            <Duration duration={duration} currentTime={currentTime} />
             <Flex jc="space-between" width="100%" className="control-buttons">
                 <SmallControlButton
                     $color1={buttonColor}

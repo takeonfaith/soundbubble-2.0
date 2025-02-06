@@ -16,6 +16,8 @@ export const ControlButtons = ({ queue, buttonColor }: Props) => {
     const { state, currentSongIndex } = songModel.useSong();
     const theme = useTheme();
     const shouldLoadSongs = 'songIds' in queue;
+    const isLoading =
+        state === SongState.loading || state === SongState.loadingThenPlay;
 
     const style = {
         background: theme.colors.pageTopButton,
@@ -69,17 +71,21 @@ export const ControlButtons = ({ queue, buttonColor }: Props) => {
                 onClick={(e) => {
                     setButtonType('shuffle');
                     e.preventDefault();
+
                     if (shouldLoadSongs) {
-                        songModel.controls.loadAndShuffle({ queue });
+                        songModel.controls.loadSongsThenShuffle({
+                            queue,
+                            currentSongIndex: 0,
+                        });
                     } else {
                         songModel.controls.shufflePlayPause({ queue });
                     }
                 }}
                 style={style}
-                disabled={state === SongState.loading}
+                disabled={isLoading}
                 appearance="outline"
             >
-                {buttonType === 'shuffle' && state === SongState.loading ? (
+                {buttonType === 'shuffle' && isLoading ? (
                     <Loading />
                 ) : (
                     <IconArrowsShuffle size={20} />

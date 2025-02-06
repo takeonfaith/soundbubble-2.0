@@ -23,11 +23,19 @@ export const SkeletonSection = styled.div<{ $background?: string }>`
     opacity: 0;
     overflow: hidden;
 
+    & .skeleton {
+        animation-play-state: paused;
+    }
+
     &.loading {
         opacity: 1;
         pointer-events: all;
         background-position: 0 100%;
         height: 100vh;
+
+        & .skeleton {
+            animation-play-state: running;
+        }
     }
 `;
 

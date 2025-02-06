@@ -44,13 +44,9 @@ export const $isLastSongInQueue = combine(
     $queue,
     $currentSongIndex,
     (queue, currentSongIndex) => {
-        const res = queue?.songs.length
-            ? (queue?.songs.length ?? 1) - 1 === currentSongIndex
-            : false;
+        if (!queue?.songs.length) return false;
 
-        console.log(res);
-
-        return res;
+        return queue.songs.length - 1 === currentSongIndex;
     }
 );
 
@@ -58,7 +54,7 @@ export const queueApi = createApi($currentSongIndex, {
     // primitives
     pNext: (index) => index + 1,
     pPrevious: (index) => index - 1,
-    pToStart: () => -1,
+    pToStart: () => 0,
 });
 
 export const $currentSong = combine(
@@ -71,7 +67,8 @@ export const $currentSong = combine(
 sample({
     clock: pToEnd,
     source: $queue,
-    fn: (queue) => (queue?.songs.length ?? 1) - 1,
+    filter: (queue) => !!queue && queue.songs.length > 0,
+    fn: (queue) => queue!.songs.length - 1,
     target: $currentSongIndex,
 });
 
@@ -81,30 +78,40 @@ const filterNext = (
     {
         loopMode,
         isLastSongInQueue,
-    }: { loopMode: LoopMode; isLastSongInQueue: boolean },
+        restarted,
+    }: { loopMode: LoopMode; isLastSongInQueue: boolean; restarted: boolean },
     nextFrom: TNextFrom
 ) => {
     const isEither =
-        loopMode !== LoopMode.loopone ||
-        (loopMode === LoopMode.loopone && nextFrom === 'from_next_button');
+        !restarted &&
+        (loopMode !== LoopMode.loopone || nextFrom === 'from_next_button');
 
     return isEither && !isLastSongInQueue;
 };
 
-// // End of queue, loopall mode, go to start
+// Weird trick that is needed so that two nexts don't
+// fire up one after another in the end of queue
+// causing queue starting from second song
+const restarted = createStore(false)
+    .on(next, () => false)
+    .on(queueApi.pToStart, () => true);
+
+// End of queue, loopall mode, go to start of queue
 sample({
     clock: next,
     source: {
         isLastSongInQueue: $isLastSongInQueue,
         loopMode: $loopMode,
+        queue: $queue,
     },
-    filter: ({ isLastSongInQueue, loopMode }, nextFrom) => {
-        const res =
+    filter: ({ queue, isLastSongInQueue, loopMode }, nextFrom) => {
+        if (!queue || queue.songs.length === 0) return false;
+
+        const shouldGoToStartOfQueue =
             isLastSongInQueue &&
             (loopMode === LoopMode.loopall || nextFrom === 'from_next_button');
-        console.log(res);
 
-        return res;
+        return shouldGoToStartOfQueue;
     },
     target: queueApi.pToStart,
 });
@@ -115,23 +122,30 @@ sample({
     source: {
         loopMode: $loopMode,
         isLastSongInQueue: $isLastSongInQueue,
+        restarted,
     },
     filter: filterNext,
     target: queueApi.pNext,
 });
 
-// Start track from beginning if loopMode === LoopMode.loopone
+// Start track from beginning if loopMode === LoopMode.loopone or
+// One track in queue, loopall mode, go to start of track
 sample({
     clock: next,
     source: {
         loopMode: $loopMode,
+        queue: $queue,
     },
-    filter: ({ loopMode }, nextFrom) => {
-        const res =
-            loopMode === LoopMode.loopone && nextFrom === 'from_end_track';
-        console.log(res);
+    filter: ({ loopMode, queue }, nextFrom) => {
+        const oneInQueue =
+            !!queue &&
+            queue?.songs.length === 1 &&
+            loopMode === LoopMode.loopall;
 
-        return res;
+        const shouldLoopOne =
+            loopMode === LoopMode.loopone && nextFrom === 'from_end_track';
+
+        return oneInQueue || shouldLoopOne;
     },
     target: previous,
 });

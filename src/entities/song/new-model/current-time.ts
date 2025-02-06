@@ -6,9 +6,14 @@ export const $currentTime = createStore<number>(0);
 // Is needed for changing the audio currentTime in AppAudio
 export const $lastTime = createStore<number>(-1);
 export const $isSliding = createStore(false);
+export const $loadedPercent = createStore(0);
 
 export const slidingApi = createApi($isSliding, {
     setIsSliding: (_, val: boolean) => val,
+});
+
+export const loadedPercentApi = createApi($loadedPercent, {
+    set: (_, val: number) => val,
 });
 
 export const currentTimeApi = createApi($currentTime, {

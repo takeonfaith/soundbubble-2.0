@@ -8,9 +8,9 @@ export const Skeleton = () => {
         <ContentWrapper>
             <Flex d="column" width="100%" gap={30}>
                 <Flex width="100%" gap={12}>
-                    <SkeletonShape height="250px" width="33%" />
-                    <SkeletonShape height="250px" width="33%" />
-                    <SkeletonShape height="250px" width="33%" />
+                    <SkeletonShape className='skeleton' height="250px" width="33%" />
+                    <SkeletonShape className='skeleton' height="250px" width="33%" />
+                    <SkeletonShape className='skeleton' height="250px" width="33%" />
                 </Flex>
                 <SongListSkeleton quantity={20} />
             </Flex>

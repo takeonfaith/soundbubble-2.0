@@ -6,11 +6,11 @@ import { songModel } from '../../entities/song/new-model';
 
 export const VolumeButton = () => {
     const [volume, isMuted] = songModel.useVolume();
-    const handleChange = (e: Evt<'input'>) => {
+    const handleChange = (time: number) => {
         if (isMuted) {
             songModel.volume.toggle();
         }
-        songModel.volume.update(+e.currentTarget.value / 100);
+        songModel.volume.update(time / 100);
     };
 
     const handleMute = () => {

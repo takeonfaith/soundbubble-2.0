@@ -1,10 +1,14 @@
 import { isDefined } from '@shared/funcs/isDefined';
 import { useUnit } from 'effector-react';
 import React, { useEffect, useRef } from 'react';
-import { songModel as songModelNew } from './entities/song/new-model';
+import {
+    songModel,
+    songModel as songModelNew,
+} from './entities/song/new-model';
 import { $isSliding } from './entities/song/new-model/current-time';
 import { $songSrc } from './entities/song/new-model/slow-songs';
 import { useEffectOnce } from './shared/hooks/useEffectOnce';
+import { SongState } from './entities/song/model/types';
 
 const audioCtx = new AudioContext();
 const analyserNode = audioCtx.createAnalyser();
@@ -65,7 +69,16 @@ const useAppAudio = () => {
         songModelNew.state.loaded();
     };
 
+    const handleWaiting: React.ReactEventHandler<HTMLAudioElement> = () => {
+        if (state === SongState.playing) {
+            songModelNew.controls.loadAndPlay()
+        } else {
+            songModelNew.state.load();
+        }
+    };
+
     const handlePlaying: React.ReactEventHandler<HTMLAudioElement> = (e) => {
+        // console.log({ curr: e.currentTarget.currentTime, isSliding });
         if (!isSliding) {
             songModelNew.playback.setCurrentTime(e.currentTarget.currentTime);
             songModelNew.lyrics.nextCurrentLyric(e.currentTarget.currentTime);
@@ -76,8 +89,25 @@ const useAppAudio = () => {
         songModelNew.queue.next('from_end_track');
     };
 
+    const handleLoaded = () => {
+        if (audioRef.current && audioRef.current.buffered) {
+            const bufferedEnd = audioRef.current.buffered.end(
+                audioRef.current.buffered.length - 1
+            );
+            const duration = audioRef.current.duration;
+            const percent = (bufferedEnd / duration) * 100;
+            console.log(percent);
+
+            if (duration > 0) {
+                songModel.playback.loadedPercentApi.set(percent);
+            }
+        }
+    };
+
     useEffect(() => {
         if (audioRef.current && isDefined(lastTime) && !isNaN(lastTime ?? 0)) {
+            console.log(lastTime);
+
             audioRef.current.currentTime = lastTime;
         }
     }, [lastTime]);
@@ -102,13 +132,22 @@ const useAppAudio = () => {
         handleEnded,
         handlePlaying,
         handleOnCanPlay,
+        handleLoaded,
         songSrc,
+        handleWaiting,
     };
 };
 
 export const AppAudio = () => {
-    const { audioRef, handleOnCanPlay, handlePlaying, handleEnded, songSrc } =
-        useAppAudio();
+    const {
+        audioRef,
+        handleOnCanPlay,
+        handlePlaying,
+        handleEnded,
+        songSrc,
+        handleLoaded,
+        handleWaiting,
+    } = useAppAudio();
 
     return (
         <audio
@@ -118,6 +157,8 @@ export const AppAudio = () => {
             // loop={loopMode === LoopMode.loopone}
             onTimeUpdate={handlePlaying}
             onCanPlay={handleOnCanPlay}
+            onWaiting={handleWaiting}
+            onProgress={handleLoaded}
         />
     );
 };

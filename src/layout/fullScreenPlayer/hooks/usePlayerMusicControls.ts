@@ -2,11 +2,15 @@ import { useUnit } from 'effector-react';
 import { useCallback, useEffect } from 'react';
 import { songModel as songModelNew } from '../../../entities/song/new-model';
 import { $currentSongDuration } from '../../../entities/song/new-model/duration';
+import { $loadedPercent } from '../../../entities/song/new-model/current-time';
 
 export const usePlayerMusicControls = () => {
     const { currentSong, state, loopMode, shuffleMode } =
         songModelNew.useSong();
-    const duration = useUnit($currentSongDuration);
+    const [duration, loadedPercent] = useUnit([
+        $currentSongDuration,
+        $loadedPercent,
+    ]);
     const currentTime = songModelNew.useCurrentTime();
 
     const disableNextSongButton = false;
@@ -16,17 +20,15 @@ export const usePlayerMusicControls = () => {
         []
     );
 
-    const handleChangeTime: React.ChangeEventHandler<HTMLInputElement> = (
-        e
-    ) => {
+    const handleChangeTime = (time: number) => {
         songModelNew.playback.setIsSliding(true);
-        songModelNew.playback.setCurrentTime(+e.currentTarget.value);
+        songModelNew.playback.setCurrentTime(time);
     };
 
-    const handleMouseUp: React.MouseEventHandler<HTMLInputElement> = (e) => {
+    const handleMouseUp = (time: number) => {
         songModelNew.playback.setIsSliding(false);
-        songModelNew.playback.setLastRangeValue(+e.currentTarget.value);
-        songModelNew.lyrics.calculateCurrentLyric(+e.currentTarget.value);
+        songModelNew.playback.setLastRangeValue(time);
+        songModelNew.lyrics.calculateCurrentLyric(time);
     };
 
     const handleLoopMode = () => {
@@ -73,5 +75,6 @@ export const usePlayerMusicControls = () => {
         onNext: handleNext,
         handleMouseUp,
         handleChangeTime,
+        loadedPercent,
     };
 };

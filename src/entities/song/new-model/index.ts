@@ -4,6 +4,7 @@ import {
     $currentTime,
     $lastTime,
     currentTimeApi,
+    loadedPercentApi,
     setLastRangeValue,
     slidingApi,
 } from './current-time';
@@ -31,6 +32,7 @@ import {
     loadAndPlay,
     loaded,
     loadSongsThenPlay,
+    loadSongsThenShuffle,
     pause,
     play,
     playPauseQueue,
@@ -64,6 +66,7 @@ export const songModel = {
         stop,
         loadAndPlay,
         loadSongsThenPlay,
+        loadSongsThenShuffle,
     },
     state: {
         load,
@@ -87,6 +90,7 @@ export const songModel = {
         setPercent: setPercent,
         setIsSliding: slidingApi.setIsSliding,
         setLastRangeValue,
+        loadedPercentApi,
     },
     fullscreenPlayer: {
         ...fullscreenPlayerApi,

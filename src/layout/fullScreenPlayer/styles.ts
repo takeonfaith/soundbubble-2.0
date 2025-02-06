@@ -219,12 +219,8 @@ export const LyricsStyled = styled.div`
     flex-direction: column;
     gap: 30px;
     color: #fff;
-
+    font-size: 1.8rem;
     position: relative;
-
-    .lyric-item {
-        font-size: 1.8rem;
-    }
 `;
 
 export const Lyric = styled.div`
@@ -396,6 +392,7 @@ export const ToggleButtonStyled = styled.label`
     border-radius: 8px;
     width: fit-content;
     cursor: pointer;
+    font-size: 1rem;
 
     @media (hover: hover) {
         &:hover {

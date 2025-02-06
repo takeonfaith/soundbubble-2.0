@@ -212,9 +212,6 @@ export const Layout = () => {
                                     size={'30px'}
                                     isAuthor={currentUser?.isAuthor}
                                 />
-                                {/* <span className="name">
-                                    {currentUser.displayName}
-                                </span> */}
                             </Flex>
                             <IconChevronDown size={14} />
                         </UserButton>
@@ -228,7 +225,7 @@ export const Layout = () => {
                     <Outlet />
                 </RightSide>
             </LayoutStyled>
-            <Player />
+            {!fullScreen && <Player />}
             <Confirm />
             <Toast />
             <MobileMenu />

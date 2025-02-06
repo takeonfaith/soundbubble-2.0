@@ -11,6 +11,8 @@ import { confirmModel } from '../confirm/model';
 import { modalModel } from '../modal/model';
 import { popupModel } from '../popup/model';
 import { UserProfileModal } from './UserProfileModal';
+import { Flex } from '../../shared/components/flex';
+import { BadgeStyled } from '../../features/shareModal/styles';
 
 export const UserContextMenu = () => {
     const [currentUser] = userModel.useUser();
@@ -47,13 +49,18 @@ export const UserContextMenu = () => {
     return (
         <DefaultContextMenuStyled>
             <Button onClick={handleProfileClick}>
-                <UserCover
-                    colors={currentUser?.imageColors ?? ['grey']}
-                    src={currentUser?.photoURL}
-                    size={'20px'}
-                    isAuthor={currentUser?.isAuthor}
-                />
-                {getShortString(currentUser?.displayName, 15)}
+                <Flex width="100%" jc="space-between">
+                    <Flex gap={14}>
+                        <UserCover
+                            colors={currentUser?.imageColors ?? ['grey']}
+                            src={currentUser?.photoURL}
+                            size={'20px'}
+                            isAuthor={currentUser?.isAuthor}
+                        />
+                        {getShortString(currentUser?.displayName, 15)}
+                    </Flex>
+                    {currentUser?.isAdmin && <BadgeStyled>Admin</BadgeStyled>}
+                </Flex>
             </Button>
             <Divider />
             <Button onClick={handleUploadSong}>

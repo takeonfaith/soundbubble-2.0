@@ -3,7 +3,7 @@ import { Database } from '../../../database';
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
 import { $user } from '../../user/model/user';
 import { DeleteHistoryPeriod } from './types';
-import { $canLoadMore, $history } from './history';
+import { $canLoadMore, $history, loadMore } from './history';
 import { PERIOD_TIMES } from './constants';
 
 type DeleteHistoryFxProps = { period: DeleteHistoryPeriod; userId: string };
@@ -23,6 +23,7 @@ sample({
     target: deleteHistoryFx,
 });
 
+// locally delete history
 sample({
     clock: deleteHistoryFx.done,
     source: $history,
@@ -36,6 +37,16 @@ sample({
     target: $history,
 });
 
+// if after deleting history it is empty,
+// load more
+sample({
+    clock: deleteHistoryFx.done,
+    source: $history,
+    filter: (history) => history.length === 0,
+    target: loadMore,
+});
+
+// if deleted everything, don't load more
 sample({
     clock: deleteHistoryFx.done,
     filter: ({ params }) => params.period === DeleteHistoryPeriod.all,

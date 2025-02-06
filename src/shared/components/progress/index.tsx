@@ -1,6 +1,6 @@
 import { ProgressLine, ProgressWrapper } from './styles';
 
-type Props = {
+type Props = React.HTMLAttributes<HTMLDivElement> & {
     /**
      * From 0 to 1
      */
@@ -11,9 +11,9 @@ type Props = {
     color?: string;
 };
 
-export const Progress = ({ value, color }: Props) => {
+export const Progress = ({ value, color, ...props }: Props) => {
     return (
-        <ProgressWrapper>
+        <ProgressWrapper {...props}>
             <ProgressLine
                 style={{ width: `${value * 100}%`, background: color }}
             />
