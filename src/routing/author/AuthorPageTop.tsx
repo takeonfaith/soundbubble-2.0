@@ -24,6 +24,7 @@ import { Button } from '../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
 import { Flex } from '../../shared/components/flex';
 import Popover from '../../shared/components/popover';
+import { NO_ACCOUNT_FOR_ACTION } from '../../shared/constants/texts';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
 import { PageTopStyled, TopLeftCorner, TopRightCorner } from '../album/styles';
 import { ButtonsStyled } from './styles';
@@ -75,9 +76,7 @@ export const AuthorPageTop = ({ author, queue }: Props) => {
             content: (
                 <DefaultContextMenuStyled>
                     <Popover
-                        content={
-                            !currentUser ? 'You need an account for that' : null
-                        }
+                        content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}
                     >
                         <Button
                             disabled={!currentUser}

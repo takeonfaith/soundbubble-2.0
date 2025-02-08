@@ -8,7 +8,7 @@ export const createChatObject = (
         participants: string[];
     }
 ): TChat => {
-    const isGroup = props.chatName?.length !== 0;
+    const isGroup = props.chatName && props.chatName?.length !== 0;
     const { participants } = props;
     const lastMessage =
         props.lastMessage ??

@@ -1,6 +1,6 @@
 import { sample } from 'effector';
 import { Database } from '../../../database';
-import { createPagitation } from '../../../shared/effector/createPagination';
+import { createPagitation } from '../../../shared/effector/pagination';
 import { TSong } from '../../song/model/types';
 import { $currentSong, $queue } from '../../song/new-model/queue';
 import { MAX_HISTORY_ITEMS_PER_LOAD } from './constants';
@@ -10,8 +10,12 @@ export const historyPaginationModel = createPagitation({
     quantity: MAX_HISTORY_ITEMS_PER_LOAD,
     loadMoreButton: false,
     onLoadMore: async (_, __, user) => {
-        const res = await Database.History.getHistoryByUserId(user.uid);
-        return res;
+        if (user) {
+            const res = await Database.History.getHistoryByUserId(user.uid);
+            return res;
+        }
+
+        return undefined;
     },
 });
 

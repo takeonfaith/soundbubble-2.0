@@ -4,12 +4,12 @@ import { Divider } from '../../shared/components/divider';
 import { QueueOrigin } from './QueueOrigin';
 import { QueueStyled } from './styles';
 
-type Props = { queue: TQueue | null };
+type Props = { queue: TQueue | null; onClick: () => void };
 
-export const Queue = ({ queue }: Props) => {
+export const Queue = ({ queue, onClick }: Props) => {
     return (
         <QueueStyled>
-            <QueueOrigin queue={queue} />
+            <QueueOrigin onClick={onClick} queue={queue} />
             <Divider />
             <PlaneSongList queue={queue} />
         </QueueStyled>

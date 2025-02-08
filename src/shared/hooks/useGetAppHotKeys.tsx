@@ -6,19 +6,21 @@ import {
     IconCommand,
 } from '@tabler/icons-react';
 import { toggleTheme } from '../../app/theme';
+import { Settings } from '../../entities/settings/ui';
 import { songModel } from '../../entities/song/new-model';
 import { CreatePlaylistModal } from '../../features/createPlaylistModal';
+import { confirmModel } from '../../layout/confirm/model';
 import { modalModel } from '../../layout/modal/model';
 import { popupModel } from '../../layout/popup/model';
-import { THotKeys } from './useHotKeys';
-import { Settings } from '../../entities/settings/ui';
 import { sidebarApi } from '../../layout/sidebar/model';
-import { confirmModel } from '../../layout/confirm/model';
+import { THotKeys } from './useHotKeys';
+import { usePrivateAction } from './usePrivateAction';
 
 export const useGetAppHotKeys = () => {
     const [modals] = modalModel.useModal();
     const { isOpen } = popupModel.usePopup();
     const fullScreen = songModel.useFullScreenPlayer();
+    const { loggedIn } = usePrivateAction();
     const { isOpen: isConfirmOpen } = confirmModel.useConfirm();
 
     const escapeAction = (event: KeyboardEvent) => {
@@ -100,15 +102,15 @@ export const useGetAppHotKeys = () => {
             description: 'Toggle mute',
         },
         KeyN: {
-            action: (e) => {
+            action: loggedIn((e) => {
+                e.preventDefault();
                 if (modals.length === 0) {
-                    e.preventDefault();
                     modalModel.events.open({
                         title: 'Create playlist',
                         content: <CreatePlaylistModal />,
                     });
                 }
-            },
+            }),
             name: 'n',
             description: 'Create playlist',
         },

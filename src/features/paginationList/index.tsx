@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { userModel } from '../../entities/user/model';
+import { TUser } from '../../entities/user/model/types';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { Loading } from '../../shared/components/loading';
-import { TPaginationModel } from '../../shared/effector/createPagination';
+import { TPaginationModel } from '../../shared/effector/pagination';
 import { useIsOnScreen } from '../../shared/hooks/useIsOnScreen';
-import { TUser } from '../../entities/user/model/types';
 
 type Props<T extends object> = {
     paginationModel: TPaginationModel<T>;
@@ -30,14 +30,13 @@ export const PaginationList = <T extends object>({
         loadMoreButton,
         data,
     } = paginationModel.usePagination();
+
     const loadMoreRef = useRef<HTMLDivElement | null>(null);
     const isOnScreen = useIsOnScreen(loadMoreRef);
     const [currentUser] = userModel.useUser();
 
     useEffect(() => {
-        if (currentUser) {
-            initialLoad();
-        }
+        initialLoad();
     }, [currentUser, initialLoad]);
 
     useEffect(() => {
@@ -46,7 +45,7 @@ export const PaginationList = <T extends object>({
         }
     }, [isOnScreen, loadMore, loadMoreButton]);
 
-    if (!isLoading && (!currentUser || !data.length)) {
+    if (!isLoading && !data.length) {
         return getStub?.(currentUser, data, isLoading);
     }
 

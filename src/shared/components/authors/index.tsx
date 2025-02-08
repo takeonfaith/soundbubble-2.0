@@ -1,10 +1,6 @@
 import { TAuthor } from '@song/model/types';
-import { useNavigate } from 'react-router';
-import { getAuthorsToString } from '../../../entities/song/lib/getAuthorsToString';
-import { AuthorsModal } from '../../../entities/song/ui/AuthorsModal';
-import { modalModel } from '../../../layout/modal/model';
-import { AuthorsStyled } from './styles';
 import React from 'react';
+import { AuthorsStyled, AuthorStyled } from './styles';
 
 type Props = {
     authors: TAuthor[] | undefined;
@@ -25,21 +21,21 @@ export const Authors = ({
     disableOnDesktop = false,
     disableOnMobile = true,
 }: Props) => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
-    const handleOpenAuthors = (e: Evt<'div'>) => {
-        e.stopPropagation();
-        onAuthorsClick?.();
+    // const handleOpenAuthors = (e: Evt<'div'>) => {
+    //     e.stopPropagation();
+    //     onAuthorsClick?.();
 
-        if ((authors?.length ?? 0) > 1) {
-            modalModel.events.open({
-                title: `Authors`,
-                content: <AuthorsModal isAuthor={isAuthor} authors={authors} />,
-            });
-        } else {
-            navigate(`/${isAuthor ? 'author' : 'user'}/${authors?.[0].uid}`);
-        }
-    };
+    //     if ((authors?.length ?? 0) > 1) {
+    //         modalModel.events.open({
+    //             title: `Authors`,
+    //             content: <AuthorsModal isAuthor={isAuthor} authors={authors} />,
+    //         });
+    //     } else {
+    //         navigate(`/${isAuthor ? 'author' : 'user'}/${authors?.[0].uid}`);
+    //     }
+    // };
 
     return (
         <AuthorsStyled
@@ -47,9 +43,26 @@ export const Authors = ({
             $width={width}
             $disableOnDesktop={disableOnDesktop}
             $disableOnMobile={disableOnMobile}
-            onClick={handleOpenAuthors}
         >
-            {authors && getAuthorsToString(authors).trim()}
+            {authors?.map((author, index) => {
+                return (
+                    <>
+                        {index !== 0 && ' & '}
+                        <AuthorStyled
+                            key={author.uid}
+                            to={`/${isAuthor ? 'author' : 'user'}/${
+                                author.uid
+                            }`}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onAuthorsClick?.();
+                            }}
+                        >
+                            {author.displayName}
+                        </AuthorStyled>
+                    </>
+                );
+            })}
             {!authors?.length && '-'}
         </AuthorsStyled>
     );

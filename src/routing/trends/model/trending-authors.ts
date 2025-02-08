@@ -1,5 +1,5 @@
 import { Database } from '../../../database';
-import { createPagitation } from '../../../shared/effector/createPagination';
+import { createPagitation } from '../../../shared/effector/pagination/createPagination';
 import {
     TRENDING_ITEMS_QUANTITY,
     TRENDING_ITEMS_PAGINATION_LOAD,

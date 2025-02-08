@@ -29,13 +29,14 @@ export const Modal = () => {
     };
 
     return (
-        <ModalBackground>
+        <ModalBackground onClick={handleClose}>
             <ModalStyled
                 role="dialog"
                 width={`${SIZES[visibleModal?.sizeX ?? 's']}px`}
                 height={`${SIZES[visibleModal?.sizeY ?? 's']}px`}
                 onTouchEnd={onTouchEnd}
                 style={style}
+                onClick={(e) => e.stopPropagation()}
             >
                 <PageStack
                     pages={modals}

@@ -168,7 +168,10 @@ export const Layout = () => {
                         <Logo short={isCollapsed} />
                         <Popover
                             content={
-                                isCollapsed ? 'Unfold sidebar' : 'Hide sidebar'
+                                <>
+                                    Open/close menu
+                                    <kbd>c</kbd>
+                                </>
                             }
                             position="right"
                         >

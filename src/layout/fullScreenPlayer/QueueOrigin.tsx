@@ -1,18 +1,17 @@
+import { IconMusic } from '@tabler/icons-react';
 import { createPlaylistObject } from '../../entities/playlist/lib/createPlaylistObject';
 import { PlaylistItem } from '../../entities/playlist/ui';
 import { TQueue } from '../../entities/song/model/types';
-import { songModel } from '../../entities/song/model';
+import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
 import { createUserObject } from '../../entities/user/lib/createUserObject';
 import { UserItem } from '../../entities/user/ui';
 import { allRoutes } from '../../routing/routes';
-import { SidebarLink } from '../sidebar/styles';
 import { IconText } from '../../shared/components/iconText';
-import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
-import { IconMusic } from '@tabler/icons-react';
+import { SidebarLink } from '../sidebar/styles';
 
-type Props = { queue: TQueue | null };
+type Props = { queue: TQueue | null; onClick: () => void };
 
-export const QueueOrigin = ({ queue }: Props) => {
+export const QueueOrigin = ({ queue, onClick }: Props) => {
     if (!queue) return null;
 
     if (queue.url?.includes('author')) {
@@ -20,7 +19,7 @@ export const QueueOrigin = ({ queue }: Props) => {
 
         return (
             <UserItem
-                onClick={() => songModel.fullscreen.close()}
+                onClick={onClick}
                 orientation="horizontal"
                 user={createUserObject({
                     uid,
@@ -37,7 +36,7 @@ export const QueueOrigin = ({ queue }: Props) => {
 
         return (
             <UserItem
-                onClick={() => songModel.fullscreen.close()}
+                onClick={onClick}
                 orientation="horizontal"
                 user={createUserObject({
                     uid,
@@ -63,6 +62,7 @@ export const QueueOrigin = ({ queue }: Props) => {
                 isAuthor
                 orientation="horizontal"
                 playlist={playlist}
+                onClick={onClick}
             />
         );
     }
@@ -81,13 +81,14 @@ export const QueueOrigin = ({ queue }: Props) => {
                 isAuthor
                 orientation="horizontal"
                 playlist={playlist}
+                onClick={onClick}
             />
         );
     }
 
     if (queue.url?.includes('song')) {
         return (
-            <SidebarLink to={queue.url}>
+            <SidebarLink to={queue.url} onClick={onClick}>
                 <IconText icon={<IconMusic />} text={queue.name} />
             </SidebarLink>
         );
@@ -99,11 +100,15 @@ export const QueueOrigin = ({ queue }: Props) => {
 
     if (route) {
         return (
-            <SidebarLink to={queue.url}>
+            <SidebarLink to={queue.url} onClick={onClick}>
                 <IconText icon={route.icon} text={route.title} />
             </SidebarLink>
         );
     }
 
-    return <SidebarLink to={queue.url}>{queue.name}</SidebarLink>;
+    return (
+        <SidebarLink onClick={onClick} to={queue.url}>
+            {queue.name}
+        </SidebarLink>
+    );
 };

@@ -11,6 +11,7 @@ import { CheckIcon } from '../../shared/components/checkIcon';
 import { Flex } from '../../shared/components/flex';
 import { AddEntitiesUI } from '../addEntitiesUI';
 import { addSongsToPlaylistsFx } from '../../entities/playlist/model/update-playlist';
+import { CreatePlaylistButton } from '../createPlaylistButton';
 
 type Props = {
     song: TSong | null | undefined;
@@ -34,25 +35,35 @@ export const AddSongToPlaylistModal = ({ song }: Props) => {
         };
     };
 
+    if (!song) return null;
+
     return (
         <Flex width="100%" d="column" padding="0 18px">
             <AddEntitiesUI
                 entities={playlists}
                 inputPlaceholder={'Search for playlists...'}
-                renderItem={(playlist, checked, onClick) => {
+                renderItem={(playlist, checked, onClick, _, index) => {
                     return (
-                        <PlaylistItem
-                            isAuthor={false}
-                            as="button"
-                            playlist={playlist}
-                            onClick={onClick}
-                            key={playlist.id}
-                            orientation="horizontal"
-                        >
-                            <Button $width="45px">
-                                <CheckIcon type="plus" checked={checked} />
-                            </Button>
-                        </PlaylistItem>
+                        <>
+                            {index === 0 && (
+                                <CreatePlaylistButton
+                                    initialSongs={[song]}
+                                    orientation="horizontal"
+                                />
+                            )}
+                            <PlaylistItem
+                                isAuthor={false}
+                                as="button"
+                                playlist={playlist}
+                                onClick={onClick}
+                                key={playlist.id}
+                                orientation="horizontal"
+                            >
+                                <Button $width="45px">
+                                    <CheckIcon type="plus" checked={checked} />
+                                </Button>
+                            </PlaylistItem>
+                        </>
                     );
                 }}
                 renderButton={(playlists) => (

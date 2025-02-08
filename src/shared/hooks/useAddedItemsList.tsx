@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
     getEntityId,
     getEntityImage,
@@ -18,6 +18,7 @@ export const useAddedItemsList = <T extends TEntity>(
     const [visibleItems, setVisibleItems] = useState(list);
     const [searchValue, setSearchValue] = useState('');
     const [addedItems, setAddedItems] = useState<T[]>(initiallyAddedItems);
+    const inputRef = useRef<HTMLInputElement | null>(null);
 
     const handleClick = (item: T, e: Evt<'a'> | Evt<'div'>) => {
         e.preventDefault();
@@ -37,6 +38,8 @@ export const useAddedItemsList = <T extends TEntity>(
             onAddItem?.(newList);
             if (searchValue.length !== 0) {
                 setSearchValue('');
+
+                inputRef.current?.focus();
                 setVisibleItems(list);
             }
         }
@@ -87,5 +90,6 @@ export const useAddedItemsList = <T extends TEntity>(
         handleDeselectAll,
         setAddedItems,
         getItemImage,
+        inputRef,
     };
 };

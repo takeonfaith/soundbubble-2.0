@@ -1,83 +1,12 @@
-import {
-    createEffect,
-    createEvent,
-    createStore,
-    Effect,
-    EventCallable,
-    sample,
-    StoreWritable,
-} from 'effector';
+import { createEffect, createEvent, createStore, sample } from 'effector';
 import { useUnit } from 'effector-react';
-import { TUser } from '../../entities/user/model/types';
-import { $user, logout } from '../../entities/user/model/user';
+import { $user, logout } from '../../../entities/user/model/user';
 import {
-    QueryDocumentSnapshot,
-    DocumentData,
-    QueryConstraint,
-    QuerySnapshot,
-    startAfter,
-} from 'firebase/firestore';
-
-type TPaginationProps<T extends object> = {
-    defaultPage?: number;
-    quantity: number;
-    dataPlace: 'start' | 'end';
-    initialLoadQuantity?: number;
-    onLoadMore: (
-        page: number,
-        quantity: number,
-        user: TUser
-    ) => Promise<T[] | undefined>;
-    loadMoreButton?: boolean;
-    maxElements?: number;
-};
-
-type LoadMoreFxProps = {
-    page: number;
-    quantity: number;
-    isInitialLoad: boolean;
-    user: TUser;
-};
-
-type LoadMoreFxResult<T extends object> = {
-    data: T[] | undefined;
-    isInitialLoad: boolean;
-};
-
-export type TPaginationModel<T extends object> = {
-    usePagination: () => {
-        loadMore: () => void;
-        initialLoad: () => void;
-        canLoadMore: boolean;
-        isLoading: boolean;
-        loadMoreButton?: boolean;
-        data: T[];
-        isInitiallyLoaded: boolean;
-    };
-    $data: StoreWritable<T[]>;
-    $canLoadMore: StoreWritable<boolean>;
-    $isInitiallyLoaded: StoreWritable<boolean>;
-    loadMore: EventCallable<void>;
-    loadMoreFx: Effect<LoadMoreFxProps, LoadMoreFxResult<T>, Error>;
-};
-
-export class Pagination {
-    lastVisible: QueryDocumentSnapshot<DocumentData, DocumentData> | null =
-        null;
-    constraints: QueryConstraint[] = [];
-
-    constructor() {}
-
-    saveLastVisible(docs: QuerySnapshot<DocumentData, DocumentData>) {
-        this.lastVisible = docs.docs[docs.docs.length - 1];
-    }
-
-    initialize() {
-        if (this.lastVisible) {
-            this.constraints.push(startAfter(this.lastVisible));
-        }
-    }
-}
+    TPaginationProps,
+    TPaginationModel,
+    LoadMoreFxProps,
+    LoadMoreFxResult,
+} from './types';
 
 export const createPagitation = <T extends object>({
     quantity,
@@ -99,8 +28,6 @@ export const createPagitation = <T extends object>({
     const $canLoadMore = createStore(true).reset(logout);
     const $isInitiallyLoaded = createStore(false).reset(logout);
     const $data = createStore<T[]>([]).reset(logout);
-
-    $data.watch(d=>console.log(d));
 
     sample({
         clock: loadMoreFx.doneData,
@@ -129,6 +56,25 @@ export const createPagitation = <T extends object>({
     });
 
     sample({
+        clock: initialLoad,
+        source: {
+            user: $user,
+            isInitiallyLoaded: $isInitiallyLoaded,
+            isLoading: loadMoreFx.pending,
+        },
+        filter: ({ isInitiallyLoaded, isLoading }) => {
+            return !isInitiallyLoaded && !isLoading;
+        },
+        fn: ({ user }) => ({
+            page: 0,
+            quantity: initialLoadQuantity,
+            user: user,
+            isInitialLoad: true,
+        }),
+        target: loadMoreFx,
+    });
+
+    sample({
         clock: loadMore,
         source: {
             page: $currentPage,
@@ -137,8 +83,8 @@ export const createPagitation = <T extends object>({
             isInitiallyLoaded: $isInitiallyLoaded,
             user: $user,
         },
-        filter: ({ canLoadMore, isLoading, isInitiallyLoaded, user }) =>
-            canLoadMore && !isLoading && isInitiallyLoaded && !!user,
+        filter: ({ canLoadMore, isLoading, isInitiallyLoaded }) =>
+            canLoadMore && !isLoading && isInitiallyLoaded,
         fn: ({ page, user }) => ({
             page,
             user: user!,
@@ -197,6 +143,7 @@ export const createPagitation = <T extends object>({
 
     loadMoreFx.use(async ({ page, quantity, user, isInitialLoad }) => {
         const data = await onLoadMore(page, quantity, user);
+        console.log({ page, quantity, isInitialLoad, data });
 
         return { data, isInitialLoad };
     });
@@ -221,6 +168,7 @@ export const createPagitation = <T extends object>({
 
             return {
                 isLoading,
+                isInitiallyLoading: isLoading && !isInitiallyLoaded,
                 loadMore: onLoadMore,
                 canLoadMore,
                 loadMoreButton,

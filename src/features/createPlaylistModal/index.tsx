@@ -11,6 +11,7 @@ import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
 import { PhotoInput } from '../../shared/components/photoInput';
 import { useForm } from './model';
+import { TSong } from '../../entities/song/model/types';
 
 const CreatePlaylistModalStyled = styled.div`
     padding: 20px;
@@ -23,7 +24,11 @@ const CreatePlaylistModalStyled = styled.div`
     gap: 20px;
 `;
 
-export const CreatePlaylistModal = () => {
+type Props = {
+    initialSongs?: TSong[];
+};
+
+export const CreatePlaylistModal = ({ initialSongs }: Props) => {
     const [currentUser] = userModel.useUser();
     const [loading] = playlistModel.useCreatePlaylist();
     const navigate = useNavigate();
@@ -42,6 +47,7 @@ export const CreatePlaylistModal = () => {
             name: name,
             image: photo,
             imageColors: colors,
+            songs: initialSongs?.map((song) => song.id),
         });
 
         playlistModel.events.createPlaylist({

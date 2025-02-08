@@ -32,7 +32,9 @@ export const AuthorStyled = styled(Link)`
     white-space: nowrap;
     overflow: hidden;
 
-    &:hover {
-        text-decoration: underline;
+    @media (hover: hover) {
+        &:hover {
+            text-decoration: underline;
+        }
     }
 `;

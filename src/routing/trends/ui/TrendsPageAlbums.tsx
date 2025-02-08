@@ -11,12 +11,12 @@ import { TopPlate } from './TopPlate';
 import { PaginationList } from '../../../features/paginationList';
 
 export const TrendsPageAlbums = () => {
-    const { data: albums, isInitiallyLoaded } =
+    const { data: albums, isInitiallyLoading } =
         trendingAlbumsPaginationModel.usePagination();
 
     return (
         <ContentWrapper>
-            <SkeletonPageAnimation loading={!isInitiallyLoaded} skeleton={<Skeleton />}>
+            <SkeletonPageAnimation loading={isInitiallyLoading} skeleton={<Skeleton />}>
                 {!!albums.length && (
                     <TopPlates>
                         <TopPlate index={1} entity={albums[0]} />

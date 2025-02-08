@@ -10,7 +10,8 @@ export const ForgotPasswordModal = () => {
     const { values, errors, updateField, onSubmit, loading } = useForm(
         (values) => {
             userModel.events.resetPassword(values.email);
-        }
+        },
+        ['email']
     );
 
     return (

@@ -3,6 +3,7 @@ import { Lyrics } from './Lyrics';
 import { Queue } from './Queue';
 import { RightSide } from './styles';
 import { TRightSideType } from './types';
+import { fullscreenPlayerApi } from '../../entities/song/new-model/fullscreen-player';
 
 type Props = {
     type: TRightSideType;
@@ -16,7 +17,12 @@ export const FullScreenPlayerRightSide = ({ type }: Props) => {
     return (
         <RightSide className={type !== null ? 'visible' : ''}>
             {type === 'lyrics' && <Lyrics />}
-            {type === 'queue' && <Queue queue={queue} />}
+            {type === 'queue' && (
+                <Queue
+                    onClick={() => fullscreenPlayerApi.close()}
+                    queue={queue}
+                />
+            )}
         </RightSide>
     );
 };

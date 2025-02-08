@@ -24,6 +24,20 @@ import { Button } from '../../../shared/components/button';
 import { Flex } from '../../../shared/components/flex';
 import { PlayPauseIcon } from '../../../shared/components/playPauseIcon';
 import { IndexStyled, TopPlateStyled } from './styles';
+import { ENTITIES_ICONS } from '../../../shared/constants/icons';
+
+const getCover = (type: keyof typeof ENTITIES_ICONS) => {
+    switch (type) {
+        case 'author':
+        case 'user':
+            return UserCover;
+        case 'album':
+        case 'playlist':
+            return PlaylistCover;
+        default:
+            return SongCover;
+    }
+};
 
 export const TopPlate = ({
     entity,
@@ -35,25 +49,13 @@ export const TopPlate = ({
     const { queue, state } = songModel.useSong();
     const type = getEntityType(entity);
     const isLoading =
-        queue?.id === getEntityId(entity) && state === SongState.loading;
+        queue?.id === getEntityId(entity) &&
+        (state === SongState.loading || state === SongState.loadingThenPlay);
     const isPlaying =
         queue?.id === getEntityId(entity) && state === SongState.playing;
     const navigate = useNavigate();
 
-    const getCover = () => {
-        switch (type) {
-            case 'author':
-            case 'user':
-                return UserCover;
-            case 'album':
-            case 'playlist':
-                return PlaylistCover;
-            default:
-                return SongCover;
-        }
-    };
-
-    const Cover = getCover();
+    const Cover = getCover(type);
 
     const handleSongPlay = () => {
         const queue = createQueueObject({
@@ -63,7 +65,7 @@ export const TopPlate = ({
             songs: [entity as TSong],
         });
 
-        songModel.controls.play({
+        songModel.controls.playPauseQueue({
             queue,
             currentSongIndex: 0,
         });
@@ -79,7 +81,7 @@ export const TopPlate = ({
             songIds: playlist.songs,
         });
 
-        songModel.controls.loadAndPlay({ queue, currentSongIndex: 0 });
+        songModel.controls.loadSongsThenPlay({ queue, currentSongIndex: 0 });
     };
 
     const handlePlayAuthor = () => {
@@ -92,10 +94,10 @@ export const TopPlate = ({
             songIds: author.ownSongs,
         });
 
-        songModel.controls.loadAndPlay({ queue, currentSongIndex: 0 });
+        songModel.controls.loadSongsThenPlay({ queue, currentSongIndex: 0 });
     };
 
-    const handleClickPlay = (e) => {
+    const handleClickPlay = (e: Evt<'btn'>) => {
         e.stopPropagation();
 
         if (type === 'song') {

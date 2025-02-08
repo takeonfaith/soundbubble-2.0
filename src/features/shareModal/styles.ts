@@ -16,12 +16,19 @@ export const ShareModalStyled = styled.div`
 export const BadgeStyled = styled.div`
     padding: 2px 5px;
     display: inline-block;
-    background: ${({ theme }) => theme.scheme.pink.transparent};;
+    background: ${({ theme }) => theme.scheme.pink.transparent};
     color: ${({ theme }) => theme.scheme.pink.text};
     font-weight: 400;
     font-size: 0.65rem;
     border-radius: 4px;
     height: 18px;
+
+    &.white {
+        font-weight: 600;
+        border-radius: 10px;
+        background: #fff;
+        color: ${({ theme }) => theme.scheme.blue.action};
+    }
 `;
 
 export const CompactUser = styled.div`

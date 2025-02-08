@@ -36,6 +36,9 @@ import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
 import { Wave } from '../../shared/images';
 import { ButtonsStyled } from '../author/styles';
 import { AddSongsToPlaylistModal } from './AddSongsToPlaylistModal';
+import Popover from '../../shared/components/popover';
+import { userModel } from '../../entities/user/model';
+import { NO_ACCOUNT_FOR_ACTION } from '../../shared/constants/texts';
 
 type Props = {
     album: TPlaylist | null;
@@ -46,6 +49,7 @@ type Props = {
 
 export const PageTop = ({ album, isOwner, handleClickShare, queue }: Props) => {
     const navigate = useNavigate();
+    const [currentUser] = userModel.useUser();
     const theme = useTheme();
     const { isLiked, handleToggleLike, performingAction } =
         useTogglePlaylistLike(album);
@@ -100,10 +104,17 @@ export const PageTop = ({ album, isOwner, handleClickShare, queue }: Props) => {
                             Add Songs
                         </Button>
                         <Divider />
-                        <Button onClick={handleClickShare}>
-                            <IconShare3 />
-                            Share
-                        </Button>
+                        <Popover
+                            content={!currentUser && NO_ACCOUNT_FOR_ACTION}
+                        >
+                            <Button
+                                disabled={!currentUser}
+                                onClick={handleClickShare}
+                            >
+                                <IconShare3 />
+                                Share
+                            </Button>
+                        </Popover>
                         <Button onClick={handleInfo}>
                             <IconInfoCircle />
                             Info
@@ -125,10 +136,17 @@ export const PageTop = ({ album, isOwner, handleClickShare, queue }: Props) => {
                 height: 96,
                 content: (
                     <DefaultContextMenuStyled>
-                        <Button onClick={handleClickShare}>
-                            <IconShare3 />
-                            Share
-                        </Button>
+                        <Popover
+                            content={!currentUser && 'Need an account for that'}
+                        >
+                            <Button
+                                disabled={!currentUser}
+                                onClick={handleClickShare}
+                            >
+                                <IconShare3 />
+                                Share
+                            </Button>
+                        </Popover>
                         <Button onClick={handleInfo}>
                             <IconInfoCircle />
                             Info

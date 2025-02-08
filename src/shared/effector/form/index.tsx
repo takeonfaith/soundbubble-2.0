@@ -11,6 +11,7 @@ import { isValidHttpUrl } from '../../funcs/isValidHttpUrl';
 import { isValidYoutubeLink } from '../../funcs/isValidYoutubeLink';
 import { ErrorType, FormType, TForm } from './types';
 import { toastModel } from '../../../layout/toast/model';
+import { useState } from 'react';
 
 export const effectorForm = <T extends TForm>(form: T) => {
     const onSubmitFx = createEffect<
@@ -123,10 +124,10 @@ export const effectorForm = <T extends TForm>(form: T) => {
             ) => Promise<void> | void,
             validate?: (keyof T)[]
         ) => {
-            const [values, errors, isValidating, isSubmiting] = useUnit([
+            const [loading, setLoading] = useState(false);
+            const [values, errors, isSubmiting] = useUnit([
                 $form,
                 $errors,
-                validateFx.pending,
                 onSubmitFx.pending,
             ]);
 
@@ -202,11 +203,27 @@ export const effectorForm = <T extends TForm>(form: T) => {
                             error: 'This field is required',
                         });
                     } else if (asyncValidation) {
-                        validateFx({
-                            func: async () =>
-                                await asyncValidation(values[key] as never),
-                            id: key as string,
-                        });
+                        try {
+                            setLoading(true);
+                            const error = await asyncValidation(
+                                values[key] as never
+                            );
+                            setLoading(false);
+                            if (error) {
+                                updateError({
+                                    id: key,
+                                    error,
+                                });
+                                hasErrors = true;
+                            }
+                        } catch (error) {
+                            hasErrors = true;
+
+                            updateError({
+                                id: key,
+                                error: 'Error happend while validating',
+                            });
+                        }
                     } else {
                         updateError({ id: key, error: undefined });
                     }
@@ -254,7 +271,7 @@ export const effectorForm = <T extends TForm>(form: T) => {
                 onSubmit,
                 updateField,
                 onChange,
-                loading: isValidating || isSubmiting,
+                loading: loading || isSubmiting,
                 handleEnterKeyDown,
                 reset,
             };

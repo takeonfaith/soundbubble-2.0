@@ -64,7 +64,11 @@ export const UserItem = memo(
         const handleClick = (e: Evt<'a'>) => {
             if (disabled) return;
 
-            e.stopPropagation();
+            // @ts-expect-error IDGAF
+            if ('closest' in e.target && e.target.closest('button')) {
+                e.preventDefault(); // Блокируем переход, если нажата кнопка
+            }
+
             onClick?.(user, e);
         };
 
@@ -93,7 +97,10 @@ export const UserItem = memo(
                         entity={user}
                         likeColor={imageColors?.[0] ?? 'grey'}
                         isLiked={isLiked}
-                        onClick={handleToggleLike}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleLike(e);
+                        }}
                         className="plane"
                     />
                 )}

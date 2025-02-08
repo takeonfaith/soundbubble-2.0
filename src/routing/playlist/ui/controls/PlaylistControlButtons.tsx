@@ -38,6 +38,7 @@ import Popover from '../../../../shared/components/popover';
 import { styled } from 'styled-components';
 import { slowSongsApi } from '../../../../entities/song/new-model/slow-songs';
 import { PlayingAnimation } from '../../../../shared/components/playingAnimation';
+import { NO_ACCOUNT_FOR_ACTION } from '../../../../shared/constants/texts';
 
 export const MainButtonsWrapper = styled.div`
     display: flex;
@@ -177,7 +178,7 @@ export const PlaylistControlButtons = ({
                         <Popover
                             content={
                                 !currentUser
-                                    ? 'You need an account for that'
+                                    ? NO_ACCOUNT_FOR_ACTION
                                     : null
                             }
                         >

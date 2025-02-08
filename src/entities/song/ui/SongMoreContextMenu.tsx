@@ -36,6 +36,7 @@ import { slowSongsApi, useIsSlowVersion } from '../new-model/slow-songs';
 import { AuthorsModal } from './AuthorsModal';
 import { EditSongModal } from './EditSongModal';
 import { SongInfo } from './SongInfo';
+import { NO_ACCOUNT_FOR_ACTION } from '../../../shared/constants/texts';
 
 const SlowButton = styled(Button)`
     justify-content: space-between !important;
@@ -186,11 +187,7 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                 </>
             )}
             {!isLiked ? (
-                <Popover
-                    content={
-                        !currentUser ? 'You need an account for that' : null
-                    }
-                >
+                <Popover content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}>
                     <Button disabled={!currentUser} onClick={handleLike}>
                         <IconHeart size={20} />
                         Add to Liked
@@ -202,9 +199,7 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                     Remove from Liked
                 </Button>
             )}
-            <Popover
-                content={!currentUser ? 'You need an account for that' : null}
-            >
+            <Popover content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}>
                 <Button disabled={!currentUser} onClick={handleAddToPlaylist}>
                     <IconSquareRoundedPlus size={20} />
                     Add to playlist
@@ -216,9 +211,7 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                 Next
             </Button>
             <Divider />
-            <Popover
-                content={!currentUser ? 'You need an account for that' : null}
-            >
+            <Popover content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}>
                 <Button disabled={!currentUser} onClick={handleShare}>
                     <IconShare3 />
                     Share

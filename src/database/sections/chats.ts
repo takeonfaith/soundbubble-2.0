@@ -311,7 +311,11 @@ export class Chats {
         }
     }
 
-    static async getChatByUserIds(senderId: string, receiverId: string) {
+    static async getChatByUserIds(
+        senderId: string,
+        receiverId: string,
+        createIfNotFound = false
+    ) {
         try {
             const q = query(
                 this.ref,
@@ -325,8 +329,12 @@ export class Chats {
                 limit(1)
             );
             const docs = await getDocs(q);
-            const chat = getDataFromDoc<TChat | null>(docs)[0];
-
+            let chat = getDataFromDoc<TChat | null>(docs)[0];
+            if (!chat && createIfNotFound) {
+                chat = await this.createChat(
+                    createChatObject({ participants: [senderId, receiverId] })
+                );
+            }
             return chat;
         } catch (error) {
             throw new Error(

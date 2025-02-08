@@ -1,10 +1,10 @@
-import { IconMessage2, IconSearch, IconUserOff } from '@tabler/icons-react';
+import { IconSearch, IconUserOff } from '@tabler/icons-react';
 import { styled } from 'styled-components';
 import { userModel } from '../../entities/user/model';
 import { UserItem } from '../../entities/user/ui';
 import { UserListSkeleton } from '../../entities/user/ui/UserListSkeleton';
+import { OpenChatButton } from '../../features/openChatButton';
 import { Header } from '../../layout/header';
-import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
 import { PageMessage } from '../../shared/components/pageMessage';
@@ -77,12 +77,10 @@ export const FriendsPage = () => {
                                             key={friend.uid}
                                             orientation="horizontal"
                                         >
-                                            <Button
-                                                $width="40px"
-                                                $height="35px"
-                                            >
-                                                <IconMessage2 size={20} />
-                                            </Button>
+                                            <OpenChatButton
+                                                userId={friend.uid}
+                                                short
+                                            />
                                         </UserItem>
                                     );
                                 })}

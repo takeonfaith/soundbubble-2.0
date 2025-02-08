@@ -13,7 +13,11 @@ type Props = {
 };
 
 export const ControlButtons = ({ queue, buttonColor }: Props) => {
-    const { state, currentSongIndex } = songModel.useSong();
+    const {
+        state,
+        currentSongIndex,
+        queue: currentQueue,
+    } = songModel.useSong();
     const theme = useTheme();
     const shouldLoadSongs = 'songIds' in queue;
     const isLoading =
@@ -39,11 +43,14 @@ export const ControlButtons = ({ queue, buttonColor }: Props) => {
             <DefaultButton
                 onClick={(e) => {
                     e.preventDefault();
-                    setButtonType('play');
+                    if (queue.id !== currentQueue?.id) {
+                        setButtonType('play');
+                    }
                     if (shouldLoadSongs) {
                         songModel.controls.loadSongsThenPlay({
                             queue,
                             currentSongIndex,
+                            sort: true,
                         });
                     } else {
                         songModel.controls.playPauseQueue({
@@ -59,10 +66,8 @@ export const ControlButtons = ({ queue, buttonColor }: Props) => {
             >
                 <PlayPauseIcon
                     size={20}
-                    loading={
-                        buttonType === 'play' && state === SongState.loading
-                    }
-                    playling={false}
+                    loading={buttonType === 'play' && isLoading}
+                    playling={state === SongState.playing}
                 />
                 Play
             </DefaultButton>

@@ -3,7 +3,7 @@ import { LocalSendStatus } from '../../../../entities/chat/model/types';
 
 type Props = {
     isMine: boolean;
-    sendStatus: LocalSendStatus;
+    sendStatus: LocalSendStatus | undefined;
 };
 
 export const MessageSentStatus = ({ isMine, sendStatus }: Props) => {

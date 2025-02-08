@@ -2,6 +2,7 @@ import { TEntity } from '../../entities/search/model/types';
 import { AddedItemsList } from '../../shared/components/addedItemsList';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
+import { Subtext } from '../../shared/components/subtext';
 import { useAddedItemsList } from '../../shared/hooks/useAddedItemsList';
 import {
     getEntityId,
@@ -53,6 +54,7 @@ export const AddEntitiesUI = <T extends TEntity>({
         handleDeselectAll,
         setAddedItems,
         getItemImage,
+        inputRef,
     } = useAddedItemsList(entities, initiallyAddedItems, onAddItem);
 
     return (
@@ -61,6 +63,7 @@ export const AddEntitiesUI = <T extends TEntity>({
                 inputPlaceholder={inputPlaceholder}
                 added={addedItems}
                 allItems={entities}
+                myRef={inputRef}
                 searchValue={searchValue}
                 setSearchValue={setSearchValue}
                 itemImage={getItemImage}
@@ -82,6 +85,9 @@ export const AddEntitiesUI = <T extends TEntity>({
                     </Button>
                 )}
             </Flex>
+            {searchValue.length !== 0 && visibleItems.length === 0 && (
+                <Subtext>Nothing found</Subtext>
+            )}
             {children}
             <Flex
                 d="column"

@@ -15,11 +15,11 @@ import { CheckIcon } from '../../shared/components/checkIcon';
 import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
 import { Loading } from '../../shared/components/loading';
+import getUID from '../../shared/funcs/getUID';
 import { AddEntitiesUI } from '../addEntitiesUI';
 import { getEntityId } from '../searchWithHints/lib/getDividedEntity';
 import { getEntityType } from '../searchWithHints/lib/getEntityType';
 import { BadgeStyled, ShareModalStyled } from './styles';
-import getUID from '../../shared/funcs/getUID';
 
 type Props = {
     entity: TEntity | null | undefined;
@@ -86,7 +86,8 @@ export const ShareModal = ({ entity }: Props) => {
                 renderItem={(chat, checked, onClick) => {
                     return (
                         <ChatItem
-                            size="s"
+                            hideLastMessage
+                            size="xs"
                             chat={chat}
                             key={chat.id}
                             cache={cache}
@@ -113,7 +114,7 @@ export const ShareModal = ({ entity }: Props) => {
                             loading={sending}
                         >
                             Send
-                            <BadgeStyled>{addedChats.length}</BadgeStyled>
+                            <BadgeStyled className='white'>{addedChats.length}</BadgeStyled>
                         </DefaultButton>
                     </>
                 )}

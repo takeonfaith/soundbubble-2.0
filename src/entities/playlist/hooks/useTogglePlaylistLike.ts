@@ -25,6 +25,7 @@ export const useTogglePlaylistLike = (playlist: TPlaylist | null) => {
 
     const handleToggleLike = (e: Evt<'btn'>) => {
         e.preventDefault();
+        e.stopPropagation();
 
         if (playlist) {
             setIsActing(true);

@@ -21,6 +21,8 @@ export const useToggleUserLike = (author: TUser | null | undefined) => {
 
     const handleToggleLike = (e: Evt<'btn'>) => {
         e.preventDefault();
+        e.stopPropagation();
+
         if (author) {
             setIsActing(true);
             userModel.events.toggleAuthorLiked({

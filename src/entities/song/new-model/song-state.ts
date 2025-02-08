@@ -22,6 +22,7 @@ type PlayProps = {
 type TLoadSongsThenPlay = {
     queue: TLoadQueue;
     currentSongIndex: number;
+    sort?: boolean;
 };
 
 const loadSongsFx = createEffect<TLoadSongsThenPlay, TSong[]>();
@@ -241,6 +242,6 @@ sample({
     target: [initialize, loadAndPlay],
 });
 
-loadSongsFx.use(async ({ queue }) => {
-    return await Database.Songs.getSongsByUids(queue.songIds);
+loadSongsFx.use(async ({ queue, sort }) => {
+    return await Database.Songs.getSongsByUids(queue.songIds, sort);
 });

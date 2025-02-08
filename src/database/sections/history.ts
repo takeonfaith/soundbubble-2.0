@@ -5,7 +5,7 @@ import {
 } from '../../entities/history/model/constants';
 import { DeleteHistoryPeriod } from '../../entities/history/model/types';
 import { FB } from '../../firebase';
-import { Pagination } from '../../shared/effector/createPagination';
+import { Pagination } from '../../shared/effector/pagination';
 import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import getUID from '../../shared/funcs/getUID';
 import { getDataFromDoc } from '../lib/getDataFromDoc';

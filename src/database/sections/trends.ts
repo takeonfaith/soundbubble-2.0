@@ -1,6 +1,6 @@
 import { getDocs, limit, orderBy, query, where } from 'firebase/firestore';
 import { TSong } from '../../entities/song/model/types';
-import { Pagination } from '../../shared/effector/createPagination';
+import { Pagination } from '../../shared/effector/pagination';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { Songs } from './songs';
 import { Users } from './users';

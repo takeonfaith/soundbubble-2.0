@@ -15,7 +15,9 @@ export const PopupStyled = styled.div<{
     top: ${({ $posY }) => `${$posY}px`};
     left: ${({ $posX }) => `${$posX}px`};
     border-radius: ${({ theme }) => theme.borderRadius.mild};
-    box-shadow: 0 0 40px #0000002e;
+    /* box-shadow: 0 0 40px #0000002e;t */
+    box-shadow: ${({ theme }) => theme.colors.shadow};
+
     visibility: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
     opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
     z-index: 1200;
@@ -23,6 +25,7 @@ export const PopupStyled = styled.div<{
     transition: 0.15s opacity, 0.15s visibility, 0.15s transform;
     transform-origin: ${({ $transformOrigin }) => $transformOrigin};
     overflow: hidden;
+    outline: 1px solid ${({ theme }) => theme.colors.hover};
 
     @media (max-width: 768px) {
         transform: ${({ $isOpen }) => ($isOpen ? 'scale(1.05)' : 'scale(0.8)')};

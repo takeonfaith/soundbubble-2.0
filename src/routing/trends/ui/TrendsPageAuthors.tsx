@@ -11,12 +11,12 @@ import { trendingAuthorsPaginationModel } from '../model';
 import { PaginationList } from '../../../features/paginationList';
 
 export const TrendsPageAuthors = () => {
-    const { data: authors, isInitiallyLoaded } =
+    const { data: authors, isInitiallyLoading } =
         trendingAuthorsPaginationModel.usePagination();
 
     return (
         <ContentWrapper>
-            <SkeletonPageAnimation loading={!isInitiallyLoaded} skeleton={<Skeleton />}>
+            <SkeletonPageAnimation loading={isInitiallyLoading} skeleton={<Skeleton />}>
                 {!!authors.length && (
                     <TopPlates>
                         <TopPlate index={1} entity={authors[0]} />

@@ -18,20 +18,22 @@ import {
     LastMessageStyled,
 } from './styles';
 
+const coverSizes = {
+    xs: '30px',
+    s: '35px',
+    m: '45px',
+};
+
 type Props = {
     chat: TChat;
     cache: TCache;
     unreadCount: number;
     isSelected: boolean;
     children?: React.ReactNode;
-    sendStatus: LocalSendStatus;
+    sendStatus?: LocalSendStatus;
+    hideLastMessage?: boolean;
     onClick?: (chat: TChat, e: Evt<'a'>) => void;
-    size?: 's' | 'm';
-};
-
-const coverSizes = {
-    s: '35px',
-    m: '45px',
+    size?: keyof typeof coverSizes;
 };
 
 export const ChatItem = ({
@@ -42,6 +44,7 @@ export const ChatItem = ({
     children,
     onClick,
     sendStatus,
+    hideLastMessage = false,
     size = 'm',
 }: Props) => {
     const [currentUser] = userModel.useUser();
@@ -82,13 +85,13 @@ export const ChatItem = ({
             <Flex
                 d="column"
                 ai="flex-start"
-                height={coverSizes[size]}
+                height={hideLastMessage ? '20px' : coverSizes[size]}
                 width="100%"
                 gap={2}
             >
                 <Flex jc="space-between" width="100%">
                     <ChatTitle>{chatTitle}</ChatTitle>
-                    {lastMessage && (
+                    {lastMessage && !hideLastMessage && (
                         <LastMessageSentTimeStyled>
                             <MessageSentStatus
                                 isMine={
@@ -118,12 +121,14 @@ export const ChatItem = ({
                                     showLastSeen
                                 />
                             )}
-                            <LastMessage
-                                cache={cache}
-                                lastMessage={lastMessage}
-                                isGroupChat={isGroupChat}
-                                currentUser={currentUser}
-                            />
+                            {!hideLastMessage && (
+                                <LastMessage
+                                    cache={cache}
+                                    lastMessage={lastMessage}
+                                    isGroupChat={isGroupChat}
+                                    currentUser={currentUser}
+                                />
+                            )}
                         </LastMessageStyled>
                     </ChatTypingIndicator>
                     {!!unreadCount && (

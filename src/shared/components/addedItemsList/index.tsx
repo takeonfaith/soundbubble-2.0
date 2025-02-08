@@ -14,6 +14,7 @@ type Props<T extends { id?: string; uid?: string }> = {
     added: T[];
     loading?: boolean;
     visibleItems: T[];
+    myRef: React.Ref<HTMLInputElement>;
     itemImage?: (item: T) => React.ReactNode;
     itemName: (item: T) => string;
     setAdded: (items: T[]) => void;
@@ -36,6 +37,7 @@ export const AddedItemsList = <T extends { id?: string; uid?: string }>(
         itemName,
         setSearchValue,
         onSearchValueChange,
+        myRef,
     } = props;
 
     const handleChange = (e: Evt<'input'>) => {
@@ -63,6 +65,7 @@ export const AddedItemsList = <T extends { id?: string; uid?: string }>(
                 icon={<IconSearch />}
                 onChange={handleChange}
                 value={searchValue}
+                ref={myRef}
             />
             <Items {...props} />
         </AddedItemsListStyled>

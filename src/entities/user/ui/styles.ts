@@ -35,7 +35,7 @@ export const UserItemStyled = styled(Link)<{ disabled?: boolean }>`
         position: absolute;
         top: 0px;
         right: 0px;
-        z-index: 20;
+        z-index: 30;
         background: ${({ theme }) => theme.colors.pageBackground};
         border-radius: 20px;
         width: 40px;

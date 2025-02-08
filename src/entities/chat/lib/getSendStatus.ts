@@ -1,7 +1,7 @@
 import { LocalSendStatus, SendStatus, TMessage } from '../model/types';
 
 export const getSendStatus = (
-    lastMessage: TMessage | undefined,
+    lastMessage: Nullable<TMessage>,
     isMine: boolean,
     maxSeenAtInCurrentChat: number | null,
     myLastReadAt: number | null

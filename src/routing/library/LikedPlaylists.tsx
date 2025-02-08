@@ -1,70 +1,14 @@
-import { IconPlaylistOff, IconPlus } from '@tabler/icons-react';
+import { IconPlaylistOff } from '@tabler/icons-react';
 import { useMemo } from 'react';
-import styled from 'styled-components';
-import { createPlaylistObject } from '../../entities/playlist/lib/createPlaylistObject';
 import { PlaylistItem } from '../../entities/playlist/ui';
-import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
 import { userModel } from '../../entities/user/model';
-import { CreatePlaylistModal } from '../../features/createPlaylistModal';
-import { modalModel } from '../../layout/modal/model';
-import { Button } from '../../shared/components/button';
+import { CreatePlaylistButton } from '../../features/createPlaylistButton';
+import { LoginButton } from '../../features/loginButton';
 import { Loading } from '../../shared/components/loading';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 import { PageGridStyled } from './styles';
-import { LoginButton } from '../../features/loginButton';
-
-const IconWrapper = styled.div`
-    height: 35%;
-    width: 35%;
-    display: flex;
-    border-radius: 100px;
-    align-items: center;
-    justify-content: center;
-    background-color: ${({ theme }) => theme.scheme.blue.transparent};
-
-    @media (max-width: 768px) {
-        width: 70%;
-        height: 70%;
-        background-color: transparent;
-    }
-`;
-
-const AddPlaylistStyled = styled.div`
-    width: 100%;
-    height: calc(100% - 30px);
-    border-radius: ${({ theme }) => theme.borderRadius.middle};
-    top: 0;
-    left: 0;
-    position: absolute;
-    background-color: ${({ theme }) => theme.colors.pageBackground2};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    font-size: 1rem;
-    gap: 16px;
-    color: ${({ theme }) => theme.colors.greyText2};
-
-    svg {
-        width: 65%;
-        height: 65%;
-        color: ${({ theme }) => theme.scheme.blue.action};
-    }
-
-    @media (max-width: 768px) {
-        width: 40px;
-        height: 40px;
-        border-radius: 2px;
-        top: 6px;
-
-        svg {
-            width: 80%;
-            height: 80%;
-        }
-    }
-`;
 
 export const LikedPlaylists = () => {
     const [added, loadingAdded] = userModel.useAddedPlaylists();
@@ -76,13 +20,6 @@ export const LikedPlaylists = () => {
         [added, own]
     );
     const { isMobile } = useCurrentDevice();
-
-    const handleAddPlaylist = () => {
-        modalModel.events.open({
-            title: 'Create Playlist',
-            content: <CreatePlaylistModal />,
-        });
-    };
 
     if (!currentUser) {
         return (
@@ -103,15 +40,7 @@ export const LikedPlaylists = () => {
                 title={'No playlists created'}
                 description={'They will appear here when you add them'}
             >
-                <Button
-                    onClick={handleAddPlaylist}
-                    className="primary"
-                    $width="150px"
-                    color="#fff"
-                >
-                    <IconPlus size={20} />
-                    Add playlist
-                </Button>
+                <CreatePlaylistButton main />
             </PageMessage>
         );
     }
@@ -121,31 +50,9 @@ export const LikedPlaylists = () => {
             {loading && <Loading />}
             <PageGridStyled>
                 {!!allPlaylists.length && (
-                    <PlaylistItem
+                    <CreatePlaylistButton
                         orientation={isMobile ? 'horizontal' : 'vertical'}
-                        onClick={handleAddPlaylist}
-                        isAuthor
-                        playlist={createPlaylistObject(createAuthorObject({}), {
-                            name: 'New playlist',
-                            authors: [],
-                            imageColors: [
-                                'transparent',
-                                'transparent',
-                                'transparent',
-                                'transparent',
-                                'transparent',
-                                'transparent',
-                            ],
-                        })}
-                        as="button"
-                    >
-                        <AddPlaylistStyled>
-                            <IconWrapper>
-                                <IconPlus size={24} />
-                            </IconWrapper>
-                            {/* New Playlist */}
-                        </AddPlaylistStyled>
-                    </PlaylistItem>
+                    />
                 )}
                 {allPlaylists.map((playlist) => {
                     const isAuthor =

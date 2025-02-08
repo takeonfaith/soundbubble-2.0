@@ -12,15 +12,12 @@ import { TopPlates } from './styles';
 import { TopPlate } from './TopPlate';
 
 export const TrendsPageSongs = () => {
-    const { data: songs, isInitiallyLoaded } =
+    const { data: songs, isInitiallyLoading } =
         trendingSongsPaginationModel.usePagination();
 
     return (
         <ContentWrapper>
-            <SkeletonPageAnimation
-                loading={!isInitiallyLoaded}
-                skeleton={<Skeleton />}
-            >
+            <SkeletonPageAnimation loading={isInitiallyLoading} skeleton={<Skeleton />}>
                 {!!songs.length && (
                     <TopPlates>
                         <TopPlate index={1} entity={songs[0]} />
@@ -30,6 +27,8 @@ export const TrendsPageSongs = () => {
                 )}
                 <PaginationList paginationModel={trendingSongsPaginationModel}>
                     {(songs) => {
+                        console.log(songs);
+
                         const queue = createQueueObject({
                             name: 'Trends',
                             url: '/trends',

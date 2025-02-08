@@ -162,12 +162,7 @@ export class Songs {
             }
 
             if (songFile) {
-                await Server.uploadAudio(
-                    songFile,
-                    newSong.id,
-                    newSong.name,
-                    getAuthorsToString(newSong.authors)
-                );
+                await Server.uploadAudio(songFile, newSong.id);
             }
         } catch (error) {
             console.log(error);

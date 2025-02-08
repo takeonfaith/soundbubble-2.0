@@ -371,13 +371,16 @@ export const QueueStyled = styled.div`
     flex-direction: column;
     gap: 4px;
 
+    & a.active {
+        background: none !important;
+        outline: none !important;
+    }
+
     /* & button {
         color: #fff;
     }
 
-    & a {
-        color: #fff;
-    }
+   
 
     & > * {
         color: #fff !important;
