@@ -14,6 +14,7 @@ import { SignUpModalStyled } from '../signUpModal/styles';
 import { CreateAuthor } from './CreateAuthor';
 import { useForm } from './model';
 import { SongCover } from './SongCover';
+import { IconMusic } from '@tabler/icons-react';
 
 const CreateAuthorButton = styled(Button)`
     font-size: 0.85rem;
@@ -38,11 +39,13 @@ export const SongNameAndAuthor = () => {
 
     const {
         updateField,
-        values: { name, author, authors },
+        values: { name, author, authors, songFile },
         errors,
         onSubmit,
         onChange,
     } = useForm(handleNext, ['name', 'authors']);
+    console.log(songFile);
+
     const [loadingItems, setLoadingItems] = useState(false);
 
     const requestAuthors = useCallback(async (value: string) => {
@@ -112,19 +115,27 @@ export const SongNameAndAuthor = () => {
                 <Message type="success">File succesfully uploaded!</Message>
                 <Input
                     required
-                    placeholder="Song name"
+                    placeholder="Enter song name..."
                     label="Song name"
                     id="name"
                     value={name}
                     error={errors.name}
                     onChange={onChange}
+                    icon={<IconMusic />}
                 />
                 <AuthorsInput
                     onChange={(value) => updateField({ id: 'author', value })}
                     onSumbit={(authors) => {
+                        console.log(authors);
+
                         updateField({
                             id: 'authors',
                             value: authors,
+                        });
+
+                        updateField({
+                            id: 'author',
+                            value: '',
                         });
                     }}
                     value={author}

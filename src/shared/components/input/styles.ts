@@ -78,7 +78,8 @@ export const InputStyled = styled.input<{
     $hasError: boolean;
 }>`
     border: none;
-    background: ${({ theme }) => theme.colors.input};
+    background: ${({ theme, $hasError }) =>
+        $hasError ? theme.scheme.red.transparent : theme.colors.input};
     padding: 10px 10px;
     border-radius: ${({ theme }) => theme.borderRadius.middle};
     color: ${({ theme }) => theme.colors.textColor};

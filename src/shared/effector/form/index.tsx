@@ -1,12 +1,28 @@
-import { createEvent, createStore, sample } from 'effector';
+import {
+    createEffect,
+    createEvent,
+    createStore,
+    EventCallable,
+    sample,
+} from 'effector';
 import { useUnit } from 'effector-react';
-import { useState } from 'react';
 import { MIN_PASSWORD_LENGTH } from '../../../features/signUpModal/constansts';
 import { isValidHttpUrl } from '../../funcs/isValidHttpUrl';
 import { isValidYoutubeLink } from '../../funcs/isValidYoutubeLink';
 import { ErrorType, FormType, TForm } from './types';
+import { toastModel } from '../../../layout/toast/model';
 
 export const effectorForm = <T extends TForm>(form: T) => {
+    const onSubmitFx = createEffect<
+        { func: () => Promise<void> | void },
+        void
+    >();
+
+    const validateFx = createEffect<
+        { id: string; func: () => Promise<string | undefined> },
+        string | undefined
+    >();
+
     const updateField = createEvent<{
         id: keyof T;
         value: FormType<T>[keyof T];
@@ -67,16 +83,52 @@ export const effectorForm = <T extends TForm>(form: T) => {
         target: $errors,
     });
 
+    sample({
+        clock: validateFx.done,
+        source: $errors,
+        filter: (_, { result }) => result !== undefined,
+        fn: (errors, { result, params }) => ({
+            ...errors,
+            [params.id]: result,
+        }),
+        target: $errors,
+    });
+
+    onSubmitFx.use(async ({ func }) => {
+        await func();
+    });
+
+    validateFx.use(async ({ func }) => {
+        return await func();
+    });
+
+    onSubmitFx.failData.watch((err) => {
+        toastModel.events.add({
+            type: 'error',
+            message: 'Failed to submit',
+            reason: err.message,
+            duration: 10000,
+        });
+    });
+
     return {
         useForm: (
             handleSubmit: (
                 values: FormType<T>,
-                handleCleanForm: () => void
-            ) => void,
+                handleCleanForm: () => void,
+                update: EventCallable<{
+                    id: keyof T;
+                    value: FormType<T>[keyof T];
+                }>
+            ) => Promise<void> | void,
             validate?: (keyof T)[]
         ) => {
-            const [values, errors] = useUnit([$form, $errors]);
-            const [loading, setLoading] = useState(false);
+            const [values, errors, isValidating, isSubmiting] = useUnit([
+                $form,
+                $errors,
+                validateFx.pending,
+                onSubmitFx.pending,
+            ]);
 
             const validateFields = async () => {
                 let hasErrors = false;
@@ -150,18 +202,11 @@ export const effectorForm = <T extends TForm>(form: T) => {
                             error: 'This field is required',
                         });
                     } else if (asyncValidation) {
-                        setLoading(true);
-                        const error = await asyncValidation(
-                            values[key] as never
-                        );
-                        setLoading(false);
-                        if (error) {
-                            updateError({
-                                id: key,
-                                error,
-                            });
-                            hasErrors = true;
-                        }
+                        validateFx({
+                            func: async () =>
+                                await asyncValidation(values[key] as never),
+                            id: key as string,
+                        });
                     } else {
                         updateError({ id: key, error: undefined });
                     }
@@ -179,7 +224,14 @@ export const effectorForm = <T extends TForm>(form: T) => {
                 console.log(hasErrors, errors);
 
                 if (!hasErrors) {
-                    handleSubmit(values, handleCleanForm);
+                    onSubmitFx({
+                        func: async () =>
+                            await handleSubmit(
+                                values,
+                                handleCleanForm,
+                                updateField
+                            ),
+                    });
                 }
             };
 
@@ -202,7 +254,7 @@ export const effectorForm = <T extends TForm>(form: T) => {
                 onSubmit,
                 updateField,
                 onChange,
-                loading,
+                loading: isValidating || isSubmiting,
                 handleEnterKeyDown,
                 reset,
             };

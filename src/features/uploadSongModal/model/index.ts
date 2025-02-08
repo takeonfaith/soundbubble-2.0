@@ -1,11 +1,11 @@
-import { TUser } from '../../../entities/user/model/types';
 import { effectorForm } from '../../../shared/effector/form';
 import { FormType } from '../../../shared/effector/form/types';
+import { TExtendedSuggestion } from '../../searchWithHints/types';
 
 const form = {
     songFile: {
         type: 'file',
-        required: true,
+        required: false,
         init: null as File | null,
     },
     youtubeLink: {
@@ -31,7 +31,7 @@ const form = {
     authors: {
         type: 'authors',
         required: true,
-        init: [] as TUser[],
+        init: [] as TExtendedSuggestion[],
     },
     duration: {
         type: 'number',

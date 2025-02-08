@@ -13,7 +13,9 @@ import { createDefaultSuggestion } from '../../entities/search/lib/createDefault
 
 export const CreateAuthor = () => {
     const [loading] = useUnit([createAuthorFx.pending]);
-    const { updateField: updateSongField } = useSongForm(() => null);
+    const { updateField: updateSongField, values: songValues } = useSongForm(
+        () => undefined
+    );
     const { values, errors, updateField, onSubmit, onChange } = useForm(
         (form) => {
             userModel.events.createAuthor({
@@ -22,7 +24,10 @@ export const CreateAuthor = () => {
                     modalModel.events.back();
                     updateSongField({
                         id: 'authors',
-                        value: [createDefaultSuggestion(user)],
+                        value: [
+                            ...songValues.authors,
+                            createDefaultSuggestion(user),
+                        ],
                     });
                 },
             });

@@ -58,6 +58,7 @@ export const AuthorsInput = ({
                 {...props}
                 initialValue={value}
                 suggestions={suggestions}
+                placeholder='Search for authors...'
                 label="Authors"
                 historySuggestions={[]}
                 areSuggestionsLoading={loading}

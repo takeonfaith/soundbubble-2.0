@@ -50,6 +50,10 @@ export const $isLastSongInQueue = combine(
     }
 );
 
+export const $isOnlySongInQueue = $queue.map(
+    (queue) => queue?.songs.length === 1
+);
+
 export const queueApi = createApi($currentSongIndex, {
     // primitives
     pNext: (index) => index + 1,
@@ -79,12 +83,21 @@ const filterNext = (
         loopMode,
         isLastSongInQueue,
         restarted,
-    }: { loopMode: LoopMode; isLastSongInQueue: boolean; restarted: boolean },
+        isOnlySongInQueue,
+    }: {
+        loopMode: LoopMode;
+        isLastSongInQueue: boolean;
+        restarted: boolean;
+        isOnlySongInQueue: boolean;
+    },
     nextFrom: TNextFrom
 ) => {
     const isEither =
+        !isOnlySongInQueue &&
         !restarted &&
         (loopMode !== LoopMode.loopone || nextFrom === 'from_next_button');
+
+    console.log(isEither && !isLastSongInQueue);
 
     return isEither && !isLastSongInQueue;
 };
@@ -102,10 +115,10 @@ sample({
     source: {
         isLastSongInQueue: $isLastSongInQueue,
         loopMode: $loopMode,
-        queue: $queue,
+        isOnlySongInQueue: $isOnlySongInQueue,
     },
-    filter: ({ queue, isLastSongInQueue, loopMode }, nextFrom) => {
-        if (!queue || queue.songs.length === 0) return false;
+    filter: ({ isLastSongInQueue, loopMode, isOnlySongInQueue }, nextFrom) => {
+        if (isOnlySongInQueue) return false;
 
         const shouldGoToStartOfQueue =
             isLastSongInQueue &&
@@ -123,6 +136,7 @@ sample({
         loopMode: $loopMode,
         isLastSongInQueue: $isLastSongInQueue,
         restarted,
+        isOnlySongInQueue: $isOnlySongInQueue,
     },
     filter: filterNext,
     target: queueApi.pNext,
@@ -134,18 +148,15 @@ sample({
     clock: next,
     source: {
         loopMode: $loopMode,
-        queue: $queue,
+        isOnlySongInQueue: $isOnlySongInQueue,
     },
-    filter: ({ loopMode, queue }, nextFrom) => {
-        const oneInQueue =
-            !!queue &&
-            queue?.songs.length === 1 &&
-            loopMode === LoopMode.loopall;
-
+    filter: ({ loopMode, isOnlySongInQueue }, nextFrom) => {
         const shouldLoopOne =
-            loopMode === LoopMode.loopone && nextFrom === 'from_end_track';
+            (isOnlySongInQueue && loopMode !== LoopMode.noloop) ||
+            (loopMode !== LoopMode.loopone && nextFrom === 'from_end_track');
+        console.log(shouldLoopOne);
 
-        return oneInQueue || shouldLoopOne;
+        return shouldLoopOne;
     },
     target: previous,
 });
@@ -161,8 +172,10 @@ sample({
         loopMode: $loopMode,
         currentSongIndex: $currentSongIndex,
         currentTime: $currentTime,
+        isOnlySongInQueue: $isOnlySongInQueue,
     },
-    filter: ({ loopMode, currentSongIndex, currentTime }) =>
+    filter: ({ loopMode, currentSongIndex, currentTime, isOnlySongInQueue }) =>
+        !isOnlySongInQueue &&
         currentTime <= 5 &&
         currentSongIndex === 0 &&
         loopMode === LoopMode.loopall,
@@ -176,9 +189,16 @@ sample({
         currentTime: $currentTime,
         currentSongIndex: $currentSongIndex,
         loopMode: $loopMode,
+        isOnlySongInQueue: $isOnlySongInQueue,
     },
-    filter: ({ currentTime, currentSongIndex, loopMode }) => {
+    filter: ({
+        currentTime,
+        currentSongIndex,
+        loopMode,
+        isOnlySongInQueue,
+    }) => {
         return (
+            !isOnlySongInQueue &&
             currentTime <= 5 &&
             currentSongIndex !== 0 &&
             loopMode !== LoopMode.loopone
@@ -192,10 +212,9 @@ sample({
     clock: previous,
     source: {
         currentTime: $currentTime,
+        isOnlySongInQueue: $isOnlySongInQueue,
     },
     filter: ({ currentTime }) => {
-        console.log('reset song');
-
         return currentTime > 5;
     },
     target: currentTimeApi.reset,

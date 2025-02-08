@@ -1,4 +1,4 @@
-import { TUser } from '../../../entities/user/model/types';
+import { TExtendedSuggestion } from '../../../features/searchWithHints/types';
 
 export type FieldType =
     | 'email'
@@ -27,7 +27,7 @@ export type TFields<T extends FieldType> = T extends StrType
     : T extends 'file'
     ? TField<'file', File | null>
     : T extends 'authors'
-    ? TField<'authors', TUser[]>
+    ? TField<'authors', TExtendedSuggestion[]>
     : T extends 'stringArray'
     ? TField<'stringArray', string[]>
     : T extends 'number'

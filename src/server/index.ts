@@ -3,12 +3,7 @@ import axios from 'axios';
 export class Server {
     static url = 'http://localhost:3000';
     static api = axios.create({ baseURL: this.url });
-    static async uploadAudio(
-        audioFile: File,
-        id: string,
-        title: string,
-        artist: string
-    ) {
+    static async uploadAudio(audioFile: File, id: string) {
         const formData = new FormData();
 
         // Append the audio file
@@ -16,8 +11,6 @@ export class Server {
 
         // Append additional data
         formData.append('id', id);
-        formData.append('title', title);
-        formData.append('artist', artist);
 
         try {
             const response = await this.api.post('/audio', formData, {
@@ -59,12 +52,19 @@ export class Server {
         formData.append('youtubeLink', url);
         try {
             const res = await this.api.post('/youtube', formData, {
+                responseType: 'blob',
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
 
-            return res.data();
+            if (res.status !== 200) {
+                throw new Error('Не удалось получить файл');
+            }
+
+            const data = await res.data;
+
+            return data as File | null;
         } catch (error) {
             console.error('Error transforming by id:', error);
             throw new Error(`Error transforming by id: ${error}`);

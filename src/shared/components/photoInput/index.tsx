@@ -17,6 +17,7 @@ import {
     InputWrapper,
     PhotoInputStyled,
 } from './styles';
+import { compressImage } from '../../funcs/compressImage';
 
 type Props = {
     file: File | string | null;
@@ -51,14 +52,25 @@ export const PhotoInput = ({
         }
     }, [file]);
 
-    const handleFile = (
+    const handleFile = async (
         event?: React.ChangeEvent<HTMLInputElement>,
         outsideFile?: File
     ) => {
         const file = outsideFile ?? event?.target?.files?.[0];
-        if (file) {
-            onUpload(file);
-            setPreview(URL.createObjectURL(file));
+
+        if (!file) return;
+        console.log(file.size);
+
+        let result = file;
+
+        if (file?.size > 200000) {
+            const blob = await compressImage(file, 0.5);
+            result = new File([blob], 'file');
+        }
+
+        if (result) {
+            onUpload(result);
+            setPreview(URL.createObjectURL(result));
         }
     };
 

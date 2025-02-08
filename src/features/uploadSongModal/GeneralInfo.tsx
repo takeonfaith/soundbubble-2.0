@@ -113,7 +113,6 @@ export const GeneralInfo = () => {
         handleNext,
         ['genres', 'moods', 'langs', 'releaseDate']
     );
-    console.log(values);
 
     return (
         <SignUpModalStyled>

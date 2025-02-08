@@ -11,27 +11,41 @@ import { SignUpModalStyled } from '../signUpModal/styles';
 import { useForm } from './model';
 import { SongNameAndAuthor } from './SongNameAndAuthor';
 import { Server } from '../../server';
+import { toastModel } from '../../layout/toast/model';
 
 export const UploadSongModal = () => {
-    const { values, updateField, errors, onSubmit, onChange } = useForm(
-        async (values) => {
-            if (values.youtubeLink) {
-                const res = await Server.youtubeLink(values.youtubeLink);
+    const { values, updateField, errors, onSubmit, onChange, loading } =
+        useForm(
+            async (values, _, update) => {
+                if (values.youtubeLink) {
+                    const res = await Server.youtubeLink(values.youtubeLink);
+                    if (!res) {
+                        toastModel.events.add({
+                            type: 'error',
+                            message: 'Failed to get data from youtube link ',
+                        });
+                        return;
+                    }
+                    const file = new File([res], 'audio.mp3', {
+                        type: 'audio/mpeg',
+                    });
+                    update({ id: 'songFile', value: file });
+                    const url = await getSongDuration(
+                        URL.createObjectURL(file)
+                    );
+                    updateField({ id: 'duration', value: url });
+                }
 
-                console.log(res);
-
-                return;
-            }
-
-            modalModel.events.open({
-                title: 'Name and author',
-                content: <SongNameAndAuthor />,
-                sizeX: 's',
-                sizeY: 's',
-            });
-        },
-        ['songFile', 'youtubeLink']
-    );
+                modalModel.events.open({
+                    title: 'Name and author',
+                    content: <SongNameAndAuthor />,
+                    sizeX: 's',
+                    sizeY: 's',
+                });
+            },
+            ['songFile', 'youtubeLink']
+        );
+    console.log(loading);
 
     const handleChange = (file: File | null) => {
         if (file === null) {
@@ -73,7 +87,7 @@ export const UploadSongModal = () => {
                 height="100%"
                 padding="0 0 30px 0"
             >
-                {/* {!values.songFile && (
+                {!values.songFile && (
                     <Input
                         placeholder="Enter youtube link..."
                         value={values.youtubeLink}
@@ -96,7 +110,7 @@ export const UploadSongModal = () => {
                         <Subtext>Or</Subtext>
                         <Divider />
                     </Flex>
-                )} */}
+                )}
                 <SongInput
                     error={errors.songFile}
                     onChange={handleChange}
@@ -104,7 +118,9 @@ export const UploadSongModal = () => {
                 />
             </Flex>
             <Flex width="100%" onClick={onSubmit}>
-                <DefaultButton appearance="primary">Next</DefaultButton>
+                <DefaultButton loading={loading} appearance="primary">
+                    Next
+                </DefaultButton>
             </Flex>
         </SignUpModalStyled>
     );

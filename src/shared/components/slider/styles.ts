@@ -10,6 +10,7 @@ export const LoadedStripe = styled.div`
     position: absolute;
     left: 0;
     transition: 0.2s width, 0.2s height;
+    z-index: -1;
 `;
 
 export const SliderValueBubbleStyled = styled.div`
