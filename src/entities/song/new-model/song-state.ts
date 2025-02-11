@@ -1,5 +1,6 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { Database } from '../../../database';
+import { shuffleArray } from '../lib/shuffleArray';
 import { LoopMode, SongState, TLoadQueue, TQueue, TSong } from '../model/types';
 import { $loadedPercent, currentTimeApi } from './current-time';
 import {
@@ -8,11 +9,11 @@ import {
     $isLastSongInQueue,
     $loopMode,
     $queue,
+    $queueCorrectSongs,
+    $shuffleMode,
     next,
-    previous,
+    queueApi,
 } from './queue';
-import { shuffleArray } from '../lib/shuffleArray';
-import { $queueCorrectSongs, $shuffleMode } from './shuffle';
 
 type PlayProps = {
     queue: TQueue;
@@ -118,7 +119,7 @@ sample({
 });
 
 sample({
-    clock: [next, previous],
+    clock: [queueApi.pNext, queueApi.pPrevious],
     source: $songState,
     filter: (songState) => songState === SongState.playing,
     target: loadAndPlay,

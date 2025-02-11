@@ -1,16 +1,9 @@
-import {
-    IconDots,
-    IconMaximize,
-    IconPlaylist,
-    IconQuote,
-    IconSparkles,
-} from '@tabler/icons-react';
+import { IconMaximize } from '@tabler/icons-react';
 import { useTheme } from 'styled-components';
 import { chatModel } from '../../entities/chat/model';
 import { SongState } from '../../entities/song/model/types';
 import { SongCover } from '../../entities/song/ui/SongCover';
 import { LikeButton } from '../../features/likeButton';
-import { VolumeButton } from '../../features/volumeButton';
 import { Authors } from '../../shared/components/authors';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
@@ -18,13 +11,12 @@ import { MusicControls } from '../../shared/components/musicControls';
 import { MusicControlsStyled } from '../../shared/components/musicControls/styles';
 import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
 import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
+import { Buttonts } from './Buttonts';
 import {
     HoverIcon,
     MobilePlayButton,
-    PlayerActionButtons,
     PlayerMusicControls,
     PlayerStyled,
-    SlowVersionButton,
     SongInfoStyled,
     SongStyled,
     SongTitle,
@@ -105,45 +97,14 @@ export const Player = () => {
                         </Button>
                     </MusicControlsStyled>
                 </MobilePlayButton>
-                <PlayerActionButtons onClick={(e) => e.stopPropagation()}>
-                    <VolumeButton />
-                    <SlowVersionButton
-                        $width="42px"
-                        $height="42px"
-                        disabled={!currentSong || !currentSong.slowSrc}
-                        $color={currentSong?.imageColors[0]}
-                        onClick={handleSlow}
-                        className={`${isSlowVersion ? 'slow' : ''} order3`}
-                    >
-                        <IconSparkles size={20} />
-                    </SlowVersionButton>
-                    <Button
-                        $width="42px"
-                        $height="42px"
-                        disabled={!currentSong}
-                        onClick={handleShowQueue}
-                        className="order2"
-                    >
-                        <IconPlaylist size={20} />
-                    </Button>
-                    <Button
-                        $width="42px"
-                        $height="42px"
-                        disabled={!currentSong?.hasLyrics}
-                        onClick={handleLyrics}
-                        className="order1"
-                    >
-                        <IconQuote size={20} />
-                    </Button>
-                    <Button
-                        $width="42px"
-                        $height="42px"
-                        onClick={handleMore}
-                        disabled={!currentSong}
-                    >
-                        <IconDots size={20} />
-                    </Button>
-                </PlayerActionButtons>
+                <Buttonts
+                    handleSlow={handleSlow}
+                    handleLyrics={handleLyrics}
+                    handleMore={handleMore}
+                    handleShowQueue={handleShowQueue}
+                    currentSong={currentSong}
+                    isSlowVersion={isSlowVersion}
+                />
             </Flex>
         </PlayerStyled>
     );

@@ -155,31 +155,33 @@ export const SongItem = ({
                 <IconHeadphones />
             </Listens>
             <SongButtons>
-                <Popover
-                    content={
-                        !song.slowSrc
-                            ? 'Not ready yet'
-                            : isSlowVersion
-                            ? 'Disable slow version'
-                            : 'Slow version'
-                    }
-                >
-                    <MoreInfoButton
-                        onClick={() => {
-                            if (song.slowSrc) {
-                                if (isSlowVersion) {
-                                    slowSongsApi.remove(song.id);
-                                } else {
-                                    slowSongsApi.add([song.id]);
-                                }
-                            }
-                        }}
-                        disabled={!song.slowSrc}
-                        className={isSlowVersion ? 'current' : ''}
+                {!children && (
+                    <Popover
+                        content={
+                            !song.slowSrc
+                                ? 'Not ready yet'
+                                : isSlowVersion
+                                ? 'Disable slow version'
+                                : 'Slow version'
+                        }
                     >
-                        <IconSparkles size={20} />
-                    </MoreInfoButton>
-                </Popover>
+                        <MoreInfoButton
+                            onClick={() => {
+                                if (song.slowSrc) {
+                                    if (isSlowVersion) {
+                                        slowSongsApi.remove(song.id);
+                                    } else {
+                                        slowSongsApi.add([song.id]);
+                                    }
+                                }
+                            }}
+                            disabled={!song.slowSrc}
+                            className={isSlowVersion ? 'current' : ''}
+                        >
+                            <IconSparkles size={20} />
+                        </MoreInfoButton>
+                    </Popover>
+                )}
                 {!children && (
                     <LikeButton
                         width="35px"
@@ -191,7 +193,7 @@ export const SongItem = ({
                         loading={performingAction}
                     />
                 )}
-                <Subtext className="duration">
+                <Subtext className={`duration ${children ? 'stay' : ''}`}>
                     {getHumanDuration(
                         isSlowVersion ? duration / SLOW_SONGS_FACTOR : duration
                     )}

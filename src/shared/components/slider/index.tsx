@@ -6,7 +6,7 @@ import { LoadedStripe, SliderValueBubbleStyled, SliderWrapper } from './styles';
 type Props = {
     value: number;
     duration: number;
-    loadedPercent: number;
+    loadedPercent?: number;
     onChangeTime: (time: number) => void;
     onMouseUp: (time: number) => void;
     color?: string;
@@ -20,7 +20,7 @@ export const Slider = ({
     onMouseUp,
     loadedPercent,
     color,
-    getSliderValue = (value) => `${Math.floor(value * 100)}%`,
+    getSliderValue = (value) => `${(value * 100).toFixed(0)}%`,
 }: Props) => {
     const [sliderValuePos, setSliderValuePos] = useState(0);
     const rangeRef = useRef<HTMLInputElement | null>(null);
@@ -38,7 +38,9 @@ export const Slider = ({
 
             setSliderValuePos(Math.min(offsetX, 1));
             if (mouseDown) {
-                onChangeTime(+(offsetX * duration).toFixed(2));
+                onChangeTime(
+                    Math.min(+(offsetX * duration).toFixed(2), duration)
+                );
             }
         }
     };
@@ -52,10 +54,10 @@ export const Slider = ({
                 (event.clientX - rect.left) / rect.width,
                 0
             );
-            console.log(+(offsetX * duration).toFixed(2));
+            console.log(mouseDown, +(offsetX * duration).toFixed(2));
 
             if (mouseDown) {
-                onMouseUp(+(offsetX * duration).toFixed(2));
+                onMouseUp(Math.min(+(offsetX * duration).toFixed(2), duration));
             }
 
             setMouseDown(false);
@@ -74,7 +76,7 @@ export const Slider = ({
 
             setMouseDown(true);
 
-            onChangeTime(+(offsetX * duration).toFixed(2));
+            onChangeTime(Math.min(+(offsetX * duration).toFixed(2), duration));
         }
     };
 
@@ -89,21 +91,21 @@ export const Slider = ({
             );
 
             if (mouseDown) {
-                onMouseUp(+(offsetX * duration).toFixed(2));
+                onMouseUp(Math.min(+(offsetX * duration).toFixed(2), duration));
+                setMouseDown(false);
             }
-
-            setMouseDown(false);
         }
     };
 
     return (
         <SliderWrapper
-            className="song-slider"
+            className={`song-slider ${mouseDown ? 'down' : ''}`}
             ref={rangeRef}
             onMouseUp={handleMouseUp}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             onMouseDown={handleMouseDown}
+            draggable={false}
         >
             {duration !== 0 && (
                 <SliderValueBubbleStyled

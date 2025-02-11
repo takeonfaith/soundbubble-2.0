@@ -1,14 +1,16 @@
-import { isDefined } from '@shared/funcs/isDefined';
 import { useUnit } from 'effector-react';
 import React, { useEffect, useRef } from 'react';
+import { SongState } from './entities/song/model/types';
 import {
     songModel,
     songModel as songModelNew,
 } from './entities/song/new-model';
-import { $isSliding } from './entities/song/new-model/current-time';
+import {
+    $currentTime,
+    $isSliding,
+} from './entities/song/new-model/current-time';
 import { $songSrc } from './entities/song/new-model/slow-songs';
 import { useEffectOnce } from './shared/hooks/useEffectOnce';
-import { SongState } from './entities/song/model/types';
 
 const audioCtx = new AudioContext();
 const analyserNode = audioCtx.createAnalyser();
@@ -22,11 +24,14 @@ const resumeCtx = () => {
 };
 
 const useAppAudio = () => {
-    const { state, lastTime } = songModelNew.useSong();
-    const isSliding = useUnit($isSliding);
+    const { state } = songModelNew.useSong();
+    const [isSliding, songSrc, currentTime] = useUnit([
+        $isSliding,
+        $songSrc,
+        $currentTime,
+    ]);
     const [volume, isMuted] = songModelNew.useVolume();
     const audioRef = useRef<HTMLAudioElement>(null);
-    const songSrc = useUnit($songSrc);
 
     useEffectOnce(() => {
         handleAudioUpload();
@@ -69,19 +74,17 @@ const useAppAudio = () => {
         songModelNew.state.loaded();
     };
 
-    const handleWaiting: React.ReactEventHandler<HTMLAudioElement> = () => {
-        if (state === SongState.playing) {
-            songModelNew.controls.loadAndPlay()
-        } else {
-            songModelNew.state.load();
-        }
+    const handleWaiting = () => {
+        songModelNew.state.waiting();
     };
 
     const handlePlaying: React.ReactEventHandler<HTMLAudioElement> = (e) => {
-        // console.log({ curr: e.currentTarget.currentTime, isSliding });
-        if (!isSliding) {
-            songModelNew.playback.setCurrentTime(e.currentTarget.currentTime);
-            songModelNew.lyrics.nextCurrentLyric(e.currentTarget.currentTime);
+        const newTime = e.currentTarget.currentTime;
+        if (Math.abs(newTime - currentTime) > 0.1) {
+            if (!isSliding) {
+                songModelNew.playback.setCurrentTime(newTime);
+                songModelNew.lyrics.nextCurrentLyric(newTime);
+            }
         }
     };
 
@@ -105,16 +108,20 @@ const useAppAudio = () => {
     };
 
     useEffect(() => {
-        if (audioRef.current && isDefined(lastTime) && !isNaN(lastTime ?? 0)) {
-            console.log(lastTime);
+        if (
+            audioRef.current &&
+            Math.abs(audioRef.current.currentTime - currentTime) > 0.1 &&
+            !isSliding
+        ) {
+            console.log('Audio', currentTime);
 
-            audioRef.current.currentTime = lastTime;
+            audioRef.current.currentTime = currentTime;
         }
-    }, [lastTime]);
+    }, [currentTime, isSliding]);
 
     useEffect(() => {
         if (audioRef.current) {
-            if (state === 'playing') {
+            if (state === SongState.playing) {
                 audioRef.current
                     .play()
                     .then(() => {})

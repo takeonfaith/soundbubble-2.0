@@ -1,7 +1,7 @@
-import { createStore, createApi, sample } from 'effector';
-import { shuffleArray } from '../lib/shuffleArray';
-import { TSong, TQueue } from '../model/types';
-import { $queue, $currentSong, $currentSongIndex } from './queue';
+import { createApi, createStore, sample } from 'effector';
+import { shuffleArray } from '../../lib/shuffleArray';
+import { TQueue, TSong } from '../../model/types';
+import { $currentSong, $currentSongIndex, $queue } from './queue';
 
 export const $shuffleMode = createStore<boolean>(
     Boolean(JSON.parse(localStorage.getItem('shuffle') ?? 'false'))

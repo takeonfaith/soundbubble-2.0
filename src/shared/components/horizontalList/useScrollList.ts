@@ -5,6 +5,7 @@ type Props = {
 };
 
 export const useScrollList = ({ children }: Props) => {
+    const [showArrows, setShowArrows] = useState(false);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(false);
     const [scrollPos, setScrollPos] = useState(0);
@@ -14,6 +15,10 @@ export const useScrollList = ({ children }: Props) => {
     }`;
 
     useEffect(() => {
+        setShowArrows(
+            (scrollElementRef.current?.clientWidth ?? 0) <
+                (scrollElementRef.current?.scrollWidth ?? 0)
+        );
         if (scrollElementRef.current?.clientWidth) {
             setShowLeftArrow(scrollPos !== 0);
 
@@ -43,6 +48,7 @@ export const useScrollList = ({ children }: Props) => {
     };
 
     return {
+        showArrows,
         showLeftArrow,
         showRightArrow,
         scrollElementRef,

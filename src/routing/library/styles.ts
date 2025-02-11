@@ -6,6 +6,7 @@ export const PageGridStyled = styled.div`
     flex-wrap: wrap;
     gap: 16px;
     height: fit-content;
+    
 
     @media (max-width: 768px) {
         gap: 0px;

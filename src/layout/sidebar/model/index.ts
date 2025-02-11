@@ -1,15 +1,15 @@
 import { createApi, createStore } from 'effector';
 import { useUnit } from 'effector-react';
 
-const getInitialValue = () => {
+const getInitialValue = (): boolean => {
     const storage = localStorage.getItem('collapsed');
 
-    if (storage !== null) return JSON.parse(storage);
+    if (storage !== null) return JSON.parse(storage) as boolean;
 
     return false;
 };
 
-const $isCollapsed = createStore(getInitialValue());
+const $isCollapsed = createStore<boolean>(getInitialValue());
 
 export const sidebarApi = createApi($isCollapsed, {
     toggle: (prev) => {

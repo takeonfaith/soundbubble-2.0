@@ -14,7 +14,7 @@ const ThemeButtonStyled = styled(Button)`
 
 const ThemeButtonIconStyled = styled.div`
     width: 100%;
-    height: 40px;
+    height: 35px;
     position: relative;
 
     & svg {
@@ -71,7 +71,7 @@ export const ThemeButton = () => {
             position="bottom"
             content={`Change theme to ${isLight ? 'dark' : 'light'}`}
         >
-            <ThemeButtonStyled $width="20px" onClick={handleTheme}>
+            <ThemeButtonStyled onClick={handleTheme}>
                 <ThemeButtonIconStyled className={`theme ${theme.toString()}`}>
                     <IconSun size={20} />
                     <IconMoon size={20} />

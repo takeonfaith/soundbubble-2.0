@@ -5,11 +5,20 @@ export const SearchWithHintsStyled = styled.div`
     position: relative;
     transition: 0.2s;
 
-    & kbd {
+    & input:hover + kbd {
+        opacity: 1;
+    }
+
+    & .rightside {
         position: absolute;
         right: 10px;
-        top: 8px;
-        width: 30px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: fit-content;
+
+        kbd {
+            opacity: 0;
+        }
     }
 `;
 

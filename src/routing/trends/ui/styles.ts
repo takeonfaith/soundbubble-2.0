@@ -90,6 +90,10 @@ export const TopPlateStyled = styled(BeautifulBackground)`
         .authors {
             font-size: 16px;
             font-weight: 300;
+
+            a {
+                color: #fff;
+            }
         }
     }
 

@@ -32,6 +32,10 @@ export const AddPlaylistStyled = styled.div`
     gap: 16px;
     color: ${({ theme }) => theme.colors.greyText2};
 
+    &:hover {
+        background: ${({ theme }) => theme.colors.input};
+    }
+
     svg {
         width: 65%;
         height: 65%;

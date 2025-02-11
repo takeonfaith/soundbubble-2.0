@@ -67,6 +67,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
         gap: 60px;
         position: relative;
         max-width: 1000px;
+        user-select: none;
 
         @media (max-width: 2270px) {
             flex-direction: column-reverse;

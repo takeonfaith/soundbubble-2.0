@@ -3,23 +3,23 @@ import { Button } from '../button';
 
 export const ArrowButton = styled(Button)`
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    min-width: 36px;
-    width: 36px;
-    height: 36px;
-    min-height: 36px;
+    right: 20px;
+    top: -40px;
+    min-width: 30px;
+    width: 30px;
+    height: 30px;
+    min-height: 30px;
     border-radius: 100%;
     background: ${({ theme }) => theme.colors.pageTopButton};
     z-index: 10;
-    display: none;
+    outline: 1px solid ${({ theme }) => theme.colors.border};
 
     &:hover {
         background: ${({ theme }) => theme.colors.sidebar};
     }
 
     &:active {
-        transform: scale(0.96) translateY(-50%);
+        transform: scale(0.96);
         transform-origin: top center;
     }
 
@@ -29,11 +29,7 @@ export const ArrowButton = styled(Button)`
     }
 
     &.left {
-        left: 4px;
-    }
-
-    &.right {
-        right: 4px;
+        right: 60px;
     }
 `;
 
@@ -41,42 +37,9 @@ export const ListWrapper = styled.div<{ $overflowColor?: string }>`
     width: 100%;
     height: fit-content;
     position: relative;
-    overflow: hidden;
     display: flex;
 
     @media (min-width: 1001px) {
-        &::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0px;
-            width: 20px;
-            height: 100%;
-            background: ${({ theme, $overflowColor }) =>
-                $overflowColor ?? theme.colors.pageBackground};
-            box-shadow: 10px 0 10px 20px
-                ${({ theme, $overflowColor }) =>
-                    $overflowColor ?? theme.colors.pageBackground};
-            z-index: 1;
-            display: none;
-        }
-
-        &::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0px;
-            width: 20px;
-            height: 100%;
-            background: ${({ theme, $overflowColor }) =>
-                $overflowColor ?? theme.colors.pageBackground};
-            box-shadow: -10px 0 10px 20px
-                ${({ theme, $overflowColor }) =>
-                    $overflowColor ?? theme.colors.pageBackground};
-            z-index: 1;
-            display: none;
-        }
-
         &.showLeft {
             &::before {
                 display: block;

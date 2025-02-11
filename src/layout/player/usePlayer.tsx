@@ -1,6 +1,9 @@
-import React from 'react';
 import { useToggleLike } from '../../entities/song/hooks/useToggleLike';
 import { songModel as songModelNew } from '../../entities/song/new-model';
+import {
+    slowSongsApi,
+    useIsSlowVersion,
+} from '../../entities/song/new-model/slow-songs';
 import { SongMoreContextMenu } from '../../entities/song/ui/SongMoreContextMenu';
 import { userModel } from '../../entities/user/model';
 import { AddSongToPlaylistModal } from '../../features/addSongToPlaylistModal';
@@ -10,10 +13,6 @@ import { modalModel } from '../modal/model';
 import { popupModel } from '../popup/model';
 import { CompactLyrics } from './CompactLyrics';
 import { SongsQueue } from './SongsQueue';
-import {
-    slowSongsApi,
-    useIsSlowVersion,
-} from '../../entities/song/new-model/slow-songs';
 
 export const usePlayer = () => {
     const { currentSong } = songModelNew.useSong();
@@ -28,7 +27,7 @@ export const usePlayer = () => {
         songModelNew.fullscreenPlayer.open();
     };
 
-    const handleMore: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    const handleMore = (e: Evt<'btn'>) => {
         e.stopPropagation();
 
         popupModel.events.open({

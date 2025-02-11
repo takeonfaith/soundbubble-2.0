@@ -2,7 +2,6 @@ import { useUnit } from 'effector-react';
 import './add-listening';
 import {
     $currentTime,
-    $lastTime,
     currentTimeApi,
     loadedPercentApi,
     setLastRangeValue,
@@ -21,10 +20,12 @@ import {
     $currentSongIndex,
     $loopMode,
     $queue,
+    $shuffleMode,
     addToQueue,
     next,
     previous,
     toggleLoopMode,
+    toggleShuffleMode,
 } from './queue';
 import {
     $songState,
@@ -41,7 +42,7 @@ import {
 } from './song-state';
 import { $isMuted, $volume, isMutedApi, volumeApi } from './volume';
 import { playWave, toggleSlow } from './wave';
-import { $shuffleMode, toggleShuffleMode } from './shuffle';
+import { waiting } from './song-state/waiting';
 
 export const songModel = {
     useSong: () =>
@@ -50,7 +51,6 @@ export const songModel = {
             currentSong: $currentSong,
             queue: $queue,
             state: $songState,
-            lastTime: $lastTime,
             currentSongIndex: $currentSongIndex,
             shuffleMode: $shuffleMode,
         }),
@@ -71,6 +71,7 @@ export const songModel = {
     state: {
         load,
         loaded,
+        waiting,
     },
     queue: {
         next,

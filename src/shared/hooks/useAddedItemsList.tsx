@@ -57,7 +57,7 @@ export const useAddedItemsList = <T extends TEntity>(
         const name = getEntityName(item);
 
         const children =
-            type === 'chat' ? (
+            type === 'chat' && !image ? (
                 <UserCoverBackground name={name} width="18px" />
             ) : undefined;
 
@@ -79,6 +79,12 @@ export const useAddedItemsList = <T extends TEntity>(
     useEffect(() => {
         setVisibleItems(list);
     }, [list]);
+
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, []);
 
     return {
         visibleItems,

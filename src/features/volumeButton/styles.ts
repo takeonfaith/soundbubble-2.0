@@ -16,6 +16,14 @@ export const VolumeButtonStyled = styled.div`
     }
 
     &:hover {
+        &::before {
+            content: '';
+            display: block;
+            position: absolute;
+            height: 40px;
+            width: 275px;
+        }
+
         .song-slider {
             opacity: 1;
             pointer-events: all;

@@ -249,7 +249,9 @@ export class Chats {
         }
     }
 
-    static async createChat(chat: TChat): Promise<TChat> {
+    static async createChat(
+        chat: TChat
+    ): Promise<{ data: TChat; isCreated: boolean }> {
         try {
             const isGroupChat = chat.chatName.length !== 0;
 
@@ -261,7 +263,8 @@ export class Chats {
                     receiverId
                 );
 
-                if (probableChat) return probableChat;
+                if (probableChat)
+                    return { data: probableChat, isCreated: false };
             }
 
             await FB.setById('newChats', chat.id, chat);
@@ -302,7 +305,7 @@ export class Chats {
                 return updateUser(userId);
             });
 
-            return chat;
+            return { data: chat, isCreated: true };
         } catch (error) {
             console.error(error);
             throw new Error(
@@ -311,11 +314,7 @@ export class Chats {
         }
     }
 
-    static async getChatByUserIds(
-        senderId: string,
-        receiverId: string,
-        createIfNotFound = false
-    ) {
+    static async getChatByUserIds(senderId: string, receiverId: string) {
         try {
             const q = query(
                 this.ref,
@@ -329,12 +328,7 @@ export class Chats {
                 limit(1)
             );
             const docs = await getDocs(q);
-            let chat = getDataFromDoc<TChat | null>(docs)[0];
-            if (!chat && createIfNotFound) {
-                chat = await this.createChat(
-                    createChatObject({ participants: [senderId, receiverId] })
-                );
-            }
+            const chat = getDataFromDoc<TChat | null>(docs)[0];
             return chat;
         } catch (error) {
             throw new Error(
@@ -352,11 +346,13 @@ export class Chats {
             let chat = await this.getChatByUserIds(senderId, receiverId);
 
             if (!chat) {
-                chat = await this.createChat(
-                    createChatObject({
-                        participants: [senderId, receiverId],
-                    })
-                );
+                chat = (
+                    await this.createChat(
+                        createChatObject({
+                            participants: [senderId, receiverId],
+                        })
+                    )
+                ).data;
             }
 
             await this.sendMessage([chat], () => message);

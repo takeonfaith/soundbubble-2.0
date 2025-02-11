@@ -73,6 +73,15 @@ export const allRoutes: TRoute[] = [
         showTitle: false,
     },
     {
+        url: 'search',
+        title: 'Search',
+        icon: <IconSearch />,
+        component: <SearchPage />,
+        section: 'features',
+        private: false,
+        showTitle: false,
+    },
+    {
         url: 'trends',
         title: 'Trends',
         icon: <IconTrendingUp />,

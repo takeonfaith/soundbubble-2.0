@@ -82,14 +82,14 @@ export const useGetAppHotKeys = () => {
         },
         ArrowUp: {
             action: () => {
-                songModel.volume.increase(0.1);
+                songModel.volume.increase({ val: 0.1, indicator: true });
             },
             name: <IconArrowUp />,
             description: 'Increase volume',
         },
         ArrowDown: {
             action: () => {
-                songModel.volume.increase(-0.1);
+                songModel.volume.increase({ val: -0.1, indicator: true });
             },
             name: <IconArrowDown />,
             description: 'Decrease volume',

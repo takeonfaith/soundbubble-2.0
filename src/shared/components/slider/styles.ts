@@ -28,6 +28,7 @@ export const SliderValueBubbleStyled = styled.div`
     font-size: 0.7rem;
     opacity: 0;
     pointer-events: none;
+    user-select: none;
     overflow: hidden;
     z-index: 100;
 `;
@@ -42,6 +43,15 @@ export const SliderWrapper = styled.div`
     height: 10px;
     transition: 0.1s transform;
     border-radius: 4px;
+
+    &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        height: 10px;
+        width: calc(100% + 30px);
+        cursor: pointer;
+    }
 
     & .progress {
         width: 100%;
@@ -78,6 +88,19 @@ export const SliderWrapper = styled.div`
 
     &:hover {
         --slider-size: 10px;
+
+        &.down {
+            &::after {
+                content: '';
+                position: fixed;
+                left: -70%;
+                bottom: 50%;
+                transform: translateY(10%);
+                height: 100vh;
+                width: 100vw;
+                z-index: 1000;
+            }
+        }
 
         ${SliderValueBubbleStyled} {
             transition: 0.2s opacity;

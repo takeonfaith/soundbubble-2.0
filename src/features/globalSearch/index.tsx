@@ -15,7 +15,17 @@ import { Tabs, TTab } from '../../shared/components/tabs';
 import { normalizeString } from '../../shared/funcs/normalizeString';
 import { SearchWithHints } from '../searchWithHints';
 import { TExtendedSuggestion } from '../searchWithHints/types';
-import { TabsWrapper } from './styles';
+import { BrowseLink, TabsWrapper } from './styles';
+import { Flex } from '../../shared/components/flex';
+import { Divider } from '../../shared/components/divider';
+import {
+    IconBrandSafari,
+    IconCompass,
+    IconCompassFilled,
+} from '@tabler/icons-react';
+import { Button } from '../../shared/components/button';
+import Popover from '../../shared/components/popover';
+import { NavLink } from 'react-router-dom';
 
 const getTabUrl = (
     location: Location<unknown>,
@@ -145,8 +155,24 @@ export const GlobalSearch = ({ queryValue, where, showTabs = true }: Props) => {
                 onChange={handleChange}
                 onSumbit={onSumbit}
                 className="global-search"
-                hotkey={<kbd>/</kbd>}
-                placeholder='Search for songs, albums, authors...'
+                rightSide={
+                    <Flex gap={8} height="35px">
+                        <kbd>/</kbd>
+                        <Divider orientation="vertical" />
+                        <Popover content={'Browse'} position="bottom">
+                            <BrowseLink to="/search">
+                                {({ isActive }) =>
+                                    isActive ? (
+                                        <IconCompassFilled />
+                                    ) : (
+                                        <IconCompass />
+                                    )
+                                }
+                            </BrowseLink>
+                        </Popover>
+                    </Flex>
+                }
+                placeholder="Search for songs, albums, authors..."
             />
             {showTabs && (
                 <TabsWrapper>

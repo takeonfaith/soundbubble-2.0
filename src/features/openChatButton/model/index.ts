@@ -1,9 +1,10 @@
-import { createEvent, sample } from 'effector';
+import { createEvent, createStore, sample } from 'effector';
 import { Database } from '../../../database';
 import { TChat } from '../../../entities/chat/model/types';
 import { $user } from '../../../entities/user/model/user';
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
 import { globalNavigate } from '../../../routing/navigation';
+import { createChatObject } from '../../../entities/chat/lib/createChatObject';
 
 export const openChatFx = createEffectWithToast<
     { senderId: string; receiverId: string },
@@ -12,6 +13,8 @@ export const openChatFx = createEffectWithToast<
 
 export const openChat = createEvent<string>();
 
+export const $userOpening = createStore<string | null>(null);
+
 sample({
     clock: openChat,
     source: $user,
@@ -19,8 +22,21 @@ sample({
     target: openChatFx,
 });
 
+sample({
+    clock: openChat,
+    fn: (receiverId) => receiverId,
+    target: $userOpening,
+});
+
+sample({
+    clock: openChatFx.doneData,
+    fn: () => null,
+    target: $userOpening,
+});
+
 openChatFx.use(async ({ senderId, receiverId }) => {
-    return await Database.Chats.getChatByUserIds(senderId, receiverId, true);
+    const chat = createChatObject({ participants: [senderId, receiverId] });
+    return await Database.Chats.createChat(chat);
 });
 
 openChatFx.doneData.watch((chat) => {

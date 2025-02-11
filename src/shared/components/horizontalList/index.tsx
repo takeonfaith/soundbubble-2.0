@@ -1,4 +1,4 @@
-import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import React from 'react';
 import { ArrowButton, HorizontalListStyled, ListWrapper } from './styles';
 import { useScrollList } from './useScrollList';
@@ -10,7 +10,10 @@ type Props = {
 
 export const HorizontalList = ({ children, overflowColor }: Props) => {
     const {
+        showArrows,
         className,
+        showLeftArrow,
+        showRightArrow,
         scrollElementRef,
         handleScroll,
         handleScrollLeft,
@@ -19,9 +22,15 @@ export const HorizontalList = ({ children, overflowColor }: Props) => {
 
     return (
         <ListWrapper className={className} $overflowColor={overflowColor}>
-            <ArrowButton className="left" onClick={handleScrollLeft}>
-                <IconArrowLeft />
-            </ArrowButton>
+            {showArrows && (
+                <ArrowButton
+                    disabled={!showLeftArrow}
+                    className="left"
+                    onClick={handleScrollLeft}
+                >
+                    <IconChevronLeft />
+                </ArrowButton>
+            )}
             <HorizontalListStyled
                 className="horizontal-list"
                 ref={scrollElementRef}
@@ -29,9 +38,15 @@ export const HorizontalList = ({ children, overflowColor }: Props) => {
             >
                 {children}
             </HorizontalListStyled>
-            <ArrowButton className="right" onClick={handleScrollRight}>
-                <IconArrowRight />
-            </ArrowButton>
+            {showArrows && (
+                <ArrowButton
+                    disabled={!showRightArrow}
+                    className="right"
+                    onClick={handleScrollRight}
+                >
+                    <IconChevronRight />
+                </ArrowButton>
+            )}
         </ListWrapper>
     );
 };

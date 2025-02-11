@@ -1,4 +1,4 @@
-import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { SongItem } from '..';
 import { ArrowButton } from '../../../../shared/components/horizontalList/styles';
 import { useScrollList } from '../../../../shared/components/horizontalList/useScrollList';
@@ -37,7 +37,10 @@ export const GridSongList = (props: Props) => {
     );
 
     const {
+        showArrows,
         scrollElementRef,
+        showLeftArrow,
+        showRightArrow,
         className,
         handleScroll,
         handleScrollLeft,
@@ -46,9 +49,15 @@ export const GridSongList = (props: Props) => {
 
     return (
         <GridWrapper className={className}>
-            <ArrowButton className="left" onClick={handleScrollLeft}>
-                <IconArrowLeft />
-            </ArrowButton>
+            {showArrows && (
+                <ArrowButton
+                    disabled={!showLeftArrow}
+                    className="left"
+                    onClick={handleScrollLeft}
+                >
+                    <IconChevronLeft />
+                </ArrowButton>
+            )}
             <GridSongListStyled
                 className="grid-list"
                 onScroll={handleScroll}
@@ -58,9 +67,15 @@ export const GridSongList = (props: Props) => {
             >
                 {items}
             </GridSongListStyled>
-            <ArrowButton className="right" onClick={handleScrollRight}>
-                <IconArrowRight />
-            </ArrowButton>
+            {showArrows && (
+                <ArrowButton
+                    disabled={!showRightArrow}
+                    className="right"
+                    onClick={handleScrollRight}
+                >
+                    <IconChevronRight />
+                </ArrowButton>
+            )}
         </GridWrapper>
     );
 };

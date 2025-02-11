@@ -164,7 +164,6 @@ export const SongStyled = styled.div`
     @media (hover: hover) {
         &:hover {
             background: ${({ theme }) => theme.colors.hover};
-            /* box-shadow: 0 0 20px #14141473; */
 
             ${PauseOverlay} {
                 ${PlayButton} {
@@ -190,8 +189,20 @@ export const SongStyled = styled.div`
                 display: flex;
             }
 
-            .duration {
-                display: none;
+            @container (min-width: 700px) {
+                .duration {
+                    display: none;
+                }
+            }
+
+            @container (max-width: 699px) {
+                .duration {
+                    display: none;
+                }
+
+                .duration.stay {
+                    display: block;
+                }
             }
         }
     }
@@ -331,6 +342,8 @@ export const SongButtons = styled.div`
     }
 
     @container (max-width: 699px) {
+        padding-right: 0px;
+
         .like-button {
             display: none;
         }

@@ -1,18 +1,18 @@
-import { createEvent, sample } from 'effector';
+import { createEffect, createEvent, sample } from 'effector';
 import { Database } from '../../../database';
-import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
 import { $chats } from './chats';
 import { TChat } from './types';
+import { toastModel } from '../../../layout/toast/model';
 
 type CreateChatProps = {
     chat: TChat;
     onSuccess: (chat: TChat) => void;
 };
 
-export const createChatFx = createEffectWithToast<CreateChatProps, TChat>(
-    'Chat created successfully',
-    'Failed to create chat'
-);
+export const createChatFx = createEffect<
+    CreateChatProps,
+    { data: TChat; isCreated: boolean }
+>();
 
 export const createChat = createEvent<CreateChatProps>();
 
@@ -24,13 +24,33 @@ sample({
 sample({
     clock: createChatFx.doneData,
     source: $chats,
-    filter: (chats, newChat) => !chats.find((c) => c.id === newChat.id),
-    fn: (chats, newChat) => [newChat, ...chats],
+    filter: (chats, { data: newChat }) =>
+        !chats.find((c) => c.id === newChat.id),
+    fn: (chats, { data: newChat }) => [newChat, ...chats],
     target: $chats,
 });
 
 createChatFx.use(async ({ chat, onSuccess }) => {
-    const res = await Database.Chats.createChat(chat);
-    onSuccess(res);
-    return res;
+    const { data, isCreated } = await Database.Chats.createChat(chat);
+    onSuccess(data);
+    return { data, isCreated };
+});
+
+createChatFx.failData.watch((err) => {
+    toastModel.events.add({
+        type: 'error',
+        message: 'Failed to create chat',
+        reason: err.message,
+        duration: 5000,
+    });
+});
+
+createChatFx.doneData.watch(({ isCreated }) => {
+    if (isCreated) {
+        toastModel.events.add({
+            type: 'success',
+            message: 'Chat created successfully',
+            duration: 5000,
+        });
+    }
 });
