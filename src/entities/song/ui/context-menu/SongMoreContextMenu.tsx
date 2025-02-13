@@ -1,4 +1,5 @@
 import {
+    IconChevronRight,
     IconEditCircle,
     IconHeart,
     IconHeartBroken,
@@ -11,32 +12,34 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { styled } from 'styled-components';
-import { AddSongToPlaylistModal } from '../../../features/addSongToPlaylistModal';
-import { ShareModal } from '../../../features/shareModal';
-import { BadgeStyled } from '../../../features/shareModal/styles';
-import { confirmModel } from '../../../layout/confirm/model';
-import { modalModel } from '../../../layout/modal/model';
-import { popupModel } from '../../../layout/popup/model';
-import { useLoadingToast } from '../../../layout/toast/hooks/useLoadingToast';
-import { toastModel } from '../../../layout/toast/model';
-import { Server } from '../../../server';
-import { Button } from '../../../shared/components/button';
-import { DefaultContextMenuStyled } from '../../../shared/components/defaultContextMenu';
-import { Divider } from '../../../shared/components/divider';
-import { Flex } from '../../../shared/components/flex';
-import Popover from '../../../shared/components/popover';
-import { SwitchToggle } from '../../../shared/components/switchToggle';
-import { ENTITIES_ICONS } from '../../../shared/constants/icons';
-import { userModel } from '../../user/model';
-import { useToggleLike } from '../hooks/useToggleLike';
-import { createQueueObject } from '../lib/createQueueObject';
-import { TSong } from '../model/types';
-import { songModel } from '../new-model';
-import { slowSongsApi, useIsSlowVersion } from '../new-model/slow-songs';
-import { AuthorsModal } from './AuthorsModal';
-import { EditSongModal } from './EditSongModal';
-import { SongInfo } from './SongInfo';
-import { NO_ACCOUNT_FOR_ACTION } from '../../../shared/constants/texts';
+import { AddSongToPlaylistModal } from '../../../../features/addSongToPlaylistModal';
+import { ShareModal } from '../../../../features/shareModal';
+import { BadgeStyled } from '../../../../features/shareModal/styles';
+import { confirmModel } from '../../../../layout/confirm/model';
+import { modalModel } from '../../../../layout/modal/model';
+import { Popup } from '../../../../layout/newpopup';
+import { useLoadingToast } from '../../../../layout/toast/hooks/useLoadingToast';
+import { toastModel } from '../../../../layout/toast/model';
+import { Server } from '../../../../server';
+import { Button } from '../../../../shared/components/button';
+import { DefaultContextMenuStyled } from '../../../../shared/components/defaultContextMenu';
+import { Divider } from '../../../../shared/components/divider';
+import { Flex } from '../../../../shared/components/flex';
+import Popover from '../../../../shared/components/popover';
+import { SwitchToggle } from '../../../../shared/components/switchToggle';
+import { ENTITIES_ICONS } from '../../../../shared/constants/icons';
+import { NO_ACCOUNT_FOR_ACTION } from '../../../../shared/constants/texts';
+import { userModel } from '../../../user/model';
+import { useToggleLike } from '../../hooks/useToggleLike';
+import { createQueueObject } from '../../lib/createQueueObject';
+import { TSong } from '../../model/types';
+import { songModel } from '../../new-model';
+import { slowSongsApi, useIsSlowVersion } from '../../new-model/slow-songs';
+import { AuthorsModal } from '../AuthorsModal';
+import { EditSongModal } from '../EditSongModal';
+import { SongInfo } from '../SongInfo';
+import { AddToPlaylistsContextMenu } from './AddToPlaylistsContextMenu';
+import { AuthorsContextMenu } from './AuthorsContextMenu';
 
 const SlowButton = styled(Button)`
     justify-content: space-between !important;
@@ -78,7 +81,6 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
             content: <ShareModal entity={song} />,
             sizeY: 'm',
         });
-        popupModel.events.close();
     };
 
     const handleAddToPlaylist = () => {
@@ -87,7 +89,6 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
             content: <AddSongToPlaylistModal song={song} />,
             sizeY: 'l',
         });
-        popupModel.events.close();
     };
 
     const handleOpenAuthors = () => {
@@ -101,13 +102,11 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
         } else {
             navigate(`/author/${song?.authors[0].uid}`);
         }
-        popupModel.events.close();
     };
 
     const handleLike = (e: Evt<'btn'>) => {
         if (song) {
             handleToggleLike(e);
-            popupModel.events.close();
         }
     };
 
@@ -116,7 +115,6 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
             title: ``,
             content: <SongInfo song={song} />,
         });
-        popupModel.events.close();
     };
 
     const handleEditModal = () => {
@@ -126,7 +124,6 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                 content: <EditSongModal song={song} />,
                 sizeY: 'l',
             });
-            popupModel.events.close();
         }
     };
 
@@ -138,7 +135,6 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                 url: window.location.href,
             });
             songModel.queue.addToQueue(queue);
-            popupModel.events.close();
             toastModel.events.add({
                 type: 'hint',
                 message: 'Added to queue',
@@ -200,10 +196,24 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                 </Button>
             )}
             <Popover content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}>
-                <Button disabled={!currentUser} onClick={handleAddToPlaylist}>
-                    <IconSquareRoundedPlus size={20} />
-                    Add to playlist
-                </Button>
+                <Popup
+                    content={<AddToPlaylistsContextMenu song={song} />}
+                    triggers={['hover']}
+                    position="left"
+                >
+                    <Button
+                        disabled={!currentUser}
+                        onClick={handleAddToPlaylist}
+                    >
+                        <Flex width="100%" jc="space-between">
+                            <Flex gap={15}>
+                                <IconSquareRoundedPlus size={20} />
+                                Add to playlist
+                            </Flex>
+                            <IconChevronRight />
+                        </Flex>
+                    </Button>
+                </Popup>
             </Popover>
             <Divider />
             <Button onClick={handleAddToQueue}>
@@ -221,10 +231,25 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                 <IconInfoCircle />
                 Info
             </Button>
-            <Button onClick={handleOpenAuthors}>
-                {ENTITIES_ICONS.author}
-                Authors
-            </Button>
+            <Popup
+                triggers={['hover']}
+                position="left"
+                content={
+                    song.authors.length > 1 ? (
+                        <AuthorsContextMenu authors={song.authors} />
+                    ) : null
+                }
+            >
+                <Button onClick={handleOpenAuthors}>
+                    <Flex jc="space-between" width="100%">
+                        <Flex gap={15}>
+                            {ENTITIES_ICONS.author}
+                            Authors
+                        </Flex>
+                        {song.authors.length > 1 ? <IconChevronRight /> : null}
+                    </Flex>
+                </Button>
+            </Popup>
             {currentUser?.isAdmin && (
                 <>
                     <Divider />

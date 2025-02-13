@@ -2,43 +2,30 @@ import {
     IconArrowsShuffle,
     IconCircleCheck,
     IconDots,
-    IconInfoCircle,
-    IconLock,
     IconPencil,
     IconPlus,
     IconSearch,
-    IconShare3,
-    IconSparkles,
-    IconTrash,
-    IconWorld,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { styled } from 'styled-components';
 import { ToggleLike } from '../../../../entities/playlist/hooks/useTogglePlaylistLike';
 import { playlistModel } from '../../../../entities/playlist/model';
 import { TPlaylist } from '../../../../entities/playlist/model/types';
-import { PlaylistInfo } from '../../../../entities/playlist/ui/PlaylistInfo';
 import { SongState, TQueue } from '../../../../entities/song/model/types';
 import { songModel } from '../../../../entities/song/new-model';
 import { userModel } from '../../../../entities/user/model';
-import { ShareModal } from '../../../../features/shareModal';
-import { confirmModel } from '../../../../layout/confirm/model';
 import { modalModel } from '../../../../layout/modal/model';
-import { popupModel } from '../../../../layout/popup/model';
+import { Popup } from '../../../../layout/newpopup';
 import { Button } from '../../../../shared/components/button';
-import { DefaultContextMenuStyled } from '../../../../shared/components/defaultContextMenu';
-import { Divider } from '../../../../shared/components/divider';
 import { Flex } from '../../../../shared/components/flex';
 import { Loading } from '../../../../shared/components/loading';
-import { PlayPauseIcon } from '../../../../shared/components/playPauseIcon';
+import Popover from '../../../../shared/components/popover';
 import { AddSongsToPlaylistModal } from '../editing/AddSongsToPlaylistModal';
 import { Like } from './Like';
+import { PlayButton } from './PlayButton';
+import { PlaylistMoreContext } from './PlaylistMoreContext';
 import { PlaylistSearch } from './PlaylistSearch';
-import Popover from '../../../../shared/components/popover';
-import { styled } from 'styled-components';
-import { slowSongsApi } from '../../../../entities/song/new-model/slow-songs';
-import { PlayingAnimation } from '../../../../shared/components/playingAnimation';
-import { NO_ACCOUNT_FOR_ACTION } from '../../../../shared/constants/texts';
+import { SlowButton } from './SlowButton';
 
 export const MainButtonsWrapper = styled.div`
     display: flex;
@@ -70,9 +57,7 @@ export const PlaylistControlButtons = ({
     likeModel,
 }: Props) => {
     const [currentUser] = userModel.useUser();
-    const { state, queue: currentQueue } = songModel.useSong();
-    const navigate = useNavigate();
-    const [slowMode, setSlowMode] = useState(false);
+    const { state } = songModel.useSong();
 
     const noSongs = queue.songs.length === 0;
     const [buttonType, setButtonType] = useState<
@@ -81,13 +66,6 @@ export const PlaylistControlButtons = ({
     const isAuthor = currentUser
         ? playlist?.authors.find((author) => author.uid === currentUser.uid)
         : false;
-    const isCurrent = currentQueue?.id === queue?.id;
-    const isOwner = playlist?.ownerId === currentUser?.uid;
-    const isSlowPlaying = slowMode && state === SongState.playing;
-
-    const buttonsDisabled =
-        queue.songs.length === 0 ||
-        (!!buttonType && state === SongState.loading);
 
     useEffect(() => {
         if (state === SongState.playing) {
@@ -95,132 +73,8 @@ export const PlaylistControlButtons = ({
         }
     }, [state]);
 
-    const handleInfo = () => {
-        popupModel.events.close();
-        modalModel.events.open({
-            title: '',
-            content: <PlaylistInfo playlist={playlist} />,
-        });
-    };
-
-    const handleShare = () => {
-        popupModel.events.close();
-        modalModel.events.open({
-            title: `Share ${playlist?.name} with friends`,
-            content: <ShareModal entity={playlist} />,
-            sizeY: 'm',
-        });
-    };
-
     const handleEdit = () => {
         playlistModel.events.updateIsEditing(!isEditing);
-    };
-
-    const handleDeletePlaylist = () => {
-        if (playlist) {
-            confirmModel.events.open({
-                icon: <IconTrash />,
-                iconColor: 'red',
-                text: 'Are you sure you want to delete this playlist?',
-                subtext:
-                    'This action is irreversible, you will not be able to restore it after deleting',
-                onAccept: () => {
-                    playlistModel.events.deletePlaylist({
-                        playlist,
-                        onSuccess: () => {
-                            navigate('/');
-                        },
-                    });
-                },
-            });
-        }
-    };
-
-    const handleMakePrivate = () => {
-        if (playlist) {
-            playlistModel.events.updatePlaylist({
-                update: {
-                    isPrivate: !playlist.isPrivate,
-                    lastEditedTime: Date.now(),
-                },
-            });
-            popupModel.events.close();
-        }
-    };
-
-    const handleMakePublic = () => {
-        if (playlist) {
-            confirmModel.events.open({
-                icon: <IconWorld />,
-                iconColor: 'blue',
-                text: 'Are you sure you want to make this playlist public?',
-                subtext: 'Everyone will be able to access this playlist',
-                onAccept: () => {
-                    playlistModel.events.updatePlaylist({
-                        update: {
-                            isPrivate: !playlist.isPrivate,
-                        },
-                    });
-                    popupModel.events.close();
-                },
-            });
-        }
-    };
-
-    const handleOpenMore = (e: Evt<'btn'>) => {
-        e.stopPropagation();
-        popupModel.events.open({
-            e,
-            height: isOwner ? (playlist?.isPrivate ? 152.5 : 192.5) : 96,
-            content: (
-                <DefaultContextMenuStyled>
-                    {!playlist?.isPrivate && (
-                        <Popover
-                            content={
-                                !currentUser
-                                    ? NO_ACCOUNT_FOR_ACTION
-                                    : null
-                            }
-                        >
-                            <Button
-                                disabled={!currentUser}
-                                onClick={handleShare}
-                            >
-                                <IconShare3 />
-                                Share
-                            </Button>
-                        </Popover>
-                    )}
-                    <Button onClick={handleInfo}>
-                        <IconInfoCircle />
-                        Info
-                    </Button>
-                    {isOwner && (
-                        <>
-                            <Divider />
-                            {!playlist?.isPrivate ? (
-                                <Button onClick={handleMakePrivate}>
-                                    <IconLock />
-                                    Make private
-                                </Button>
-                            ) : (
-                                <Button onClick={handleMakePublic}>
-                                    <IconWorld />
-                                    Make public
-                                </Button>
-                            )}
-                            <Button
-                                className="danger"
-                                onClick={handleDeletePlaylist}
-                            >
-                                <IconTrash />
-                                Delete
-                            </Button>
-                        </>
-                    )}
-                </DefaultContextMenuStyled>
-            ),
-        });
     };
 
     const handleAddSongs = () => {
@@ -254,87 +108,16 @@ export const PlaylistControlButtons = ({
             {!noSongs && !isEditing && (
                 <Flex gap={10}>
                     <MainButtonsWrapper>
-                        <Button
-                            $height="45px"
-                            $width="45px"
-                            style={{
-                                borderRadius: '30px',
-                                color: !slowMode ? '#fff' : undefined,
-                            }}
-                            $primaryColor={primaryColor}
-                            className={!slowMode ? 'primary' : ''}
-                            onClick={() => {
-                                if (!isCurrent) {
-                                    setButtonType('play');
-                                }
-                                songModel.controls.playPauseQueue({
-                                    queue,
-                                    currentSongIndex: 0,
-                                });
-                                setSlowMode(false);
-                                slowSongsApi.reset();
-                            }}
-                            disabled={buttonsDisabled}
-                        >
-                            <PlayPauseIcon
-                                loading={buttonType === 'play'}
-                                playling={
-                                    !slowMode &&
-                                    isCurrent &&
-                                    state === SongState.playing
-                                }
-                                size={20}
-                            />
-                        </Button>
-                        <Popover
-                            content={
-                                isSlowPlaying
-                                    ? 'Pause slow version'
-                                    : 'Play slow version'
-                            }
-                        >
-                            <Button
-                                style={{
-                                    color: slowMode ? '#fff' : undefined,
-                                    borderRadius: '100%',
-                                }}
-                                $width="45px"
-                                $height="45px"
-                                $primaryColor={primaryColor}
-                                className={slowMode ? 'primary' : ''}
-                                onClick={() => {
-                                    slowSongsApi.add(
-                                        queue.songs.reduce((acc, song) => {
-                                            if (song.slowSrc) {
-                                                acc.push(song.id);
-                                            }
-
-                                            return acc;
-                                        }, [] as string[])
-                                    );
-                                    if (!slowMode) {
-                                        setButtonType('slow');
-                                    }
-
-                                    setSlowMode(true);
-                                    songModel.controls.playPauseQueue({
-                                        queue,
-                                        currentSongIndex: 0,
-                                    });
-                                }}
-                            >
-                                {buttonType === 'slow' ? (
-                                    <Loading />
-                                ) : isSlowPlaying ? (
-                                    <PlayingAnimation
-                                        playing={true}
-                                        color={'#fff'}
-                                    />
-                                ) : (
-                                    <IconSparkles />
-                                )}
-                            </Button>
-                        </Popover>
+                        <PlayButton
+                            queue={queue}
+                            state={state}
+                            primaryColor={primaryColor}
+                        />
+                        <SlowButton
+                            primaryColor={primaryColor}
+                            state={state}
+                            queue={queue}
+                        />
                     </MainButtonsWrapper>
                     <Popover content="Shuffle">
                         <Button
@@ -346,7 +129,6 @@ export const PlaylistControlButtons = ({
                                 setButtonType('shuffle');
                                 songModel.controls.shufflePlayPause({ queue });
                             }}
-                            disabled={buttonsDisabled}
                         >
                             {buttonType === 'shuffle' ? (
                                 <Loading />
@@ -417,15 +199,18 @@ export const PlaylistControlButtons = ({
                 )}
 
                 {playlist && !isEditing && (
-                    <Button
-                        $width="90px"
-                        className="ghost"
-                        style={{ fontWeight: '300' }}
-                        onClick={handleOpenMore}
+                    <Popup
+                        content={<PlaylistMoreContext playlist={playlist} />}
                     >
-                        <IconDots size={18} />
-                        More
-                    </Button>
+                        <Button
+                            $width="90px"
+                            className="ghost"
+                            style={{ fontWeight: '300' }}
+                        >
+                            <IconDots size={18} />
+                            More
+                        </Button>
+                    </Popup>
                 )}
             </Flex>
         </Flex>

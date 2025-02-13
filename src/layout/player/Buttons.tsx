@@ -8,23 +8,23 @@ import { TSong } from '../../entities/song/model/types';
 import { VolumeButton } from '../../features/volumeButton';
 import { Button } from '../../shared/components/button';
 import { PlayerActionButtons, SlowVersionButton } from './styles';
+import { Popup } from '../newpopup';
+import { SongMoreContextMenu } from '../../entities/song/ui/context-menu/SongMoreContextMenu';
 
 type Props = {
     handleSlow: () => void;
     handleLyrics: (e: Evt<'btn'>) => void;
-    handleMore: (e: Evt<'btn'>) => void;
     handleShowQueue: (e: Evt<'btn'>) => void;
     currentSong: Nullable<TSong>;
     isSlowVersion: boolean;
 };
 
-export const Buttonts = ({
+export const Buttons = ({
     handleSlow,
     currentSong,
     isSlowVersion,
     handleShowQueue,
     handleLyrics,
-    handleMore,
 }: Props) => {
     return (
         <PlayerActionButtons onClick={(e) => e.stopPropagation()}>
@@ -57,14 +57,11 @@ export const Buttonts = ({
             >
                 <IconQuote size={20} />
             </Button>
-            <Button
-                $width="42px"
-                $height="42px"
-                onClick={handleMore}
-                disabled={!currentSong}
-            >
-                <IconDots size={20} />
-            </Button>
+            <Popup content={<SongMoreContextMenu song={currentSong} />}>
+                <Button $width="42px" $height="42px" disabled={!currentSong}>
+                    <IconDots size={20} />
+                </Button>
+            </Popup>
         </PlayerActionButtons>
     );
 };

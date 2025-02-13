@@ -13,7 +13,9 @@ import { filterOneArrayWithAnother } from '../../../shared/funcs/filterOneArrayW
 const $slowSongs = createStore<string[]>([]);
 
 export const slowSongsApi = createApi($slowSongs, {
-    add: (store, id: string[]) => [...store, ...id],
+    add: (store, id: string[]) => {
+        return [...store, ...id];
+    },
     remove: (store, id: string) => store.filter((s) => s !== id),
     reset: (store, ids?: string[]) => {
         if (ids)

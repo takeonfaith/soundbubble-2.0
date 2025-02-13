@@ -1,14 +1,16 @@
 import { Authors } from '@components/authors';
 import { Flex } from '@components/flex';
-import { songModel as songModelNew } from '@song/new-model';
-import { songModel } from '@song/new-model';
+import { songModel, songModel as songModelNew } from '@song/new-model';
 import { IconDots, IconPlaylist, IconQuote } from '@tabler/icons-react';
 import { SongCover } from '../../entities/song/ui/SongCover';
 
 import { LikeButton } from '@features/likeButton';
 import { useToggleLike } from '../../entities/song/hooks/useToggleLike';
+import { SongMoreContextMenu } from '../../entities/song/ui/context-menu/SongMoreContextMenu';
 import { VolumeButton } from '../../features/volumeButton';
+import { Button } from '../../shared/components/button';
 import { SmallControlButton } from '../../shared/components/musicControls/styles';
+import { Popup } from '../newpopup';
 import { PlayerMusicControls } from './PlayerMusicControls';
 import {
     BottomControlButtons,
@@ -19,9 +21,6 @@ import {
     PlayerWrapper,
 } from './styles';
 import { TRightSideType } from './types';
-import { Button } from '../../shared/components/button';
-import { popupModel } from '../popup/model';
-import { SongMoreContextMenu } from '../../entities/song/ui/SongMoreContextMenu';
 
 type Props = {
     type: TRightSideType;
@@ -66,25 +65,19 @@ export const FullScreenPlayerLeftSide = ({
                                 onClick={handleToggleLike}
                                 likeColor={currentSong?.imageColors[1]}
                             />
-                            <Button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    popupModel.events.open({
-                                        e,
-                                        height: 400,
-                                        content: (
-                                            <SongMoreContextMenu
-                                                song={currentSong}
-                                            />
-                                        ),
-                                    });
-                                }}
-                                disabled={!currentSong}
-                                $width="30px"
-                                $height="30px"
+                            <Popup
+                                content={
+                                    <SongMoreContextMenu song={currentSong} />
+                                }
                             >
-                                <IconDots size={20} color="#fff" />
-                            </Button>
+                                <Button
+                                    disabled={!currentSong}
+                                    $width="30px"
+                                    $height="30px"
+                                >
+                                    <IconDots size={20} color="#fff" />
+                                </Button>
+                            </Popup>
                         </Flex>
                     </Flex>
                     <Authors

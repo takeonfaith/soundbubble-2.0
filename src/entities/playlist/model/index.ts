@@ -13,6 +13,7 @@ import {
     $isEditing,
     addSongsToPlaylists,
     isEditingApi,
+    removeSongsFromPlaylists,
     updatePlaylist,
 } from './update-playlist';
 
@@ -34,6 +35,7 @@ export const playlistModel = {
         updatePlaylist,
         sendPlaylistInvitation,
         acceptInvitation,
+        removeSongsFromPlaylists,
         ...isEditingApi,
         ...isSearchingApi,
     },

@@ -23,7 +23,7 @@ export const AddPlaylistStyled = styled.div`
     top: 0;
     left: 0;
     position: absolute;
-    background-color: ${({ theme }) => theme.colors.pageBackground2};
+    background-color: ${({ theme }) => theme.colors.chatBackground};
     display: flex;
     align-items: center;
     justify-content: center;

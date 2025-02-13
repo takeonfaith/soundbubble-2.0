@@ -1,44 +1,6 @@
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
-import { Button } from '../../../shared/components/button';
 import { PLAYLIST_RADIUS } from '../constants';
-
-export const ControlButton = styled(Button)<{ $color: string }>`
-    position: absolute;
-
-    bottom: 60px;
-    left: 16px;
-    right: auto;
-    width: 40px;
-    height: 40px;
-    min-height: auto;
-    border-radius: 100px;
-    color: ${({ $color }) => $color};
-    background: ${({ theme }) => theme.colors.pageTopButton} !important;
-    transition: 0.1s opacity;
-    opacity: 0;
-    z-index: 10;
-
-    svg {
-        filter: brightness(${({ theme }) => theme.colors.brightness});
-    }
-
-    & .playing-animation {
-        filter: brightness(${({ theme }) => theme.colors.brightness});
-    }
-
-    &.horizontal {
-        bottom: 6px;
-        left: auto;
-        right: 6px;
-        width: 35px;
-        height: 35px;
-    }
-
-    &:hover {
-        background: ${({ theme }) => theme.colors.pageBackground2};
-    }
-`;
 
 export const PlaylistStyled = styled(Link)<{ $color1: string }>`
     --size: calc((100vw - var(--sidebar-width)) / 6 - 27.5px);
@@ -69,6 +31,36 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
         border-radius: ${PLAYLIST_RADIUS};
     }
 
+    & .play-button {
+        position: absolute;
+
+        bottom: 60px;
+        left: 16px;
+        right: auto;
+        width: 40px;
+        height: 40px;
+        min-height: auto;
+        border-radius: 100px;
+        color: ${({ $color1 }) => $color1};
+        background: ${({ theme }) => theme.colors.pageTopButton} !important;
+        transition: 0.1s opacity;
+        opacity: 0;
+        z-index: 10;
+        outline: 1px solid ${({ theme }) => theme.colors.border};
+
+        svg {
+            filter: brightness(${({ theme }) => theme.colors.brightness});
+        }
+
+        & .playing-animation {
+            filter: brightness(${({ theme }) => theme.colors.brightness});
+        }
+
+        &:hover {
+            background: ${({ theme }) => theme.colors.pageBackground2};
+        }
+    }
+
     & .like-button {
         position: absolute;
         bottom: -4px;
@@ -93,13 +85,21 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
         flex-direction: row;
         align-items: center;
 
+        & .play-button {
+            bottom: 6px;
+            left: auto;
+            right: 6px;
+            width: 35px;
+            height: 35px;
+        }
+
         &::before {
             display: none;
         }
     }
 
     &.playing {
-        ${ControlButton} {
+        & .play-button {
             opacity: 1;
             border: 1px solid ${({ theme }) => theme.colors.border};
         }
@@ -123,7 +123,7 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
                 background: ${({ theme }) => theme.colors.hover};
             }
 
-            ${ControlButton} {
+            & .play-button {
                 opacity: 1;
             }
         }

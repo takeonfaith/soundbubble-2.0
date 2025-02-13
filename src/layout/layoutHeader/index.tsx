@@ -16,10 +16,10 @@ import { Flex } from '../../shared/components/flex';
 import { Logo } from '../../shared/components/logo';
 import Popover from '../../shared/components/popover';
 import { AdminCircle } from '../header/styles';
-import { UserContextMenu } from '../header/UserContextMenu';
-import { popupModel } from '../popup/model';
 import { sidebarApi, useSidebar } from '../sidebar/model';
 import { GlobalSearchWrapper, LayoutHeaderStyled, UserButton } from './styles';
+import { Popup } from '../newpopup';
+import { UserContextMenu } from '../header/UserContextMenu';
 
 export const LayoutHeader = () => {
     const [params] = useSearchParams();
@@ -27,15 +27,6 @@ export const LayoutHeader = () => {
     const queryValue = params.get('query') ?? '';
     const where = (params.get('where') ?? '') as TPlace | '';
     const isCollapsed = useSidebar();
-
-    const handleOpenUserPopup = (e: Evt<'btn'>) => {
-        e.stopPropagation();
-        popupModel.events.open({
-            content: <UserContextMenu />,
-            e,
-            height: 209,
-        });
-    };
 
     const handleHideSidebar = () => {
         sidebarApi.toggle();
@@ -89,21 +80,20 @@ export const LayoutHeader = () => {
                 <ThemeButton />
 
                 {currentUser && (
-                    <UserButton
-                        className="outline"
-                        onClick={handleOpenUserPopup}
-                    >
-                        <Flex gap={8}>
-                            {currentUser.isAdmin && <AdminCircle />}
-                            <UserCover
-                                colors={currentUser?.imageColors}
-                                src={currentUser?.photoURL}
-                                size={'30px'}
-                                isAuthor={currentUser?.isAuthor}
-                            />
-                        </Flex>
-                        <IconChevronDown size={14} />
-                    </UserButton>
+                    <Popup content={<UserContextMenu />}>
+                        <UserButton className="outline">
+                            <Flex gap={8}>
+                                {currentUser.isAdmin && <AdminCircle />}
+                                <UserCover
+                                    colors={currentUser?.imageColors}
+                                    src={currentUser?.photoURL}
+                                    size={'30px'}
+                                    isAuthor={currentUser?.isAuthor}
+                                />
+                            </Flex>
+                            <IconChevronDown size={14} />
+                        </UserButton>
+                    </Popup>
                 )}
                 <SignUpButton />
                 <LoginButton />

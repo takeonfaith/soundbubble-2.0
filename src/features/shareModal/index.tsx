@@ -20,6 +20,12 @@ import { AddEntitiesUI } from '../addEntitiesUI';
 import { getEntityId } from '../searchWithHints/lib/getDividedEntity';
 import { getEntityType } from '../searchWithHints/lib/getEntityType';
 import { BadgeStyled, ShareModalStyled } from './styles';
+import { PageMessage } from '../../shared/components/pageMessage';
+import {
+    IconFriendsOff,
+    IconMessagesOff,
+    TablerIconsProps,
+} from '@tabler/icons-react';
 
 type Props = {
     entity: TEntity | null | undefined;
@@ -114,11 +120,20 @@ export const ShareModal = ({ entity }: Props) => {
                             loading={sending}
                         >
                             Send
-                            <BadgeStyled className='white'>{addedChats.length}</BadgeStyled>
+                            <BadgeStyled className="white">
+                                {addedChats.length}
+                            </BadgeStyled>
                         </DefaultButton>
                     </>
                 )}
             />
+            {chatsWithNames.length === 0 && (
+                <PageMessage
+                    icon={IconMessagesOff}
+                    title={'No chats yet'}
+                    description={'You have nobody to share with'}
+                />
+            )}
             {(loadingChats || loadingChatData) && (
                 <Flex jc="center" width="100%" height="100%">
                     <Loading />

@@ -3,9 +3,7 @@ import { Flex } from '@components/flex';
 import { IconLock } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { LikeButton } from '../../../features/likeButton';
-import { toastModel } from '../../../layout/toast/model';
-import { PlayPauseIcon } from '../../../shared/components/playPauseIcon';
-import { PlayingAnimation } from '../../../shared/components/playingAnimation';
+import { PlayButton } from '../../../routing/playlist/ui/controls/PlayButton';
 import { Subtext } from '../../../shared/components/subtext';
 import { createLoadQueueObject } from '../../song/lib/createQueueObject';
 import { SongState } from '../../song/model/types';
@@ -16,7 +14,7 @@ import { useTogglePlaylistLike } from '../hooks/useTogglePlaylistLike';
 import { createPlaylistObject } from '../lib/createPlaylistObject';
 import { TPlaylist } from '../model/types';
 import { PlaylistCover } from './PlaylistCover';
-import { ControlButton, PalylistTitle, PlaylistStyled } from './styles';
+import { PalylistTitle, PlaylistStyled } from './styles';
 
 type Props = {
     playlist: TPlaylist | null;
@@ -24,6 +22,7 @@ type Props = {
     children?: React.ReactNode;
     as?: string;
     isAuthor: boolean;
+    hideAuthors?: boolean;
     imagePlaceholder?: React.ReactNode;
     onClick?: (playlist: TPlaylist, e: Evt<'a'>) => void;
 };
@@ -35,6 +34,7 @@ export const PlaylistItem = ({
     as,
     imagePlaceholder,
     isAuthor,
+    hideAuthors,
     orientation = 'vertical',
 }: Props) => {
     const p =
@@ -50,34 +50,18 @@ export const PlaylistItem = ({
     const url = `/${isAlbum ? 'album' : 'playlist'}/${id}`;
     const isCurrentPlaying = state === 'playing' && queue?.id === id;
     const [loadingSongs, setLoadingSongs] = useState(false);
+    const playlistQueue = createLoadQueueObject({
+        id,
+        name,
+        imageUrl: image,
+        songIds: songs,
+        url,
+    });
     const { isLiked, handleToggleLike, performingAction } =
         useTogglePlaylistLike(playlist);
 
     const handleClick = (e: Evt<'a'>) => {
         onClick?.(p, e);
-    };
-
-    const handlePlay = (event: Evt<'btn'>) => {
-        event.preventDefault();
-        if (songs.length > 0) {
-            setLoadingSongs(true);
-            const queue = createLoadQueueObject({
-                id,
-                name,
-                imageUrl: image,
-                songIds: songs,
-                url,
-            });
-            songModel.controls.loadSongsThenPlay({
-                queue,
-                currentSongIndex: 0,
-            });
-        } else {
-            toastModel.events.add({
-                type: 'info',
-                message: 'This playlist has no songs',
-            });
-        }
     };
 
     useEffect(() => {
@@ -90,28 +74,18 @@ export const PlaylistItem = ({
         <PlaylistStyled
             as={as}
             onClick={handleClick}
-            className={`${orientation} ${
+            className={`playlist-item ${orientation} ${
                 isCurrentPlaying || loadingSongs ? 'playing' : ''
             }`}
             to={url}
             $color1={imageColors?.[0]}
         >
             {!children && (
-                <ControlButton
-                    $color={imageColors[0]}
-                    onClick={handlePlay}
-                    className={`${orientation} plane`}
-                >
-                    {isCurrentPlaying ? (
-                        <PlayingAnimation playing color={imageColors[0]} />
-                    ) : (
-                        <PlayPauseIcon
-                            loading={loadingSongs}
-                            playling={false}
-                            size={18}
-                        />
-                    )}
-                </ControlButton>
+                <PlayButton
+                    queue={playlistQueue}
+                    state={state}
+                    primaryColor={imageColors[0]}
+                />
             )}
             {orientation === 'vertical' && !isAuthor && (
                 <LikeButton
@@ -144,30 +118,34 @@ export const PlaylistItem = ({
                     className="playlist-name"
                 >
                     <Flex gap={2}>
-                        <PalylistTitle>{name}</PalylistTitle>
+                        <PalylistTitle className="playlist-title">
+                            {name}
+                        </PalylistTitle>
                         {isPrivate && <IconLock size={16} />}
                     </Flex>
                     {orientation === 'vertical' ? (
                         authors.length !== 0 && <Authors authors={authors} />
                     ) : (
                         <Flex width="100%" gap={4}>
-                            <Subtext
-                                style={{
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    fontWeight: 200,
-                                    fontSize: '0.8rem',
-                                }}
-                            >
-                                {authors.length !== 0
-                                    ? isAlbum
-                                        ? 'Album'
-                                        : 'Playlist'
-                                    : ''}{' '}
-                                {authors.length !== 0 && '·'}
-                            </Subtext>
-                            {authors.length !== 0 && (
+                            {!hideAuthors && (
+                                <Subtext
+                                    style={{
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        fontWeight: 200,
+                                        fontSize: '0.8rem',
+                                    }}
+                                >
+                                    {authors.length !== 0
+                                        ? isAlbum
+                                            ? 'Album'
+                                            : 'Playlist'
+                                        : ''}{' '}
+                                    {authors.length !== 0 && '·'}
+                                </Subtext>
+                            )}
+                            {authors.length !== 0 && !hideAuthors && (
                                 <Authors
                                     isAuthor={isAlbum}
                                     width="fit-content"

@@ -9,7 +9,8 @@ import {
     IconSparkles,
     IconSquareRoundedMinusFilled,
 } from '@tabler/icons-react';
-import { popupModel } from '../../../layout/popup/model';
+import { useRef } from 'react';
+import { Popup } from '../../../layout/newpopup';
 import { PlayingAnimation } from '../../../shared/components/playingAnimation';
 import Popover from '../../../shared/components/popover';
 import { Subtext } from '../../../shared/components/subtext';
@@ -20,7 +21,7 @@ import { getHumanDuration } from '../lib/getHumanDuration';
 import { TSong } from '../model/types';
 import { slowSongsApi, useIsSlowVersion } from '../new-model/slow-songs';
 import { SongCover } from './SongCover';
-import { SongMoreContextMenu } from './SongMoreContextMenu';
+import { SongMoreContextMenu } from './context-menu/SongMoreContextMenu';
 import {
     DeleteButton,
     Listens,
@@ -68,16 +69,7 @@ export const SongItem = ({
     const { name, authors, imageColors, cover, listens, duration } = song;
     const { handleToggleLike, performingAction, isLiked } = useToggleLike(song);
     const isSlowVersion = useIsSlowVersion(song.id);
-
-    const handleMore: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-        e.stopPropagation();
-
-        popupModel.events.open({
-            content: <SongMoreContextMenu onRemove={onRemove} song={song} />,
-            height: onRemove ? 402 : 345.5,
-            e,
-        });
-    };
+    const ref = useRef<HTMLButtonElement | null>(null);
 
     const handleClick = (e: Evt<'div'>) => {
         if (!isEditing) {
@@ -199,10 +191,20 @@ export const SongItem = ({
                     )}
                 </Subtext>
                 {children ?? (
-                    <MoreInfoButton onClick={handleMore}>
-                        <IconDots />
-                    </MoreInfoButton>
+                    <Popup
+                        content={
+                            <SongMoreContextMenu
+                                onRemove={onRemove}
+                                song={song}
+                            />
+                        }
+                    >
+                        <MoreInfoButton ref={ref}>
+                            <IconDots />
+                        </MoreInfoButton>
+                    </Popup>
                 )}
+
                 {/* {isEditing && (
                     <Button
                         $width="45px"

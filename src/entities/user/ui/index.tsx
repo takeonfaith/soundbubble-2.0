@@ -76,7 +76,7 @@ export const UserItem = memo(
             <UserItemStyled
                 as={as}
                 to={link}
-                className={orientation}
+                className={`user-item ${orientation}`}
                 onClick={handleClick}
                 disabled={disabled}
             >
@@ -107,7 +107,7 @@ export const UserItem = memo(
                 <UserCover
                     colors={imageColors}
                     src={photoURL}
-                    size={isVertical ? 'var(--size)' : '38px'}
+                    size={undefined}
                     isAuthor={isAuthor}
                 >
                     {status === 'online' && !isAuthor && (

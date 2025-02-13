@@ -2,17 +2,16 @@ import { IconCirclePlus, IconLogout, IconSun } from '@tabler/icons-react';
 import { toggleTheme } from '../../app/theme';
 import { userModel } from '../../entities/user/model';
 import { UserCover } from '../../entities/user/ui/UserCover';
+import { BadgeStyled } from '../../features/shareModal/styles';
 import { UploadSongModal } from '../../features/uploadSongModal';
 import { Button } from '../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
 import { Divider } from '../../shared/components/divider';
+import { Flex } from '../../shared/components/flex';
 import { getShortString } from '../../shared/funcs/getShortString';
 import { confirmModel } from '../confirm/model';
 import { modalModel } from '../modal/model';
-import { popupModel } from '../popup/model';
 import { UserProfileModal } from './UserProfileModal';
-import { Flex } from '../../shared/components/flex';
-import { BadgeStyled } from '../../features/shareModal/styles';
 
 export const UserContextMenu = () => {
     const [currentUser] = userModel.useUser();
@@ -34,7 +33,6 @@ export const UserContextMenu = () => {
             title: 'Upload song',
             content: <UploadSongModal />,
         });
-        popupModel.events.close();
     };
 
     const handleProfileClick = () => {
@@ -43,7 +41,6 @@ export const UserContextMenu = () => {
             content: <UserProfileModal />,
             sizeY: 'm',
         });
-        popupModel.events.close();
     };
 
     return (

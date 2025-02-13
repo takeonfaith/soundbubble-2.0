@@ -222,8 +222,6 @@ subscribeToFriendsFx.use(async (user: TUser) => {
         unsubscribe = await Database.Users.listenToUsersChanges(
             friends,
             (users) => {
-                console.log(users);
-
                 return updateFriendsFn(users, friendIds);
             }
         );

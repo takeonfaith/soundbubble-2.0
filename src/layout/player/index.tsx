@@ -11,7 +11,7 @@ import { MusicControls } from '../../shared/components/musicControls';
 import { MusicControlsStyled } from '../../shared/components/musicControls/styles';
 import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
 import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
-import { Buttonts } from './Buttonts';
+import { Buttons } from './Buttons';
 import {
     HoverIcon,
     MobilePlayButton,
@@ -32,7 +32,6 @@ export const Player = () => {
         handleToggleLike,
         performingAction,
         handleShowQueue,
-        handleMore,
         handleOpen,
         isSlowVersion,
         handleSlow,
@@ -97,10 +96,9 @@ export const Player = () => {
                         </Button>
                     </MusicControlsStyled>
                 </MobilePlayButton>
-                <Buttonts
+                <Buttons
                     handleSlow={handleSlow}
                     handleLyrics={handleLyrics}
-                    handleMore={handleMore}
                     handleShowQueue={handleShowQueue}
                     currentSong={currentSong}
                     isSlowVersion={isSlowVersion}

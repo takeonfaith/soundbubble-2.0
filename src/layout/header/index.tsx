@@ -7,7 +7,7 @@ import { allRoutes, TRoute } from '../../routing/routes';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
 import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
-import { popupModel } from '../popup/model';
+import { Popup } from '../newpopup';
 import {
     AdminCircle,
     DesktopChildren,
@@ -67,15 +67,6 @@ export const Header = ({ children, hide, className, right }: Props) => {
         [location.pathname]
     );
 
-    const handleOpenUserPopup = (e: Evt<'btn'>) => {
-        e.stopPropagation();
-        popupModel.events.open({
-            content: <UserContextMenu />,
-            e,
-            height: 345,
-        });
-    };
-
     return (
         <HeaderStyled className={`${className} ${hide ? 'hidden' : ''}`}>
             <Flex
@@ -96,18 +87,17 @@ export const Header = ({ children, hide, className, right }: Props) => {
                     {isMobile && (
                         <>
                             {currentUser && (
-                                <Button
-                                    $width="40px"
-                                    onClick={handleOpenUserPopup}
-                                >
-                                    {currentUser.isAdmin && <AdminCircle />}
-                                    <UserCover
-                                        colors={currentUser?.imageColors}
-                                        src={currentUser?.photoURL}
-                                        size={'30px'}
-                                        isAuthor={currentUser?.isAuthor}
-                                    />
-                                </Button>
+                                <Popup content={<UserContextMenu />}>
+                                    <Button $width="40px">
+                                        {currentUser.isAdmin && <AdminCircle />}
+                                        <UserCover
+                                            colors={currentUser?.imageColors}
+                                            src={currentUser?.photoURL}
+                                            size={'30px'}
+                                            isAuthor={currentUser?.isAuthor}
+                                        />
+                                    </Button>
+                                </Popup>
                             )}
                             <LoginButton />
                         </>

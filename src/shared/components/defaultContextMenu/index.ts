@@ -2,6 +2,7 @@ import { styled } from 'styled-components';
 
 export const DefaultContextMenuStyled = styled.div`
     padding: 8px 0;
+    width: 220px;
 
     .admin {
         font-size: 0.6rem;

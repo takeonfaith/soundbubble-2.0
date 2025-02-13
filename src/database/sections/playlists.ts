@@ -336,4 +336,22 @@ export class Playlists {
             );
         }
     }
+
+    static async removeSongsFromPlaylists(
+        songs: TSong[],
+        playlists: TPlaylist[]
+    ) {
+        const removeSongs = async (p: TPlaylist) => {
+            await FB.updateById('playlists', p.id, {
+                songs: arrayRemove(...songs),
+            });
+        };
+
+        try {
+            asyncRequests(playlists, removeSongs);
+        } catch (error) {
+            console.error(error);
+            throw new Error('Failed to remove songs from playlists');
+        }
+    }
 }

@@ -26,6 +26,10 @@ export const UserItemStyled = styled(Link)<{ disabled?: boolean }>`
         }
     }
 
+    &.horizontal {
+        --size: 38px;
+    }
+
     .verified-icon {
         min-width: 16px;
         height: 16px;

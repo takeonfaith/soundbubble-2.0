@@ -10,7 +10,7 @@ import { toastModel } from '../../../layout/toast/model';
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
 import { updateDeepObject } from '../../../shared/funcs/updateDeepObject';
 import { TSong } from '../../song/model/types';
-import { $user, updateOwnPlaylist } from '../../user/model/user';
+import { $ownPlaylists, $user, updateOwnPlaylist } from '../../user/model/user';
 import { $currentPlaylist, $currentPlaylistSongs } from './playlist';
 import { TPlaylist, TUploadPlaylist } from './types';
 
@@ -49,6 +49,11 @@ export const addSongsToPlaylistsFx = createEffect<
     { songs: TSong[]; playlists: TPlaylist[] }
 >();
 
+export const removeSongsFromPlaylistsFx = createEffect<
+    AddSongsToPlaylistProps,
+    { songs: TSong[]; playlists: TPlaylist[] }
+>();
+
 export const updatePlaylist = createEvent<{
     update: Partial<TUploadPlaylist>;
     onSuccess?: (updated: TPlaylist) => void;
@@ -57,11 +62,9 @@ export const updateLocalPlaylist = createEvent<{
     playlist: TPlaylist;
     songs?: TSong[];
 }>();
-export const addSongsToPlaylists = createEvent<{
-    songs: TSong[];
-    playlists: TPlaylist[];
-    onSuccess?: () => void;
-}>();
+export const addSongsToPlaylists = createEvent<AddSongsToPlaylistProps>();
+
+export const removeSongsFromPlaylists = createEvent<AddSongsToPlaylistProps>();
 
 export const $isEditing = createStore(false);
 export const isEditingApi = createApi($isEditing, {
@@ -71,6 +74,11 @@ export const isEditingApi = createApi($isEditing, {
 sample({
     clock: addSongsToPlaylists,
     target: addSongsToPlaylistsFx,
+});
+
+sample({
+    clock: removeSongsFromPlaylists,
+    target: removeSongsFromPlaylistsFx,
 });
 
 // If this playlist is opened, update UI
@@ -101,6 +109,24 @@ sample({
         ...songs,
     ],
     target: $currentPlaylistSongs,
+});
+
+sample({
+    clock: addSongsToPlaylistsFx.doneData,
+    source: $ownPlaylists,
+    fn: (ownPlaylists, { playlists, songs }) => {
+        const newPlaylists = [...ownPlaylists];
+
+        return newPlaylists.reduce((acc, p, index) => {
+            const found = playlists.find((playlist) => playlist.id === p.id);
+            if (found) {
+                newPlaylists[index].songs = [...songs.map((s) => s.id)];
+            }
+            acc.push(newPlaylists[index]);
+            return acc;
+        }, [] as TPlaylist[]);
+    },
+    target: $ownPlaylists,
 });
 
 sample({
@@ -166,6 +192,12 @@ addSongsToPlaylistsFx.use(async ({ songs, playlists, onSuccess }) => {
     return { songs, playlists };
 });
 
+removeSongsFromPlaylistsFx.use(async ({ songs, playlists, onSuccess }) => {
+    await Database.Playlists.removeSongsFromPlaylists(songs, playlists);
+    onSuccess?.();
+    return { songs, playlists };
+});
+
 addSongsToPlaylistsFx.done.watch(({ result: { songs, playlists } }) => {
     toastModel.events.add({
         message: `Song${songs.length > 1 ? 's' : ''} added to playlist${
@@ -180,5 +212,22 @@ addSongsToPlaylistsFx.failData.watch((error) => {
         message: 'Failed to add song to playlist',
         reason: error.message,
         type: 'error',
+    });
+});
+
+removeSongsFromPlaylistsFx.failData.watch((error) => {
+    toastModel.events.add({
+        message: 'Failed to remove song from playlist',
+        reason: error.message,
+        type: 'error',
+    });
+});
+
+removeSongsFromPlaylistsFx.done.watch(({ result: { songs, playlists } }) => {
+    toastModel.events.add({
+        type: 'success',
+        message: `Song${
+            songs.length > 1 ? 's' : ''
+        } successfully removed from playlist${playlists.length > 1 ? 's' : ''}`,
     });
 });

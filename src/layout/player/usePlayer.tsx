@@ -4,7 +4,7 @@ import {
     slowSongsApi,
     useIsSlowVersion,
 } from '../../entities/song/new-model/slow-songs';
-import { SongMoreContextMenu } from '../../entities/song/ui/SongMoreContextMenu';
+import { SongMoreContextMenu } from '../../entities/song/ui/context-menu/SongMoreContextMenu';
 import { userModel } from '../../entities/user/model';
 import { AddSongToPlaylistModal } from '../../features/addSongToPlaylistModal';
 import { usePrivateAction } from '../../shared/hooks/usePrivateAction';

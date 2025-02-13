@@ -10,10 +10,9 @@ import { playlistModel } from '../../../../entities/playlist/model';
 import { TPlaylist } from '../../../../entities/playlist/model/types';
 import { TAuthor, TQueue } from '../../../../entities/song/model/types';
 import { modalModel } from '../../../../layout/modal/model';
-import { popupModel } from '../../../../layout/popup/model';
+import { Popup } from '../../../../layout/newpopup';
 import { Authors } from '../../../../shared/components/authors';
 import { Button } from '../../../../shared/components/button';
-import { DefaultContextMenuStyled } from '../../../../shared/components/defaultContextMenu';
 import { Flex } from '../../../../shared/components/flex';
 import { Subtext } from '../../../../shared/components/subtext';
 import { dateToString } from '../../../../shared/funcs/dateToString';
@@ -23,6 +22,7 @@ import { hexToRgbA } from '../../../../shared/funcs/hexToRgba';
 import { getLastUpdated } from '../../lib/getLastUpdated';
 import { PlaylistControlButtons } from '../controls/PlaylistControlButtons';
 import { AddFriendsToPlaylistModal } from '../editing/AddFriendsToPlaylistModal';
+import { MakePrivateContext } from './MakePrivateContext';
 import { PlaylistDescription } from './PlaylistDescription';
 import { PlaylistName } from './PlaylistName';
 import { PlaylistPhoto } from './PlaylistPhoto';
@@ -104,40 +104,6 @@ export const PageTop = ({
             : imageColors ?? ['#3f3f3f']
     )[0];
 
-    const handleMakePrivate = (e: Evt<'btn'>) => {
-        if (isOwner) {
-            e.stopPropagation();
-            popupModel.events.open({
-                e,
-                height: 56,
-                content: (
-                    <DefaultContextMenuStyled>
-                        <Button
-                            onClick={() => {
-                                playlistModel.events.updatePlaylist({
-                                    update: {
-                                        isPrivate: !playlist?.isPrivate,
-                                    },
-                                });
-                                popupModel.events.close();
-                            }}
-                        >
-                            {playlist?.isPrivate ? (
-                                <>
-                                    <IconWorld /> Make publuc
-                                </>
-                            ) : (
-                                <>
-                                    <IconLock /> Make private
-                                </>
-                            )}
-                        </Button>
-                    </DefaultContextMenuStyled>
-                ),
-            });
-        }
-    };
-
     return (
         <>
             <PageTopWrapper
@@ -176,17 +142,23 @@ export const PageTop = ({
                                         });
                                     }}
                                 />
-                                {(playlist?.isPrivate || isEditing) && (
-                                    <Button
-                                        $width="40px"
-                                        onClick={handleMakePrivate}
+                                {(playlist?.isPrivate || isEditing) && isOwner && (
+                                    <Popup
+                                        content={
+                                            <MakePrivateContext
+                                                playlist={playlist}
+                                                isOwner={isOwner}
+                                            />
+                                        }
                                     >
-                                        {playlist?.isPrivate ? (
-                                            <IconLock size={22} />
-                                        ) : (
-                                            <IconWorld size={22} />
-                                        )}
-                                    </Button>
+                                        <Button $width="40px">
+                                            {playlist?.isPrivate ? (
+                                                <IconLock size={22} />
+                                            ) : (
+                                                <IconWorld size={22} />
+                                            )}
+                                        </Button>
+                                    </Popup>
                                 )}
                             </Flex>
                             <Flex gap={8} width="100%">
