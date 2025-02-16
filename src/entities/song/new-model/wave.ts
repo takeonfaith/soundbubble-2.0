@@ -8,12 +8,12 @@ import {
 import { Database } from '../../../database';
 import { toastModel } from '../../../layout/toast/model';
 import { TUser } from '../../user/model/types';
-import { $addedAuthors } from '../../user/model/user';
 import { createQueueObject } from '../lib/createQueueObject';
 import { TQueue } from '../model/types';
 import { playPauseQueue, togglePlayPause } from './song-state';
 import { slowSongsApi } from './slow-songs';
 import { $queue } from './queue';
+import { $addedAuthors } from '../../user/model/library/authors';
 
 export const playWaveFx = createEffect<{ authors: TUser[] }, TQueue>();
 

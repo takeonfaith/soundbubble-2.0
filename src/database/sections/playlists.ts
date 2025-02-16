@@ -341,14 +341,14 @@ export class Playlists {
         songs: TSong[],
         playlists: TPlaylist[]
     ) {
-        const removeSongs = async (p: TPlaylist) => {
-            await FB.updateById('playlists', p.id, {
-                songs: arrayRemove(...songs),
-            });
-        };
-
         try {
-            asyncRequests(playlists, removeSongs);
+            const removeSongs = async (p: TPlaylist) => {
+                await FB.updateById('playlists', p.id, {
+                    songs: arrayRemove(...songs.map((s) => s.id)),
+                });
+            };
+
+            await asyncRequests(playlists, removeSongs);
         } catch (error) {
             console.error(error);
             throw new Error('Failed to remove songs from playlists');

@@ -108,7 +108,10 @@ export const AlbumPage = () => {
                                     )}
                                 </PageMessage>
                             )}
-                            <VerticalSongsList queue={queue} />
+                            <VerticalSongsList
+                                showSerialNumber={0}
+                                queue={queue}
+                            />
                             {(currentPlaylistSongs?.length ?? 0) > 0 &&
                                 isOwner && (
                                     <AddSongsButton

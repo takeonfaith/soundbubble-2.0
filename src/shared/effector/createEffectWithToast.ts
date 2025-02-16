@@ -8,12 +8,21 @@ export const createEffectWithToast = <Params, Done>(
     const effect = createEffect<Params, Done, Error>();
 
     if (successMessage.length) {
-        effect.doneData.watch(() => {
-            toastModel.events.add({
-                message: successMessage,
-                type: 'success',
-                duration: 5000,
-            });
+        effect.done.watch(({ params }) => {
+            const shouldShow =
+                typeof params === 'object' &&
+                params !== null &&
+                'showToast' in params
+                    ? (params.showToast as boolean)
+                    : true;
+
+            if (shouldShow) {
+                toastModel.events.add({
+                    message: successMessage,
+                    type: 'success',
+                    duration: 5000,
+                });
+            }
         });
     }
 

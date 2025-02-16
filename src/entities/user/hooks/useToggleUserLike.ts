@@ -1,44 +1,27 @@
 import { useUnit } from 'effector-react';
-import { useEffect, useState } from 'react';
 import { useIsAuthorLiked } from '../../../shared/hooks/useIsAuthorLiked';
-import {
-    addAuthorsToLibraryFx,
-    removeAuthorsFromLibraryFx,
-} from '../../user/model/user';
-import { TUser } from '../model/types';
 import { userModel } from '../model';
+import { $isAddingOrRemovingUser } from '../model/library/authors';
+import { TUser } from '../model/types';
 
 export const useToggleUserLike = (author: TUser | null | undefined) => {
-    const [isAddingAuthor, isRemovingAuthor] = useUnit([
-        addAuthorsToLibraryFx.pending,
-        removeAuthorsFromLibraryFx.pending,
-    ]);
+    const [isAddingOrRemovingPlaylists] = useUnit([$isAddingOrRemovingUser]);
     const isLiked = useIsAuthorLiked(author);
 
-    const [isActing, setIsActing] = useState(false);
-
-    const performingAction = (isAddingAuthor || isRemovingAuthor) && isActing;
+    const performingAction = author
+        ? isAddingOrRemovingPlaylists.has(author.uid)
+        : false;
 
     const handleToggleLike = (e: Evt<'btn'>) => {
-        e.preventDefault();
-        e.stopPropagation();
-
         if (author) {
-            setIsActing(true);
+            e.preventDefault();
+            e.stopPropagation();
             userModel.events.toggleAuthorLiked({
                 authors: [author],
-                isLiked,
                 showToast: true,
             });
-            e.stopPropagation();
         }
     };
-
-    useEffect(() => {
-        if (!isAddingAuthor && !isRemovingAuthor) {
-            setIsActing(false);
-        }
-    }, [isAddingAuthor, isRemovingAuthor]);
 
     return { handleToggleLike, performingAction, isLiked };
 };

@@ -6,9 +6,53 @@ import {
 } from '../../../../entities/song/model/types';
 import { songModel } from '../../../../entities/song/new-model';
 import { slowSongsApi } from '../../../../entities/song/new-model/slow-songs';
+import { $pendingQueueLoading } from '../../../../entities/song/new-model/song-state';
 import { Button } from '../../../../shared/components/button';
 import { PlayPauseIcon } from '../../../../shared/components/playPauseIcon';
 import { $type, load } from './model';
+import { PlayingAnimation } from '../../../../shared/components/playingAnimation';
+import styled from 'styled-components';
+import { toastModel } from '../../../../layout/toast/model';
+
+const PlayButtonStyled = styled(Button)`
+    .playing-animation {
+        opacity: 0;
+        position: absolute;
+        transition: 0.2s opacity;
+    }
+
+    .play-icon {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+        transition: 0.2s opacity;
+    }
+
+    &.playing {
+        .playing-animation {
+            opacity: 1;
+        }
+
+        .play-icon {
+            opacity: 0;
+        }
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            .playing-animation {
+                opacity: 0;
+            }
+
+            .play-icon {
+                opacity: 1;
+            }
+        }
+    }
+`;
 
 type ButtonProps = React.DetailedHTMLProps<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -23,51 +67,72 @@ type ButtonProps = React.DetailedHTMLProps<
 
 type Props = {
     queue: TQueue | TLoadQueue;
-    state: SongState | null;
     primaryColor: string | undefined;
+    showPlayingAnimation?: boolean;
+    short?: boolean;
     children?: (props: ButtonProps) => React.ReactNode;
 };
 
-export const PlayButton = ({ queue, state, primaryColor, children }: Props) => {
-    const type = useUnit($type);
-    const { queue: currentQueue } = songModel.useSong();
+export const PlayButton = ({
+    queue,
+    primaryColor,
+    showPlayingAnimation,
+    children,
+    short = true,
+}: Props) => {
+    const [type, pendingQueue] = useUnit([$type, $pendingQueueLoading]);
+    const { queue: currentQueue, state } = songModel.useSong();
     const isCurrent = currentQueue?.id === queue?.id && type === 'default';
     const isSlow = currentQueue?.id === queue?.id && type === 'slow';
-    const isLoading =
-        isCurrent &&
-        (state === SongState.loading || state === SongState.loadingThenPlay);
-    const isPlaying = isCurrent && state === SongState.playing;
     const shouldLoad = currentQueue?.id !== queue.id && 'songIds' in queue;
+    const isLoading =
+        type === 'default' && shouldLoad
+            ? pendingQueue.has(queue.id)
+            : isCurrent &&
+              (state === SongState.loadingThenPlay ||
+                  state === SongState.loading);
+    const isPlaying = isCurrent && state === SongState.playing;
 
     const handlePlay = (e: Evt<'btn'>) => {
         e.stopPropagation();
         e.preventDefault();
 
-        load('default');
         if (shouldLoad) {
+            if (queue.songIds.length === 0) {
+                toastModel.events.add({
+                    type: 'info',
+                    message: 'Playlist has no songs',
+                    duration: 2000,
+                });
+                return;
+            }
+
             songModel.controls.loadSongsThenPlay({
                 queue,
                 currentSongIndex: 0,
             });
         } else {
             songModel.controls.playPauseQueue({
-                queue,
+                queue: queue as TQueue,
                 currentSongIndex: 0,
             });
         }
-
+        load('default');
         slowSongsApi.reset();
     };
 
     const props = {
         $height: '45px',
-        $width: '45px',
+        $width: short ? '45px' : '110px',
         style: {
+            padding: '0 0px',
             borderRadius: '30px',
             color: isSlow ? undefined : '#fff',
         },
         $primaryColor: primaryColor,
-        className: `play-button ${isSlow ? '' : 'primary'}`,
+        className: `play-button ${isSlow ? '' : 'primary'} ${
+            isPlaying && showPlayingAnimation ? 'playing' : ''
+        }`,
         onClick: handlePlay,
         disabled: isLoading,
     };
@@ -76,8 +141,21 @@ export const PlayButton = ({ queue, state, primaryColor, children }: Props) => {
         return children(props);
     }
     return (
-        <Button {...props}>
-            <PlayPauseIcon loading={isLoading} playling={isPlaying} size={18} />
-        </Button>
+        <PlayButtonStyled {...props}>
+            <div className="play-icon">
+                <PlayPauseIcon
+                    loading={isLoading}
+                    playling={isPlaying}
+                    size={20}
+                />
+                {!short && 'Play'}
+            </div>
+            {showPlayingAnimation && isPlaying && (
+                <PlayingAnimation
+                    playing={true}
+                    color={primaryColor ? '#fff' : primaryColor ?? 'grey'}
+                />
+            )}
+        </PlayButtonStyled>
     );
 };

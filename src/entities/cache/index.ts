@@ -2,12 +2,10 @@ import { createEffect, createEvent, createStore, sample } from 'effector';
 import { convertToMap } from '../../shared/funcs/convertToMap';
 import { THeavyMedia, TCache } from '../chat/model/types';
 import { $friends } from '../user/model/friends';
-import {
-    $user,
-    $library,
-    $addedAuthors,
-    $ownPlaylists,
-} from '../user/model/user';
+import { $user } from '../user/model/user';
+import { $addedAuthors } from '../user/model/library/authors';
+import { $ownPlaylists } from '../user/model/library/playlists';
+import { $library } from '../user/model/library/songs';
 
 export const getNotInCacheFx = createEffect<
     THeavyMedia & { cache: TCache },

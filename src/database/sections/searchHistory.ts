@@ -1,35 +1,25 @@
-import { getDocs, query, where } from 'firebase/firestore';
-import { TPlace, TSuggestion } from '../../entities/search/model/types';
+import { TSuggestion } from '../../entities/search/model/types';
 import { TSearchHistory } from '../../entities/user/model/types';
-import { FB } from '../../firebase';
-import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { TExtendedSuggestion } from '../../features/searchWithHints/types';
+import { FB } from '../../firebase';
 
 export class SearchHistory {
     static ref = FB.get('history');
 
-    static async getSearchHistory(userId: string | undefined) {
+    static async getSearchHistory(
+        userId: string | undefined
+    ): Promise<TSuggestion[]> {
         try {
             if (!userId)
                 throw new Error('userId is required in getSearchHistory');
 
-            const historyIds =
-                (await FB.getById('searchHistory', userId))?.history ?? [];
+            const historyIds = (
+                (await FB.getById('searchHistory', userId))?.history ?? []
+            ).map((h) => h.id);
 
-            const q = query(
-                FB.get('search'),
-                where(
-                    'uid',
-                    'in',
-                    historyIds.map((h) => h.id)
-                )
-            );
+            const res = await FB.getByIds('search', historyIds);
 
-            const docs = await getDocs(q);
-
-            const result = getDataFromDoc<TSuggestion>(docs);
-
-            return result.reverse();
+            return res;
         } catch (error) {
             console.error(error);
             return [];
@@ -38,26 +28,23 @@ export class SearchHistory {
 
     static async addEntityToSearchHistory(
         history: TExtendedSuggestion[],
-        userId: string | undefined,
-        id: string | null | undefined,
-        type: TPlace | undefined
+        userId: string,
+        suggestion: TSuggestion
     ) {
         try {
-            if (!userId) throw new Error('userId is required');
-            if (!id) throw new Error('uid is required');
-            if (!type) throw new Error('place is required');
-
-            if (history.find((s) => s.uid === id)) return;
+            const { uid, place } = suggestion;
 
             const newHistoryItem: TSearchHistory = {
-                id,
-                type,
+                id: uid,
+                type: place,
             };
 
             const newHistory = [
                 newHistoryItem,
                 ...history.map((h) => ({ id: h.uid, type: h.place })),
             ];
+
+            console.log(newHistory);
 
             await FB.updateById('searchHistory', userId, {
                 history: newHistory,

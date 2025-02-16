@@ -3,8 +3,9 @@ import { User } from 'firebase/auth';
 import { Database } from '../../../database';
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
 import { TUser } from './types';
-import { $user, $userCreds, logout } from './user';
+import { $user, $userCreds } from './user';
 import { modalModel } from '../../../layout/modal/model';
+import { logout } from './logout';
 
 export const deleteAccountFx = createEffectWithToast<
     { user: TUser; userCreds: User },

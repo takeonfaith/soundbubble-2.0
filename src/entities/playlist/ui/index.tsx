@@ -1,12 +1,10 @@
 import { Authors } from '@components/authors';
 import { Flex } from '@components/flex';
 import { IconLock } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
 import { LikeButton } from '../../../features/likeButton';
 import { PlayButton } from '../../../routing/playlist/ui/controls/PlayButton';
 import { Subtext } from '../../../shared/components/subtext';
 import { createLoadQueueObject } from '../../song/lib/createQueueObject';
-import { SongState } from '../../song/model/types';
 import { songModel } from '../../song/new-model';
 import { createAuthorObject } from '../../user/lib/createAuthorObject';
 import { TOrientation } from '../../user/types';
@@ -15,6 +13,10 @@ import { createPlaylistObject } from '../lib/createPlaylistObject';
 import { TPlaylist } from '../model/types';
 import { PlaylistCover } from './PlaylistCover';
 import { PalylistTitle, PlaylistStyled } from './styles';
+import { useUnit } from 'effector-react';
+import { $pendingQueueLoading } from '../../song/new-model/song-state';
+import { SongState } from '../../song/model/types';
+import { $type } from '../../../routing/playlist/ui/controls/model';
 
 type Props = {
     playlist: TPlaylist | null;
@@ -25,6 +27,7 @@ type Props = {
     hideAuthors?: boolean;
     imagePlaceholder?: React.ReactNode;
     onClick?: (playlist: TPlaylist, e: Evt<'a'>) => void;
+    disabled?: boolean;
 };
 
 export const PlaylistItem = ({
@@ -35,6 +38,7 @@ export const PlaylistItem = ({
     imagePlaceholder,
     isAuthor,
     hideAuthors,
+    disabled,
     orientation = 'vertical',
 }: Props) => {
     const p =
@@ -48,8 +52,12 @@ export const PlaylistItem = ({
 
     const { queue, state } = songModel.useSong();
     const url = `/${isAlbum ? 'album' : 'playlist'}/${id}`;
-    const isCurrentPlaying = state === 'playing' && queue?.id === id;
-    const [loadingSongs, setLoadingSongs] = useState(false);
+    const [type, pendingQueueLoading] = useUnit([$type, $pendingQueueLoading]);
+    const isCurrentPlaying =
+        type === 'default' && state === SongState.playing && queue?.id === id;
+    const isLoadingQueue = playlist
+        ? pendingQueueLoading.has(playlist.id)
+        : false;
     const playlistQueue = createLoadQueueObject({
         id,
         name,
@@ -64,27 +72,21 @@ export const PlaylistItem = ({
         onClick?.(p, e);
     };
 
-    useEffect(() => {
-        if (state === SongState.playing) {
-            setLoadingSongs(false);
-        }
-    }, [state]);
-
     return (
         <PlaylistStyled
             as={as}
             onClick={handleClick}
             className={`playlist-item ${orientation} ${
-                isCurrentPlaying || loadingSongs ? 'playing' : ''
-            }`}
+                isCurrentPlaying || isLoadingQueue ? 'playing' : ''
+            } ${disabled ? 'disabled' : ''}`}
             to={url}
             $color1={imageColors?.[0]}
         >
             {!children && (
                 <PlayButton
                     queue={playlistQueue}
-                    state={state}
                     primaryColor={imageColors[0]}
+                    showPlayingAnimation
                 />
             )}
             {orientation === 'vertical' && !isAuthor && (

@@ -1,12 +1,13 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { useUnit } from 'effector-react';
-import { $user, logout } from '../../../entities/user/model/user';
+import { $user } from '../../../entities/user/model/user';
 import {
     TPaginationProps,
     TPaginationModel,
     LoadMoreFxProps,
     LoadMoreFxResult,
 } from './types';
+import { logout } from '../../../entities/user/model/logout';
 
 export const createPagitation = <T extends object>({
     quantity,

@@ -9,7 +9,7 @@ type Props = {
 };
 
 export const useSongPlay = (props: Props) => {
-    const { currentSong, state } = songModel.useSong();
+    const { currentSong, state, queue: currentQueue } = songModel.useSong();
     const { queue, showSerialNumber, isEditing, onRemove } = props;
 
     const handlePlay = (_: TSong, __: Evt<'div'>, currentSongIndex: number) => {
@@ -31,10 +31,8 @@ export const useSongPlay = (props: Props) => {
     };
 
     const getPlaying = (song: TSong) => {
-        // TODO: && queue?.id === currentQueue?.id;
-        // doesn't work when click on the same song 
-        // in other queue
-        const isCurrent = song.id === currentSong?.id; 
+        const isCurrent =
+            song.id === currentSong?.id && queue?.id === currentQueue?.id;
 
         return isCurrent && state === SongState.playing;
     };

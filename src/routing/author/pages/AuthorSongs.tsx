@@ -16,6 +16,7 @@ import { PlaylistControlButtons } from '../../playlist/ui/controls/PlaylistContr
 import { UserCover } from '../../../entities/user/ui/UserCover';
 import styled from 'styled-components';
 import { playlistModel } from '../../../entities/playlist/model';
+import { usePlaylistSearch } from '../../playlist/hooks/usePlaylistSearch';
 
 const AuthorSongsHeader = styled.header`
     display: flex;
@@ -37,6 +38,7 @@ export const AuthorSongs = () => {
     const navigate = useNavigate();
     const match = useMatch(`author/:id/songs`);
     const id = match?.params.id;
+    const { visible } = usePlaylistSearch(searching, songs);
 
     useEffect(() => {
         if (id) {
@@ -51,7 +53,7 @@ export const AuthorSongs = () => {
         id: user?.uid,
         name: user?.displayName,
         url: `/author/${user?.uid}/songs`,
-        songs,
+        songs: visible,
         imageUrl: user?.photoURL,
     });
 

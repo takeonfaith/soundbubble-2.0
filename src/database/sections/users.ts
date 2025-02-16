@@ -93,7 +93,7 @@ export class Users {
 
     static async login({ email, password }: LoginCreditsType) {
         try {
-            return FB.login(email, password);
+            return await FB.login(email, password);
         } catch (error) {
             console.error(error);
         }
@@ -101,7 +101,7 @@ export class Users {
 
     static async logout() {
         try {
-            return FB.logout();
+            return await FB.logout();
         } catch (error) {
             console.error(error);
         }

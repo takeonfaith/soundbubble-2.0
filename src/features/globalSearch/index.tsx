@@ -1,3 +1,4 @@
+import { IconCompass, IconCompassFilled } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
 import { useCallback, useEffect, useRef } from 'react';
 import { Location, useLocation, useNavigate } from 'react-router';
@@ -9,23 +10,16 @@ import {
     getSearchResult,
     setSearchQuery,
 } from '../../entities/search/model';
-import { TPlace } from '../../entities/search/model/types';
-import { userModel } from '../../entities/user/model';
+import { $searchHistory } from '../../entities/search/model/search-history';
+import { TPlace, TSuggestion } from '../../entities/search/model/types';
+import { Divider } from '../../shared/components/divider';
+import { Flex } from '../../shared/components/flex';
+import Popover from '../../shared/components/popover';
 import { Tabs, TTab } from '../../shared/components/tabs';
 import { normalizeString } from '../../shared/funcs/normalizeString';
 import { SearchWithHints } from '../searchWithHints';
 import { TExtendedSuggestion } from '../searchWithHints/types';
 import { BrowseLink, TabsWrapper } from './styles';
-import { Flex } from '../../shared/components/flex';
-import { Divider } from '../../shared/components/divider';
-import {
-    IconBrandSafari,
-    IconCompass,
-    IconCompassFilled,
-} from '@tabler/icons-react';
-import { Button } from '../../shared/components/button';
-import Popover from '../../shared/components/popover';
-import { NavLink } from 'react-router-dom';
 
 const getTabUrl = (
     location: Location<unknown>,
@@ -83,8 +77,10 @@ export const GlobalSearch = ({ queryValue, where, showTabs = true }: Props) => {
             getSearchResult,
         ]);
 
-    const searchHistory = userModel.useSearchHistory();
-    const suggestions = useUnit($searchSuggestions);
+    const [searchHistory, suggestions] = useUnit([
+        $searchHistory,
+        $searchSuggestions,
+    ]);
 
     const handleGetResult = useCallback(
         (tab?: TTab) => {
@@ -118,7 +114,7 @@ export const GlobalSearch = ({ queryValue, where, showTabs = true }: Props) => {
         getResult({
             query: normalizeString(value),
             place: where === '' ? undefined : (where as TPlace),
-            suggestion,
+            suggestion: suggestion as TSuggestion,
         });
         setSearchQuery(value);
     };

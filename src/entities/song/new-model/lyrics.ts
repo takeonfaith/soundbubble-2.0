@@ -15,7 +15,7 @@ import { $isCurrentSongSlow } from './slow-songs';
 import { SLOW_SONGS_FACTOR } from '../../../shared/constants';
 
 const loadLyricsFx = createEffect<string, TLyric[], Error>();
-const loadLyrics = createEvent();
+export const loadLyrics = createEvent<undefined | string>();
 export const calculateCurrentLyric = createEvent<number>();
 export const nextCurrentLyric = createEvent<number>();
 const calculateCurrentLyrics = createEvent();
@@ -39,6 +39,7 @@ sample({
     clock: $currentSong,
     source: $isLyricsVisibleNow,
     filter: (isLyricsVisibleNow) => isLyricsVisibleNow,
+    fn: () => undefined,
     target: loadLyrics,
 });
 
@@ -53,8 +54,8 @@ sample({
 sample({
     clock: loadLyrics,
     source: $currentSong,
-    filter: (song) => !!song,
-    fn: (song) => song!.id,
+    filter: (song, id) => !!id || !!song,
+    fn: (song, id) => id ?? song!.id,
     target: loadLyricsFx,
 });
 
@@ -135,10 +136,10 @@ export const lyricsModel = {
     useLyrics: () =>
         useUnit([
             $lyrics,
+            loadLyricsFx.pending,
             $currentLyricIndex,
             $shouldCalculateLyrics,
             $isKaraoke,
             $userEnabledKaraoke,
-            loadLyricsFx.pending,
         ]),
 };

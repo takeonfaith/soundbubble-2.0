@@ -1,5 +1,4 @@
 import { IconHeartFilled, IconMusicOff } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
 import { useTheme } from 'styled-components';
 import { playlistModel } from '../../entities/playlist/model';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
@@ -11,36 +10,23 @@ import { Flex } from '../../shared/components/flex';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { normalizeString } from '../../shared/funcs/normalizeString';
+import { usePlaylistSearch } from '../playlist/hooks/usePlaylistSearch';
 import { PageTop } from '../playlist/ui/layout/PageTop';
 
 export const LikedSongs = () => {
     const [, , , searching] = playlistModel.usePlaylist();
     const [library, loading] = userModel.useSongLibrary();
     const [currentUser] = userModel.useUser();
-    const [librarySongs, setLibrarySongs] = useState(library);
     const theme = useTheme();
+
+    const { visible } = usePlaylistSearch(searching, library);
 
     const queue = createQueueObject({
         name: 'Library',
-        songs: librarySongs,
+        songs: visible,
         url: '',
         id: 'library',
     });
-
-    useEffect(() => {
-        if (searching.value.length > 0) {
-            setLibrarySongs(
-                (library ?? []).filter((s) =>
-                    normalizeString(s.name).includes(
-                        normalizeString(searching.value)
-                    )
-                )
-            );
-        } else {
-            setLibrarySongs(library ?? []);
-        }
-    }, [library, searching.value]);
 
     if (!currentUser) {
         return (

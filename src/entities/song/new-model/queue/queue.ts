@@ -1,9 +1,8 @@
-import { createStore, combine, createApi, createEvent, sample } from 'effector';
-import { logout } from '../../../user/model/user';
+import { combine, createApi, createEvent, createStore, sample } from 'effector';
 import { TQueue } from '../../model/types';
 
-export const $queue = createStore<TQueue | null>(null).reset(logout);
-export const $currentSongIndex = createStore<number>(0).reset(logout);
+export const $queue = createStore<TQueue | null>(null);
+export const $currentSongIndex = createStore<number>(0);
 export const $isLastSongInQueue = combine(
     $queue,
     $currentSongIndex,

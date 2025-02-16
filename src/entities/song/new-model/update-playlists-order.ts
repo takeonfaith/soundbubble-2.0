@@ -1,9 +1,9 @@
 // sorting own playlists when play clicked
 
 import { createEffect, sample } from 'effector';
-import { $ownPlaylists, $user } from '../../user/model';
-import { initalize, loadAndPlay } from './song-state';
 import { Database } from '../../../database';
+import { $ownPlaylists, $user } from '../../user/model/user';
+import { loadAndPlay } from './song-state';
 
 const updateOwnPlaylistsOrderFx = createEffect<
     {
@@ -50,7 +50,7 @@ sample({
     target: updateOwnPlaylistsOrderFx,
 });
 
-updateOwnPlaylistsOrderFx.use(
-    async ({ userId, playlistIds }) =>
-        await Database.Users.updateOwnPlaylistsOrder(userId, playlistIds)
-);
+// updateOwnPlaylistsOrderFx.use(
+//     async ({ userId, playlistIds }) =>
+//         await Database.Users.updateOwnPlaylistsOrder(userId, playlistIds)
+// );

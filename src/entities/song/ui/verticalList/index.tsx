@@ -21,7 +21,9 @@ export const VerticalSongsList = (props: Props) => {
             {!!songs.length && (
                 <Titles
                     className={`titles ${
-                        showSerialNumber || isEditing ? 'showSerialNumber' : ''
+                        showSerialNumber !== undefined || isEditing
+                            ? 'showSerialNumber'
+                            : ''
                     } `}
                 >
                     <Title
@@ -33,7 +35,7 @@ export const VerticalSongsList = (props: Props) => {
                             paddingLeft: '4px',
                         }}
                     >
-                        {showSerialNumber ? '#' : ''}
+                        {showSerialNumber !== undefined ? '#' : ''}
                     </Title>
                     <Title>Name</Title>
                     <Title>Author</Title>

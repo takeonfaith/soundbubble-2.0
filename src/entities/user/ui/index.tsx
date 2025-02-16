@@ -42,7 +42,8 @@ export const UserItem = memo(
         onDelete,
     }: Props) => {
         const theme = useTheme();
-        const { handleToggleLike, isLiked } = useToggleUserLike(user);
+        const { handleToggleLike, isLiked, performingAction } =
+            useToggleUserLike(user);
 
         if (!user) return null;
 
@@ -101,6 +102,7 @@ export const UserItem = memo(
                             e.stopPropagation();
                             handleToggleLike(e);
                         }}
+                        loading={performingAction}
                         className="plane"
                     />
                 )}

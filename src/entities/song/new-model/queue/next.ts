@@ -23,8 +23,6 @@ const filterNext = (
         !restarted &&
         (loopMode !== LoopMode.loopone || nextFrom === 'from_next_button');
 
-    console.log(isEither && !isLastSongInQueue);
-
     return isEither && !isLastSongInQueue;
 };
 
@@ -82,8 +80,7 @@ sample({
         const shouldLoopOne =
             (isOnlySongInQueue && loopMode !== LoopMode.noloop) ||
             (loopMode === LoopMode.loopone && nextFrom === 'from_end_track');
-        console.log('shouldLoopOne', shouldLoopOne);
-        
+
         return shouldLoopOne;
     },
     target: previous,

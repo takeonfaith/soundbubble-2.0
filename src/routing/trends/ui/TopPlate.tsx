@@ -8,7 +8,7 @@ import {
     createLoadQueueObject,
     createQueueObject,
 } from '../../../entities/song/lib/createQueueObject';
-import { SongState, TAuthor, TSong } from '../../../entities/song/model/types';
+import { TAuthor, TSong } from '../../../entities/song/model/types';
 import { songModel } from '../../../entities/song/new-model';
 import { SongCover } from '../../../entities/song/ui/SongCover';
 import { TUser } from '../../../entities/user/model/types';
@@ -20,11 +20,10 @@ import {
 } from '../../../features/searchWithHints/lib/getDividedEntity';
 import { getEntityType } from '../../../features/searchWithHints/lib/getEntityType';
 import { Authors } from '../../../shared/components/authors';
-import { Button } from '../../../shared/components/button';
 import { Flex } from '../../../shared/components/flex';
-import { PlayPauseIcon } from '../../../shared/components/playPauseIcon';
-import { IndexStyled, TopPlateStyled } from './styles';
 import { ENTITIES_ICONS } from '../../../shared/constants/icons';
+import { PlayButton } from '../../playlist/ui/controls/PlayButton';
+import { IndexStyled, TopPlateStyled } from './styles';
 
 const getCover = (type: keyof typeof ENTITIES_ICONS) => {
     switch (type) {
@@ -39,84 +38,40 @@ const getCover = (type: keyof typeof ENTITIES_ICONS) => {
     }
 };
 
-export const TopPlate = ({
-    entity,
-    index,
-}: {
+type Props = {
     entity: Exclude<TEntity, TChat | TAuthor> | TUser;
     index: number;
-}) => {
-    const { queue, state } = songModel.useSong();
+};
+export const TopPlate = ({ entity, index }: Props) => {
+    const { state } = songModel.useSong();
     const type = getEntityType(entity);
-    const isLoading =
-        queue?.id === getEntityId(entity) &&
-        (state === SongState.loading || state === SongState.loadingThenPlay);
-    const isPlaying =
-        queue?.id === getEntityId(entity) && state === SongState.playing;
     const navigate = useNavigate();
+    const queueBasis = {
+        id: getEntityId(entity),
+        name: 'Trends',
+        url: '/trends',
+    };
+    const queues = {
+        song: createQueueObject({
+            ...queueBasis,
+            songs: [entity as TSong],
+        }),
+        album: createLoadQueueObject({
+            ...queueBasis,
+            imageUrl: (entity as TPlaylist).image,
+            songIds: (entity as TPlaylist).songs,
+        }),
+        author: createLoadQueueObject({
+            ...queueBasis,
+            imageUrl: (entity as TUser).photoURL,
+            songIds: (entity as TUser).ownSongs,
+        }),
+    };
 
     const Cover = getCover(type);
 
-    const handleSongPlay = () => {
-        const queue = createQueueObject({
-            id: getEntityId(entity),
-            name: 'Trends',
-            url: '/trends',
-            songs: [entity as TSong],
-        });
-
-        songModel.controls.playPauseQueue({
-            queue,
-            currentSongIndex: 0,
-        });
-    };
-
-    const handlePlayAlbum = () => {
-        const playlist = entity as TPlaylist;
-        const queue = createLoadQueueObject({
-            id: playlist.id,
-            name: playlist.name,
-            url: `/playlist/${playlist.id}`,
-            imageUrl: playlist.image,
-            songIds: playlist.songs,
-        });
-
-        songModel.controls.loadSongsThenPlay({ queue, currentSongIndex: 0 });
-    };
-
-    const handlePlayAuthor = () => {
-        const author = entity as TUser;
-        const queue = createLoadQueueObject({
-            id: author.uid,
-            name: author.displayName,
-            url: `/author/${author.uid}`,
-            imageUrl: author.photoURL,
-            songIds: author.ownSongs,
-        });
-
-        songModel.controls.loadSongsThenPlay({ queue, currentSongIndex: 0 });
-    };
-
-    const handleClickPlay = (e: Evt<'btn'>) => {
-        e.stopPropagation();
-
-        if (type === 'song') {
-            handleSongPlay();
-            return;
-        }
-
-        if (type === 'playlist' || type === 'album') {
-            handlePlayAlbum();
-            return;
-        }
-
-        handlePlayAuthor();
-    };
-
     const handleClick = () => {
         if (type === 'song') {
-            handleSongPlay();
-
             return;
         }
 
@@ -162,18 +117,13 @@ export const TopPlate = ({
                         </div>
                     )}
                 </Flex>
-                <Button
-                    $height="45px"
-                    $width="45px"
-                    className="playbutton"
-                    onClick={handleClickPlay}
-                >
-                    <PlayPauseIcon
-                        loading={isLoading}
-                        playling={isPlaying}
-                        size={20}
-                    />
-                </Button>
+
+                <PlayButton
+                    queue={queues[type as keyof typeof queues]}
+                    state={state}
+                    primaryColor={entity.imageColors[0]}
+                    showPlayingAnimation
+                />
             </div>
             <IndexStyled>#{index}</IndexStyled>
         </TopPlateStyled>

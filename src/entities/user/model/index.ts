@@ -1,9 +1,9 @@
-import { useGate, useUnit } from 'effector-react';
+import { useUnit } from 'effector-react';
 import {
+    authorPage,
     getAuthorPageById,
     loadSimilarAuthors,
     resetUserPage,
-    authorPage,
 } from './author-page';
 import { createAuthor } from './create-author';
 import { deleteAccount } from './delete-account';
@@ -20,31 +20,27 @@ import {
     subscribeToFriendsFx,
     updateFriends,
 } from './friends';
+import { loadUserData, loadUserDataFx, setUser } from './init';
+import {
+    $addedAuthors,
+    loadAddedAuthorsFx,
+    toggleAuthorLiked,
+} from './library/authors';
+import {
+    $addedPlaylists,
+    $ownPlaylists,
+    addOwnPlaylistToLibrary,
+    loadAddedPlaylistsFx,
+    loadOwnPlaylistsFx,
+    toggleOtherPlaylistLiked,
+} from './library/playlists';
+import { $library, loadLibraryFx, toggleSongLiked } from './library/songs';
 import { login, loginFx } from './login';
+import { logout } from './logout';
 import { resetPassword } from './reset-password';
 import { signUp } from './sign-up';
 import './update-online';
-import {
-    $addedAuthors,
-    $addedPlaylists,
-    $library,
-    $ownPlaylists,
-    $searchHistory,
-    $user,
-    addOwnPlaylistToLibrary,
-    loadAddedAuthorsFx,
-    loadAddedPlaylistsFx,
-    loadLibraryFx,
-    loadOwnPlaylistsFx,
-    loadUserData,
-    loadUserDataFx,
-    logout,
-    setUser,
-    toggleAuthorLiked,
-    toggleOtherPlaylistLiked,
-    toggleSongLiked,
-    userGate,
-} from './user';
+import { $user } from './user';
 import { getUserPageById, userPage } from './user-page';
 
 export const userModel = {
@@ -54,7 +50,6 @@ export const userModel = {
     useAddedPlaylists: () =>
         useUnit([$addedPlaylists, loadAddedPlaylistsFx.pending]),
     useAddedAuthors: () => useUnit([$addedAuthors, loadAddedAuthorsFx.pending]),
-    useSearchHistory: () => useUnit($searchHistory),
     authorPage,
     userPage,
     useFriends: () =>
@@ -88,8 +83,5 @@ export const userModel = {
         editUser,
         deleteAccount,
         resetPassword,
-    },
-    gates: {
-        useLoadUser: () => useGate(userGate),
     },
 };

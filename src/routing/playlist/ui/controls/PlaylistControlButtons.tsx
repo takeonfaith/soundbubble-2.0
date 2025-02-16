@@ -1,30 +1,26 @@
 import {
-    IconArrowsShuffle,
     IconCircleCheck,
     IconDots,
     IconPencil,
     IconPlus,
     IconSearch,
 } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { ToggleLike } from '../../../../entities/playlist/hooks/useTogglePlaylistLike';
 import { playlistModel } from '../../../../entities/playlist/model';
 import { TPlaylist } from '../../../../entities/playlist/model/types';
-import { SongState, TQueue } from '../../../../entities/song/model/types';
-import { songModel } from '../../../../entities/song/new-model';
+import { TQueue } from '../../../../entities/song/model/types';
 import { userModel } from '../../../../entities/user/model';
 import { modalModel } from '../../../../layout/modal/model';
 import { Popup } from '../../../../layout/newpopup';
 import { Button } from '../../../../shared/components/button';
 import { Flex } from '../../../../shared/components/flex';
-import { Loading } from '../../../../shared/components/loading';
-import Popover from '../../../../shared/components/popover';
 import { AddSongsToPlaylistModal } from '../editing/AddSongsToPlaylistModal';
 import { Like } from './Like';
 import { PlayButton } from './PlayButton';
 import { PlaylistMoreContext } from './PlaylistMoreContext';
 import { PlaylistSearch } from './PlaylistSearch';
+import { ShuffleButton } from './ShuffleButton';
 import { SlowButton } from './SlowButton';
 
 export const MainButtonsWrapper = styled.div`
@@ -57,21 +53,11 @@ export const PlaylistControlButtons = ({
     likeModel,
 }: Props) => {
     const [currentUser] = userModel.useUser();
-    const { state } = songModel.useSong();
 
     const noSongs = queue.songs.length === 0;
-    const [buttonType, setButtonType] = useState<
-        'play' | 'shuffle' | 'slow' | null
-    >(null);
     const isAuthor = currentUser
         ? playlist?.authors.find((author) => author.uid === currentUser.uid)
         : false;
-
-    useEffect(() => {
-        if (state === SongState.playing) {
-            setButtonType(null);
-        }
-    }, [state]);
 
     const handleEdit = () => {
         playlistModel.events.updateIsEditing(!isEditing);
@@ -110,33 +96,12 @@ export const PlaylistControlButtons = ({
                     <MainButtonsWrapper>
                         <PlayButton
                             queue={queue}
-                            state={state}
                             primaryColor={primaryColor}
+                            showPlayingAnimation
                         />
-                        <SlowButton
-                            primaryColor={primaryColor}
-                            state={state}
-                            queue={queue}
-                        />
+                        <SlowButton primaryColor={primaryColor} queue={queue} />
                     </MainButtonsWrapper>
-                    <Popover content="Shuffle">
-                        <Button
-                            $width="45px"
-                            $height="45px"
-                            className="outline"
-                            style={{ borderRadius: '30px' }}
-                            onClick={() => {
-                                setButtonType('shuffle');
-                                songModel.controls.shufflePlayPause({ queue });
-                            }}
-                        >
-                            {buttonType === 'shuffle' ? (
-                                <Loading />
-                            ) : (
-                                <IconArrowsShuffle size={20} />
-                            )}
-                        </Button>
-                    </Popover>
+                    <ShuffleButton queue={queue} />
                 </Flex>
             )}
             {isAuthor && !isEditing && noSongs && (
@@ -200,7 +165,12 @@ export const PlaylistControlButtons = ({
 
                 {playlist && !isEditing && (
                     <Popup
-                        content={<PlaylistMoreContext playlist={playlist} />}
+                        content={
+                            <PlaylistMoreContext
+                                songs={queue.songs}
+                                playlist={playlist}
+                            />
+                        }
                     >
                         <Button
                             $width="90px"

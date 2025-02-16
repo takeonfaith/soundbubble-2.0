@@ -2,11 +2,15 @@ import {
     IconInfoCircle,
     IconLock,
     IconShare3,
+    IconSparkles,
     IconTrash,
     IconWorld,
 } from '@tabler/icons-react';
+import { useNavigate } from 'react-router';
 import { playlistModel } from '../../../../entities/playlist/model';
+import { TPlaylist } from '../../../../entities/playlist/model/types';
 import { PlaylistInfo } from '../../../../entities/playlist/ui/PlaylistInfo';
+import { userModel } from '../../../../entities/user/model';
 import { ShareModal } from '../../../../features/shareModal';
 import { confirmModel } from '../../../../layout/confirm/model';
 import { modalModel } from '../../../../layout/modal/model';
@@ -15,15 +19,14 @@ import { DefaultContextMenuStyled } from '../../../../shared/components/defaultC
 import { Divider } from '../../../../shared/components/divider';
 import Popover from '../../../../shared/components/popover';
 import { NO_ACCOUNT_FOR_ACTION } from '../../../../shared/constants/texts';
-import { TPlaylist } from '../../../../entities/playlist/model/types';
-import { userModel } from '../../../../entities/user/model';
-import { useNavigate } from 'react-router';
+import { TSong } from '../../../../entities/song/model/types';
 
 type Props = {
     playlist: TPlaylist | null;
+    songs: TSong[];
 };
 
-export const PlaylistMoreContext = ({ playlist }: Props) => {
+export const PlaylistMoreContext = ({ playlist, songs }: Props) => {
     const [currentUser] = userModel.useUser();
     const navigate = useNavigate();
     const isOwner = playlist?.ownerId === currentUser?.uid;
@@ -94,6 +97,12 @@ export const PlaylistMoreContext = ({ playlist }: Props) => {
 
     return (
         <DefaultContextMenuStyled>
+            {playlist && songs.length > 3 && (
+                <Button>
+                    <IconSparkles />
+                    Play wave on playlist
+                </Button>
+            )}
             {!playlist?.isPrivate && (
                 <Popover content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}>
                     <Button disabled={!currentUser} onClick={handleShare}>

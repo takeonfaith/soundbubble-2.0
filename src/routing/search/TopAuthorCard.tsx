@@ -154,10 +154,13 @@ export const TopAuthorCard = ({ author }: { author: TUser }) => {
                             </Flex>
                         </Flex>
                     </Flex>
-                    <ButtonsStyled className='bottom-buttons'>
+                    <ButtonsStyled
+                        $color={author.imageColors[0]}
+                        className="bottom-buttons"
+                    >
                         <ControlButtons
                             queue={queue}
-                            buttonColor={author.imageColors[0]}
+                            color={author.imageColors[0]}
                         />
                     </ButtonsStyled>
                 </LeftSide>

@@ -14,7 +14,6 @@ import {
     TPlace,
     TSuggestion,
 } from '../../entities/search/model/types';
-import { MAX_SEARCH_HISTORY_QUANTITY } from '../../entities/user/model/constants';
 import { TUser } from '../../entities/user/model/types';
 import { getEntityId } from '../../features/searchWithHints/lib/getDividedEntity';
 import { getEntityType } from '../../features/searchWithHints/lib/getEntityType';
@@ -24,6 +23,7 @@ import { normalizeString } from '../../shared/funcs/normalizeString';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
 import { uniqueArrayObjectsByField } from '../../shared/funcs/uniqueArrayObjectsByFields';
 import { TExtendedSuggestion } from '../../features/searchWithHints/types';
+import { MAX_SEARCH_HISTORY_QUANTITY } from '../../entities/search/model/constants';
 
 const MAX_AUTHOR_SONGS = 3;
 
@@ -42,7 +42,10 @@ export class SearchSuggestions {
     }
 
     private static getEntitiesReqs(suggestions: TSuggestion[]) {
-        const requests: Record<TPlace, (uid: string) => Promise<TEntity>> = {
+        const requests: Record<
+            TPlace,
+            (uid: string) => Promise<TEntity | null>
+        > = {
             users: Database.Users.getUserById,
             playlists: Database.Playlists.getPlaylistByUid,
             songs: Database.Songs.getSongByUid,
@@ -130,7 +133,7 @@ export class SearchSuggestions {
 
             const reqs = this.getEntitiesReqs(dirtySuggestions);
 
-            let cleanSuggestions: TEntity[] = await Promise.all(reqs);
+            let cleanSuggestions: (TEntity | null)[] = await Promise.all(reqs);
 
             if (
                 getEntityType(cleanSuggestions[0]) === 'author' &&
@@ -161,6 +164,16 @@ export class SearchSuggestions {
             return await FB.updateById('search', id, { rank: increment(1) });
         } catch (error) {
             throw new Error((error as Error).message);
+        }
+    }
+
+    static async getTopSuggestions(quantity: number) {
+        try {
+            const q = query(this.ref, orderBy('rank', 'desc'), limit(quantity));
+            const snapshot = await getDocs(q);
+            return getDataFromDoc<TSuggestion>(snapshot);
+        } catch (error) {
+            throw new Error('Failed to get top suggestions');
         }
     }
 }

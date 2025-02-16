@@ -7,15 +7,15 @@ import {
 } from 'effector';
 import { Unsubscribe } from 'firebase/auth';
 import { Database } from '../../../database';
-import { $user, logout } from '../../user/model/user';
+import { $cache, saveInCache } from '../../cache';
+import { $user } from '../../user/model/user';
 import { getHeavyMediaIdsFromMessages } from '../lib/getHeavyMediaIdsFromMessages';
 import { $currentChatId } from './chats';
 import { MAX_MESSAGES_PER_LOAD } from './constants';
 import { loadHeavyMedia } from './heavy-media';
 import { TCache, TMessage } from './types';
-import { $cache, saveInCache } from '../../cache';
 
-let unsubscribe: Unsubscribe | null;
+export let unsubscribeFromCurrentMessages: Unsubscribe | null;
 
 export const subscribeToCurrentChatMessagesFx = createEffect<
     { chatId: string; userId: string },
@@ -50,14 +50,6 @@ export const loadNextMessages = createEvent();
 export const canMoreBeLoadedApi = createApi($canMoreBeLoaded, {
     canMoreBeLoaded: (_, val: boolean) => val,
 });
-
-// unsubscribe from chat updates if logout
-logout.watch(() => {
-    unsubscribe?.();
-    unsubscribe = null;
-});
-
-$currentChatMessages.reset(logout);
 
 sample({
     clock: $currentChatId,
@@ -206,12 +198,12 @@ sample({
 
 $currentChatId.watch((id) => {
     if (!id) {
-        unsubscribe?.();
+        unsubscribeFromCurrentMessages?.();
     }
 });
 
 initiallyLoadChatMessagesFx.use(async ({ chatId, userId, cache }) => {
-    // POTENTIAL BUG: because I for some reason 
+    // POTENTIAL BUG: because I for some reason
     // set firstUnreadMessage to null
     if (cache[chatId]) {
         return {
@@ -242,12 +234,13 @@ paginationLoadMessagesFx.use(async ({ chatId, userId }) => {
 });
 
 subscribeToCurrentChatMessagesFx.use(async ({ chatId }) => {
-    unsubscribe?.();
+    unsubscribeFromCurrentMessages?.();
 
-    unsubscribe = await Database.Chats.subscribeToChatMessagesWithChatId(
-        chatId,
-        (messages) => {
-            addMessage(messages[0]);
-        }
-    );
+    unsubscribeFromCurrentMessages =
+        await Database.Chats.subscribeToChatMessagesWithChatId(
+            chatId,
+            (messages) => {
+                addMessage(messages[0]);
+            }
+        );
 });

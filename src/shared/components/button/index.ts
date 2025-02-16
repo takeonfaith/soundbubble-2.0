@@ -84,7 +84,7 @@ export const Button = styled.button<{
         pointer-events: none;
 
         &.primary {
-            filter: grayscale(1);
+            filter: grayscale(0.6);
             color: #ffffff66;
             box-shadow: none;
         }
@@ -104,17 +104,17 @@ export const Button = styled.button<{
             }
         }
 
-        &.primary:hover,
-        &.outline:hover,
-        &.secondary:hover {
+        &.primary:not(:disabled):hover,
+        &.outline:not(:disabled):hover,
+        &.secondary:not(:disabled):hover {
             filter: brightness(0.9);
         }
 
-        &.plane:hover {
+        &.plane:not(:disabled):hover {
             background: ${({ theme }) => theme.scheme.grey.mild};
         }
 
-        &.ghost:hover {
+        &.ghost:not(:disabled):hover {
             color: ${({ theme }) => theme.colors.textColor};
         }
     }

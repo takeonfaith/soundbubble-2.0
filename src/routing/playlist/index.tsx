@@ -1,17 +1,17 @@
 import { IconMusicMinus } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTogglePlaylistLike } from '../../entities/playlist/hooks/useTogglePlaylistLike';
 import { playlistModel } from '../../entities/playlist/model';
+import { deletePlaylistFx } from '../../entities/playlist/model/delete-playlist';
+import { updatePlaylistFx } from '../../entities/playlist/model/update-playlist';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { TSong } from '../../entities/song/model/types';
 import { userModel } from '../../entities/user/model';
 import { confirmModel } from '../../layout/confirm/model';
-import { normalizeString } from '../../shared/funcs/normalizeString';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
+import { usePlaylistSearch } from './hooks/usePlaylistSearch';
 import { PlaylistPageContent } from './PlaylistPageContent';
-import { deletePlaylistFx } from '../../entities/playlist/model/delete-playlist';
-import { updatePlaylistFx } from '../../entities/playlist/model/update-playlist';
 
 export const PlaylistPage = () => {
     const [currentPlaylist, loading, isEditing, searching] =
@@ -23,31 +23,15 @@ export const PlaylistPage = () => {
         deletePlaylistFx.pending,
     ]);
     const isLoadingEditing = isDeleting || isUpdating;
-    const [playlistSongs, setPlaylistSongs] = useState(
-        currentPlaylistSongs ?? []
-    );
+    const { visible } = usePlaylistSearch(searching, currentPlaylistSongs);
 
     const queue = createQueueObject({
         name: currentPlaylist?.name,
-        songs: playlistSongs,
+        songs: visible,
         imageUrl: currentPlaylist?.image,
         url: `/playlist/${currentPlaylist?.id}`,
         id: currentPlaylist?.id,
     });
-
-    useEffect(() => {
-        if (searching.value.length > 0) {
-            setPlaylistSongs(
-                (currentPlaylistSongs ?? []).filter((s) =>
-                    normalizeString(s.name).includes(
-                        normalizeString(searching.value)
-                    )
-                )
-            );
-        } else {
-            setPlaylistSongs(currentPlaylistSongs ?? []);
-        }
-    }, [currentPlaylistSongs, searching.value]);
 
     const isOwner = !!currentPlaylist?.authors.find(
         (author) => author.uid === currentUser?.uid
@@ -99,7 +83,7 @@ export const PlaylistPage = () => {
             loading={loading}
             queue={queue}
             isOwner={isOwner}
-            currentPlaylistSongs={playlistSongs}
+            currentPlaylistSongs={visible}
             isEditing={isEditing}
             handleRemoveSong={handleRemove}
             searching={searching}

@@ -31,6 +31,11 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
         border-radius: ${PLAYLIST_RADIUS};
     }
 
+    &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
     & .play-button {
         position: absolute;
 
@@ -46,7 +51,8 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
         transition: 0.1s opacity;
         opacity: 0;
         z-index: 10;
-        outline: 1px solid ${({ theme }) => theme.colors.border};
+        box-shadow: none;
+        /* outline: 1px solid ${({ theme }) => theme.colors.border}; */
 
         svg {
             filter: brightness(${({ theme }) => theme.colors.brightness});
@@ -101,7 +107,7 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
     &.playing {
         & .play-button {
             opacity: 1;
-            border: 1px solid ${({ theme }) => theme.colors.border};
+            outline: 1px solid ${({ theme }) => theme.colors.border};
         }
     }
 

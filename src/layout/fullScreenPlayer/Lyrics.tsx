@@ -19,11 +19,11 @@ export const Lyrics = () => {
     const currentLyricRef = useRef<HTMLDivElement>(null);
     const [
         lyrics,
+        loading,
         currentLyricIndex,
         shouldCalculateLyrics,
         isKaraoke,
         userEnabledKaraoke,
-        loading,
     ] = lyricsModel.useLyrics();
     const { currentSong, state } = songModel.useSong();
     const [currentTime, isSlowVersion] = useUnit([
@@ -55,7 +55,7 @@ export const Lyrics = () => {
     }, [currentLyricIndex, isEnabledKaraoke]);
 
     useEffect(() => {
-        lyricsModel.events.loadLyrics();
+        lyricsModel.events.loadLyrics(undefined);
         songModel.lyrics.isLyricsVisibleNowApi.set(true);
 
         return () => {

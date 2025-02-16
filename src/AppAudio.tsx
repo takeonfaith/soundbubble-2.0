@@ -113,11 +113,11 @@ const useAppAudio = () => {
             Math.abs(audioRef.current.currentTime - currentTime) > 0.1 &&
             !isSliding
         ) {
-            console.log('Audio', currentTime);
-
             audioRef.current.currentTime = currentTime;
         }
     }, [currentTime, isSliding]);
+
+    // console.log(audioRef.current.currentTime);
 
     useEffect(() => {
         if (audioRef.current) {

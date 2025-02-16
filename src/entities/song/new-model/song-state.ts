@@ -14,6 +14,7 @@ import {
     next,
     queueApi,
 } from './queue';
+import { createPendingEffectsStore } from '../../../shared/effector/createPendingEffects';
 
 type PlayProps = {
     queue: TQueue;
@@ -26,7 +27,7 @@ type TLoadSongsThenPlay = {
     sort?: boolean;
 };
 
-const loadSongsFx = createEffect<TLoadSongsThenPlay, TSong[]>();
+export const loadSongsFx = createEffect<TLoadSongsThenPlay, TSong[]>();
 
 export const $songState = createStore<SongState | null>(null);
 
@@ -46,6 +47,11 @@ export const loadAndPlay = createEvent();
 
 export const loadSongsThenShuffle = createEvent<TLoadSongsThenPlay>();
 export const loadSongsThenPlay = createEvent<TLoadSongsThenPlay>();
+
+export const $pendingQueueLoading = createPendingEffectsStore({
+    effects: [loadSongsFx],
+    getId: ({ queue }) => [queue.id],
+});
 
 const initialize = createEvent<PlayProps>();
 
@@ -102,11 +108,16 @@ sample({
 
 sample({
     clock: playPauseQueue,
-    source: $currentSong,
-    filter: (currentSong, { queue, currentSongIndex }) =>
-        !currentSong || currentSong.id !== queue.songs[currentSongIndex].id,
+    source: { queue: $queue, currentSong: $currentSong },
+    filter: (
+        { queue: currentQueue, currentSong },
+        { queue, currentSongIndex }
+    ) =>
+        !currentQueue ||
+        currentQueue.id !== queue.id ||
+        currentSong?.id !== queue.songs[currentSongIndex].id,
     fn: (_, props) => props,
-    target: [initialize, loadAndPlay],
+    target: [initialize, currentTimeApi.reset, loadAndPlay],
 });
 
 sample({
@@ -116,13 +127,6 @@ sample({
         currentSongIndex: 0,
     }),
     target: [initialize, loadAndPlay],
-});
-
-sample({
-    clock: [queueApi.pNext, queueApi.pPrevious],
-    source: $songState,
-    filter: (songState) => songState === SongState.playing,
-    target: loadAndPlay,
 });
 
 sample({
@@ -141,6 +145,30 @@ sample({
     clock: loadAndPlay,
     fn: () => SongState.loadingThenPlay,
     target: $songState,
+});
+
+sample({
+    clock: [load, loadAndPlay],
+    source: { queue: $queue, pendingQueueLoading: $pendingQueueLoading },
+    filter: ({ queue }) => !!queue,
+    fn: ({ queue, pendingQueueLoading }) => {
+        const newPending = new Set(pendingQueueLoading);
+        newPending.add(queue!.id);
+        return newPending;
+    },
+    target: $pendingQueueLoading,
+});
+
+sample({
+    clock: loaded,
+    source: { queue: $queue, pendingQueueLoading: $pendingQueueLoading },
+    filter: ({ queue }) => !!queue,
+    fn: ({ queue, pendingQueueLoading }) => {
+        const newPending = new Set(pendingQueueLoading);
+        newPending.delete(queue!.id);
+        return newPending;
+    },
+    target: $pendingQueueLoading,
 });
 
 sample({
@@ -213,6 +241,18 @@ sample({
         return res;
     },
     target: stop,
+});
+
+sample({
+    clock: [
+        queueApi.pNext,
+        queueApi.pPrevious,
+        queueApi.pToStart,
+        currentTimeApi.reset,
+    ],
+    source: $songState,
+    filter: (songState) => songState === SongState.playing,
+    target: loadAndPlay,
 });
 
 sample({

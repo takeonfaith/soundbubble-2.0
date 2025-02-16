@@ -78,7 +78,7 @@ export const LikeButtonWrapper = styled.div`
 `;
 
 export const PlaylistNameStyled = styled.div`
-    &.hoverable:hover > * {
+    &.hoverable:hover {
         outline: 1px solid ${({ theme }) => theme.colors.border};
         border-radius: 4px;
     }
@@ -93,6 +93,7 @@ export const PlaylistNameInput = styled(Input)`
     padding: 6px;
     background: ${({ theme }) => theme.colors.lightHover};
     outline: 1px solid ${({ theme }) => theme.colors.border};
+    transform: translateX(-6px);
 `;
 
 export const DescriptionStyled = styled.div`

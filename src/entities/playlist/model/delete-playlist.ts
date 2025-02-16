@@ -1,9 +1,10 @@
 import { createEvent, sample } from 'effector';
 import { Database } from '../../../database';
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
-import { $user, removeOwnPlaylistFromLibrary } from '../../user/model/user';
+import { $user } from '../../user/model/user';
 import { TPlaylist } from './types';
 import { $currentPlaylist, $currentPlaylistSongs } from './playlist';
+import { removeOwnPlaylistFromLibrary } from '../../user/model/library/playlists';
 
 export const deletePlaylistFx = createEffectWithToast<
     { playlist: TPlaylist; onSuccess?: (playlist: TPlaylist) => void },

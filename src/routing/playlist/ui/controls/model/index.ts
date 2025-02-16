@@ -4,7 +4,7 @@ type ButtonType = 'default' | 'slow' | 'shuffle';
 
 export const load = createEvent<ButtonType>();
 
-export const $type = createStore<ButtonType | null>(null);
+export const $type = createStore<ButtonType>('default');
 
 sample({
     clock: load,

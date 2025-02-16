@@ -62,6 +62,8 @@ sample({
         currentSongIndex: $currentSongIndex,
     },
     filter: ({ currentTime, currentSongIndex }) => {
+        console.log(currentTime > 5 || currentSongIndex === 0);
+
         return currentTime > 5 || currentSongIndex === 0;
     },
     fn: () => 0,

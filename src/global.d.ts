@@ -38,6 +38,9 @@ declare global {
 
     type Nullable<T> = T | null | undefined;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    type NonEmptyString = `${any}${string}`;
+
     interface Window {
         // for safari compatibility
         webkitAudioContext: typeof AudioContext;

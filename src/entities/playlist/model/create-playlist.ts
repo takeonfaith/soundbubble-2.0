@@ -1,9 +1,9 @@
 import { createEvent, sample } from 'effector';
 
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
-import { addOwnPlaylistToLibrary } from '../../user/model/user';
 import { TUploadPlaylist, TPlaylist } from './types';
 import { Database } from '../../../database';
+import { addOwnPlaylistToLibrary } from '../../user/model/library/playlists';
 
 type CreatePlaylistProps = {
     playlist: TUploadPlaylist;

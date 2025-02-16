@@ -2,9 +2,11 @@ import { createEffect, sample } from 'effector';
 import { Database } from '../../../database';
 import { TUser } from './types';
 import { userIsLoggedIn } from '../../chat/lib/userIsLoggedIn';
-import { setUser, $user, logout } from './user';
+import { $user } from './user';
 import { interval } from 'patronum';
 import { TIME_IN_MS } from '../../../shared/constants/time';
+import { logout } from './logout';
+import { setUser } from './init';
 
 export const updateUserOnlineFx = createEffect<TUser, void>();
 

@@ -4,30 +4,25 @@ import {
     IconDotsVertical,
     IconHeadphones,
     IconHeart,
-    IconInfoCircle,
-    IconShare3,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { TQueue } from '../../entities/song/model/types';
 import { useToggleUserLike } from '../../entities/user/hooks/useToggleUserLike';
-import { userModel } from '../../entities/user/model';
 import { TUser } from '../../entities/user/model/types';
 import { UserCover } from '../../entities/user/ui/UserCover';
-import { UserInfo } from '../../entities/user/ui/UserInfo';
 import { UserStatus } from '../../entities/user/ui/UserStatus';
-import { ControlButtons } from '../../features/controlButtons';
 import { LikeButton } from '../../features/likeButton';
-import { ShareModal } from '../../features/shareModal';
-import { modalModel } from '../../layout/modal/model';
-import { popupModel } from '../../layout/popup/model';
+import { Popup } from '../../layout/newpopup';
 import { Button } from '../../shared/components/button';
-import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
 import { Flex } from '../../shared/components/flex';
 import Popover from '../../shared/components/popover';
-import { NO_ACCOUNT_FOR_ACTION } from '../../shared/constants/texts';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
 import { PageTopStyled, TopLeftCorner, TopRightCorner } from '../album/styles';
+import { PlayButton } from '../playlist/ui/controls/PlayButton';
+import { AuthorMoreContext } from './AuthorMoreContext';
 import { ButtonsStyled } from './styles';
+import { ShuffleButton } from '../playlist/ui/controls/ShuffleButton';
+import { SlowButton } from '../playlist/ui/controls/SlowButton';
 
 type Props = {
     author: TUser | null;
@@ -36,7 +31,6 @@ type Props = {
 
 export const AuthorPageTop = ({ author, queue }: Props) => {
     const navigate = useNavigate();
-    const [currentUser] = userModel.useUser();
     const { handleToggleLike, isLiked, performingAction } =
         useToggleUserLike(author);
 
@@ -50,50 +44,6 @@ export const AuthorPageTop = ({ author, queue }: Props) => {
         numberOfListenersPerMonth,
         subscribers,
     } = author;
-
-    const handleClickShare = () => {
-        popupModel.events.close();
-        modalModel.events.open({
-            title: `Share ${displayName} with friends`,
-            content: <ShareModal entity={author} />,
-        });
-    };
-
-    const handleInfo = () => {
-        popupModel.events.close();
-        modalModel.events.open({
-            title: '',
-            content: <UserInfo user={author} />,
-        });
-    };
-
-    const handleOpenMore = (e: Evt<'btn'>) => {
-        e.stopPropagation();
-
-        popupModel.events.open({
-            e,
-            height: 96,
-            content: (
-                <DefaultContextMenuStyled>
-                    <Popover
-                        content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}
-                    >
-                        <Button
-                            disabled={!currentUser}
-                            onClick={handleClickShare}
-                        >
-                            <IconShare3 />
-                            Share
-                        </Button>
-                    </Popover>
-                    <Button onClick={handleInfo}>
-                        <IconInfoCircle />
-                        Info
-                    </Button>
-                </DefaultContextMenuStyled>
-            ),
-        });
-    };
 
     return (
         <PageTopStyled $colors={imageColors}>
@@ -168,15 +118,23 @@ export const AuthorPageTop = ({ author, queue }: Props) => {
                     loading={performingAction}
                     onClick={handleToggleLike}
                 />
-                <Button $height="40px" $width="40px" onClick={handleOpenMore}>
-                    <IconDotsVertical size={20} />
-                </Button>
+                <Popup content={<AuthorMoreContext author={author} />}>
+                    <Button $height="40px" $width="40px">
+                        <IconDotsVertical size={20} />
+                    </Button>
+                </Popup>
             </TopRightCorner>
             {/* <TopBackground>
 			  		<img src={Wave} />
 		  		</TopBackground> */}
-            <ButtonsStyled>
-                <ControlButtons queue={queue} buttonColor={imageColors[0]} />
+            <ButtonsStyled $color={imageColors[0]}>
+                <PlayButton
+                    short={false}
+                    queue={queue}
+                    primaryColor={imageColors[0]}
+                />
+                <SlowButton primaryColor={imageColors[0]} queue={queue} />
+                <ShuffleButton queue={queue} />
             </ButtonsStyled>
         </PageTopStyled>
     );

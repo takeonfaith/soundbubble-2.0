@@ -1,9 +1,8 @@
 import { useUnit } from 'effector-react';
 import { useIsPlaylistLiked } from '../../../shared/hooks/useIsPlaylistLiked';
-import { addPlaylistFx, removePlaylistFx } from '../../user/model/user';
-import { TPlaylist } from '../model/types';
-import { useEffect, useState } from 'react';
 import { userModel } from '../../user/model';
+import { $isAddingOrRemovingPlaylists } from '../../user/model/library/playlists';
+import { TPlaylist } from '../model/types';
 
 export type ToggleLike = {
     isLiked: boolean;
@@ -13,22 +12,19 @@ export type ToggleLike = {
 
 export const useTogglePlaylistLike = (playlist: TPlaylist | null) => {
     const isLiked = useIsPlaylistLiked(playlist);
-    const [isAddingPlaylisst, isRemovingPlaylist] = useUnit([
-        addPlaylistFx.pending,
-        removePlaylistFx.pending,
+    const [isAddingOrRemovingPlaylists] = useUnit([
+        $isAddingOrRemovingPlaylists,
     ]);
 
-    const [isActing, setIsActing] = useState(false);
-
-    const performingAction =
-        (isAddingPlaylisst || isRemovingPlaylist) && isActing;
+    const performingAction = playlist
+        ? isAddingOrRemovingPlaylists.has(playlist.id)
+        : false;
 
     const handleToggleLike = (e: Evt<'btn'>) => {
         e.preventDefault();
         e.stopPropagation();
 
         if (playlist) {
-            setIsActing(true);
             userModel.events.toggleOtherPlaylistLiked({
                 playlist,
                 isLiked,
@@ -37,12 +33,6 @@ export const useTogglePlaylistLike = (playlist: TPlaylist | null) => {
             e.stopPropagation();
         }
     };
-
-    useEffect(() => {
-        if (!isAddingPlaylisst && !isRemovingPlaylist) {
-            setIsActing(false);
-        }
-    }, [isAddingPlaylisst, isRemovingPlaylist]);
 
     return { isLiked, handleToggleLike, performingAction };
 };

@@ -65,7 +65,7 @@ export const TopPlateStyled = styled(BeautifulBackground)`
     }
 
     &:active {
-        .playbutton {
+        .play-button {
             transform: scale(1);
         }
     }
@@ -97,7 +97,7 @@ export const TopPlateStyled = styled(BeautifulBackground)`
         }
     }
 
-    .playbutton {
+    .play-button {
         position: absolute;
         bottom: 30px;
         right: 30px;

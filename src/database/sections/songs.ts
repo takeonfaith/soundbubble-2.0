@@ -13,7 +13,6 @@ import { Database } from '..';
 import { createDefaultSuggestion } from '../../entities/search/lib/createDefaultSuggestion';
 import { createLyricsObject } from '../../entities/song/lib/createLyricsObject';
 import { createSongObject } from '../../entities/song/lib/createSongObject';
-import { getAuthorsToString } from '../../entities/song/lib/getAuthorsToString';
 import { shuffleArray } from '../../entities/song/lib/shuffleArray';
 import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
 import { TUser } from '../../entities/user/model/types';
@@ -75,10 +74,10 @@ export class Songs {
     };
 
     static getSongsByUids = async (
-        uids: string[],
+        uids: string[] | undefined,
         sortedByListens?: boolean
     ): Promise<TSong[]> => {
-        if (uids.length === 0) return [];
+        if (!uids || uids.length === 0) return [];
 
         if (sortedByListens) {
             const additionalContstraints = [];

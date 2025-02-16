@@ -1,13 +1,14 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { Database } from '../../../database';
-import { $searchHistory, $user, setSearchHistory } from '../../user/model/user';
-import { TEntity, TPlace, TSuggestion } from './types';
 import { TExtendedSuggestion } from '../../../features/searchWithHints/types';
+import { $searchHistory, setSearchHistory } from './search-history';
+import { $user } from '../../user/model/user';
+import { TEntity, TPlace, TSuggestion } from './types';
 
 type GetResultProps = {
     query: string;
     place?: TPlace;
-    suggestion?: TExtendedSuggestion | null;
+    suggestion?: TSuggestion | null;
 };
 
 export const getResultFx = createEffect(
@@ -122,7 +123,7 @@ sample({
     filter: (_, { suggestion }) => !!suggestion,
     fn: ({ userId }, { suggestion }) => ({
         userId,
-        suggestion,
+        suggestion: suggestion!,
     }),
     target: setSearchHistory,
 });
@@ -140,7 +141,7 @@ sample({
 
 sample({
     clock: getResultFx.doneData,
-    fn: (result) => result,
+    fn: (result) => result.filter((r) => r !== null),
     target: $searchResult,
 });
 

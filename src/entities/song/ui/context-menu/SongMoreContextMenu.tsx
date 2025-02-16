@@ -45,7 +45,7 @@ const SlowButton = styled(Button)`
     justify-content: space-between !important;
 
     & svg {
-        color: ${({ theme }) => theme.scheme.purple.action} !important;
+        color: ${({ theme }) => theme.scheme.pink.action} !important;
     }
 `;
 

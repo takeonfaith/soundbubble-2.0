@@ -7,8 +7,6 @@ export const $search = createStore<{ isSearching: boolean; value: string }>({
 
 export const isSearchingApi = createApi($search, {
     updateIsSearching: (store, val: boolean) => {
-        console.log(val);
-
         return { ...store, isSearching: val };
     },
     updateSearchValue: (store, val: string) => ({ ...store, value: val }),

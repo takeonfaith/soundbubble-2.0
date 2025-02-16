@@ -1,10 +1,17 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import ReactDOM from 'react-dom';
 import { useClickOutside } from '../../shared/hooks/useClickOutside';
 import { ANIMATION_DURATION, DELAY, INITIAL_SCALE } from './constants';
+import { calculatePosition } from './lib/calculatePosition';
 import { PopupContainer } from './styles';
 import { PopupPosition, TTrigger } from './types';
-import { calculatePosition } from './lib/calculatePosition';
 
 type Props = {
     position?: PopupPosition;
@@ -31,36 +38,49 @@ export const Popup = ({
     const timeout = useRef<NodeJS.Timeout | null>(null);
     const delayTimeout = useRef<NodeJS.Timeout | null>(null);
     const closeDelay = triggers.includes('hover') ? DELAY : 0;
+    const isDisabled = useMemo(
+        () =>
+            React.Children.toArray(children).some((child: React.ReactNode) =>
+                typeof child === 'object' && child !== null && 'props' in child
+                    ? child?.props.disabled
+                    : false
+            ),
+        [children]
+    );
 
     const handleOpen = () => {
-        setIsOpen(true);
-        setIsVisible(true);
-        if (delayTimeout.current) {
-            clearTimeout(delayTimeout.current);
-        }
+        if (!isDisabled) {
+            setIsOpen(true);
+            setIsVisible(true);
+            if (delayTimeout.current) {
+                clearTimeout(delayTimeout.current);
+            }
 
-        if (timeout.current) {
-            clearTimeout(timeout.current);
+            if (timeout.current) {
+                clearTimeout(timeout.current);
+            }
         }
     };
 
-    const handleClose = () => {
-        if (closeDelay) {
-            delayTimeout.current = setTimeout(() => {
+    const handleClose = useCallback(() => {
+        if (!isDisabled) {
+            if (closeDelay) {
+                delayTimeout.current = setTimeout(() => {
+                    setIsVisible(false);
+                }, closeDelay);
+            } else {
                 setIsVisible(false);
-            }, closeDelay);
-        } else {
-            setIsVisible(false);
-        }
+            }
 
-        timeout.current = setTimeout(() => {
-            setIsOpen(false);
-        }, ANIMATION_DURATION + closeDelay);
-    };
+            timeout.current = setTimeout(() => {
+                setIsOpen(false);
+            }, ANIMATION_DURATION + closeDelay);
+        }
+    }, [closeDelay, isDisabled]);
 
     // Вычисляем координаты попапа
     useLayoutEffect(() => {
-        if (isOpen && anchorRef.current && content) {
+        if (isOpen && anchorRef.current && content && !isDisabled) {
             const { width, height, x, y } =
                 anchorRef.current.getBoundingClientRect();
             const popUpValues = popupRef.current?.getBoundingClientRect() ?? {
@@ -89,7 +109,15 @@ export const Popup = ({
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen, anchorRef, position, popupRef]);
+    }, [isOpen, anchorRef, position, popupRef, isDisabled]);
+
+    useEffect(() => {
+        document.addEventListener('scroll', () => {
+            console.log('scroll');
+
+            handleClose();
+        });
+    }, [handleClose]);
 
     useClickOutside(popupRef, () => handleClose());
 
@@ -123,10 +151,7 @@ export const Popup = ({
                 ReactDOM.createPortal(
                     <>
                         <PopupContainer
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleClose();
-                            }}
+                            onClick={(e) => e.stopPropagation()}
                             $closeDelay={closeDelay}
                             className={`${isVisible ? '' : 'hidden'}`}
                             ref={popupRef}

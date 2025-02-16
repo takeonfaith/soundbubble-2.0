@@ -8,13 +8,14 @@ import {
 } from 'effector';
 import { Unsubscribe } from 'firebase/firestore';
 import { Database } from '../../../database';
+import { setUser } from '../../user/model/init';
 import { TUser } from '../../user/model/types';
-import { $user, logout, setUser } from '../../user/model/user';
+import { $user } from '../../user/model/user';
 import { getHeavyMediaIdsFromChats } from '../lib/getHeavyMediaIdsFromChats';
 import { loadHeavyMedia } from './heavy-media';
 import { TChat } from './types';
 
-let unsubscribe: Unsubscribe | null = null;
+export let unsubscribeFromChats: Unsubscribe | null = null;
 
 const $initialLoad = createStore(true);
 
@@ -26,11 +27,7 @@ export const insertChats = createEvent<TChat[]>();
 
 export const $currentChatId = createStore<Nullable<string>>('');
 
-$currentChatId.reset(logout);
-
 export const $chats = createStore<TChat[]>([]);
-
-$chats.reset(logout);
 
 export const $currentChat = combine(
     $currentChatId,
@@ -43,12 +40,6 @@ export const $currentChat = combine(
 
 export const currentChatIdApi = createApi($currentChatId, {
     setCurrentChatId: (_, id: string | null | undefined) => id,
-});
-
-// unsubscribe from chat updates if logout
-logout.watch(() => {
-    unsubscribe?.();
-    unsubscribe = null;
 });
 
 sample({
@@ -130,7 +121,7 @@ initialChatLoadFx.use(async (user: TUser) => {
 });
 
 subscribeToChatsFx.use(async (userId: string) => {
-    unsubscribe = await Database.Chats.subscribeToChatsWithUserId(
+    unsubscribeFromChats = await Database.Chats.subscribeToChatsWithUserId(
         userId,
         (chats) => {
             console.log(chats);

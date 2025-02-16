@@ -8,11 +8,16 @@ import {
 import { Database } from '../../../database';
 import { toastModel } from '../../../layout/toast/model';
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
-import { updateDeepObject } from '../../../shared/funcs/updateDeepObject';
+import { createPendingEffectsStore } from '../../../shared/effector/createPendingEffects';
+import { filterOneArrayWithAnother } from '../../../shared/funcs/filterOneArrayWithAnother';
 import { TSong } from '../../song/model/types';
-import { $ownPlaylists, $user, updateOwnPlaylist } from '../../user/model/user';
 import { $currentPlaylist, $currentPlaylistSongs } from './playlist';
 import { TPlaylist, TUploadPlaylist } from './types';
+import {
+    $ownPlaylists,
+    updateOwnPlaylist,
+} from '../../user/model/library/playlists';
+import { $user } from '../../user/model/user';
 
 // #region Update Playlist
 type TUpdatePlaylistEffectProps = {
@@ -63,10 +68,15 @@ export const updateLocalPlaylist = createEvent<{
     songs?: TSong[];
 }>();
 export const addSongsToPlaylists = createEvent<AddSongsToPlaylistProps>();
-
 export const removeSongsFromPlaylists = createEvent<AddSongsToPlaylistProps>();
 
+export const $pendingAddingOrRemoving = createPendingEffectsStore({
+    effects: [addSongsToPlaylistsFx, removeSongsFromPlaylistsFx],
+    getId: (p) => p.playlists.map((p) => p.id),
+});
+
 export const $isEditing = createStore(false);
+
 export const isEditingApi = createApi($isEditing, {
     updateIsEditing: (_, val: boolean) => val,
 });
@@ -81,19 +91,29 @@ sample({
     target: removeSongsFromPlaylistsFx,
 });
 
-// If this playlist is opened, update UI
 sample({
-    clock: addSongsToPlaylistsFx.doneData,
-    source: $currentPlaylist,
-    filter: (currentPlaylist, { playlists }) =>
-        !!playlists.find((p) => p.id === currentPlaylist?.id),
-    fn: (currentPlaylist, { songs }) =>
-        updateDeepObject(
-            currentPlaylist,
-            'songs',
-            songs.map((s) => s.id)
-        ),
-    target: $currentPlaylist,
+    clock: removeSongsFromPlaylistsFx.doneData,
+    source: $ownPlaylists,
+    fn: (ownPlaylists, { playlists, songs }) => {
+        const newPlaylists = [...ownPlaylists];
+        const found = newPlaylists.find(
+            // POTENTIAL BUG: ----------------------↓ because it's an array and I only change in the first element
+            (playlist) => playlist.id === playlists[0].id
+        )!;
+
+        return {
+            playlist: {
+                ...found,
+                songs: filterOneArrayWithAnother(
+                    found.songs,
+                    songs,
+                    (id) => id,
+                    (songs) => songs.map((s) => s.id)
+                ),
+            } as TPlaylist,
+        };
+    },
+    target: updateLocalPlaylist,
 });
 
 sample({
@@ -120,7 +140,10 @@ sample({
         return newPlaylists.reduce((acc, p, index) => {
             const found = playlists.find((playlist) => playlist.id === p.id);
             if (found) {
-                newPlaylists[index].songs = [...songs.map((s) => s.id)];
+                newPlaylists[index].songs = [
+                    ...newPlaylists[index].songs,
+                    ...songs.map((s) => s.id),
+                ];
             }
             acc.push(newPlaylists[index]);
             return acc;
@@ -193,6 +216,8 @@ addSongsToPlaylistsFx.use(async ({ songs, playlists, onSuccess }) => {
 });
 
 removeSongsFromPlaylistsFx.use(async ({ songs, playlists, onSuccess }) => {
+    console.log('remove songs', songs, playlists);
+
     await Database.Playlists.removeSongsFromPlaylists(songs, playlists);
     onSuccess?.();
     return { songs, playlists };
@@ -226,8 +251,8 @@ removeSongsFromPlaylistsFx.failData.watch((error) => {
 removeSongsFromPlaylistsFx.done.watch(({ result: { songs, playlists } }) => {
     toastModel.events.add({
         type: 'success',
-        message: `Song${
-            songs.length > 1 ? 's' : ''
-        } successfully removed from playlist${playlists.length > 1 ? 's' : ''}`,
+        message: `Song${songs.length > 1 ? 's' : ''} removed from playlist${
+            playlists.length > 1 ? 's' : ''
+        }`,
     });
 });

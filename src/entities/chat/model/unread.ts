@@ -3,7 +3,7 @@ import { Unsubscribe } from 'firebase/firestore';
 import { debounce } from 'patronum';
 import { Database } from '../../../database';
 import { updateDeepObject } from '../../../shared/funcs/updateDeepObject';
-import { $user, logout } from '../../user/model/user';
+import { $user } from '../../user/model/user';
 import { $currentChat, $currentChatId, initialChatLoadFx } from './chats';
 import { READ_MESSAGES_COOLDOWN } from './constants';
 import { initiallyLoadChatMessagesFx } from './messages';
@@ -39,15 +39,9 @@ export const updateUnread = createEvent<number>();
 const updateLastReadAt = createEvent();
 
 export const $userLastReadAt = createStore<number>(Infinity);
-const $messagesReadCount = createStore(0);
-
+export const $messagesReadCount = createStore(0);
 export const $unreadCountMap = createStore<TUnreadCount>({});
 export const $maxSeenAtInCurrentChat = createStore<number | null>(null);
-
-$unreadCountMap.reset(logout);
-$userLastReadAt.reset(logout);
-$maxSeenAtInCurrentChat.reset(logout);
-$messagesReadCount.reset(logout);
 
 // Read messages with a delay so that it doesn't spam the server
 // while reading a bunch of unread messages

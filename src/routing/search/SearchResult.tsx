@@ -16,6 +16,7 @@ import { SkeletonPageAnimation } from '../../shared/components/skeleton/Skeleton
 import { SearchSkeleton } from './SearchSkeleton';
 import { TopAuthorCard } from './TopAuthorCard';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
+import { Browse } from './Browse';
 
 const SearchPageWrapper = styled.div`
     max-width: 650px;
@@ -32,8 +33,11 @@ const SearchPageWrapper = styled.div`
 
 export const SearchResult = () => {
     const [params] = useSearchParams();
-    const [result, isLoading] = useUnit([$searchResult, $isLoadingResult]);
-    const [searchQuery] = useUnit([$searchQuery]);
+    const [searchQuery, result, isLoading] = useUnit([
+        $searchQuery,
+        $searchResult,
+        $isLoadingResult,
+    ]);
 
     const first = result[0];
 
@@ -47,13 +51,21 @@ export const SearchResult = () => {
     const noResult =
         params.get('query') !== null && result.length === 0 && !isLoading;
 
-    // const notSearchedYet =
-    //     params.get('query') === null && result.length === 0 && !isLoading;
+    const notSearchedYet =
+        params.get('query') === null && result.length === 0 && !isLoading;
 
     const queue = createQueueObject({
         name: 'Search',
         url: `/search/?query=${searchQuery}`,
     });
+
+    if (notSearchedYet) {
+        return (
+            <ContentWrapper>
+                <Browse />
+            </ContentWrapper>
+        );
+    }
 
     return (
         <ContentWrapper>

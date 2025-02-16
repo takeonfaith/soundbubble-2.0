@@ -232,10 +232,10 @@ export const PageTop = ({ album, isOwner, handleClickShare, queue }: Props) => {
             <TopBackground>
                 <img src={Wave} />
             </TopBackground>
-            <ButtonsStyled>
+            <ButtonsStyled $color={imageColors?.[0] ?? 'grey'}>
                 <ControlButtons
                     queue={queue}
-                    buttonColor={imageColors?.[0] ?? 'grey'}
+                    color={imageColors?.[0] ?? 'grey'}
                 />
             </ButtonsStyled>
         </PageTopStyled>

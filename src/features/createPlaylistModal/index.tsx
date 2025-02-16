@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { createPlaylistObject } from '../../entities/playlist/lib/createPlaylistObject';
 import { playlistModel } from '../../entities/playlist/model';
+import { TUploadPlaylist } from '../../entities/playlist/model/types';
+import { TSong } from '../../entities/song/model/types';
 import { createAuthorObject } from '../../entities/user/lib/createAuthorObject';
 import { userModel } from '../../entities/user/model';
 import { modalModel } from '../../layout/modal/model';
@@ -11,7 +13,6 @@ import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
 import { PhotoInput } from '../../shared/components/photoInput';
 import { useForm } from './model';
-import { TSong } from '../../entities/song/model/types';
 
 const CreatePlaylistModalStyled = styled.div`
     padding: 20px;
@@ -43,12 +44,20 @@ export const CreatePlaylistModal = ({ initialSongs }: Props) => {
         reset,
     } = useForm((obj, handleClean) => {
         const { name, photo, colors } = obj;
-        const playlist = createPlaylistObject(createAuthorObject(currentUser), {
+        const initialPlaylist: Partial<TUploadPlaylist> = {
             name: name,
             image: photo,
             imageColors: colors,
-            songs: initialSongs?.map((song) => song.id),
-        });
+        };
+
+        if (initialSongs) {
+            initialPlaylist.songs = initialSongs?.map((song) => song.id);
+        }
+
+        const playlist = createPlaylistObject(
+            createAuthorObject(currentUser),
+            initialPlaylist
+        );
 
         playlistModel.events.createPlaylist({
             playlist,

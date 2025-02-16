@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { IconMessagesOff } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
 import { useState } from 'react';
 import { createMessageObject } from '../../entities/chat/lib/createMessageObject';
@@ -15,17 +16,12 @@ import { CheckIcon } from '../../shared/components/checkIcon';
 import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
 import { Loading } from '../../shared/components/loading';
+import { PageMessage } from '../../shared/components/pageMessage';
 import getUID from '../../shared/funcs/getUID';
 import { AddEntitiesUI } from '../addEntitiesUI';
 import { getEntityId } from '../searchWithHints/lib/getDividedEntity';
 import { getEntityType } from '../searchWithHints/lib/getEntityType';
 import { BadgeStyled, ShareModalStyled } from './styles';
-import { PageMessage } from '../../shared/components/pageMessage';
-import {
-    IconFriendsOff,
-    IconMessagesOff,
-    TablerIconsProps,
-} from '@tabler/icons-react';
 
 type Props = {
     entity: TEntity | null | undefined;
@@ -90,8 +86,22 @@ export const ShareModal = ({ entity }: Props) => {
                 inputPlaceholder="Search for friends..."
                 entities={chatsWithNames}
                 renderItem={(chat, checked, onClick) => {
+                    if (chatsWithNames.length === 0) {
+                        return (
+                            chatsWithNames.length !== 0 && (
+                                <PageMessage
+                                    icon={IconMessagesOff}
+                                    title={'No chats yet'}
+                                    description={
+                                        'You have nobody to share with yet'
+                                    }
+                                />
+                            )
+                        );
+                    }
                     return (
                         <ChatItem
+                            as={'button'}
                             hideLastMessage
                             size="xs"
                             chat={chat}
@@ -127,13 +137,7 @@ export const ShareModal = ({ entity }: Props) => {
                     </>
                 )}
             />
-            {chatsWithNames.length === 0 && (
-                <PageMessage
-                    icon={IconMessagesOff}
-                    title={'No chats yet'}
-                    description={'You have nobody to share with'}
-                />
-            )}
+
             {(loadingChats || loadingChatData) && (
                 <Flex jc="center" width="100%" height="100%">
                     <Loading />

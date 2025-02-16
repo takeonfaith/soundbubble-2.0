@@ -34,6 +34,7 @@ type Props = {
     hideLastMessage?: boolean;
     onClick?: (chat: TChat, e: Evt<'a'>) => void;
     size?: keyof typeof coverSizes;
+    as?: string;
 };
 
 export const ChatItem = ({
@@ -45,6 +46,7 @@ export const ChatItem = ({
     onClick,
     sendStatus,
     hideLastMessage = false,
+    as,
     size = 'm',
 }: Props) => {
     const [currentUser] = userModel.useUser();
@@ -64,6 +66,7 @@ export const ChatItem = ({
         <ChatItemStyled
             onClick={handleClick}
             to={`/chats/${chat.id}`}
+            as={as}
             className={`chat-item ${isSelected ? 'selected' : ''}`}
         >
             <UserCover

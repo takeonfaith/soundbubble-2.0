@@ -6,7 +6,7 @@ export const LoadedStripe = styled.div`
     background: ${({ theme }) => theme.colors.skeleton};
     border-radius: 020px;
     pointer-events: none;
-    border-radius: 4px;
+    border-radius: 8px;
     position: absolute;
     left: 0;
     transition: 0.2s width, 0.2s height;
@@ -42,7 +42,7 @@ export const SliderWrapper = styled.div`
     align-items: center;
     height: 10px;
     transition: 0.1s transform;
-    border-radius: 4px;
+    border-radius: 8px;
 
     &::after {
         content: '';
@@ -56,7 +56,7 @@ export const SliderWrapper = styled.div`
     & .progress {
         width: 100%;
         height: var(--slider-size);
-        border-radius: 4px;
+        border-radius: 8px;
         transition: 0.2s filter, 0.2s transform;
         cursor: pointer;
         filter: brightness(${({ theme }) => theme.colors.brightness});
@@ -69,7 +69,7 @@ export const SliderWrapper = styled.div`
         & > div {
             transition: none;
             width: 0;
-            border-radius: 4px;
+            border-radius: 0px;
         }
 
         &:focus {

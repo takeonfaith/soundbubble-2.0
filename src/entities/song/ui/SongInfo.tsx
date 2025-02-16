@@ -1,4 +1,5 @@
 import { IconHeadphones, IconQuote } from '@tabler/icons-react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import { ShareModal } from '../../../features/shareModal';
 import { Lyric } from '../../../layout/fullScreenPlayer/styles';
@@ -6,17 +7,16 @@ import { modalModel } from '../../../layout/modal/model';
 import { Authors } from '../../../shared/components/authors';
 import { Button } from '../../../shared/components/button';
 import { Flex } from '../../../shared/components/flex';
+import { LoadingWrapper } from '../../../shared/components/loadingWrapper';
 import { SmallAvatarList } from '../../../shared/components/smallAvatarList';
 import { Subtext } from '../../../shared/components/subtext';
 import { hexToRgbA } from '../../../shared/funcs/hexToRgba';
 import { userModel } from '../../user/model';
 import { UserItem } from '../../user/ui';
 import { UserCover } from '../../user/ui/UserCover';
-import { TLyric, TSong } from '../model/types';
+import { TSong } from '../model/types';
+import { loadLyrics, lyricsModel } from '../new-model/lyrics';
 import { SongCover } from './SongCover';
-import { useEffect, useState } from 'react';
-import { Database } from '../../../database';
-import { LoadingWrapper } from '../../../shared/components/loadingWrapper';
 
 const SongInfoStyled = styled.div<{ shadowColor: string }>`
     width: 100%;
@@ -86,23 +86,10 @@ const Buttons = styled.div`
 `;
 
 const Lyrics = ({ song }: { song: TSong }) => {
-    const [lyrics, setLyrics] = useState<TLyric[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [lyrics, loading] = lyricsModel.useLyrics();
 
     useEffect(() => {
-        setLoading(true);
-        Database.Songs.loadLyrics(song.id)
-            .then((lyrics) => {
-                setLyrics(
-                    lyrics.filter(
-                        (lyric) =>
-                            lyric.text !== '@loading' && lyric.text !== '@end'
-                    )
-                );
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        loadLyrics(song.id);
     }, [song.id]);
 
     return (

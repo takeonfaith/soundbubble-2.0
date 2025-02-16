@@ -34,8 +34,8 @@ export const calculatePosition = (
             y: isOverBottomScreenY
                 ? window.innerHeight - menuHeight - 10
                 : y - Math.max(y + menuHeight - window.innerHeight + 10, 0),
-            origin: `${isOverRightScreenX ? 'left' : 'right'} ${
-                isOverBottomScreenY ? 'bottom' : 'top'
+            origin: `${isOverLeftScreenX ? 'left' : 'right'} ${
+                isOverBottomScreenY ? '' : 'top'
             }`,
         },
         right: {

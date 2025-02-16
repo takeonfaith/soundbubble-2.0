@@ -2,10 +2,16 @@ import { createEffect, createEvent, createStore, sample } from 'effector';
 import { Unsubscribe } from 'firebase/firestore';
 import { Database } from '../../../database';
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
+import { setUser } from './init';
 import { FriendStatus, TUser } from './types';
-import { $user, logout, setUser } from './user';
+import { $user } from './user';
 
-let unsubscribe: Unsubscribe | null = null;
+// const createSubscriptionEffect = () => {
+//     const effect = createEffect();
+//     let unsubscribe: Unsubscribe | null = null;
+// };
+
+export let unsubscribeFromFriends: Unsubscribe | null = null;
 
 type FriendQueryProps = {
     userId: string;
@@ -96,13 +102,6 @@ export const updateAwaiting = createEvent<TUser[]>();
 export const $friends = createStore<TUser[]>([]);
 export const $friendRequests = createStore<TUser[]>([]);
 export const $awaiting = createStore<TUser[]>([]);
-$friends.reset(logout);
-$friendRequests.reset(logout);
-$awaiting.reset(logout);
-
-logout.watch(() => {
-    unsubscribe?.();
-});
 
 sample({
     clock: setUser,
@@ -219,7 +218,7 @@ subscribeToFriendsFx.use(async (user: TUser) => {
         const friendIds = user?.friends ?? [];
         const friends = friendIds.map((friend) => friend.uid) ?? [];
 
-        unsubscribe = await Database.Users.listenToUsersChanges(
+        unsubscribeFromFriends = await Database.Users.listenToUsersChanges(
             friends,
             (users) => {
                 return updateFriendsFn(users, friendIds);

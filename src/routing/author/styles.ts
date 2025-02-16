@@ -83,18 +83,71 @@ export const PlaylistsStyled = styled.div`
     }
 `;
 
-export const ButtonsStyled = styled.div`
+export const ButtonsStyled = styled.div<{ $color: string }>`
     display: flex;
     align-items: center;
-    gap: 8px;
-    width: 300px;
+    gap: 2px;
+    width: fit-content;
     margin-bottom: -70px;
+    border-radius: 30px;
+    padding: 0px;
+    background: ${({ theme }) => theme.colors.pageBackground};
+    outline: 4px solid ${({ theme }) => theme.colors.pageBackground};
+    position: relative;
 
     button {
-        box-shadow: 0 20px 50px #00000036;
-
-        & > div {
+        &::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            inset: 0;
+            background: ${({ $color }) => $color};
+            z-index: -1;
+            display: none;
             filter: brightness(${({ theme }) => theme.colors.brightness});
+        }
+
+        &.primary {
+            background: transparent;
+            z-index: 2;
+            color: ${({ theme }) => theme.colors.textColorOppiste} !important;
+
+            &::before {
+                display: block;
+            }
+        }
+
+        &:not(.primary):not(:disabled) {
+            background: ${({ theme }) => theme.colors.input} !important;
+
+            /* &:hover {
+                background: ${({ theme }) => theme.colors.hover};
+            } */
+        }
+    }
+
+    & button.play-button {
+        border-radius: 30px 2px 2px 30px !important;
+
+        &::before {
+            border-radius: 30px 2px 2px 30px;
+        }
+    }
+
+    & button.slow-button {
+        border-radius: 2px !important;
+
+        &::before {
+            border-radius: 2px;
+        }
+    }
+
+    & button.shuffle-button {
+        border-radius: 2px 30px 30px 2px !important;
+
+        &::before {
+            border-radius: 2px 30px 30px 2px;
         }
     }
 

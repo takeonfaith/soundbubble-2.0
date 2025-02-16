@@ -4,10 +4,11 @@ import { createEffect, createEvent, sample } from 'effector';
 import { toastModel } from '../../../layout/toast/model';
 import { userIsLoggedIn } from '../../chat/lib/userIsLoggedIn';
 import { TUser } from '../../user/model/types';
-import { $user, addOwnPlaylistToLibrary } from '../../user/model/user';
+import { $user } from '../../user/model/user';
 import { $currentPlaylist } from './playlist';
 import { TPlaylist } from './types';
 import { Database } from '../../../database';
+import { addOwnPlaylistToLibrary } from '../../user/model/library/playlists';
 
 const sendPlaylistInvitationFx = createEffect<
     { senderId: string; playlist: TPlaylist; participants: TUser[] },
