@@ -1,14 +1,20 @@
-import { createEffect, createEvent, createStore, sample } from 'effector';
-import { throttle } from 'patronum';
+import {
+    createApi,
+    createEffect,
+    createEvent,
+    createStore,
+    sample,
+} from 'effector';
+import { debounce } from 'patronum';
 import { Database } from '../../../../database';
 import { toastModel } from '../../../../layout/toast/model';
+import { createPendingEffectsStore } from '../../../../shared/effector/createPendingEffects';
+import { getDataFromEffect } from '../../../../shared/effector/getDataFromEffect';
 import { TSong } from '../../../song/model/types';
 import { REMOVE_FROM_LIBRARY_TIMEOUT } from '../constants';
 import { TUser } from '../types';
 import { $user } from '../user';
 import { addAuthorsToLibrary } from './authors';
-import { getDataFromEffect } from '../../../../shared/effector/getDataFromEffect';
-import { createPendingEffectsStore } from '../../../../shared/effector/createPendingEffects';
 
 type TLibraryUpdateSongProps = {
     userId: string;
@@ -18,6 +24,7 @@ type TLibraryUpdateSongProps = {
 type TLibraryAddSongProps = {
     userId: string;
     song: TSong;
+    canSaveRevert?: boolean;
 };
 
 const updateLibraryFx = createEffect<TLibraryUpdateSongProps, void>();
@@ -40,6 +47,10 @@ export const $isAddingOrRemovingSong = createPendingEffectsStore({
     getId: (p) => [p.song.id],
 });
 const $copiedLibrary = createStore<TSong[]>([]).reset(resetCopiedLibrary);
+const $canSaveRevert = createStore<boolean>(true);
+const { enableSaveRevert } = createApi($canSaveRevert, {
+    enableSaveRevert: (_, val: boolean) => val,
+});
 
 sample({
     clock: toggleSongLiked,
@@ -90,17 +101,30 @@ sample({
 
 sample({
     clock: removeSongFromLibrary,
-    source: $library,
-    fn: (library) => library,
+    source: { library: $library, canSaveRevert: $canSaveRevert },
+    filter: ({ canSaveRevert }) => canSaveRevert,
+    fn: ({ library }) => library,
     target: $copiedLibrary,
 });
 
 sample({
     clock: removeSongFromLibrary,
-    source: $user,
-    filter: Boolean,
-    fn: (user, song) => ({ userId: user.uid, song }),
+    source: { user: $user, canSaveRevert: $canSaveRevert },
+    filter: ({ user }) => !!user,
+    fn: ({ user, canSaveRevert }, song) => ({
+        userId: user!.uid,
+        song,
+        canSaveRevert,
+    }),
     target: removeSongFromLibraryFx,
+});
+
+sample({
+    clock: removeSongFromLibraryFx.done,
+    source: $canSaveRevert,
+    filter: Boolean,
+    fn: () => false,
+    target: enableSaveRevert,
 });
 
 sample({
@@ -112,26 +136,30 @@ sample({
     target: $library,
 });
 
-const { unsubscribe } = throttle(
-    removeSongFromLibraryFx.doneData,
-    REMOVE_FROM_LIBRARY_TIMEOUT
-).watch(() => {
-    resetCopiedLibrary();
-});
+debounce(removeSongFromLibraryFx.doneData, REMOVE_FROM_LIBRARY_TIMEOUT).watch(
+    () => {
+        resetCopiedLibrary();
+        enableSaveRevert(true);
+    }
+);
 
 sample({
     clock: revertRemove,
     source: { user: $user, oldLibrary: $copiedLibrary },
-    filter: ({ user }) => !!user,
+    filter: ({ user, oldLibrary }) => !!user && oldLibrary.length !== 0,
     fn: ({ user, oldLibrary }) => {
-        unsubscribe();
-
         return {
             userId: user!.uid,
             songs: oldLibrary.map((s) => s.id).reverse(),
         };
     },
     target: [updateLibraryFx],
+});
+
+sample({
+    clock: revertRemove,
+    fn: () => true,
+    target: enableSaveRevert,
 });
 
 sample({
@@ -165,19 +193,21 @@ updateLibraryFx.use(async ({ userId, songs }) => {
     await Database.Users.updateLibrary(userId, songs);
 });
 
-removeSongFromLibraryFx.doneData.watch(() => {
-    toastModel.events.add({
-        message: 'Removed from Liked',
-        type: 'info',
-        action: {
-            text: 'Undo',
-            onClick: () => {
-                revertRemove();
+removeSongFromLibraryFx.done.watch(({ params: { canSaveRevert } }) => {
+    if (canSaveRevert) {
+        toastModel.events.add({
+            message: 'Removed from Liked',
+            type: 'info',
+            action: {
+                text: 'Undo',
+                onClick: () => {
+                    revertRemove();
+                },
             },
-        },
-        showTimer: true,
-        duration: REMOVE_FROM_LIBRARY_TIMEOUT,
-    });
+            showTimer: true,
+            duration: REMOVE_FROM_LIBRARY_TIMEOUT,
+        });
+    }
 });
 
 removeSongFromLibraryFx.failData.watch((err) => {
