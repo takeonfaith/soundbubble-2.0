@@ -1,4 +1,4 @@
-import { TLastQueue, TQueue, TSong } from '@song/model/types';
+import { TAuthor, TLastQueue, TQueue, TSong } from '@song/model/types';
 import {
     arrayUnion,
     getDocs,
@@ -75,13 +75,20 @@ export class Songs {
 
     static getSongsByUids = async (
         uids: string[] | undefined,
-        sortedByListens?: boolean
+        sortedByListens?: boolean,
+        maxSongs?: number
     ): Promise<TSong[]> => {
         if (!uids || uids.length === 0) return [];
 
-        if (sortedByListens) {
+        if (sortedByListens || maxSongs) {
             const additionalContstraints = [];
-            additionalContstraints.push(orderBy('listens', 'desc'));
+            if (sortedByListens) {
+                additionalContstraints.push(orderBy('listens', 'desc'));
+            }
+            if (maxSongs) {
+                additionalContstraints.push(limit(maxSongs));
+            }
+
             const q = query(
                 FB.get('songs'),
                 where('id', 'in', uids),
@@ -255,7 +262,7 @@ export class Songs {
         }
     }
 
-    static async getWave(authors: TUser[]): Promise<TSong[]> {
+    static async getWave(authors: (TUser | TAuthor)[]): Promise<TSong[]> {
         try {
             const getTop3SongsFromAuthor = async (author: TUser) => {
                 if (!author.ownSongs) return await Promise.resolve(null);
@@ -263,17 +270,36 @@ export class Songs {
                 return await this.getTopSongsBySongIds(author.ownSongs);
             };
 
+            if (!('ownSongs' in authors[0])) {
+                const res = await asyncRequests(authors, (author) => {
+                    return Users.getAuthorSongsByAuthorId(author.uid, false, 3);
+                });
+
+                const dsa = res
+                    .filter((r) => r !== null)
+                    .flatMap((r) => r.songs);
+
+                return shuffleArray(dsa);
+            }
+
             if (authors.length < 3) {
                 const songs = [
                     ...(await this.getTopSongs(20)),
-                    ...(await asyncRequests(authors, getTop3SongsFromAuthor))
+                    ...(
+                        await asyncRequests(
+                            authors as TUser[],
+                            getTop3SongsFromAuthor
+                        )
+                    )
                         .flat()
                         .filter((s) => s !== null),
                 ];
                 return shuffleArray(songs);
             }
 
-            const songs = (await asyncRequests(authors, getTop3SongsFromAuthor))
+            const songs = (
+                await asyncRequests(authors as TUser[], getTop3SongsFromAuthor)
+            )
                 .flat()
                 .filter((s) => s !== null);
 

@@ -1,4 +1,5 @@
 import { createApi, createEvent, createStore } from 'effector';
+import { indicatorModel } from '../../../layout/indicator/model';
 
 export const setLastRangeValue = createEvent<number>();
 
@@ -18,4 +19,12 @@ export const currentTimeApi = createApi($currentTime, {
     reset: () => 0,
     set: (_, value: number) => value,
     add: (time, val: number) => time + val,
+});
+
+currentTimeApi.add.watch((val) => {
+    if (val > 0) {
+        indicatorModel.show({ content: '+15 seconds' });
+    } else {
+        indicatorModel.show({ content: '-15 seconds' });
+    }
 });

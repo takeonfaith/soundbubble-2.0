@@ -10,10 +10,13 @@ import {
     $loopMode,
     $queue,
     $shuffleMode,
+    addAfterCurrentSongInQueue,
+    addToTheEndOfQueue,
     next,
     queueApi,
 } from './queue';
 import { initialize } from './queue/init';
+import { createQueueObject } from '../lib/createQueueObject';
 
 type PlayProps = {
     queue: TQueue;
@@ -239,6 +242,24 @@ sample({
         currentSongIndex,
     }),
     target: [initialize, loadAndPlay],
+});
+
+sample({
+    clock: [addAfterCurrentSongInQueue, addToTheEndOfQueue],
+    source: { queue: $queue },
+    filter: ({ queue }) => !queue,
+    fn: (_, song) => {
+        const queue = createQueueObject({
+            songs: [song],
+            name: song.name,
+            url: `/song/${song.id}`,
+            id: song.id,
+            imageUrl: song.cover,
+        });
+
+        return { queue, currentSongIndex: 0 };
+    },
+    target: [playPauseQueue],
 });
 
 loadSongsFx.use(async ({ queue, sort }) => {

@@ -4,6 +4,7 @@ import {
     IconShare3,
     IconSparkles,
     IconTrash,
+    IconWaveSine,
     IconWorld,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
@@ -19,7 +20,12 @@ import { DefaultContextMenuStyled } from '../../../../shared/components/defaultC
 import { Divider } from '../../../../shared/components/divider';
 import Popover from '../../../../shared/components/popover';
 import { NO_ACCOUNT_FOR_ACTION } from '../../../../shared/constants/texts';
-import { TSong } from '../../../../entities/song/model/types';
+import { SongState, TSong } from '../../../../entities/song/model/types';
+import { songModel } from '../../../../entities/song/new-model';
+import { uniqueArrayObjectsByField } from '../../../../shared/funcs/uniqueArrayObjectsByFields';
+import { Loading } from '../../../../shared/components/loading';
+import { useUnit } from 'effector-react';
+import { playWaveFx } from '../../../../entities/song/new-model/wave';
 
 type Props = {
     playlist: TPlaylist | null;
@@ -30,6 +36,12 @@ export const PlaylistMoreContext = ({ playlist, songs }: Props) => {
     const [currentUser] = userModel.useUser();
     const navigate = useNavigate();
     const isOwner = playlist?.ownerId === currentUser?.uid;
+    const { state } = songModel.useSong();
+    const playWavePending = useUnit(playWaveFx.pending);
+    const isLoadingWave =
+        state === SongState.loading ||
+        state === SongState.loadingThenPlay ||
+        playWavePending;
 
     const handleInfo = () => {
         modalModel.events.open({
@@ -95,13 +107,25 @@ export const PlaylistMoreContext = ({ playlist, songs }: Props) => {
         }
     };
 
+    const handlePlayWave = () => {
+        if (playlist && songs.length > 3) {
+            const authors = songs.flatMap((song) => song.authors);
+            songModel.wave.playWave({
+                authors: uniqueArrayObjectsByField(authors, 'uid'),
+            });
+        }
+    };
+
     return (
         <DefaultContextMenuStyled>
             {playlist && songs.length > 3 && (
-                <Button>
-                    <IconSparkles />
-                    Play wave on playlist
-                </Button>
+                <>
+                    <Button disabled={isLoadingWave} onClick={handlePlayWave}>
+                        {isLoadingWave ? <Loading /> : <IconWaveSine />}
+                        Play wave on playlist
+                    </Button>
+                    <Divider />
+                </>
             )}
             {!playlist?.isPrivate && (
                 <Popover content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}>

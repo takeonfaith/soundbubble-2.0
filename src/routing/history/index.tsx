@@ -66,6 +66,7 @@ export const HistoryPage = () => {
                                 songs: converted[date],
                                 name: 'History',
                                 url: '/history',
+                                id: 'history',
                             });
 
                             return (

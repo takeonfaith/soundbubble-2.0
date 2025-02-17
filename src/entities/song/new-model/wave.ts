@@ -9,15 +9,18 @@ import { Database } from '../../../database';
 import { toastModel } from '../../../layout/toast/model';
 import { TUser } from '../../user/model/types';
 import { createQueueObject } from '../lib/createQueueObject';
-import { TQueue } from '../model/types';
+import { TAuthor, TQueue } from '../model/types';
 import { playPauseQueue, togglePlayPause } from './song-state';
 import { slowSongsApi } from './slow-songs';
 import { $queue } from './queue';
 import { $addedAuthors } from '../../user/model/library/authors';
 
-export const playWaveFx = createEffect<{ authors: TUser[] }, TQueue>();
+export const playWaveFx = createEffect<
+    { authors: TUser[] | TAuthor[] },
+    TQueue
+>();
 
-export const playWave = createEvent();
+export const playWave = createEvent<{ authors: TAuthor[] } | void>();
 
 export const $isSlowWave = createStore(false);
 
@@ -29,7 +32,12 @@ sample({
     clock: playWave,
     source: { authors: $addedAuthors, queue: $queue },
     filter: ({ queue }) => !queue || queue.url !== '/discover',
-    fn: ({ authors }) => ({ authors }),
+    fn: ({ authors }, local) => ({
+        authors:
+            local !== null && typeof local === 'object'
+                ? local.authors
+                : authors,
+    }),
     target: playWaveFx,
 });
 

@@ -14,6 +14,7 @@ import { SLOW_SONGS_FACTOR } from '../../shared/constants';
 import { LyricItem } from './LyricItem';
 import { LyricLoading } from './LyricLoading';
 import { LyricsStyled, ToggleButtonStyled } from './styles';
+import { SongState } from '../../entities/song/model/types';
 
 export const Lyrics = () => {
     const currentLyricRef = useRef<HTMLDivElement>(null);
@@ -30,7 +31,8 @@ export const Lyrics = () => {
         $currentTime,
         $isCurrentSongSlow,
     ]);
-    const isEnabledKaraoke = isKaraoke && userEnabledKaraoke;
+    const isEnabledKaraoke =
+        isKaraoke && userEnabledKaraoke && state === SongState.playing;
 
     const handleClickLyrics = (startTime: number | string) => {
         return () => {

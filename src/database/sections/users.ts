@@ -527,25 +527,49 @@ export class Users {
         }
     }
 
-    static async getAuthorPageById(userId: string, sortSongs = false) {
+    static async getAuthorSongsByAuthorId(
+        authorId: string,
+        sortSongs: boolean,
+        limit?: number
+    ) {
         try {
-            const user = await this.getUserById(userId);
+            const author = await this.getUserById(authorId);
 
-            if (!user) return null;
+            if (!author) return null;
 
-            const userSongs = user?.ownSongs ?? [];
-
-            const userPlaylists = user?.ownPlaylists;
+            const authorSongs = author?.ownSongs;
 
             const songs = await Songs.getSongsByUids(
-                userSongs.reverse(),
+                authorSongs?.reverse(),
+                sortSongs,
+                limit,
+            );
+
+            return { author, songs };
+        } catch (error) {
+            console.log('Failed to get author songs', error);
+
+            throw new Error('Failed to get author songs');
+        }
+    }
+
+    static async getAuthorPageById(userId: string, sortSongs = false) {
+        try {
+            const props = await this.getAuthorSongsByAuthorId(
+                userId,
                 sortSongs
             );
 
-            const playlists = await Playlists.getPlaylistsByUids(userPlaylists);
+            if (!props) return null;
+
+            const { author, songs } = props;
+
+            const playlists = await Playlists.getPlaylistsByUids(
+                author.ownPlaylists
+            );
 
             return {
-                user,
+                user: author,
                 songs,
                 playlists,
             };

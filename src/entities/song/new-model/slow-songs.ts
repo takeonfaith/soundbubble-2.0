@@ -58,9 +58,8 @@ sample({
     target: loadAndPlay,
 });
 
-// Recalculate current time based on if song is slow
-// so that is when switching between slow and current
-// it continues from the same spot
+// Recalculate current time based on whether song is slow or not
+// so that when switching it continues from the same spot
 sample({
     clock: [slowSongsApi.add, slowSongsApi.remove, slowSongsApi.reset],
     source: {

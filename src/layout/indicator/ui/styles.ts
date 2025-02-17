@@ -22,4 +22,16 @@ export const IndicatorStyled = styled.div`
     z-index: 1000;
     max-width: 200px;
     white-space: nowrap;
+    animation: appearIndicator 0.2s forwards;
+
+    @keyframes appearIndicator {
+        0% {
+            opacity: 0;
+            transform: translateX(-50%) translateY(10px) scale(0.9);
+        }
+        100% {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0px) scale(1);
+        }
+    }
 `;

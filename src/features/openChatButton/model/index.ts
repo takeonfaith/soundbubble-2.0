@@ -36,7 +36,8 @@ sample({
 
 openChatFx.use(async ({ senderId, receiverId }) => {
     const chat = createChatObject({ participants: [senderId, receiverId] });
-    return await Database.Chats.createChat(chat);
+    const res = await Database.Chats.createChat(chat);
+    return res.data;
 });
 
 openChatFx.doneData.watch((chat) => {

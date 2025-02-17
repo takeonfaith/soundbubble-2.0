@@ -1,8 +1,8 @@
 import { createEvent, sample } from 'effector';
+import { toastModel } from '../../../../layout/toast/model';
 import { createQueueObject } from '../../lib/createQueueObject';
 import { PlayProps, TSong } from '../../model/types';
 import { $currentSongIndex, $queue } from './queue';
-import { toastModel } from '../../../../layout/toast/model';
 
 export const addToTheEndOfQueue = createEvent<TSong>();
 export const addAfterCurrentSongInQueue = createEvent<TSong>();
@@ -23,6 +23,7 @@ sample({
 sample({
     clock: addToTheEndOfQueue,
     source: { queue: $queue, currentSongIndex: $currentSongIndex },
+    filter: ({ queue }) => !!queue,
     fn: ({ queue, currentSongIndex }, song) => {
         const newQueue = queue
             ? { ...queue, songs: [...queue.songs, song] }
@@ -36,26 +37,19 @@ sample({
 sample({
     clock: addAfterCurrentSongInQueue,
     source: { queue: $queue, currentSongIndex: $currentSongIndex },
+    filter: ({ queue }) => !!queue,
     fn: ({ queue, currentSongIndex }, song) => {
-        const newQueue = queue
-            ? {
-                  ...queue,
-                  songs: [
-                      ...queue.songs.slice(0, currentSongIndex + 1),
-                      song,
-                      ...queue.songs.slice(
-                          currentSongIndex + 1,
-                          queue.songs.length
-                      ),
-                  ],
-              }
-            : createQueueObject({
-                  songs: [song],
-                  name: song.name,
-                  url: `/track/${song.id}`,
-                  id: song.id,
-                  imageUrl: song.cover,
-              });
+        const newQueue = {
+            ...queue!,
+            songs: [
+                ...queue!.songs.slice(0, currentSongIndex + 1),
+                song,
+                ...queue!.songs.slice(
+                    currentSongIndex + 1,
+                    queue!.songs.length
+                ),
+            ],
+        };
 
         return { queue: newQueue, currentSongIndex };
     },

@@ -121,7 +121,14 @@ export const PlaylistItem = ({
                 >
                     <Flex
                         gap={2}
-                        width={isAuthor ? '100%' : 'calc(100% - 30px)'}
+                        jc="flex-start"
+                        width={
+                            orientation === 'vertical'
+                                ? isAuthor
+                                    ? 'fit-content'
+                                    : 'calc(100% - 30px)'
+                                : 'fit-content'
+                        }
                     >
                         <PalylistTitle className="playlist-title">
                             {name}
@@ -130,7 +137,9 @@ export const PlaylistItem = ({
                     </Flex>
                     {orientation === 'vertical' ? (
                         authors.length !== 0 && (
-                            <Flex width={isAuthor ? '100%' : 'calc(100% - 30px)'}>
+                            <Flex
+                                width={isAuthor ? '100%' : 'calc(100% - 30px)'}
+                            >
                                 <Authors authors={authors} />
                             </Flex>
                         )
