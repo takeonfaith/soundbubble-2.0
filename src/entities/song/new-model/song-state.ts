@@ -1,20 +1,19 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { Database } from '../../../database';
+import { createPendingEffectsStore } from '../../../shared/effector/createPendingEffects';
 import { shuffleArray } from '../lib/shuffleArray';
 import { LoopMode, SongState, TLoadQueue, TQueue, TSong } from '../model/types';
 import { $loadedPercent, currentTimeApi } from './current-time';
 import {
     $currentSong,
-    $currentSongIndex,
     $isLastSongInQueue,
     $loopMode,
     $queue,
-    $queueCorrectSongs,
     $shuffleMode,
     next,
     queueApi,
 } from './queue';
-import { createPendingEffectsStore } from '../../../shared/effector/createPendingEffects';
+import { initialize } from './queue/init';
 
 type PlayProps = {
     queue: TQueue;
@@ -53,51 +52,10 @@ export const $pendingQueueLoading = createPendingEffectsStore({
     getId: ({ queue }) => [queue.id],
 });
 
-const initialize = createEvent<PlayProps>();
-
 sample({
     clock: shufflePlayPause,
     fn: () => true,
     target: $shuffleMode,
-});
-
-sample({
-    clock: initialize,
-    source: $shuffleMode,
-    filter: (shuffleMode) => shuffleMode,
-    fn: (_, { queue }) => queue.songs,
-    target: $queueCorrectSongs,
-});
-
-sample({
-    clock: initialize,
-    source: $shuffleMode,
-    fn: (shuffleMode, { queue, currentSongIndex }) => {
-        const currentSong = queue.songs[currentSongIndex];
-        console.log(queue.songs, currentSongIndex);
-
-        const songs = shuffleMode
-            ? currentSongIndex === 0
-                ? shuffleArray(queue.songs)
-                : [
-                      currentSong!,
-                      ...shuffleArray(queue!.songs).filter(
-                          (s) => s.id !== currentSong!.id
-                      ),
-                  ]
-            : queue.songs;
-
-        return { ...queue, songs };
-    },
-    target: $queue,
-});
-
-sample({
-    clock: initialize,
-    source: $shuffleMode,
-    fn: (shuffleMode, { currentSongIndex }) =>
-        shuffleMode ? 0 : currentSongIndex,
-    target: $currentSongIndex,
 });
 
 sample({

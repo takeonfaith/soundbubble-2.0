@@ -3,7 +3,7 @@ import { Button } from '../button';
 
 export const ArrowButton = styled(Button)`
     position: absolute;
-    right: 20px;
+    right: calc(var(--page-padding) + 10px);
     top: -40px;
     min-width: 30px;
     width: 30px;
@@ -29,7 +29,7 @@ export const ArrowButton = styled(Button)`
     }
 
     &.left {
-        right: 60px;
+        right: calc(var(--page-padding) + 50px);
     }
 `;
 

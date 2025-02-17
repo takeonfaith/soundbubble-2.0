@@ -19,7 +19,6 @@ import { confirmModel } from '../../../../layout/confirm/model';
 import { modalModel } from '../../../../layout/modal/model';
 import { Popup } from '../../../../layout/newpopup';
 import { useLoadingToast } from '../../../../layout/toast/hooks/useLoadingToast';
-import { toastModel } from '../../../../layout/toast/model';
 import { Server } from '../../../../server';
 import { Button } from '../../../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../../../shared/components/defaultContextMenu';
@@ -31,7 +30,6 @@ import { ENTITIES_ICONS } from '../../../../shared/constants/icons';
 import { NO_ACCOUNT_FOR_ACTION } from '../../../../shared/constants/texts';
 import { userModel } from '../../../user/model';
 import { useToggleLike } from '../../hooks/useToggleLike';
-import { createQueueObject } from '../../lib/createQueueObject';
 import { TSong } from '../../model/types';
 import { songModel } from '../../new-model';
 import { slowSongsApi, useIsSlowVersion } from '../../new-model/slow-songs';
@@ -127,18 +125,15 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
         }
     };
 
-    const handleAddToQueue = () => {
+    const handleAddNext = () => {
         if (song) {
-            const queue = createQueueObject({
-                songs: [song],
-                name: 'Queue',
-                url: window.location.href,
-            });
-            songModel.queue.addToQueue(queue);
-            toastModel.events.add({
-                type: 'hint',
-                message: 'Added to queue',
-            });
+            songModel.queue.addAfterCurrentSongInQueue(song);
+        }
+    };
+
+    const handleAddToTheEnd = () => {
+        if (song) {
+            songModel.queue.addToTheEndOfQueue(song);
         }
     };
 
@@ -216,9 +211,13 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                 </Popup>
             </Popover>
             <Divider />
-            <Button onClick={handleAddToQueue}>
+            <Button onClick={handleAddNext}>
                 <IconPlaylistAdd />
                 Next
+            </Button>
+            <Button onClick={handleAddToTheEnd}>
+                <IconPlaylistAdd />
+                At the end
             </Button>
             <Divider />
             <Popover content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}>

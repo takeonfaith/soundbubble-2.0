@@ -22,7 +22,8 @@ export const useSongPlay = (props: Props) => {
     };
 
     const getLoading = (song: TSong) => {
-        const isCurrent = song.id === currentSong?.id;
+        const isCurrent =
+            song.id === currentSong?.id && queue?.id === currentQueue?.id;
 
         return (
             isCurrent &&

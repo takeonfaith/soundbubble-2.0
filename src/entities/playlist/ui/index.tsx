@@ -119,14 +119,21 @@ export const PlaylistItem = ({
                     ai="flex-start"
                     className="playlist-name"
                 >
-                    <Flex gap={2}>
+                    <Flex
+                        gap={2}
+                        width={isAuthor ? '100%' : 'calc(100% - 30px)'}
+                    >
                         <PalylistTitle className="playlist-title">
                             {name}
                         </PalylistTitle>
                         {isPrivate && <IconLock size={16} />}
                     </Flex>
                     {orientation === 'vertical' ? (
-                        authors.length !== 0 && <Authors authors={authors} />
+                        authors.length !== 0 && (
+                            <Flex width={isAuthor ? '100%' : 'calc(100% - 30px)'}>
+                                <Authors authors={authors} />
+                            </Flex>
+                        )
                     ) : (
                         <Flex width="100%" gap={4}>
                             {!hideAuthors && (

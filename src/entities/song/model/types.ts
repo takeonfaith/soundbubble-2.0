@@ -81,3 +81,8 @@ export type TLastQueue = TLoadQueue & {
 };
 
 export type TNextFrom = 'from_next_button' | 'from_end_track';
+
+export type PlayProps = {
+    queue: TQueue;
+    currentSongIndex: number;
+};
