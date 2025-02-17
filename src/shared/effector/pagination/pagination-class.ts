@@ -1,9 +1,15 @@
-import { QueryDocumentSnapshot, DocumentData, QueryConstraint, QuerySnapshot, startAfter } from "firebase/firestore";
+import {
+    DocumentData,
+    QueryDocumentSnapshot,
+    QuerySnapshot,
+    QueryStartAtConstraint,
+    startAfter,
+} from 'firebase/firestore';
 
 export class Pagination {
     lastVisible: QueryDocumentSnapshot<DocumentData, DocumentData> | null =
         null;
-    constraints: QueryConstraint[] = [];
+    constraints: QueryStartAtConstraint[] = [];
 
     constructor() {}
 

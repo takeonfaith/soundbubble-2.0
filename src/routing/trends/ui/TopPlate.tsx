@@ -48,22 +48,27 @@ export const TopPlate = ({ entity, index }: Props) => {
     const navigate = useNavigate();
     const queueBasis = {
         id: getEntityId(entity),
-        name: 'Trends',
-        url: '/trends',
+        name: getEntityName(entity),
+        url: `/${type}/${getEntityId(entity)}`,
+        imageUrl: getEntityImage(entity),
     };
     const queues = {
         song: createQueueObject({
             ...queueBasis,
+            name: 'Trends',
+            url: '/trends',
             songs: [entity as TSong],
         }),
         album: createLoadQueueObject({
             ...queueBasis,
-            imageUrl: (entity as TPlaylist).image,
+            songIds: (entity as TPlaylist).songs,
+        }),
+        playlist: createLoadQueueObject({
+            ...queueBasis,
             songIds: (entity as TPlaylist).songs,
         }),
         author: createLoadQueueObject({
             ...queueBasis,
-            imageUrl: (entity as TUser).photoURL,
             songIds: (entity as TUser).ownSongs,
         }),
     };

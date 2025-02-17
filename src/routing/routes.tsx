@@ -39,6 +39,7 @@ import { TrendsPageAuthors } from './trends/ui/TrendsPageAuthors';
 import { LikedAlbums } from './library/LikedAlbums';
 import { UserSongs } from './user/UserSongs';
 import { TestPage } from './test';
+import { TrendsPagePlaylists } from './trends/ui/TrendsPagePlaylists';
 
 type Section = 'features' | 'your activities' | 'your music';
 
@@ -110,6 +111,14 @@ export const allRoutes: TRoute[] = [
                 title: 'Trending Authors',
                 icon: <IconMicrophone2 />,
                 component: <TrendsPageAuthors />,
+                section: 'features',
+                private: false,
+            },
+            {
+                url: 'playlists',
+                title: 'Trending Playlists',
+                icon: <IconPlaylist />,
+                component: <TrendsPagePlaylists />,
                 section: 'features',
                 private: false,
             },

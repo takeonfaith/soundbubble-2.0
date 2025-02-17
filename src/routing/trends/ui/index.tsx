@@ -7,6 +7,7 @@ const TABS = [
     { title: 'Songs', url: '' },
     { title: 'Authors', url: 'authors' },
     { title: 'Albums', url: 'albums' },
+    { title: 'Playlists', url: 'playlists' },
 ];
 
 export const TrendsPage = () => {
