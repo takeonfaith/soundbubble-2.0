@@ -1,24 +1,30 @@
 import { useUnit } from 'effector-react';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
+import { SongState } from '../../../entities/song/model/types';
 import { songModel as songModelNew } from '../../../entities/song/new-model';
-import { $currentSongDuration } from '../../../entities/song/new-model/duration';
 import { $loadedPercent } from '../../../entities/song/new-model/current-time';
+import { $currentSongDuration } from '../../../entities/song/new-model/duration';
+import { playWaveFx } from '../../../entities/song/new-model/wave';
 
 export const usePlayerMusicControls = () => {
-    const { currentSong, state, loopMode, shuffleMode } =
+    const { currentSong, state, loopMode, shuffleMode, queue } =
         songModelNew.useSong();
-    const [duration, loadedPercent] = useUnit([
+    const [duration, loadedPercent, isLoadingWave] = useUnit([
         $currentSongDuration,
         $loadedPercent,
+        playWaveFx.pending,
     ]);
     const currentTime = songModelNew.useCurrentTime();
 
     const disableNextSongButton = false;
 
-    const handlePlay = useCallback(
-        () => songModelNew.controls.togglePlayPause(),
-        []
-    );
+    const handlePlay = useCallback(() => {
+        if (!queue) {
+            songModelNew.wave.playWave();
+        } else {
+            songModelNew.controls.togglePlayPause();
+        }
+    }, [queue]);
 
     const handleChangeTime = (time: number) => {
         songModelNew.playback.setIsSliding(true);
@@ -39,32 +45,15 @@ export const usePlayerMusicControls = () => {
         songModelNew.queue.toggleShuffleMode();
     };
 
-    const handleKeyDown = useCallback(
-        (event: KeyboardEvent) => {
-            // console.log(event.key);
-
-            if (event.key === 'Space') {
-                handlePlay();
-            }
-        },
-        [handlePlay]
-    );
-
     const handleNext = () => {
         songModelNew.queue.next('from_next_button');
     };
-
-    useEffect(() => {
-        addEventListener('keydown', handleKeyDown);
-
-        return () => removeEventListener('keydown', handleKeyDown);
-    }, [handleKeyDown]);
 
     return {
         currentTime,
         duration,
         colors: currentSong?.imageColors,
-        state,
+        state: isLoadingWave ? SongState.loading : state,
         loopMode,
         shuffle: shuffleMode,
         disableNextSongButton,

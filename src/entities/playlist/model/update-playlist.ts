@@ -186,14 +186,19 @@ sample({
 
 sample({
     clock: updateLocalPlaylist,
-    fn: ({ playlist }) => playlist,
+    source: $currentPlaylist,
+    filter: (currentPlaylist, { playlist }) =>
+        !!currentPlaylist && currentPlaylist.id === playlist.id,
+    fn: (_, { playlist }) => playlist,
     target: $currentPlaylist,
 });
 
 sample({
     clock: updateLocalPlaylist,
-    filter: ({ songs }) => !!songs,
-    fn: ({ songs }) => songs!,
+    source: $currentPlaylist,
+    filter: (currentPlaylist, { songs, playlist }) =>
+        !!currentPlaylist && !!songs && playlist.id === currentPlaylist.id,
+    fn: (_, { songs }) => songs!,
     target: $currentPlaylistSongs,
 });
 

@@ -114,7 +114,10 @@ export const TopPlate = ({ entity, index }: Props) => {
                         </Flex>
                     </Flex>
                     {'authors' in entity && (
-                        <Authors authors={entity.authors} />
+                        <Authors
+                            isAuthor={getEntityType(entity) !== 'playlist'}
+                            authors={entity.authors}
+                        />
                     )}
                     {'ownSongs' in entity && (
                         <div className="subtext">

@@ -1,10 +1,15 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-export const LogoWrapper = styled.div<{ size?: string }>`
+export const LogoWrapper = styled(Link)<{ size?: string }>`
     display: flex;
     align-items: center;
     gap: 14px;
+    transition: 0.1s transform;
+
+    &:active {
+        transform: scale(0.96);
+    }
 
     &.appLike {
         background: ${({ theme }) => theme.colors.pageBackground};
@@ -21,7 +26,7 @@ export const LogoStyled = styled.img<{ size?: string }>`
     width: ${({ size }) => size ?? '30px'};
 `;
 
-export const LogoText = styled(Link)`
+export const LogoText = styled.span`
     font-size: 1.1rem;
     font-weight: 300;
     color: ${({ theme }) => theme.colors.textColor};

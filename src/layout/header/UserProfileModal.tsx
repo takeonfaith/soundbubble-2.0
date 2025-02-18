@@ -95,8 +95,6 @@ export const UserProfileModal = () => {
             content: (
                 <EditPhotoModal
                     onSave={(newPhoto, imageColors, setLoading) => {
-                        console.log(newPhoto);
-
                         userModel.events.editUser({
                             update: {
                                 photoFile: newPhoto,
@@ -148,7 +146,7 @@ export const UserProfileModal = () => {
         <UserProfileModalStyled>
             {isLoadingEditing || (isDeletingAccount && <LoadingWrapper />)}
 
-            <Flex d="column" gap={20} height='100%' jc='center'>
+            <Flex d="column" gap={20} height="100%" jc="center">
                 <UserCover
                     src={currentUser?.photoURL}
                     size={'160px'}

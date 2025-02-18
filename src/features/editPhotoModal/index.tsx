@@ -31,7 +31,7 @@ export const EditPhotoModal = ({ onSave, photo, imageColors }: Props) => {
         photo !== newPhoto ||
         subtractArrays(imageColors, newImageColors).length !== 0;
 
-    const handleUpdatePlaylist = () => {
+    const handleUpdatePhoto = () => {
         if (isAvailableToChange) {
             setLoading(true);
             const updatedPhoto =
@@ -62,7 +62,7 @@ export const EditPhotoModal = ({ onSave, photo, imageColors }: Props) => {
                 width="100%"
                 loading={loading}
                 disabled={!isAvailableToChange}
-                onClick={handleUpdatePlaylist}
+                onClick={handleUpdatePhoto}
             >
                 Save
             </DefaultButton>

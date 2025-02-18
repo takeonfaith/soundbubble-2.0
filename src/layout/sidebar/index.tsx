@@ -128,6 +128,7 @@ export const Sidebar = ({ collapsed }: Props) => {
                                 isAuthor={true}
                                 orientation="horizontal"
                                 playlist={playlist}
+                                hideAuthors
                             />
                         </Popover>
                     ))}

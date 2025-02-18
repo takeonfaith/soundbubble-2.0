@@ -75,24 +75,6 @@ export const PlayerStyled = styled.div<{ $background: string }>`
         }
     }
 
-    .song-slider {
-        height: 3px;
-        width: 100%;
-        margin-right: 40px;
-        min-width: 150px;
-
-        &::-webkit-slider-thumb {
-            width: 10px;
-            height: 10px;
-        }
-
-        @media (max-width: 2270px) {
-            width: 400px;
-            margin-top: -4px;
-            margin-right: 0;
-        }
-    }
-
     .duration-numbers {
         opacity: 0.6;
         position: absolute;
@@ -147,6 +129,24 @@ export const PlayerStyled = styled.div<{ $background: string }>`
 
 export const PlayerMusicControls = styled.div`
     width: 100%;
+
+    .song-slider {
+        height: 3px;
+        width: 100%;
+        margin-right: 40px;
+        min-width: 150px;
+
+        &::-webkit-slider-thumb {
+            width: 10px;
+            height: 10px;
+        }
+
+        @media (max-width: 2270px) {
+            width: 400px;
+            margin-top: -4px;
+            margin-right: 0;
+        }
+    }
 
     @media (max-width: 2270px) {
         transform: translateY(-7px);
@@ -246,7 +246,7 @@ export const PlayerActionButtons = styled.div`
         }
     }
 
-    & .volume-button:hover ~ button {
+    & .volume-button:hover ~ * {
         opacity: 0;
         pointer-events: none;
     }

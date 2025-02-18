@@ -9,14 +9,18 @@ type Props = {
 
 export const Logo = ({ size, appLike, short = false }: Props) => {
     return (
-        <LogoWrapper size={size} className={`logo ${appLike ? 'appLike' : ''}`}>
+        <LogoWrapper
+            to={'/discover'}
+            size={size}
+            className={`logo ${appLike ? 'appLike' : ''}`}
+        >
             <LogoStyled
                 size={size}
                 src={LogoImage}
                 className={`logo`}
                 alt="Logo"
             />{' '}
-            {!short && <LogoText className='logo-text' to={'/discover'}>Soundbubble</LogoText>}
+            {!short && <LogoText className="logo-text">Soundbubble</LogoText>}
         </LogoWrapper>
     );
 };

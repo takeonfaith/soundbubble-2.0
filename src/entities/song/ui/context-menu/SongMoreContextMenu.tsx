@@ -38,6 +38,7 @@ import { EditSongModal } from '../EditSongModal';
 import { SongInfo } from '../SongInfo';
 import { AddToPlaylistsContextMenu } from './AddToPlaylistsContextMenu';
 import { AuthorsContextMenu } from './AuthorsContextMenu';
+import { Loading } from '../../../../shared/components/loading';
 
 const SlowButton = styled(Button)`
     justify-content: space-between !important;
@@ -57,7 +58,7 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
     const [library] = userModel.useSongLibrary();
     const isLiked = library?.find((s) => s.id === song?.id);
     const navigate = useNavigate();
-    const { handleToggleLike } = useToggleLike(song);
+    const { handleToggleLike, performingAction } = useToggleLike(song);
     const isSlowVersion = useIsSlowVersion(song?.id);
 
     const createSlow = async () => {
@@ -177,19 +178,21 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                     <Divider />
                 </>
             )}
-            {!isLiked ? (
-                <Popover content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}>
-                    <Button disabled={!currentUser} onClick={handleLike}>
+            <Popover content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}>
+                <Button
+                    disabled={!currentUser || performingAction}
+                    onClick={handleLike}
+                >
+                    {performingAction ? (
+                        <Loading />
+                    ) : isLiked ? (
+                        <IconHeartBroken />
+                    ) : (
                         <IconHeart size={20} />
-                        Add to Liked
-                    </Button>
-                </Popover>
-            ) : (
-                <Button onClick={handleLike}>
-                    <IconHeartBroken />
-                    Remove from Liked
+                    )}
+                    {isLiked ? 'Remove from Liked' : 'Add to Liked'}
                 </Button>
-            )}
+            </Popover>
             <Popover content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}>
                 <Popup
                     content={<AddToPlaylistsContextMenu song={song} />}
