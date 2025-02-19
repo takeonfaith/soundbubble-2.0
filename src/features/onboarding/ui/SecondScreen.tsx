@@ -10,6 +10,7 @@ import { modalModel } from '../../../layout/modal/model';
 import { DefaultButton } from '../../../shared/components/button/DefaultButton';
 import backgroundImg from '../../signUpModal/img/background.png';
 import { ThirdScreen } from './ThirdScreen';
+import { translate } from '../../../i18n';
 
 export const SecondScreen = () => {
     const [toggled, setToggled] = useState(false);
@@ -40,7 +41,7 @@ export const SecondScreen = () => {
                 <IconStyled className={toggled ? 'toggled' : ''}>
                     <Flex gap={10}>
                         <IconSparkles />
-                        Slow version
+                        {translate('slow_version')}
                     </Flex>
                     <SwitchToggle
                         onChange={() => null}
@@ -48,11 +49,10 @@ export const SecondScreen = () => {
                         size="s"
                     />
                 </IconStyled>
-                <Flex d="column" gap={10}>
-                    <h2>Slow version of every song!</h2>
+                <Flex d="column" width="100%" gap={10}>
+                    <h2>{translate('slow_version_every_song')}</h2>
                     <Subtext>
-                        Just hit one button and enjoy new sound never heard
-                        before
+                        {translate('slow_version_every_song_subtext')}
                     </Subtext>
                 </Flex>
             </Flex>
@@ -63,7 +63,7 @@ export const SecondScreen = () => {
                         modalModel.events.back();
                     }}
                 >
-                    Back
+                    {translate('back')}
                 </DefaultButton>
                 <DefaultButton
                     onClick={() =>
@@ -74,7 +74,7 @@ export const SecondScreen = () => {
                     }
                     appearance="primary"
                 >
-                    Next
+                    {translate('next')}
                 </DefaultButton>
             </Flex>
         </FirstScreenStyled>

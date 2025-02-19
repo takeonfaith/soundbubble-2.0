@@ -151,7 +151,10 @@ export const Popup = ({
                 ReactDOM.createPortal(
                     <>
                         <PopupContainer
-                            onClick={(e) => e.stopPropagation()}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleClose();
+                            }}
                             $closeDelay={closeDelay}
                             className={`${isVisible ? '' : 'hidden'}`}
                             ref={popupRef}

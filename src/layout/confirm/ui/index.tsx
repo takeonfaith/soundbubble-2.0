@@ -6,6 +6,7 @@ import { Subtext } from '../../../shared/components/subtext';
 import { ModalBackground } from '../../modal/ui/styles';
 import { confirmModel } from '../model';
 import { ConfirmButtons, ConfirmIcon, ConfirmStyled } from './styles';
+import { translate } from '../../../i18n';
 
 export const Confirm = () => {
     const theme = useTheme();
@@ -47,10 +48,10 @@ export const Confirm = () => {
                         onClick={onReject ?? handleClose}
                         appearance="outline"
                     >
-                        No
+                        {translate('no')}
                     </DefaultButton>
                     <DefaultButton onClick={handleAccept} appearance="primary">
-                        Yes
+                        {translate('yes')}
                     </DefaultButton>
                 </ConfirmButtons>
             </ConfirmStyled>

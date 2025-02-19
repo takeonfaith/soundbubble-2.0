@@ -1,5 +1,7 @@
 import { TSong } from '../../../../entities/song/model/types';
+import { translate } from '../../../../i18n';
 import { Subtext } from '../../../../shared/components/subtext';
+import { getPluralForm } from '../../../../shared/funcs/getPluralForm';
 import { getTotalSongsDuration } from '../../../../shared/funcs/getTotalSongsDuration';
 
 type Props = {
@@ -15,7 +17,14 @@ export const PlaylistStatistics = ({ songs }: Props) => {
                 opacity: '0.4',
             }}
         >
-            {songs?.length ?? 0} songs, {getTotalSongsDuration(songs)}
+            {songs?.length ?? 0}{' '}
+            {songs?.length &&
+                `${getPluralForm(songs.length, {
+                    one: translate('song_one'),
+                    toFour: translate('songs_to_four'),
+                    fromFive: translate('songs_from_five'),
+                })}, `}
+            {getTotalSongsDuration(songs)}
         </Subtext>
     );
 };

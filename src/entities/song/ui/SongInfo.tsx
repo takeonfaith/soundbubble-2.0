@@ -1,7 +1,7 @@
 import { IconHeadphones, IconQuote } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import { ShareModal } from '../../../features/shareModal';
+import { ShareButton } from '../../../features/shareButton';
 import { Lyric } from '../../../layout/fullScreenPlayer/styles';
 import { modalModel } from '../../../layout/modal/model';
 import { Authors } from '../../../shared/components/authors';
@@ -17,6 +17,8 @@ import { UserCover } from '../../user/ui/UserCover';
 import { TSong } from '../model/types';
 import { loadLyrics, lyricsModel } from '../new-model/lyrics';
 import { SongCover } from './SongCover';
+import { translate } from '../../../i18n';
+import { dateToString } from '../../../shared/funcs/dateToString';
 
 const SongInfoStyled = styled.div<{ shadowColor: string }>`
     width: 100%;
@@ -62,16 +64,6 @@ const Listens = styled.div`
 
 const FriendsListetingButton = styled(Button)`
     gap: 20px;
-`;
-
-const ShareButton = styled(Button)`
-    color: #fff;
-    filter: ${({ theme }) => theme.colors.brightness};
-
-    &.primary {
-        background: ${({ color }) => color ?? 'grey'};
-        box-shadow: none;
-    }
 `;
 
 const Buttons = styled.div`
@@ -121,15 +113,11 @@ export const SongInfo = ({ song }: Props) => {
         friend.addedSongs?.includes(song.id)
     );
 
-    const formattedDate = new Date(releaseDate).toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-    });
+    const formattedDate = dateToString(releaseDate);
 
     const handleOpenFriendsListeting = () => {
         modalModel.events.open({
-            title: `Friends listening to ${name},`,
+            title: translate('friends_listening', { listen: song.name }),
             content: (
                 <Flex d="column" gap={10} width="100%" padding="0 20px">
                     {friendsListening.map((friend) => {
@@ -145,14 +133,6 @@ export const SongInfo = ({ song }: Props) => {
                     })}
                 </Flex>
             ),
-        });
-    };
-
-    const handleShare = () => {
-        modalModel.events.open({
-            title: `Share ${name} with friends`,
-            content: <ShareModal entity={song} />,
-            sizeY: 'l',
         });
     };
 
@@ -174,7 +154,9 @@ export const SongInfo = ({ song }: Props) => {
                     />
                 </Flex>
                 <Flex gap={4} width="100%" d="column">
-                    <Subtext>Released: {formattedDate}</Subtext>
+                    <Subtext>
+                        {translate('released', { released: formattedDate })}
+                    </Subtext>
                     {song.hasLyrics && (
                         <Button
                             className="ghost"
@@ -200,7 +182,7 @@ export const SongInfo = ({ song }: Props) => {
                         className="outline"
                         onClick={handleOpenFriendsListeting}
                     >
-                        Friends listening{' '}
+                        {translate('friends_listening', {listen: ''})}{' '}
                         <Flex>
                             <SmallAvatarList users={friendsListening}>
                                 {friendsListening.length > 2 && (
@@ -233,13 +215,7 @@ export const SongInfo = ({ song }: Props) => {
                     </FriendsListetingButton>
                 )}
 
-                <ShareButton
-                    className="primary"
-                    color={imageColors[0]}
-                    onClick={handleShare}
-                >
-                    Share
-                </ShareButton>
+                <ShareButton entity={song} />
             </Buttons>
         </SongInfoStyled>
     );

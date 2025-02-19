@@ -26,6 +26,8 @@ import { MakePrivateContext } from './MakePrivateContext';
 import { PlaylistDescription } from './PlaylistDescription';
 import { PlaylistName } from './PlaylistName';
 import { PlaylistPhoto } from './PlaylistPhoto';
+import { translate } from '../../../../i18n';
+import { PlaylistStatistics } from './PlaylistStatistics';
 
 const PageTopWrapper = styled.div`
     display: flex;
@@ -142,24 +144,25 @@ export const PageTop = ({
                                         });
                                     }}
                                 />
-                                {(playlist?.isPrivate || isEditing) && isOwner && (
-                                    <Popup
-                                        content={
-                                            <MakePrivateContext
-                                                playlist={playlist}
-                                                isOwner={isOwner}
-                                            />
-                                        }
-                                    >
-                                        <Button $width="40px">
-                                            {playlist?.isPrivate ? (
-                                                <IconLock size={22} />
-                                            ) : (
-                                                <IconWorld size={22} />
-                                            )}
-                                        </Button>
-                                    </Popup>
-                                )}
+                                {(playlist?.isPrivate || isEditing) &&
+                                    isOwner && (
+                                        <Popup
+                                            content={
+                                                <MakePrivateContext
+                                                    playlist={playlist}
+                                                    isOwner={isOwner}
+                                                />
+                                            }
+                                        >
+                                            <Button $width="40px">
+                                                {playlist?.isPrivate ? (
+                                                    <IconLock size={22} />
+                                                ) : (
+                                                    <IconWorld size={22} />
+                                                )}
+                                            </Button>
+                                        </Popup>
+                                    )}
                             </Flex>
                             <Flex gap={8} width="100%">
                                 {authors && (
@@ -190,7 +193,7 @@ export const PageTop = ({
                                         }}
                                     >
                                         <IconUserPlus size={14} />
-                                        Edit
+                                        {translate('edit')}
                                     </Button>
                                 )}
                             </Flex>
@@ -236,22 +239,20 @@ export const PageTop = ({
                                     </>
                                 )}
                                 {!playlist ? (
-                                    <Subtext style={{ fontSize: '0.85rem' }}>
-                                        {queue.songs.length}{' '}
-                                        {queue.songs.length > 1
-                                            ? 'songs'
-                                            : 'song'}
-                                        , {getTotalSongsDuration(queue.songs)}
-                                    </Subtext>
+                                    <PlaylistStatistics songs={queue.songs} />
                                 ) : (
                                     <Subtext style={{ fontSize: '0.85rem' }}>
                                         {playlist.lastEditedTime !== undefined
-                                            ? `Updated: ${getLastUpdated(
-                                                  playlist.lastEditedTime
-                                              )}`
-                                            : `Created: ${dateToString(
-                                                  playlist.creationDate
-                                              )}`}
+                                            ? translate('updated', {
+                                                  updated: getLastUpdated(
+                                                      playlist.lastEditedTime
+                                                  ),
+                                              })
+                                            : translate('created', {
+                                                  created: dateToString(
+                                                      playlist.creationDate
+                                                  ),
+                                              })}
                                     </Subtext>
                                 )}
                             </Flex>

@@ -16,6 +16,10 @@ export const DesktopWrapperStyled = styled.div`
     background: ${({ theme }) => theme.colors.pageBackground};
     padding-top: 20px;
 
+    h2 {
+        font-weight: 400;
+    }
+
     @media (max-width: 768px) {
         display: none;
     }

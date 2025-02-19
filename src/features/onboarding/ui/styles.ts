@@ -51,7 +51,7 @@ export const FirstScreenStyled = styled.div`
 
     span {
         font-size: 1.1rem;
-        width: 300px;
+        width: 370px;
         text-align: center;
         z-index: 10;
     }

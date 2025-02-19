@@ -6,6 +6,7 @@ import { filterOneArrayWithAnother } from '../../../../shared/funcs/filterOneArr
 import { $user } from '../user';
 import { getDataFromEffect } from '../../../../shared/effector/getDataFromEffect';
 import { createPendingEffectsStore } from '../../../../shared/effector/createPendingEffects';
+import { translate } from '../../../../i18n';
 
 type TAuthorEffectProps = {
     userId: string | undefined;
@@ -16,11 +17,11 @@ export const loadAddedAuthorsFx = createEffect<TUser, TUser[]>();
 export const addAuthorsToLibraryFx = createEffectWithToast<
     TAuthorEffectProps,
     void
->('Author added to Liked', 'Failed to add author to Liked');
+>(translate('author_added_to_liked'), 'Failed to add author to Liked');
 export const removeAuthorsFromLibraryFx = createEffectWithToast<
     TAuthorEffectProps,
     void
->('Author removed from Liked', 'Failed to remove author from Liked');
+>(translate('author_removed_from_liked'), 'Failed to remove author from Liked');
 
 export const addAuthorsToLibrary = createEvent<{
     authors: TUser[];

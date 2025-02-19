@@ -12,6 +12,7 @@ import { isValidYoutubeLink } from '../../funcs/isValidYoutubeLink';
 import { ErrorType, FormType, TForm } from './types';
 import { toastModel } from '../../../layout/toast/model';
 import { useState } from 'react';
+import { translate } from '../../../i18n';
 
 export const effectorForm = <T extends TForm>(form: T) => {
     const onSubmitFx = createEffect<
@@ -142,7 +143,7 @@ export const effectorForm = <T extends TForm>(form: T) => {
                     if (required && !values[key]) {
                         updateError({
                             id: key,
-                            error: 'This field is required',
+                            error: translate('field_is_required'),
                         });
                         hasErrors = true;
                     } else if (

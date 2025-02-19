@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { playlistModel } from '../../../../entities/playlist/model';
 import { Button } from '../../../../shared/components/button';
 import { Input } from '../../../../shared/components/input';
+import { translate } from '../../../../i18n';
 
 const PlaylistSearchStyled = styled.div`
     width: 100%;
@@ -37,7 +38,7 @@ export const PlaylistSearch = ({ searching }: Props) => {
         <PlaylistSearchStyled>
             <Input
                 icon={<IconSearch />}
-                placeholder="Search for songs in this playlist..."
+                placeholder={translate('playlist_search_placeholder')}
                 value={searching.value}
                 onChange={(e) => {
                     playlistModel.events.updateSearchValue(e.target.value);
@@ -47,7 +48,7 @@ export const PlaylistSearch = ({ searching }: Props) => {
             />
 
             <Button $width="120px" className="outline" onClick={handleCancel}>
-                Cancel
+                {translate('cancel')}
             </Button>
         </PlaylistSearchStyled>
     );

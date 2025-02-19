@@ -13,6 +13,7 @@ import { $type, load } from './model';
 import { PlayingAnimation } from '../../../../shared/components/playingAnimation';
 import styled from 'styled-components';
 import { toastModel } from '../../../../layout/toast/model';
+import { translate } from '../../../../i18n';
 
 const PlayButtonStyled = styled(Button)`
     .playing-animation {
@@ -123,9 +124,9 @@ export const PlayButton = ({
 
     const props = {
         $height: '45px',
-        $width: short ? '45px' : '110px',
+        $width: short ? '45px' : 'fit-content',
         style: {
-            padding: '0 0px',
+            padding: short ? '0' : '0 20px',
             borderRadius: '30px',
             color: isSlow ? undefined : '#fff',
         },
@@ -148,7 +149,7 @@ export const PlayButton = ({
                     playling={isPlaying}
                     size={20}
                 />
-                {!short && 'Play'}
+                {!short && translate('play')}
             </div>
             {showPlayingAnimation && isPlaying && (
                 <PlayingAnimation

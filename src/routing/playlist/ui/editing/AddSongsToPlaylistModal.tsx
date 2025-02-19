@@ -18,6 +18,7 @@ import { DefaultButton } from '../../../../shared/components/button/DefaultButto
 import { CheckIcon } from '../../../../shared/components/checkIcon';
 import { Flex } from '../../../../shared/components/flex';
 import { PageMessage } from '../../../../shared/components/pageMessage';
+import { translate } from '../../../../i18n';
 
 const AddSongsToPlaylistModalStyled = styled.div`
     padding: 10px 20px;
@@ -42,7 +43,7 @@ export const AddSongsToPlaylistModal = ({ playlist }: Props) => {
     const [currentPlaylistSongs] = playlistModel.usePlaylistSongs();
     const [isAdding] = useUnit([addSongsToPlaylistsFx.pending]);
     const [loading, setLoading] = useState(false);
-    const [listTitle, setListTitle] = useState('Library');
+    const [listTitle, setListTitle] = useState(translate('liked_songs'));
     const [notFound, setNotFound] = useState(false);
     const [suggestedSongs, setSuggestedSongs] = useState<TSong[]>([]);
     const [loadingSuggestedSongs, setLoadingSuggestedSongs] = useState(false);
@@ -85,7 +86,7 @@ export const AddSongsToPlaylistModal = ({ playlist }: Props) => {
         setNotFound(false);
         if (visibleItems.length === 0 && value.length !== 0) {
             setLoading(true);
-            setListTitle('Global Search');
+            setListTitle(translate('global_search'));
             Database.SearchSuggestions.getSearchResult(value, 'songs').then(
                 (results: TEntity[]) => {
                     setVisibleItems(results as TSong[]);
@@ -94,7 +95,7 @@ export const AddSongsToPlaylistModal = ({ playlist }: Props) => {
                 }
             );
         } else {
-            setListTitle('Library');
+            setListTitle(translate('liked_songs'));
         }
     };
 
@@ -123,7 +124,9 @@ export const AddSongsToPlaylistModal = ({ playlist }: Props) => {
 
                     return (
                         <>
-                            {showSuggestedTitle && <h4>Suggested songs</h4>}
+                            {showSuggestedTitle && (
+                                <h4>{translate('suggested_songs')}</h4>
+                            )}
                             {showSkeleton && <SongListSkeleton quantity={4} />}
                             {showTitle && <h4>{listTitle}</h4>}
                             <SongItem
@@ -150,7 +153,7 @@ export const AddSongsToPlaylistModal = ({ playlist }: Props) => {
                             loading={isAdding}
                             onClick={handleSave(addedSongs)}
                         >
-                            Save changes
+                            {translate('save_changes')}
                         </DefaultButton>
                     );
                 }}
@@ -163,7 +166,7 @@ export const AddSongsToPlaylistModal = ({ playlist }: Props) => {
                 {!loading && notFound && (
                     <PageMessage
                         icon={IconSearch}
-                        title="Nothing found"
+                        title={translate('no_results')}
                         description={'Try to change search query'}
                     />
                 )}

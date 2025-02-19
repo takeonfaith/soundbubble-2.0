@@ -1,31 +1,28 @@
 import {
     IconInfoCircle,
     IconLock,
-    IconShare3,
-    IconSparkles,
     IconTrash,
     IconWaveSine,
     IconWorld,
 } from '@tabler/icons-react';
+import { useUnit } from 'effector-react';
 import { useNavigate } from 'react-router';
 import { playlistModel } from '../../../../entities/playlist/model';
 import { TPlaylist } from '../../../../entities/playlist/model/types';
 import { PlaylistInfo } from '../../../../entities/playlist/ui/PlaylistInfo';
+import { SongState, TSong } from '../../../../entities/song/model/types';
+import { songModel } from '../../../../entities/song/new-model';
+import { playWaveFx } from '../../../../entities/song/new-model/wave';
 import { userModel } from '../../../../entities/user/model';
-import { ShareModal } from '../../../../features/shareModal';
+import { ShareButton } from '../../../../features/shareButton';
+import { translate } from '../../../../i18n';
 import { confirmModel } from '../../../../layout/confirm/model';
 import { modalModel } from '../../../../layout/modal/model';
 import { Button } from '../../../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../../../shared/components/defaultContextMenu';
 import { Divider } from '../../../../shared/components/divider';
-import Popover from '../../../../shared/components/popover';
-import { NO_ACCOUNT_FOR_ACTION } from '../../../../shared/constants/texts';
-import { SongState, TSong } from '../../../../entities/song/model/types';
-import { songModel } from '../../../../entities/song/new-model';
-import { uniqueArrayObjectsByField } from '../../../../shared/funcs/uniqueArrayObjectsByFields';
 import { Loading } from '../../../../shared/components/loading';
-import { useUnit } from 'effector-react';
-import { playWaveFx } from '../../../../entities/song/new-model/wave';
+import { uniqueArrayObjectsByField } from '../../../../shared/funcs/uniqueArrayObjectsByFields';
 
 type Props = {
     playlist: TPlaylist | null;
@@ -50,22 +47,14 @@ export const PlaylistMoreContext = ({ playlist, songs }: Props) => {
         });
     };
 
-    const handleShare = () => {
-        modalModel.events.open({
-            title: `Share ${playlist?.name} with friends`,
-            content: <ShareModal entity={playlist} />,
-            sizeY: 'm',
-        });
-    };
-
     const handleDeletePlaylist = () => {
         if (playlist) {
             confirmModel.events.open({
                 icon: <IconTrash />,
                 iconColor: 'red',
-                text: 'Are you sure you want to delete this playlist?',
+                text: translate('playlist_delete_warning'),
                 subtext:
-                    'This action is irreversible, you will not be able to restore it after deleting',
+                    translate('playlist_delete_warning_subtext'),
                 onAccept: () => {
                     playlistModel.events.deletePlaylist({
                         playlist,
@@ -122,22 +111,17 @@ export const PlaylistMoreContext = ({ playlist, songs }: Props) => {
                 <>
                     <Button disabled={isLoadingWave} onClick={handlePlayWave}>
                         {isLoadingWave ? <Loading /> : <IconWaveSine />}
-                        Play wave on playlist
+                        {translate('play_wave_on_playlist')}
                     </Button>
                     <Divider />
                 </>
             )}
-            {!playlist?.isPrivate && (
-                <Popover content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}>
-                    <Button disabled={!currentUser} onClick={handleShare}>
-                        <IconShare3 />
-                        Share
-                    </Button>
-                </Popover>
+            {!playlist?.isPrivate && playlist && (
+                <ShareButton entity={playlist} type="menu" />
             )}
             <Button onClick={handleInfo}>
                 <IconInfoCircle />
-                Info
+                {translate('info')}
             </Button>
             {isOwner && (
                 <>
@@ -145,17 +129,17 @@ export const PlaylistMoreContext = ({ playlist, songs }: Props) => {
                     {!playlist?.isPrivate ? (
                         <Button onClick={handleMakePrivate}>
                             <IconLock />
-                            Make private
+                            {translate('make_private')}
                         </Button>
                     ) : (
                         <Button onClick={handleMakePublic}>
                             <IconWorld />
-                            Make public
+                            {translate('make_public')}
                         </Button>
                     )}
                     <Button className="danger" onClick={handleDeletePlaylist}>
                         <IconTrash />
-                        Delete
+                        {translate('delete')}
                     </Button>
                 </>
             )}

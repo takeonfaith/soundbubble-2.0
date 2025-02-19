@@ -14,6 +14,7 @@ import { Subtext } from '../../shared/components/subtext';
 import { useForm } from './model';
 import { Welcome } from './Welcome';
 import { MIN_ADDED_AUTHORS } from './constants';
+import { translate } from '../../i18n';
 
 const ChoosingAuthorsStyled = styled.div`
     width: 100%;
@@ -118,7 +119,7 @@ export const ChoosingAuthors = () => {
     const [loading, setLoading] = useState(false);
     const handleNext = () => {
         modalModel.events.open({
-            title: 'Welcome!',
+            title: '',
             content: <Welcome />,
             sizeY: 'm',
         });
@@ -148,23 +149,27 @@ export const ChoosingAuthors = () => {
                     <Flex width="100%" gap={4} d="column" ai="flex-start">
                         <Flex jc="space-between" width="100%">
                             <h3 className={errors.added ? 'error' : ''}>
-                                Choose at least 5 artists you like{' '}
+                                {translate('choose_at_least_authors_you_like', {
+                                    minimum: 5,
+                                })}{' '}
                             </h3>
                         </Flex>
                         <Subtext style={{ fontSize: '1rem' }}>
-                            {errors.added ?? 'So we know your taste'}
+                            {errors.added ?? translate('so_we_know_your_taste')}
                         </Subtext>
                     </Flex>
                     <Button
-                        $width="100px"
+                        $width="fit-content"
+                        style={{ padding: '0 10px' }}
                         className="secondary"
                         onClick={onSubmit}
                     >
-                        Skip
+                        {translate('skip')}
                     </Button>
                 </Flex>
                 <AttachEntity
                     library={values.authors}
+                    placeholder={translate('search_for_authors')}
                     submitButtonText={'Next'}
                     onEntityClick={(added) => {
                         console.log({ added });

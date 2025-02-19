@@ -8,6 +8,7 @@ import { Button } from '../../shared/components/button';
 import { CreatePlaylistModal } from '../createPlaylistModal';
 import { AddPlaylistStyled, IconWrapper } from './styles';
 import { TSong } from '../../entities/song/model/types';
+import { translate } from '../../i18n';
 
 type Props = {
     orientation?: TOrientation;
@@ -22,7 +23,7 @@ export const CreatePlaylistButton = ({
 }: Props) => {
     const handleAddPlaylist = () => {
         modalModel.events.open({
-            title: 'Create Playlist',
+            title: translate('create_playlist'),
             content: <CreatePlaylistModal initialSongs={initialSongs} />,
         });
     };
@@ -36,7 +37,7 @@ export const CreatePlaylistButton = ({
                 color="#fff"
             >
                 <IconPlus size={20} />
-                Add playlist
+                {translate('create_playlist')}
             </Button>
         );
     }
@@ -47,7 +48,7 @@ export const CreatePlaylistButton = ({
             onClick={handleAddPlaylist}
             isAuthor
             playlist={createPlaylistObject(createAuthorObject({}), {
-                name: 'New playlist',
+                name: translate('create_playlist'),
                 authors: [],
                 imageColors: [
                     'transparent',

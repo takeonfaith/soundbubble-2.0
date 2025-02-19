@@ -2,12 +2,13 @@ import { Outlet, useLocation } from 'react-router';
 import { Header } from '../../../layout/header';
 import { PageWrapper } from '../../../shared/components/pageWrapper';
 import { Tabs } from '../../../shared/components/tabs';
+import { translate } from '../../../i18n';
 
 const TABS = [
-    { title: 'Songs', url: '' },
-    { title: 'Authors', url: 'authors' },
-    { title: 'Albums', url: 'albums' },
-    { title: 'Playlists', url: 'playlists' },
+    { title: translate('songs'), url: '' },
+    { title: translate('authors'), url: 'authors' },
+    { title: translate('albums'), url: 'albums' },
+    { title: translate('playlists'), url: 'playlists' },
 ];
 
 export const TrendsPage = () => {

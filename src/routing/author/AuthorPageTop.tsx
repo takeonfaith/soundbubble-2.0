@@ -21,6 +21,7 @@ import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
 import { PageTopStyled, TopLeftCorner, TopRightCorner } from '../album/styles';
 import { AuthorMoreContext } from './AuthorMoreContext';
 import { ButtonsStyled } from './styles';
+import { translate } from '../../i18n';
 
 type Props = {
     author: TUser | null;
@@ -85,7 +86,9 @@ export const AuthorPageTop = ({ author, queue }: Props) => {
                         </Flex>
                     </Popover>
                     <Popover
-                        content={`${formatBigNumber(subscribers)} likes`}
+                        content={translate('likes', {
+                            likes: formatBigNumber(subscribers),
+                        })}
                         position="top"
                     >
                         <Flex gap={4}>
@@ -96,7 +99,7 @@ export const AuthorPageTop = ({ author, queue }: Props) => {
                 </Flex>
             </Flex>
             <TopLeftCorner>
-                <Popover content={'Back'}>
+                <Popover content={translate('back')}>
                     <Button
                         $height="40px"
                         $width="40px"

@@ -1,3 +1,4 @@
+import { translate } from '../../i18n';
 import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
@@ -9,7 +10,7 @@ import { SignUpModalStyled } from './styles';
 export const Email = () => {
     const handleNext = () => {
         modalModel.events.open({
-            title: 'Password',
+            title: translate('password'),
             content: <Passwords />,
             sizeX: 's',
             sizeY: 's',
@@ -45,14 +46,15 @@ export const Email = () => {
                     appearance="outline"
                     onClick={() => modalModel.events.back()}
                 >
-                    Previous
+                    {translate('previous')}
                 </DefaultButton>
                 <DefaultButton
                     loading={loading}
                     appearance="primary"
                     onClick={onSubmit}
+                    disabled={!values.email}
                 >
-                    Next
+                    {translate('next')}
                 </DefaultButton>
             </Flex>
         </SignUpModalStyled>

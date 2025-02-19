@@ -22,6 +22,8 @@ import {
     SidebarSectionTitle,
     SidebarStyled,
 } from './styles';
+import { translate } from '../../i18n';
+import resources from '../../locales';
 
 type Props = {
     collapsed: boolean;
@@ -44,7 +46,7 @@ export const Sidebar = ({ collapsed }: Props) => {
 
     const handleAddPlaylist = loggedIn(() => {
         modalModel.events.open({
-            title: 'Create Playlist',
+            title: translate('create_playlist'),
             content: <CreatePlaylistModal />,
         });
     });
@@ -54,7 +56,11 @@ export const Sidebar = ({ collapsed }: Props) => {
             {Object.keys(preparedRoutes).map((route, index) => {
                 return (
                     <SidebarSection key={index}>
-                        <SidebarSectionTitle>{route}</SidebarSectionTitle>
+                        <SidebarSectionTitle>
+                            {translate(
+                                route as keyof (typeof resources)['en']['translation']
+                            )}
+                        </SidebarSectionTitle>
                         {preparedRoutes[route].map((link) => {
                             return (
                                 <Popover
@@ -89,14 +95,14 @@ export const Sidebar = ({ collapsed }: Props) => {
                         <SidebarSectionTitle
                             className={currentUser ? 'clickable' : ''}
                         >
-                            Your Playlists
+                            {translate('your_playlists')}
                         </SidebarSectionTitle>
                     </NavigationTitle>
 
                     <Popover
                         content={
                             <>
-                                Create playlist <kbd>n</kbd>
+                                {translate('create_playlist')} <kbd>n</kbd>
                             </>
                         }
                         position={collapsed ? 'right' : 'top'}
@@ -115,7 +121,7 @@ export const Sidebar = ({ collapsed }: Props) => {
                             className="no-playlists"
                             style={{ padding: '8px', fontSize: '0.9rem' }}
                         >
-                            No Playlists
+                            {translate('no_playlists')}
                         </Subtext>
                     )}
                     {ownPlaylists?.slice(0, 4)?.map((playlist) => (

@@ -1,43 +1,32 @@
-import { IconCirclePlus, IconLogout, IconSun } from '@tabler/icons-react';
+import { IconCirclePlus, IconSun } from '@tabler/icons-react';
 import { toggleTheme } from '../../app/theme';
 import { userModel } from '../../entities/user/model';
 import { UserCover } from '../../entities/user/ui/UserCover';
+import { LogoutButton } from '../../features/logoutButton';
 import { BadgeStyled } from '../../features/shareModal/styles';
 import { UploadSongModal } from '../../features/uploadSongModal';
+import { translate } from '../../i18n';
 import { Button } from '../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
 import { Divider } from '../../shared/components/divider';
 import { Flex } from '../../shared/components/flex';
 import { getShortString } from '../../shared/funcs/getShortString';
-import { confirmModel } from '../confirm/model';
 import { modalModel } from '../modal/model';
 import { UserProfileModal } from './UserProfileModal';
 
 export const UserContextMenu = () => {
     const [currentUser] = userModel.useUser();
 
-    const handleLogout = () => {
-        confirmModel.events.open({
-            text: 'Are you sure you want to log out?',
-            onAccept: () => {
-                userModel.events.logout();
-            },
-            subtext: 'All your data is saved',
-            icon: <IconLogout />,
-            iconColor: 'red',
-        });
-    };
-
     const handleUploadSong = () => {
         modalModel.events.open({
-            title: 'Upload song',
+            title: translate('upload_song'),
             content: <UploadSongModal />,
         });
     };
 
     const handleProfileClick = () => {
         modalModel.events.open({
-            title: 'Profile',
+            title: translate('profile'),
             content: <UserProfileModal />,
             sizeY: 'm',
         });
@@ -62,17 +51,14 @@ export const UserContextMenu = () => {
             <Divider />
             <Button onClick={handleUploadSong}>
                 <IconCirclePlus />
-                Upload song
+                {translate('upload_song')}
             </Button>
             <Button onClick={() => toggleTheme()}>
                 <IconSun />
-                Change theme
+                {translate('change_theme')}
             </Button>
             <Divider />
-            <Button onClick={handleLogout}>
-                <IconLogout />
-                Logout
-            </Button>
+            <LogoutButton />
         </DefaultContextMenuStyled>
     );
 };

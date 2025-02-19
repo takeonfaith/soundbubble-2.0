@@ -8,6 +8,7 @@ import { useForm } from './model';
 import { PasswordStrength } from './PasswordStrength';
 import { SignUpModalStyled } from './styles';
 import { MIN_PASSWORD_LENGTH } from './constansts';
+import { translate } from '../../i18n';
 
 export const PasswordRules = styled.div`
     background: ${({ theme }) => theme.colors.pageBackground2};
@@ -16,7 +17,7 @@ export const PasswordRules = styled.div`
 export const Passwords = () => {
     const handleNext = () => {
         modalModel.events.open({
-            title: 'Choose your favorite authors',
+            title: translate('choose_authors'),
             content: <ChoosingAuthors />,
             sizeX: 'm',
             sizeY: 'l',
@@ -39,12 +40,11 @@ export const Passwords = () => {
             >
                 <PasswordInput
                     id="password"
-                    placeholder="Enter your password..."
                     value={values.password}
                     onChange={onChange}
                     required
                     error={errors.password}
-                    maxLength={20}
+                    maxLength={30}
                 />
                 <PasswordStrength value={values.password} />
             </Flex>
@@ -53,14 +53,14 @@ export const Passwords = () => {
                     appearance="outline"
                     onClick={() => modalModel.events.back()}
                 >
-                    Previous
+                    {translate('previous')}
                 </DefaultButton>
                 <DefaultButton
                     disabled={values.password.length < MIN_PASSWORD_LENGTH}
                     appearance="primary"
                     onClick={onSubmit}
                 >
-                    Next
+                    {translate('next')}
                 </DefaultButton>
             </Flex>
         </SignUpModalStyled>

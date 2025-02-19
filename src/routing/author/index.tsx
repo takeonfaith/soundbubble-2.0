@@ -14,6 +14,7 @@ import { MAX_SONGS } from './constants';
 import { AuthorPageWrapper, SongsStyled } from './styles';
 import { TIME_IN_MS } from '../../shared/constants/time';
 import { Flex } from '../../shared/components/flex';
+import { translate } from '../../i18n';
 
 type Props = {
     userData?: TUser | null;
@@ -97,7 +98,7 @@ export const AuthorPage = ({ userData }: Props) => {
                                 showNavigation={songs.length > MAX_SONGS}
                                 to={`/author/${userPageData?.uid}/songs`}
                             >
-                                <h3>Top Songs</h3>
+                                <h3>{translate('top_songs')}</h3>
                             </NavigationTitle>
                         </div>
 
@@ -106,7 +107,7 @@ export const AuthorPage = ({ userData }: Props) => {
                     <Playlists
                         playlists={albums}
                         uid={userPageData?.uid}
-                        title="Top Albums"
+                        title={translate('top_albums')}
                     />
                     {!loading && (
                         <SimilarAuthors

@@ -17,6 +17,7 @@ import { editUserFx } from '../../entities/user/model/edit-user';
 import { UserCover } from '../../entities/user/ui/UserCover';
 import { UserStatus } from '../../entities/user/ui/UserStatus';
 import { EditPhotoModal } from '../../features/editPhotoModal';
+import { HotkeysList } from '../../features/hotkeysList';
 import { SecondScreen } from '../../features/onboarding/ui/SecondScreen';
 import { PlaylistName } from '../../routing/playlist/ui/layout/PlaylistName';
 import { Button } from '../../shared/components/button';
@@ -26,41 +27,9 @@ import { LoadingWrapper } from '../../shared/components/loadingWrapper';
 import { Subtext } from '../../shared/components/subtext';
 import { confirmModel } from '../confirm/model';
 import { modalModel } from '../modal/model';
-import styled from 'styled-components';
-import { LoadingOverlay } from '../../entities/song/ui/styles';
-import { HotkeysList } from '../../features/hotkeysList';
-
-const EditOverlayStyled = styled(LoadingOverlay)`
-    opacity: 0;
-    border-radius: 100%;
-    cursor: pointer;
-    transition: 0.2s opacity;
-
-    &:hover {
-        opacity: 1;
-    }
-`;
-
-const UserProfileModalStyled = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    justify-content: space-between;
-    padding: 0 20px;
-    padding-bottom: 20px;
-
-    button {
-        gap: 16px;
-        font-weight: 300;
-        justify-content: flex-start;
-
-        svg {
-            color: ${({ theme }) => theme.colors.greyText};
-        }
-    }
-`;
+import { UserProfileModalStyled, EditOverlayStyled } from './styles';
+import { translate } from '../../i18n';
+import { dateToString } from '../../shared/funcs/dateToString';
 
 export const UserProfileModal = () => {
     const [currentUser] = userModel.useUser();
@@ -86,6 +55,7 @@ export const UserProfileModal = () => {
         modalModel.events.open({
             title: 'Settings',
             content: <Settings />,
+            sizeX: 'm',
         });
     };
 
@@ -135,7 +105,7 @@ export const UserProfileModal = () => {
 
     const handleOpenHotKeys = () => {
         modalModel.events.open({
-            title: 'Hot keys',
+            title: translate('hot_keys'),
             content: <HotkeysList />,
             sizeX: 'l',
             sizeY: 's',
@@ -185,10 +155,10 @@ export const UserProfileModal = () => {
                     />
                     {currentUser?.regDate && (
                         <Subtext>
-                            Registred:{' '}
-                            {new Date(
-                                currentUser?.regDate.toDate()
-                            ).toLocaleDateString('en-US')}
+                            {translate('registered')}:{' '}
+                            {dateToString(
+                                new Date(currentUser?.regDate.toDate())
+                            )}
                         </Subtext>
                     )}
                 </Flex>
@@ -201,7 +171,7 @@ export const UserProfileModal = () => {
                 >
                     <Flex width="100%" gap={16}>
                         <IconSettings size={20} />
-                        Settings
+                        {translate('settings')}
                     </Flex>
                     <IconChevronRight size={18} />
                 </Button>
@@ -212,7 +182,7 @@ export const UserProfileModal = () => {
                 >
                     <Flex width="100%" gap={16}>
                         <IconBook size={20} />
-                        Tutorial
+                        {translate('tutorial')}
                     </Flex>
                     <IconChevronRight size={18} />
                 </Button>
@@ -223,7 +193,7 @@ export const UserProfileModal = () => {
                 >
                     <Flex width="100%" gap={16}>
                         <IconCommand size={20} />
-                        Hot keys
+                        {translate('hot_keys')}
                     </Flex>
                     <IconChevronRight size={18} />
                 </Button>
@@ -234,7 +204,7 @@ export const UserProfileModal = () => {
                     style={{ padding: '0 10px' }}
                 >
                     <IconLogout size={20} />
-                    Log out
+                    {translate('logout')}
                 </Button>
                 <Button
                     className="danger"
@@ -243,7 +213,7 @@ export const UserProfileModal = () => {
                     onClick={handleDeleteAccount}
                 >
                     <IconTrash size={20} />
-                    Delete account
+                    {translate('delete_account')}
                 </Button>
             </Flex>
         </UserProfileModalStyled>

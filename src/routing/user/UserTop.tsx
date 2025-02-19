@@ -19,6 +19,7 @@ import { confirmModel } from '../../layout/confirm/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Subtext } from '../../shared/components/subtext';
 import { UserButtons, UserInfo, UserInfoName, UserTopStyled } from './styles';
+import { translate } from '../../i18n';
 
 type Props = {
     user: TUser | null;
@@ -46,7 +47,7 @@ export const UserTop = ({ user }: Props) => {
                 text: (
                     <>
                         <IconUserCheck size={18} />
-                        Added
+                        {translate('added_to_friends')}
                     </>
                 ),
                 onClick: () => {
@@ -100,7 +101,7 @@ export const UserTop = ({ user }: Props) => {
             text: (
                 <>
                     <IconUserPlus size={18} />
-                    Add to friends
+                    {translate('add_to_friends')}
                 </>
             ),
             onClick: () => {

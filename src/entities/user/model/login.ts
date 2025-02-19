@@ -2,6 +2,7 @@ import { createEffect, createEvent, sample } from 'effector';
 import { LoginCreditsType } from './types';
 import { toastModel } from '../../../layout/toast/model';
 import { Database } from '../../../database';
+import { translate } from '../../../i18n';
 
 enum FirebaseAuthError {
     'Firebase: Error (auth/wrong-password).' = 'Firebase: Error (auth/wrong-password).',
@@ -19,7 +20,7 @@ sample({
 
 loginFx.doneData.watch(() => {
     toastModel.events.add({
-        message: 'Succesfully logged in',
+        message: translate('logged_in'),
         type: 'success',
     });
 });
@@ -30,7 +31,7 @@ loginFx.failData.watch((err) => {
         FirebaseAuthError['Firebase: Error (auth/wrong-password).']
     ) {
         toastModel.events.add({
-            message: 'Wrong password',
+            message: translate('wrong_password'),
             reason: err.message,
             type: 'error',
         });
@@ -42,7 +43,7 @@ loginFx.failData.watch((err) => {
         FirebaseAuthError['Firebase: Error (auth/user-not-found).']
     ) {
         toastModel.events.add({
-            message: 'User not found',
+            message: translate('user_not_found'),
             reason: err.message,
             type: 'error',
         });
@@ -50,7 +51,7 @@ loginFx.failData.watch((err) => {
     }
 
     toastModel.events.add({
-        message: 'Failed to log in',
+        message: translate('failed_to_login'),
         reason: err.message,
         type: 'error',
     });

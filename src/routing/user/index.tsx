@@ -17,6 +17,7 @@ import { AuthorPageWrapper } from '../author/styles';
 import { SkeletonLoading } from './SkeletonLoading';
 import { SectionStyled } from './styles';
 import { UserTop } from './UserTop';
+import { translate } from '../../i18n';
 
 type Props = {
     data?: TUser | null;
@@ -44,8 +45,6 @@ export const UserPage = ({ data, loadingUser }: Props) => {
     });
 
     const loadingData = loadingUser || loading || id !== currentPageUser?.uid;
-
-    console.log(playlists);
 
     useEffect(() => {
         return () => {
@@ -80,7 +79,7 @@ export const UserPage = ({ data, loadingUser }: Props) => {
                 {lastSongPlayed && (
                     <SectionStyled>
                         <div className="title">
-                            <h3>Last played song</h3>
+                            <h3>{translate('last_played_song')}</h3>
                         </div>
                         <GridSongList
                             queue={{ ...queue, songs: [lastSongPlayed] }}
@@ -94,7 +93,7 @@ export const UserPage = ({ data, loadingUser }: Props) => {
                                 showNavigation={songs.length > MAX_SONGS}
                                 to={`/user/${userPageData?.uid}/songs`}
                             >
-                                <h3>Added songs</h3>
+                                <h3>{translate('liked_songs')}</h3>
                             </NavigationTitle>
                         </div>
                         <GridSongList queue={queue} />
@@ -102,7 +101,7 @@ export const UserPage = ({ data, loadingUser }: Props) => {
                 )}
                 <Playlists
                     playlists={playlists}
-                    title="Playlists"
+                    title={translate('playlists')}
                     uid={userPageData?.uid}
                 />
                 <SectionStyled>
@@ -111,7 +110,7 @@ export const UserPage = ({ data, loadingUser }: Props) => {
                             showNavigation={songs.length > MAX_SONGS}
                             to={`/author/${userPageData?.uid}/songs`}
                         >
-                            <h3>Friends</h3>
+                            <h3>{translate('friends')}</h3>
                         </NavigationTitle>
                     </div>
                     <HorizontalList>

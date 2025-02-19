@@ -26,6 +26,7 @@ import {
     SystemMessageItemStyled,
     UserAvatarStyled,
 } from './styles';
+import { dateToString } from '../../../../shared/funcs/dateToString';
 
 export const ChatMessages = () => {
     const [cache] = chatModel.useCache();
@@ -135,13 +136,9 @@ export const ChatMessages = () => {
                         );
                         const isSystemMessage =
                             m[0].sender === SYSTEM_MESSAGE_SENDER;
-                        const date = new Date(
-                            arr[i][0]?.sentTime ?? ''
-                        ).toLocaleDateString('en-US', {
-                            day: '2-digit',
-                            month: 'long',
-                            year: 'numeric',
-                        });
+                        const date = dateToString(
+                            new Date(arr[i][0]?.sentTime ?? '')
+                        );
                         const isNotSeenFirst = firstUnreadMessage
                             ? m.find(
                                   (message) =>

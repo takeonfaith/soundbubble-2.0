@@ -13,6 +13,7 @@ import {
     ModalStyled,
     ModalTitle,
 } from './styles';
+import { translate } from '../../../i18n';
 
 export const Modal = () => {
     const [modals, slidingBack] = modalModel.useModal();
@@ -59,7 +60,7 @@ export const Modal = () => {
                                             <IconChevronLeft />
                                             <span>
                                                 {modals[index - 1].title === ''
-                                                    ? 'Back'
+                                                    ? translate('back')
                                                     : modals[index - 1].title}
                                             </span>
                                         </Button>

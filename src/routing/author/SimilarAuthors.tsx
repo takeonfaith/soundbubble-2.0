@@ -10,6 +10,7 @@ import { NavigationTitle } from '../../shared/components/navigationTitle';
 import { useIsOnScreen } from '../../shared/hooks/useIsOnScreen';
 import { MAX_SIMILAR_AUTHORS } from './constants';
 import { SimilarAuthorsStyled } from './styles';
+import { translate } from '../../i18n';
 
 type Props = {
     songs: TSong[];
@@ -36,7 +37,7 @@ export const SimilarAuthors = ({ songs, currentPageUser }: Props) => {
                     showNavigation={similarAuthors.length > MAX_SIMILAR_AUTHORS}
                     to={`/author/${currentPageUser?.uid}/similar-authors`}
                 >
-                    <h3>Similar Authors</h3>
+                    <h3>{translate('similar_authors')}</h3>
                 </NavigationTitle>
             </div>
             <HorizontalList overflowColor={theme.colors.pageBackground4}>

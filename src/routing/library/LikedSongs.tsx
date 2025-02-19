@@ -12,6 +12,7 @@ import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { usePlaylistSearch } from '../playlist/hooks/usePlaylistSearch';
 import { PageTop } from '../playlist/ui/layout/PageTop';
+import { translate } from '../../i18n';
 
 export const LikedSongs = () => {
     const [, , , searching] = playlistModel.usePlaylist();
@@ -32,8 +33,8 @@ export const LikedSongs = () => {
         return (
             <PageMessage
                 icon={IconMusicOff}
-                title={'Need to log in'}
-                description={'To listen to your favorite songs'}
+                title={translate('need_to_login')}
+                description={translate('need_to_login_subtext')}
                 className="with-header"
             >
                 <LoginButton />
@@ -55,7 +56,7 @@ export const LikedSongs = () => {
                     <PageTop
                         authors={[currentUser]}
                         queue={{ ...queue, songs: library }}
-                        name="Liked Songs"
+                        name={translate('liked_songs')}
                         icon={<IconHeartFilled />}
                         playlist={null}
                         hasHeader

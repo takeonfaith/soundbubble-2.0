@@ -2,6 +2,7 @@ import { IconMail } from '@tabler/icons-react';
 import { SearchWithHints } from '../searchWithHints';
 import { getSuggestions } from './getSuggestions';
 import { getEmailProviders } from './lib/getEmailProviders';
+import { translate } from '../../i18n';
 
 type Props = {
     onChange: (value: string) => void;
@@ -30,7 +31,7 @@ export const EmailInput = (props: Props) => {
             areSuggestionsLoading={false}
             onSumbit={(val) => onChange(val)}
             icon={icon}
-            placeholder="Enter your email"
+            placeholder={translate('enter_email')}
             label="Email"
             initialValue={value}
             disableCopyButton

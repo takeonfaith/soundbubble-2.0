@@ -16,6 +16,7 @@ import { FirstScreenStyled, Icons } from './styles';
 import { modalModel } from '../../../layout/modal/model';
 import { SecondScreen } from './SecondScreen';
 import { ONBOARDING_KEY } from '../constants';
+import { translate } from '../../../i18n';
 
 export const FirstScreen = () => {
     const icons = [
@@ -79,7 +80,7 @@ export const FirstScreen = () => {
                     }
                     appearance="primary"
                 >
-                    Next
+                    {translate('next')}
                 </DefaultButton>
             </Flex>
         </FirstScreenStyled>

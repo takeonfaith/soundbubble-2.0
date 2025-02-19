@@ -1,10 +1,10 @@
 import { IconMoon, IconSun } from '@tabler/icons-react';
 import styled from 'styled-components';
 import { toggleTheme, useTheme } from '../../app/theme';
-import { settingsModel } from '../../entities/settings/model';
 import { Button } from '../../shared/components/button';
 import Popover from '../../shared/components/popover';
 import { ETheme } from '../../app/theme/types';
+import { translate } from '../../i18n';
 
 const ThemeButtonStyled = styled(Button)`
     min-height: 35px;
@@ -53,23 +53,20 @@ const ThemeButtonIconStyled = styled.div`
 
 export const ThemeButton = () => {
     const { theme } = useTheme();
-    const [themeValue] = settingsModel.useSettings();
-    const isLight =
-        themeValue.settings.items.appearance.children.theme.items.darkMode
-            .value;
 
     const handleTheme = () => {
-        settingsModel.events.updateSettings({
-            path: 'settings.items.appearance.children.theme.items.darkMode',
-            value: isLight === ETheme.dark ? ETheme.light : ETheme.dark,
-        });
         toggleTheme();
     };
 
     return (
         <Popover
             position="bottom"
-            content={`Change theme to ${isLight ? 'dark' : 'light'}`}
+            content={translate('change_theme_to', {
+                theme:
+                    theme === ETheme.light
+                        ? translate('theme_dark')
+                        : translate('theme_light'),
+            })}
         >
             <ThemeButtonStyled onClick={handleTheme}>
                 <ThemeButtonIconStyled className={`theme ${theme.toString()}`}>

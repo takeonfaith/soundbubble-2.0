@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { DESKTOP_HEADER_HEIGHT } from './constants';
+import { LoadingOverlay } from '../../entities/song/ui/styles';
 
 export const HeaderStyled = styled.header`
     width: 100%;
@@ -57,10 +58,10 @@ export const MobileChildren = styled.div`
 `;
 
 export const HeaderPageTitle = styled.h2`
-    width: 350px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
     font-weight: 400;
 
     @media (max-width: 1000px) {
@@ -77,4 +78,36 @@ export const AdminCircle = styled.div`
     border-radius: 100%;
     background: ${({ theme: { scheme } }) =>
         `linear-gradient(45deg, ${scheme.blue.action}, ${scheme.purple.main}, ${scheme.pink.main})`};
+`;
+
+export const EditOverlayStyled = styled(LoadingOverlay)`
+    opacity: 0;
+    border-radius: 100%;
+    cursor: pointer;
+    transition: 0.2s opacity;
+
+    &:hover {
+        opacity: 1;
+    }
+`;
+
+export const UserProfileModalStyled = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    justify-content: space-between;
+    padding: 0 20px;
+    padding-bottom: 20px;
+
+    button {
+        gap: 16px;
+        font-weight: 300;
+        justify-content: flex-start;
+
+        svg {
+            color: ${({ theme }) => theme.colors.greyText};
+        }
+    }
 `;

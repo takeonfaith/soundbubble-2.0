@@ -17,6 +17,7 @@ import { SearchSkeleton } from './SearchSkeleton';
 import { TopAuthorCard } from './TopAuthorCard';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { Browse } from './Browse';
+import { translate } from '../../i18n';
 
 const SearchPageWrapper = styled.div`
     max-width: 650px;
@@ -135,7 +136,7 @@ export const SearchResult = () => {
                                         marginLeft: '7px',
                                     }}
                                 >
-                                    Result
+                                    {translate('result')}
                                 </h3>
                             )}
                             <Flex d="column" gap={4} width="100%">

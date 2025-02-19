@@ -1,7 +1,7 @@
 import { TEntity } from '../../../entities/search/model/types';
 
 export const getEntityName = (suggestion: TEntity | undefined) => {
-    if(!suggestion) return ''
+    if (!suggestion) return '';
 
     if ('displayName' in suggestion) return suggestion['displayName'];
 
@@ -24,4 +24,11 @@ export const getEntityImage = (suggestion: TEntity) => {
     if ('chatImage' in suggestion) return suggestion['chatImage'];
 
     return suggestion['cover'];
+};
+
+export const getEntityColors = (suggestion: TEntity): string[] => {
+    if ('imageColors' in suggestion)
+        return suggestion['imageColors'] as string[];
+
+    return [];
 };

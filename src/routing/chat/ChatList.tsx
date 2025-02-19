@@ -20,6 +20,7 @@ import {
     DesktopWrapperStyled,
     ListOfChats,
 } from './styles';
+import { translate } from '../../i18n';
 
 export const ChatList = () => {
     const [chats, loadingChats] = chatModel.useChats();
@@ -32,7 +33,7 @@ export const ChatList = () => {
 
     const handleCreateChatModal = () => {
         modalModel.events.open({
-            title: 'Create chat with friends',
+            title: translate('create_chat_with_friends'),
             content: <CreateChatModal />,
             sizeY: 'l',
         });
@@ -81,7 +82,7 @@ export const ChatList = () => {
                     jc="space-between"
                     padding="0 20px 10px 20px"
                 >
-                    <h2>Chats</h2>
+                    <h2>{translate('chats')}</h2>
                     <Button
                         className="primary"
                         $width="35px"
@@ -95,7 +96,7 @@ export const ChatList = () => {
                 <ChatSearchStyled>
                     <Input
                         icon={<IconSearch />}
-                        placeholder="Search for chats..."
+                        placeholder={translate('search_for_chats')}
                         style={{ borderRadius: '20px' }}
                         onChange={handleChange}
                         value={searchValue}

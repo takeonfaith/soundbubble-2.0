@@ -22,6 +22,7 @@ import { AddEntitiesUI } from '../addEntitiesUI';
 import { getEntityId } from '../searchWithHints/lib/getDividedEntity';
 import { getEntityType } from '../searchWithHints/lib/getEntityType';
 import { BadgeStyled, ShareModalStyled } from './styles';
+import { translate } from '../../i18n';
 
 type Props = {
     entity: TEntity | null | undefined;
@@ -83,7 +84,7 @@ export const ShareModal = ({ entity }: Props) => {
         <ShareModalStyled>
             <AddEntitiesUI
                 initiallyAddedItems={[]}
-                inputPlaceholder="Search for friends..."
+                inputPlaceholder={translate('search_for_chats')}
                 entities={chatsWithNames}
                 renderItem={(chat, checked, onClick) => {
                     if (chatsWithNames.length === 0) {
@@ -118,7 +119,7 @@ export const ShareModal = ({ entity }: Props) => {
                 renderButton={(addedChats) => (
                     <>
                         <Input
-                            placeholder="Your Message"
+                            placeholder={translate('your_message')}
                             value={messageValue}
                             onChange={(e) =>
                                 setMessageValue(e.currentTarget.value)
@@ -129,7 +130,7 @@ export const ShareModal = ({ entity }: Props) => {
                             onClick={() => handleShare(addedChats)}
                             loading={sending}
                         >
-                            Send
+                            {translate('send')}
                             <BadgeStyled className="white">
                                 {addedChats.length}
                             </BadgeStyled>

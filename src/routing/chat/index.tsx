@@ -19,6 +19,7 @@ import { PageWrapper } from '../../shared/components/pageWrapper';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
 import { ChatList } from './ChatList';
 import { LoginButton } from '../../features/loginButton';
+import { translate } from '../../i18n';
 
 const ChatPageStyled = styled.div`
     width: 100%;
@@ -86,8 +87,8 @@ export const ChatPage = () => {
             <>
                 <PageMessage
                     icon={IconMessageOff}
-                    title={'Need to log in '}
-                    description={'To share songs with your friends'}
+                    title={translate('need_to_login')}
+                    description={translate('to_share_songs')}
                 >
                     <LoginButton />
                 </PageMessage>
@@ -102,7 +103,7 @@ export const ChatPage = () => {
                         <Flex gap={10} width="100%">
                             <Input
                                 icon={<IconSearch />}
-                                placeholder="Search for chats..."
+                                placeholder={translate('search_for_chats')}
                             />
                             <Button
                                 onClick={handleCreateChatModal}
@@ -120,8 +121,8 @@ export const ChatPage = () => {
                     {!currentChat ? (
                         <PageMessage
                             icon={IconMessageOff}
-                            title="No chat choosen"
-                            description="Select any chat"
+                            title={translate('no_chat_selected')}
+                            description=""
                         />
                     ) : (
                         <Outlet />

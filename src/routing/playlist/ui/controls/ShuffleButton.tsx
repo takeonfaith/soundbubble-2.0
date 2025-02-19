@@ -7,6 +7,7 @@ import { Button } from '../../../../shared/components/button';
 import { Loading } from '../../../../shared/components/loading';
 import Popover from '../../../../shared/components/popover';
 import { $type, load } from './model';
+import { translate } from '../../../../i18n';
 
 type Props = {
     queue: TQueue | TLoadQueue;
@@ -34,7 +35,7 @@ export const ShuffleButton = ({ queue }: Props) => {
     };
 
     return (
-        <Popover content="Shuffle">
+        <Popover content={translate('shuffle')}>
             <Button
                 $width="45px"
                 $height="45px"

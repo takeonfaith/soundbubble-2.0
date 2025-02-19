@@ -3,6 +3,7 @@ import { toastModel } from '../../../../layout/toast/model';
 import { createQueueObject } from '../../lib/createQueueObject';
 import { PlayProps, TSong } from '../../model/types';
 import { $currentSongIndex, $queue } from './queue';
+import { translate } from '../../../../i18n';
 
 export const addToTheEndOfQueue = createEvent<TSong>();
 export const addAfterCurrentSongInQueue = createEvent<TSong>();
@@ -59,7 +60,7 @@ sample({
 addAfterCurrentSongInQueue.watch(() => {
     toastModel.events.add({
         type: 'hint',
-        message: 'Song added next',
+        message: translate('song_plays_next'),
         duration: 5000,
     });
 });
@@ -67,7 +68,7 @@ addAfterCurrentSongInQueue.watch(() => {
 addToTheEndOfQueue.watch(() => {
     toastModel.events.add({
         type: 'hint',
-        message: 'Song added to the end of queue',
+        message: translate('song_plays_at_the_end'),
         duration: 5000,
     });
 });

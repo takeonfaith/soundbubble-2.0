@@ -1,6 +1,7 @@
 import { IconEye, IconEyeClosed, IconLock } from '@tabler/icons-react';
 import { useState } from 'react';
 import { Input } from '../../shared/components/input';
+import { translate } from '../../i18n';
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
     error?: string;
@@ -17,8 +18,8 @@ export const PasswordInput = (props: Props) => {
 
     return (
         <Input
-            label="Password"
-            placeholder="Enter password"
+            label={translate('password')}
+            placeholder={translate('enter_password')}
             rightIcon={rightIcon}
             onRightIconClick={handleShowPassword}
             type={localType}

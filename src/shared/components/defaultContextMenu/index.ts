@@ -20,8 +20,6 @@ export const DefaultContextMenuStyled = styled.div`
         justify-content: flex-start;
         padding: 8px 16px;
         border-radius: 0;
-        /* opacity: 0.8; */
-
         white-space: nowrap;
 
         svg {

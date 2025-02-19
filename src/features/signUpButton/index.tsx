@@ -1,4 +1,5 @@
 import { userModel } from '../../entities/user/model';
+import { translate } from '../../i18n';
 import { modalModel } from '../../layout/modal/model';
 import { Button } from '../../shared/components/button';
 import { SignUpModal } from '../signUpModal';
@@ -8,7 +9,7 @@ export const SignUpButton = () => {
 
     const handleOpenSignUp = () => {
         modalModel.events.open({
-            title: 'Sign Up',
+            title: translate('sign_up'),
             content: <SignUpModal />,
         });
     };
@@ -16,8 +17,13 @@ export const SignUpButton = () => {
     if (currentUser) return null;
 
     return (
-        <Button onClick={handleOpenSignUp} $width="100px" className="outline">
-            Sign up
+        <Button
+            onClick={handleOpenSignUp}
+            $width="fit-content"
+            style={{ padding: '0 10px' }}
+            className="outline"
+        >
+            {translate('sign_up')}
         </Button>
     );
 };

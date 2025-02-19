@@ -5,7 +5,6 @@ import {
     IconHeartBroken,
     IconInfoCircle,
     IconPlaylistAdd,
-    IconShare3,
     IconSparkles,
     IconSquareRoundedPlus,
     IconTrash,
@@ -13,8 +12,9 @@ import {
 import { useNavigate } from 'react-router';
 import { styled } from 'styled-components';
 import { AddSongToPlaylistModal } from '../../../../features/addSongToPlaylistModal';
-import { ShareModal } from '../../../../features/shareModal';
+import { ShareButton } from '../../../../features/shareButton';
 import { BadgeStyled } from '../../../../features/shareModal/styles';
+import { translate } from '../../../../i18n';
 import { confirmModel } from '../../../../layout/confirm/model';
 import { modalModel } from '../../../../layout/modal/model';
 import { Popup } from '../../../../layout/newpopup';
@@ -24,6 +24,7 @@ import { Button } from '../../../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../../../shared/components/defaultContextMenu';
 import { Divider } from '../../../../shared/components/divider';
 import { Flex } from '../../../../shared/components/flex';
+import { Loading } from '../../../../shared/components/loading';
 import Popover from '../../../../shared/components/popover';
 import { SwitchToggle } from '../../../../shared/components/switchToggle';
 import { ENTITIES_ICONS } from '../../../../shared/constants/icons';
@@ -38,7 +39,6 @@ import { EditSongModal } from '../EditSongModal';
 import { SongInfo } from '../SongInfo';
 import { AddToPlaylistsContextMenu } from './AddToPlaylistsContextMenu';
 import { AuthorsContextMenu } from './AuthorsContextMenu';
-import { Loading } from '../../../../shared/components/loading';
 
 const SlowButton = styled(Button)`
     justify-content: space-between !important;
@@ -73,14 +73,6 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
     );
 
     if (!song) return null;
-
-    const handleShare = () => {
-        modalModel.events.open({
-            title: `Share "${song?.name}" with friends`,
-            content: <ShareModal entity={song} />,
-            sizeY: 'm',
-        });
-    };
 
     const handleAddToPlaylist = () => {
         modalModel.events.open({
@@ -173,7 +165,7 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                         className="danger"
                     >
                         <IconTrash />
-                        Delete from playlist
+                        {translate('delete_from_playlist')}
                     </Button>
                     <Divider />
                 </>
@@ -190,7 +182,9 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                     ) : (
                         <IconHeart size={20} />
                     )}
-                    {isLiked ? 'Remove from Liked' : 'Add to Liked'}
+                    {isLiked
+                        ? translate('remove_from_liked')
+                        : translate('add_to_liked')}
                 </Button>
             </Popover>
             <Popover content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}>
@@ -206,7 +200,7 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                         <Flex width="100%" jc="space-between">
                             <Flex gap={15}>
                                 <IconSquareRoundedPlus size={20} />
-                                Add to playlist
+                                {translate('add_to_playlist')}
                             </Flex>
                             <IconChevronRight />
                         </Flex>
@@ -216,22 +210,17 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
             <Divider />
             <Button onClick={handleAddNext}>
                 <IconPlaylistAdd />
-                Next
+                {translate('next')}
             </Button>
             <Button onClick={handleAddToTheEnd}>
                 <IconPlaylistAdd />
-                At the end
+                {translate('at_the_end')}
             </Button>
             <Divider />
-            <Popover content={!currentUser ? NO_ACCOUNT_FOR_ACTION : null}>
-                <Button disabled={!currentUser} onClick={handleShare}>
-                    <IconShare3 />
-                    Share
-                </Button>
-            </Popover>
+            <ShareButton entity={song} type="menu" />
             <Button onClick={handleInfoModal}>
                 <IconInfoCircle />
-                Info
+                {translate('info')}
             </Button>
             <Popup
                 triggers={['hover']}
@@ -246,7 +235,7 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                     <Flex jc="space-between" width="100%">
                         <Flex gap={15}>
                             {ENTITIES_ICONS.author}
-                            Authors
+                            {translate('authors')}
                         </Flex>
                         {song.authors.length > 1 ? <IconChevronRight /> : null}
                     </Flex>
@@ -282,7 +271,7 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                         >
                             <Flex gap={16}>
                                 <IconSparkles />
-                                Slow version
+                                {translate('slow_version')}
                             </Flex>
                             <SwitchToggle
                                 onChange={(e) => handleSlow(e)}

@@ -2,6 +2,7 @@
 import { LoginModal } from 'features/loginModal';
 import { modalModel } from 'layout/modal/model';
 import { userModel } from '../../entities/user/model';
+import { translate } from '../../i18n';
 
 export const usePrivateAction = () => {
     const [currentUser] = userModel.useUser();
@@ -14,7 +15,7 @@ export const usePrivateAction = () => {
                 content: (
                     <LoginModal
                         actionAfterLogin={fn}
-                        title={fn ? 'Log in to your account first' : undefined}
+                        title={fn ? translate('login_first') : undefined}
                     />
                 ),
                 sizeY: 's',

@@ -17,6 +17,7 @@ import { SearchWithItems } from '../searchWithItems';
 import { SignUpModalStyled } from '../signUpModal/styles';
 import { Lyrics } from './Lyrics';
 import { useForm } from './model';
+import { translate } from '../../i18n';
 
 const MOODS: TExtendedSuggestion[] = [
     {
@@ -169,7 +170,7 @@ export const GeneralInfo = () => {
             </Flex>
             <Flex width="100%">
                 <DefaultButton onClick={onSubmit} appearance="primary">
-                    Next
+                    {translate('next')}
                 </DefaultButton>
             </Flex>
         </SignUpModalStyled>

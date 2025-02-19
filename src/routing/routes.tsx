@@ -40,8 +40,9 @@ import { LikedAlbums } from './library/LikedAlbums';
 import { UserSongs } from './user/UserSongs';
 import { TestPage } from './test';
 import { TrendsPagePlaylists } from './trends/ui/TrendsPagePlaylists';
+import { translate } from '../i18n';
 
-type Section = 'features' | 'your activities' | 'your music';
+type Section = 'features' | 'your_activities' | 'your_music';
 
 export type TRoute = {
     url: string;
@@ -58,7 +59,7 @@ export type TRoute = {
 export const allRoutes: TRoute[] = [
     {
         url: 'discover',
-        title: 'Wave',
+        title: translate('wave'),
         icon: <IconWaveSine />,
         component: <DiscoverPage />,
         section: 'features',
@@ -66,16 +67,7 @@ export const allRoutes: TRoute[] = [
     },
     {
         url: 'search',
-        title: 'Search',
-        icon: <IconSearch />,
-        component: <SearchPage />,
-        section: 'features',
-        private: false,
-        showTitle: false,
-    },
-    {
-        url: 'search',
-        title: 'Search',
+        title: translate('search'),
         icon: <IconSearch />,
         component: <SearchPage />,
         section: 'features',
@@ -84,7 +76,7 @@ export const allRoutes: TRoute[] = [
     },
     {
         url: 'trends',
-        title: 'Trends',
+        title: translate('trends'),
         icon: <IconTrendingUp />,
         component: <TrendsPage />,
         section: 'features',
@@ -99,24 +91,24 @@ export const allRoutes: TRoute[] = [
                 private: false,
             },
             {
-                url: 'albums',
-                title: 'Trending Albums',
-                icon: <IconDisc />,
-                component: <TrendsPageAlbums />,
-                section: 'features',
-                private: false,
-            },
-            {
                 url: 'authors',
-                title: 'Trending Authors',
+                title: translate('trending_authors'),
                 icon: <IconMicrophone2 />,
                 component: <TrendsPageAuthors />,
                 section: 'features',
                 private: false,
             },
             {
+                url: 'albums',
+                title: translate('trending_albums'),
+                icon: <IconDisc />,
+                component: <TrendsPageAlbums />,
+                section: 'features',
+                private: false,
+            },
+            {
                 url: 'playlists',
-                title: 'Trending Playlists',
+                title: translate('trending_playlists'),
                 icon: <IconPlaylist />,
                 component: <TrendsPagePlaylists />,
                 section: 'features',
@@ -126,10 +118,10 @@ export const allRoutes: TRoute[] = [
     },
     {
         url: '',
-        title: 'Liked',
+        title: translate('liked'),
         icon: <IconHeart />,
         component: <Library />,
-        section: 'your music',
+        section: 'your_music',
         private: true,
         showTitle: false,
         children: [
@@ -138,31 +130,31 @@ export const allRoutes: TRoute[] = [
                 title: '',
                 icon: <IconMusic />,
                 component: <LikedSongs />,
-                section: 'your music',
+                section: 'your_music',
                 private: true,
             },
             {
                 url: 'playlists',
-                title: 'Your Playlists',
+                title: translate('your_playlists'),
                 icon: <IconPlaylist />,
                 component: <LikedPlaylists />,
-                section: 'your music',
+                section: 'your_music',
                 private: true,
             },
             {
                 url: 'albums',
-                title: 'Liked Albums',
+                title: translate('liked_albums'),
                 icon: <IconVinyl />,
                 component: <LikedAlbums />,
-                section: 'your music',
+                section: 'your_music',
                 private: true,
             },
             {
                 url: 'authors',
-                title: 'Liked Authors',
+                title: translate('liked_authors'),
                 icon: <IconMicrophone2 />,
                 component: <LikedAuthors />,
-                section: 'your music',
+                section: 'your_music',
                 private: true,
             },
         ],
@@ -170,15 +162,15 @@ export const allRoutes: TRoute[] = [
 
     {
         url: 'history',
-        title: 'History',
+        title: translate('history'),
         icon: <IconHistory />,
         component: <HistoryPage />,
-        section: 'your music',
+        section: 'your_music',
         private: true,
     },
     {
         url: 'chats',
-        title: 'Chats',
+        title: translate('chats'),
         icon: <IconMessage />,
         component: <ChatPage />,
         children: [
@@ -187,19 +179,19 @@ export const allRoutes: TRoute[] = [
                 title: 'Chat',
                 icon: <IconMessage />,
                 component: <ChatDialog />,
-                section: 'your activities',
+                section: 'your_activities',
                 private: true,
             },
         ],
-        section: 'your activities',
+        section: 'your_activities',
         private: true,
     },
     {
         url: 'friends',
-        title: 'Friends',
+        title: translate('friends'),
         icon: <IconUsers />,
         component: <FriendsPage />,
-        section: 'your activities',
+        section: 'your_activities',
         private: true,
     },
     {
@@ -207,15 +199,15 @@ export const allRoutes: TRoute[] = [
         title: 'Song',
         icon: <IconMusic />,
         component: <SongPage />,
-        section: 'your music',
+        section: 'your_music',
         private: true,
     },
     {
         url: 'playlist/:id',
-        title: 'Playlist',
+        title: translate('playlist'),
         icon: <IconDisc />,
         component: <PlaylistPage />,
-        section: 'your music',
+        section: 'your_music',
         private: true,
     },
     {
@@ -223,7 +215,7 @@ export const allRoutes: TRoute[] = [
         title: 'Album',
         icon: <IconVinyl />,
         component: <AlbumPage />,
-        section: 'your music',
+        section: 'your_music',
         private: true,
     },
     {
@@ -231,7 +223,7 @@ export const allRoutes: TRoute[] = [
         title: 'Author',
         icon: <IconMicrophone />,
         component: <AuthorPage />,
-        section: 'your music',
+        section: 'your_music',
         private: true,
     },
     {
@@ -239,7 +231,7 @@ export const allRoutes: TRoute[] = [
         title: 'Author songs',
         icon: <IconMusic />,
         component: <AuthorSongs />,
-        section: 'your music',
+        section: 'your_music',
         private: true,
     },
     {
@@ -247,7 +239,7 @@ export const allRoutes: TRoute[] = [
         title: 'Similar Authors',
         icon: <IconMicrophone />,
         component: <SimilarAuthorsPage />,
-        section: 'your music',
+        section: 'your_music',
         private: true,
     },
     {
@@ -255,7 +247,7 @@ export const allRoutes: TRoute[] = [
         title: 'User',
         icon: <IconUser />,
         component: <UserPage />,
-        section: 'your music',
+        section: 'your_music',
         private: true,
     },
     {
@@ -263,7 +255,7 @@ export const allRoutes: TRoute[] = [
         title: 'User Songs',
         icon: <IconMusic />,
         component: <UserSongs />,
-        section: 'your music',
+        section: 'your_music',
         private: true,
     },
     {
@@ -271,15 +263,7 @@ export const allRoutes: TRoute[] = [
         title: 'User',
         icon: <IconUser />,
         component: <UserPage />,
-        section: 'your music',
-        private: true,
-    },
-    {
-        url: 'me',
-        title: 'Me',
-        icon: <IconUser />,
-        component: <MePage />,
-        section: 'your music',
+        section: 'your_music',
         private: true,
     },
     {
@@ -308,19 +292,18 @@ const getRoutes = <T extends (typeof allRoutes)[number]['title'][]>(
 };
 
 export const menuRoutes = getRoutes([
-    'Wave',
-    'Trends',
-    'Liked',
-    'History',
-    'Chats',
-    'Friends',
-    'Settings',
+    translate('wave'),
+    translate('trends'),
+    translate('liked'),
+    translate('history'),
+    translate('chats'),
+    translate('friends'),
 ]);
 
 export const mobileMenuRoutes = getRoutes([
-    'Wave',
-    'Trends',
-    'Liked',
-    'Chats',
-    'Search',
+    translate('wave'),
+    translate('trends'),
+    translate('liked'),
+    translate('chats'),
+    translate('search'),
 ]);

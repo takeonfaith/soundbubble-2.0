@@ -7,6 +7,7 @@ import { FirstScreenStyled } from './styles';
 import { Subtext } from '../../../shared/components/subtext';
 import { IconWaveSine } from '@tabler/icons-react';
 import { ONBOARDING_KEY } from '../constants';
+import { translate } from '../../../i18n';
 
 const FourthScreenStyled = styled(FirstScreenStyled)`
     img.background1 {
@@ -61,10 +62,9 @@ export const FourthScreen = () => {
                 </Icon>
             </Flex>
             <Flex height="300px" d="column" gap={10}>
-                <h2>And last but not least: Wave</h2>
+                <h2>{translate('wave_promo')}</h2>
                 <Subtext>
-                    There you can find new songs based on what you already
-                    listen
+                    {translate('wave_promo_subtext')}
                 </Subtext>
             </Flex>
             <Flex width="100%" gap={10}>
@@ -74,7 +74,7 @@ export const FourthScreen = () => {
                         modalModel.events.back();
                     }}
                 >
-                    Back
+                    {translate('back')}
                 </DefaultButton>
                 <DefaultButton
                     onClick={() => {
@@ -83,7 +83,7 @@ export const FourthScreen = () => {
                     }}
                     appearance="primary"
                 >
-                    Done
+                    {translate('done')}
                 </DefaultButton>
             </Flex>
         </FourthScreenStyled>

@@ -4,6 +4,7 @@ import { createEffectWithToast } from '../../../shared/effector/createEffectWith
 import { TUploadPlaylist, TPlaylist } from './types';
 import { Database } from '../../../database';
 import { addOwnPlaylistToLibrary } from '../../user/model/library/playlists';
+import { translate } from '../../../i18n';
 
 type CreatePlaylistProps = {
     playlist: TUploadPlaylist;
@@ -11,7 +12,7 @@ type CreatePlaylistProps = {
 };
 
 export const createPlaylistsFx = createEffectWithToast<CreatePlaylistProps, TPlaylist>(
-    'Playlist created',
+    translate('playlist_created'),
     'Failed to create playlist'
 );
 

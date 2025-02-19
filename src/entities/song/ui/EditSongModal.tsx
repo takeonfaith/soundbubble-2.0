@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 import { Database } from '../../../database';
 import { Loading } from '../../../shared/components/loading';
 import { DefaultButton } from '../../../shared/components/button/DefaultButton';
+import { translate } from '../../../i18n';
 
 const EditLyricsModal = ({ song }: Props) => {
     const [lyrics, setLyrics] = useState<TLyric[]>([]);
@@ -56,7 +57,9 @@ const EditLyricsModal = ({ song }: Props) => {
                     value={lyrics.map((l) => `${l.text}`).join('\n')}
                 />
             )}
-            <DefaultButton appearance="primary">Save changes</DefaultButton>
+            <DefaultButton appearance="primary">
+                {translate('save_changes')}
+            </DefaultButton>
         </Flex>
     );
 };
@@ -68,7 +71,7 @@ type Props = {
 export const EditSongModal = ({ song }: Props) => {
     if (!song) return null;
     return (
-        <Flex d="column" padding='20px' gap={12} width='100%'>
+        <Flex d="column" padding="20px" gap={12} width="100%">
             <PhotoInput
                 file={null}
                 colors={[]}

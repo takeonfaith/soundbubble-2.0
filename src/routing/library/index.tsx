@@ -4,12 +4,13 @@ import { Header } from '../../layout/header';
 import { Flex } from '../../shared/components/flex';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { Tabs } from '../../shared/components/tabs';
+import { translate } from '../../i18n';
 
 const TABS = [
-    { title: 'Songs', url: '' },
-    { title: 'Playlists', url: 'playlists' },
-    { title: 'Albums', url: 'albums' },
-    { title: 'Authors', url: 'authors' },
+    { title: translate('songs'), url: '' },
+    { title: translate('playlists'), url: 'playlists' },
+    { title: translate('albums'), url: 'albums' },
+    { title: translate('authors'), url: 'authors' },
 ];
 
 export const Library = () => {

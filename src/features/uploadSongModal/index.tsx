@@ -12,6 +12,7 @@ import { useForm } from './model';
 import { SongNameAndAuthor } from './SongNameAndAuthor';
 import { Server } from '../../server';
 import { toastModel } from '../../layout/toast/model';
+import { translate } from '../../i18n';
 
 export const UploadSongModal = () => {
     const { values, updateField, errors, onSubmit, onChange, loading } =
@@ -119,7 +120,7 @@ export const UploadSongModal = () => {
             </Flex>
             <Flex width="100%" onClick={onSubmit}>
                 <DefaultButton loading={loading} appearance="primary">
-                    Next
+                    {translate('next')}
                 </DefaultButton>
             </Flex>
         </SignUpModalStyled>

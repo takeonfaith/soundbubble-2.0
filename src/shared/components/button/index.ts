@@ -40,14 +40,6 @@ export const Button = styled.button<{
             );
     }
 
-    &.danger {
-        color: ${({ theme }) => theme.scheme.red.text};
-
-        svg {
-            color: ${({ theme }) => theme.scheme.red.text};
-        }
-    }
-
     &.secondary {
         background: ${({ theme }) => theme.colors.hover};
         color: ${({ theme }) => theme.scheme.blue.action};
@@ -57,6 +49,14 @@ export const Button = styled.button<{
         background: ${({ theme }) => theme.colors.pageBackground};
         color: ${({ theme }) => theme.colors.textColor};
         border: 1px solid ${({ theme }) => theme.colors.border};
+    }
+
+    &.danger {
+        color: ${({ theme }) => theme.scheme.red.text};
+
+        svg {
+            color: ${({ theme }) => theme.scheme.red.text};
+        }
     }
 
     &.plane {

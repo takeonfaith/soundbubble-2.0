@@ -1,6 +1,7 @@
 import { ToggleLike } from '../../../../entities/playlist/hooks/useTogglePlaylistLike';
 import { TPlaylist } from '../../../../entities/playlist/model/types';
 import { LikeButton } from '../../../../features/likeButton';
+import { translate } from '../../../../i18n';
 import { LikeButtonWrapper } from '../../styles';
 
 type Props = {
@@ -19,12 +20,13 @@ export const Like = ({ playlist, likeModel }: Props) => {
                 entity={playlist}
                 likeColor={playlist.imageColors[0]}
                 isLiked={isLiked}
-                width="90px"
+                width="fit-content"
                 loading={performingAction}
                 onClick={handleToggleLike}
                 className="ghost"
+                style={{ padding: '0 10px' }}
             >
-                {isLiked ? 'Liked' : 'Like'}
+                {isLiked ? translate('liked') : translate('add_to_liked')}
             </LikeButton>
         </LikeButtonWrapper>
     );

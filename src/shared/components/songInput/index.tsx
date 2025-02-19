@@ -18,6 +18,7 @@ import {
 } from './styles';
 import { getHumanFileSize } from '../../funcs/getHumanFileSize';
 import { InputError } from '../input/styles';
+import { translate } from '../../../i18n';
 
 const UploadedSong = ({
     file,
@@ -160,7 +161,7 @@ export const SongInput = ({ file, onChange, error }: Props) => {
                         {!dragActive && <IconMusicUp />}
                     </SongInputIcon>
                     <Flex d="column" gap={8}>
-                        <h3>Drag and drop audio files</h3>
+                        <h3>{translate('drag_and_drop_audio_files')}</h3>
                         <Subtext>
                             Your file should either be <kbd>.mp3</kbd> or{' '}
                             <kbd>.wav</kbd>
@@ -171,7 +172,7 @@ export const SongInput = ({ file, onChange, error }: Props) => {
                         className="outline"
                         onClick={onButtonClick}
                     >
-                        Browse files
+                        {translate('browse_files')}
                     </Button>
                 </SongInputLabel>
                 <input

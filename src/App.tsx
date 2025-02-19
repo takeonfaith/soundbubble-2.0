@@ -13,6 +13,8 @@ import { useSidebar } from './layout/sidebar/model';
 import { CustomRouter } from './routing/CustomRouter';
 import { useGetAppHotKeys } from './shared/hooks/useGetAppHotKeys';
 import useHotkeys from './shared/hooks/useHotKeys';
+import { I18nextProvider } from 'react-i18next';
+import i18next from './i18n';
 
 const AppStyled = styled.div`
     height: 100dvh;
@@ -43,19 +45,21 @@ function App() {
     }, []);
 
     return (
-        <ThemeProvider theme={themeParams}>
-            <GlobalStyles collapsed={isCollapsed} />
-            <HashRouter>
-                <CustomRouter>
-                    <AppStyled>
-                        <ErrorBoundary>
-                            <AppAudio />
-                            <AppRouter />
-                        </ErrorBoundary>
-                    </AppStyled>
-                </CustomRouter>
-            </HashRouter>
-        </ThemeProvider>
+        <I18nextProvider i18n={i18next} >
+            <ThemeProvider theme={themeParams}>
+                <GlobalStyles collapsed={isCollapsed} />
+                <HashRouter>
+                    <CustomRouter>
+                        <AppStyled>
+                            <ErrorBoundary>
+                                <AppAudio />
+                                <AppRouter />
+                            </ErrorBoundary>
+                        </AppStyled>
+                    </CustomRouter>
+                </HashRouter>
+            </ThemeProvider>
+        </I18nextProvider>
     );
 }
 

@@ -13,6 +13,7 @@ import { Flex } from '../../shared/components/flex';
 import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
 import { SwitchToggle } from '../../shared/components/switchToggle';
 import { MeshGradientBubblesWithAudio } from './Bubble';
+import { translate } from '../../i18n';
 
 const DiscoverPageStyled = styled.div`
     position: relative;
@@ -56,12 +57,13 @@ const PlaybuttonStyled = styled.div`
         border-radius: 20px;
         opacity: 0;
         position: absolute;
-        width: 205px;
+        width: fit-content;
         transition: 0.2s transform, 0.1s opacity;
         transform: translateY(60px);
-        gap: 10px;
+        gap: 20px;
         display: flex;
         align-items: center;
+        justify-content: space-between;
         color: #fff;
 
         &:hover {
@@ -117,8 +119,11 @@ export const DiscoverPage = () => {
             )}
             <PlaybuttonStyled>
                 <Button
-                    $width="260px"
-                    style={{ fontSize: '2rem', minHeight: '60px' }}
+                    style={{
+                        fontSize: '2rem',
+                        minHeight: '60px',
+                        minWidth: '260px',
+                    }}
                     onClick={() => {
                         songModel.wave.playWave();
                     }}
@@ -133,23 +138,25 @@ export const DiscoverPage = () => {
                             />
                         </Flex>
                         {!isWave || !state || state === SongState.pause
-                            ? 'Play Wave'
-                            : "Wave vibin'"}
+                            ? translate('play_wave')
+                            : translate('wave_vibin')}
                     </Flex>
                 </Button>
-                <Button className="slow-btn" onClick={handleSlow}>
-                    <Flex width="100%" jc="space-between">
-                        <Flex gap={10}>
-                            <IconSparkles size={22} />
-                            Slow version
-                        </Flex>
-                        <SwitchToggle
-                            onChange={handleSlow}
-                            size="s"
-                            checked={isSlow}
-                            primaryColor={currentSong?.imageColors[3]}
-                        />
+                <Button
+                    $width="fit-content"
+                    className="slow-btn"
+                    onClick={handleSlow}
+                >
+                    <Flex gap={10}>
+                        <IconSparkles size={22} />
+                        {translate('slow_version')}
                     </Flex>
+                    <SwitchToggle
+                        onChange={handleSlow}
+                        size="s"
+                        checked={isSlow}
+                        primaryColor={currentSong?.imageColors[3]}
+                    />
                 </Button>
             </PlaybuttonStyled>
             {/* <YearPlaylists /> */}

@@ -1,4 +1,4 @@
-import { IconSearch, IconUserOff } from '@tabler/icons-react';
+import { IconFriendsOff, IconSearch, IconUserOff } from '@tabler/icons-react';
 import { styled } from 'styled-components';
 import { userModel } from '../../entities/user/model';
 import { UserItem } from '../../entities/user/ui';
@@ -14,6 +14,8 @@ import {
 } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { FriendRequests } from './FriendRequests';
+import { translate } from '../../i18n';
+import { LoginButton } from '../../features/loginButton';
 
 const FriendsWrapper = styled.div`
     width: 100%;
@@ -28,6 +30,19 @@ const FriendsWrapper = styled.div`
 export const FriendsPage = () => {
     const [currentUser] = userModel.useUser();
     const [friends, , awaiting, loading] = userModel.useFriends();
+
+    if (!currentUser)
+        return (
+            <>
+                <PageMessage
+                    icon={IconFriendsOff}
+                    title={translate('need_to_login')}
+                    description={translate('to_add_friends')}
+                >
+                    <LoginButton />
+                </PageMessage>
+            </>
+        );
 
     return (
         <PageWrapper>

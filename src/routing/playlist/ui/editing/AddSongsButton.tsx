@@ -4,6 +4,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { modalModel } from '../../../../layout/modal/model';
 import { AddSongsToPlaylistModal } from './AddSongsToPlaylistModal';
 import { TPlaylist } from '../../../../entities/playlist/model/types';
+import { translate } from '../../../../i18n';
 
 const AddSongsButtonStyled = styled(Button)`
     font-weight: 200;
@@ -47,7 +48,7 @@ type Props = {
 export const AddSongsButton = ({ playlist }: Props) => {
     const handleAddSongs = () => {
         modalModel.events.open({
-            title: 'Add songs to playlist',
+            title: translate('add_songs_to_playlist'),
             content: <AddSongsToPlaylistModal playlist={playlist} />,
             sizeY: 'l',
         });
@@ -58,7 +59,7 @@ export const AddSongsButton = ({ playlist }: Props) => {
             <IconWrapper>
                 <IconPlus size={22} />
             </IconWrapper>
-            Add songs
+            {translate('add_songs')}
         </AddSongsButtonStyled>
     );
 };

@@ -22,6 +22,7 @@ type Props<T extends TExtendedSuggestion> = {
     label: string;
     error?: string;
     required?: boolean;
+    icon?: React.ReactNode;
     onSubmit: (addedItems: T[]) => void;
 };
 
@@ -30,6 +31,7 @@ export const SearchWithItems = <T extends TExtendedSuggestion>({
     label,
     placeholder,
     error,
+    icon,
     required,
     onSubmit,
 }: Props<T>) => {
@@ -66,6 +68,7 @@ export const SearchWithItems = <T extends TExtendedSuggestion>({
                 disableCopyButton
                 error={error}
                 required={required}
+                icon={icon}
             />
             <Items
                 added={addedItems}

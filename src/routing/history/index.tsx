@@ -16,6 +16,7 @@ import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { convertToMapArray } from '../../shared/funcs/convertToMap';
 import { DeleteHistoryButton } from './DeleteHistoryButton';
 import { HistoryPageWrapper } from './styles';
+import { translate } from '../../i18n';
 
 export const HistoryPage = () => {
     const [history, isDeletingHistory] = useUnit([
@@ -39,13 +40,13 @@ export const HistoryPage = () => {
                                 icon={user ? IconHistoryOff : IconUserOff}
                                 title={
                                     user
-                                        ? 'No history yet'
-                                        : 'Need to log in to see history'
+                                        ? translate('no_history')
+                                        : translate('need_to_login')
                                 }
                                 description={
                                     user
-                                        ? 'Songs that you listen end up here'
-                                        : ''
+                                        ? translate('no_history_subtext')
+                                        : translate('to_see_history')
                                 }
                             >
                                 <LoginButton />

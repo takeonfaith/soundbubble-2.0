@@ -19,7 +19,7 @@ import {
 } from '../../chat/model/unread';
 import { $searchHistory } from '../../search/model/search-history';
 import { currentTimeApi } from '../../song/new-model/current-time';
-import { $currentSongIndex, $queue } from '../../song/new-model/queue';
+import { $currentSongIndex, $queue } from '../../song/new-model/queue/index';
 import { stop } from '../../song/new-model/song-state';
 import { $isSlowWave } from '../../song/new-model/wave';
 import {
@@ -32,6 +32,7 @@ import { $addedAuthors } from './library/authors';
 import { $addedPlaylists, $ownPlaylists } from './library/playlists';
 import { $library } from './library/songs';
 import { $user, $userCreds } from './user';
+import { translate } from '../../../i18n';
 
 export const logoutFx = createEffect();
 
@@ -91,7 +92,7 @@ logoutFx.use(async () => {
 logoutFx.doneData.watch(() => {
     toastModel.events.add({
         type: 'info',
-        message: 'You have been logged out',
+        message: translate('logged_out'),
         duration: 5000,
     });
 });

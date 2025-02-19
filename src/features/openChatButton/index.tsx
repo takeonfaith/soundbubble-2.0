@@ -3,6 +3,7 @@ import { useUnit } from 'effector-react';
 import { Loading } from '../../shared/components/loading';
 import { $userOpening, openChat, openChatFx } from './model';
 import { OpenChatButtonStyled } from './styles';
+import { translate } from '../../i18n';
 
 type Props = {
     userId: string;
@@ -24,7 +25,7 @@ export const OpenChatButton = ({ userId, short = false }: Props) => {
             ) : (
                 <IconMessage2 size={20} />
             )}
-            {!short && 'Message'}
+            {!short && translate('message')}
         </OpenChatButtonStyled>
     );
 };

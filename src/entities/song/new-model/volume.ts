@@ -1,5 +1,6 @@
 import { createApi, createStore, sample } from 'effector';
 import { indicatorModel } from '../../../layout/indicator/model';
+import { translate } from '../../../i18n';
 
 type Props = { val: number; indicator?: boolean };
 
@@ -20,6 +21,8 @@ sample({
     clock: [volumeApi.update, volumeApi.increase],
     source: $volume,
     filter: (_, { indicator }) => !!indicator,
-    fn: (val) => ({ content: `Volume: ${(val * 100).toFixed(0)}%` }),
+    fn: (val) => ({
+        content: translate('volume', { volume: `${(val * 100).toFixed(0)}` }),
+    }),
     target: indicatorModel.show,
 });

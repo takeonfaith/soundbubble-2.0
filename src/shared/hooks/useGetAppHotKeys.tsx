@@ -15,6 +15,7 @@ import { popupModel } from '../../layout/popup/model';
 import { sidebarApi } from '../../layout/sidebar/model';
 import { THotKeys } from './useHotKeys';
 import { usePrivateAction } from './usePrivateAction';
+import { translate } from '../../i18n';
 
 export const useGetAppHotKeys = () => {
     const [modals] = modalModel.useModal();
@@ -56,7 +57,7 @@ export const useGetAppHotKeys = () => {
         Escape: {
             action: escapeAction,
             name: 'Esc',
-            description: 'Close modal',
+            description: translate('close_modal'),
         },
         Space: {
             action: (event) => {
@@ -64,55 +65,55 @@ export const useGetAppHotKeys = () => {
                 songModel.controls.togglePlayPause();
             },
             name: 'Space',
-            description: 'Play/pause song',
+            description: translate('play_pause'),
         },
         ArrowRight: {
             action: () => {
                 songModel.playback.addCurrentTime(15);
             },
             name: <IconArrowRight />,
-            description: 'Add 15 seconds to the playback',
+            description: translate('add_to_playback'),
         },
         ArrowLeft: {
             action: () => {
                 songModel.playback.addCurrentTime(-15);
             },
             name: <IconArrowLeft />,
-            description: 'Subtract 15 seconds from the playback',
+            description: translate('substract_from_playback'),
         },
         ArrowUp: {
             action: () => {
                 songModel.volume.increase({ val: 0.1, indicator: true });
             },
             name: <IconArrowUp />,
-            description: 'Increase volume',
+            description: translate('increase_volume'),
         },
         ArrowDown: {
             action: () => {
                 songModel.volume.increase({ val: -0.1, indicator: true });
             },
             name: <IconArrowDown />,
-            description: 'Decrease volume',
+            description: translate('decrease_volume'),
         },
         KeyM: {
             action: () => {
                 songModel.volume.toggle();
             },
             name: 'm',
-            description: 'Toggle mute',
+            description: translate('mute'),
         },
         KeyN: {
             action: loggedIn((e) => {
                 e.preventDefault();
                 if (modals.length === 0) {
                     modalModel.events.open({
-                        title: 'Create playlist',
+                        title: translate('create_playlist'),
                         content: <CreatePlaylistModal />,
                     });
                 }
             }),
             name: 'n',
-            description: 'Create playlist',
+            description: translate('create_playlist'),
         },
         KeyF: {
             action: () => {
@@ -121,14 +122,14 @@ export const useGetAppHotKeys = () => {
                 }
             },
             name: 'f',
-            description: 'Toggle full screen',
+            description: translate('toggle_fullscreen'),
         },
         KeyC: {
             action: () => {
                 sidebarApi.toggle();
             },
             name: 'c',
-            description: 'Collapse/open menu',
+            description: translate('open_close_menu'),
         },
         Slash: {
             action: (event) => {
@@ -140,7 +141,7 @@ export const useGetAppHotKeys = () => {
                 }
             },
             name: '/',
-            description: 'Toggle search bar',
+            description: translate('toggle_search'),
         },
         'Shift+ArrowLeft': {
             action: () => {
@@ -152,7 +153,7 @@ export const useGetAppHotKeys = () => {
                     <IconArrowLeft />
                 </>
             ),
-            description: 'Previous track ',
+            description: translate('play_previous'),
         },
         'Shift+ArrowRight': {
             action: () => {
@@ -164,7 +165,7 @@ export const useGetAppHotKeys = () => {
                     <IconArrowRight />
                 </>
             ),
-            description: 'Next track ',
+            description: translate('play_next'),
         },
 
         KeyT: {
@@ -172,7 +173,7 @@ export const useGetAppHotKeys = () => {
                 toggleTheme();
             },
             name: 't',
-            description: 'Toggle theme',
+            description: translate('change_theme'),
         },
         'Meta+Comma': {
             action: (event) => {
@@ -181,6 +182,7 @@ export const useGetAppHotKeys = () => {
                     modalModel.events.open({
                         title: 'Settings',
                         content: <Settings />,
+                        sizeX: 'm',
                     });
                 }
             },
@@ -189,7 +191,7 @@ export const useGetAppHotKeys = () => {
                     <IconCommand />,
                 </>
             ),
-            description: 'Open settings',
+            description: translate('open_settings'),
         },
         Digits: {
             name: '0-9',
@@ -197,7 +199,7 @@ export const useGetAppHotKeys = () => {
                 const num = +event.key;
                 songModel.playback.setPercent(num / 10);
             },
-            description: 'Jump from 0% to 90% of a playback',
+            description: translate('playback_jump'),
         },
     };
 

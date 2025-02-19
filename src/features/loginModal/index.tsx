@@ -15,6 +15,7 @@ import { ForgotPasswordModal } from './ForgotPasswordModal';
 import { LeftSide } from './LeftSide';
 import { useForm } from './model';
 import { LoginButtons, LoginModalStyled, RightSideStyled } from './styles';
+import { translate } from '../../i18n';
 
 type Props<T> = {
     actionAfterLogin?: T;
@@ -23,7 +24,7 @@ type Props<T> = {
 
 export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
     actionAfterLogin,
-    title = 'Welcome back to Soundbubble',
+    title = translate('welcome_back'),
 }: Props<T>) => {
     const [currentUser, _, loading] = userModel.useUser();
     const { values, errors, onSubmit, updateField, handleEnterKeyDown } =
@@ -33,7 +34,7 @@ export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
 
     const handleOpenSignUp = () => {
         modalModel.events.open({
-            title: 'Sign Up',
+            title: translate('sign_up'),
             content: <SignUpModal />,
             sizeX: 's',
             sizeY: 's',
@@ -59,7 +60,7 @@ export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
                     <h2>{title}</h2>
 
                     <Subtext style={{ fontSize: '1rem' }}>
-                        Please enter your details
+                        {translate('enter_details')}
                     </Subtext>
                 </Flex>
 
@@ -81,7 +82,6 @@ export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
                         focusOnLoad
                     />
                     <PasswordInput
-                        placeholder="Enter your password"
                         required
                         error={errors.password}
                         value={values.password}
@@ -99,14 +99,14 @@ export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
                         $width="fit-content"
                         onClick={() =>
                             modalModel.events.open({
-                                title: 'Forgot password',
+                                title: translate('forgot_password'),
                                 content: <ForgotPasswordModal />,
                                 sizeX: 's',
                                 sizeY: 's',
                             })
                         }
                     >
-                        Forgot password?
+                        {translate('forgot_password')}
                     </Button>
                 </Flex>
                 <LoginButtons>
@@ -114,7 +114,7 @@ export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
                         appearance="outline"
                         onClick={handleOpenSignUp}
                     >
-                        Don't have an account
+                        {translate('dont_have_an_account')}
                     </DefaultButton>
                     <DefaultButton
                         loading={loading}
@@ -122,7 +122,7 @@ export const LoginModal = <T extends ((params?: any) => unknown) | undefined>({
                         className="primary"
                         onClick={onSubmit}
                     >
-                        Login
+                        {translate('login')}
                     </DefaultButton>
                 </LoginButtons>
             </RightSideStyled>

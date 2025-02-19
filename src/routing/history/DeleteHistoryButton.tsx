@@ -1,7 +1,8 @@
 import { IconChevronDown, IconTrash } from '@tabler/icons-react';
 import { TSong } from '../../entities/song/model/types';
+import { translate } from '../../i18n';
 import { Popup } from '../../layout/newpopup';
-import { DefaultButton } from '../../shared/components/button/DefaultButton';
+import { Button } from '../../shared/components/button';
 import { DeleteHistoryPeriodContext } from './DeleteHistoryPeriodContext';
 
 type Props = {
@@ -13,10 +14,14 @@ export const DeleteHistoryButton = ({ history }: Props) => {
 
     return (
         <Popup content={<DeleteHistoryPeriodContext />}>
-            <DefaultButton width="175px">
-                <IconTrash size={20} />
-                Delete history <IconChevronDown size={16} />
-            </DefaultButton>
+            <Button
+                className="outline"
+                style={{ padding: '0 10px' }}
+                $width="fit-content"
+            >
+                <IconTrash size={18} />
+                {translate('delete_history')} <IconChevronDown size={16} />
+            </Button>
         </Popup>
     );
 };

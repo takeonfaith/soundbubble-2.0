@@ -1,3 +1,6 @@
+import { translate } from '../../../i18n';
+import { dateToString } from '../../../shared/funcs/dateToString';
+
 export const getLastUpdated = (lastUpdated: number) => {
     if (!lastUpdated) return null;
 
@@ -5,7 +8,7 @@ export const getLastUpdated = (lastUpdated: number) => {
     const fourHoursAgo = new Date().getTime() - 1_800_000 * 4;
     const justUpdated = lastUpdated > fiveMinutesAgo;
 
-    if (justUpdated) return 'Now';
+    if (justUpdated) return translate('now');
 
     const lastUpdateDate = new Date(lastUpdated);
     const lastUpdate = new Date(
@@ -20,5 +23,5 @@ export const getLastUpdated = (lastUpdated: number) => {
 
     if (lastUpdated > fourHoursAgo) return `${lastUpdate} ${lastSeenWord} ago`;
 
-    return `${lastUpdateDate.toLocaleDateString('ru-RU')}`;
+    return dateToString(lastUpdateDate);
 };

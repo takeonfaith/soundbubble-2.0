@@ -5,7 +5,7 @@ import { $queue } from './queue/';
 export const setLastRangeValue = createEvent<number>();
 const add = createEvent<number>();
 const set = createEvent<number>();
-const reset = createEvent<number>();
+const reset = createEvent();
 const showIndicator = createEvent<number>();
 
 export const $currentTime = createStore<number>(0).reset(reset);

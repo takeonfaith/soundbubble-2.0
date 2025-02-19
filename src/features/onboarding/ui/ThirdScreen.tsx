@@ -9,6 +9,7 @@ import { Subtext } from '../../../shared/components/subtext';
 import { useEffectOnce } from '../../../shared/hooks/useEffectOnce';
 import { FirstScreenStyled, ShareSongAnimation } from './styles';
 import { FourthScreen } from './FourthScreen';
+import { translate } from '../../../i18n';
 
 const IMAGES = [
     'https://firebasestorage.googleapis.com/v0/b/soundbubble-27737.appspot.com/o/songsImages%2Fcopines10ef509d-6d30-4c03-b97b-3ee412eab944.jpeg?alt=media&token=7b592cbb-8a9f-4f32-9860-b640200b9d44',
@@ -68,10 +69,8 @@ export const ThirdScreen = () => {
                     </Flex>
                 </Flex>
                 <Flex d="column" gap={10}>
-                    <h2>Share songs with your friends</h2>
-                    <Subtext>
-                        You can chat with your friends and share songs right in the app
-                    </Subtext>
+                    <h2>{translate('share_songs')}</h2>
+                    <Subtext>{translate('share_songs_subtext')}</Subtext>
                 </Flex>
             </Flex>
             <Flex width="100%" gap={10}>
@@ -81,7 +80,7 @@ export const ThirdScreen = () => {
                         modalModel.events.back();
                     }}
                 >
-                    Back
+                    {translate('back')}
                 </DefaultButton>
                 <DefaultButton
                     onClick={() =>
@@ -92,7 +91,7 @@ export const ThirdScreen = () => {
                     }
                     appearance="primary"
                 >
-                    Next
+                    {translate('next')}
                 </DefaultButton>
             </Flex>
         </FirstScreenStyled>

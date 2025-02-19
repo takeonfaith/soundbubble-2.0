@@ -1,6 +1,7 @@
 import { TQueue, TSong } from '@song/model/types';
 import { PlaneSongList } from '../planeList';
 import { Title, Titles } from './styles';
+import { translate } from '../../../../i18n';
 
 type Props = {
     queue: TQueue;
@@ -37,9 +38,9 @@ export const VerticalSongsList = (props: Props) => {
                     >
                         {showSerialNumber !== undefined ? '#' : ''}
                     </Title>
-                    <Title>Name</Title>
-                    <Title>Author</Title>
-                    <Title>Listenings</Title>
+                    <Title>{translate('name')}</Title>
+                    <Title>{translate('author')}</Title>
+                    <Title>{translate('listenings')}</Title>
                 </Titles>
             )}
             <PlaneSongList {...props} />

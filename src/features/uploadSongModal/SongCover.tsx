@@ -1,3 +1,4 @@
+import { translate } from '../../i18n';
 import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
@@ -37,7 +38,7 @@ export const SongCover = () => {
             </Flex>
             <Flex width="100%">
                 <DefaultButton appearance="primary" onClick={onSubmit}>
-                    Next
+                    {translate('next')}
                 </DefaultButton>
             </Flex>
         </SignUpModalStyled>

@@ -10,6 +10,7 @@ import { useForm as useSongForm } from './model';
 import { createAuthorFx } from '../../entities/user/model/create-author';
 import { modalModel } from '../../layout/modal/model';
 import { createDefaultSuggestion } from '../../entities/search/lib/createDefaultSuggestion';
+import { translate } from '../../i18n';
 
 export const CreateAuthor = () => {
     const [loading] = useUnit([createAuthorFx.pending]);
@@ -64,7 +65,7 @@ export const CreateAuthor = () => {
                     appearance="primary"
                     onClick={onSubmit}
                 >
-                    Create author
+                    {translate('create_author')}
                 </DefaultButton>
             </Flex>
         </SignUpModalStyled>

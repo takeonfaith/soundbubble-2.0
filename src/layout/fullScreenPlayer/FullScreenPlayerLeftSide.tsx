@@ -21,6 +21,7 @@ import {
     PlayerWrapper,
 } from './styles';
 import { TRightSideType } from './types';
+import { translate } from '../../i18n';
 
 type Props = {
     type: TRightSideType;
@@ -53,7 +54,7 @@ export const FullScreenPlayerLeftSide = ({
                 <Flex d="column" gap={2} width="100%">
                     <Flex width="100%" gap={10} jc="space-between">
                         <PlayerTitle>
-                            {currentSong?.name ?? 'Untitled'}
+                            {currentSong?.name ?? translate('untitled')}
                         </PlayerTitle>
                         <Flex gap={8}>
                             <LikeButton

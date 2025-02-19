@@ -20,6 +20,7 @@ import { sidebarApi, useSidebar } from '../sidebar/model';
 import { GlobalSearchWrapper, LayoutHeaderStyled, UserButton } from './styles';
 import { Popup } from '../newpopup';
 import { UserContextMenu } from '../header/UserContextMenu';
+import { translate } from '../../i18n';
 
 export const LayoutHeader = () => {
     const [params] = useSearchParams();
@@ -48,7 +49,7 @@ export const LayoutHeader = () => {
                     <Popover
                         content={
                             <>
-                                Open/close menu
+                                {translate('open_close_menu')}
                                 <kbd>c</kbd>
                             </>
                         }

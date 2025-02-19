@@ -82,7 +82,7 @@ export const Header = ({ children, hide, className, right }: Props) => {
                         : ''}
                 </HeaderPageTitle>
                 <DesktopChildren>{children}</DesktopChildren>
-                <Flex width="350px" gap={20} jc="flex-end">
+                <Flex width="100%" gap={20} jc="flex-end">
                     {right}
                     {isMobile && (
                         <>

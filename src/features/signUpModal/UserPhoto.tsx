@@ -1,3 +1,4 @@
+import { translate } from '../../i18n';
 import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
@@ -33,7 +34,7 @@ export const UserPhoto = () => {
                 />
                 {!values.photo && (
                     <Message type="tip">
-                        You may add photo later in your profile
+                        {translate('you_may_add_photo_later')}
                     </Message>
                 )}
             </Flex>
@@ -42,10 +43,10 @@ export const UserPhoto = () => {
                     appearance="outline"
                     onClick={() => modalModel.events.back()}
                 >
-                    Previous
+                    {translate('previous')}
                 </DefaultButton>
                 <DefaultButton appearance="primary" onClick={handleNext}>
-                    Next
+                    {translate('next')}
                 </DefaultButton>
             </Flex>
         </SignUpModalStyled>

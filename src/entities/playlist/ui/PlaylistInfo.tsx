@@ -1,13 +1,12 @@
 import { IconHeadphones, IconUserPlus } from '@tabler/icons-react';
 import styled from 'styled-components';
-import { ShareModal } from '../../../features/shareModal';
-import { modalModel } from '../../../layout/modal/model';
-import { Button } from '../../../shared/components/button';
+import { ShareButton } from '../../../features/shareButton';
+import { translate } from '../../../i18n';
 import { Flex } from '../../../shared/components/flex';
 import { Subtext } from '../../../shared/components/subtext';
+import { dateToString } from '../../../shared/funcs/dateToString';
 import { formatBigNumber } from '../../../shared/funcs/formatBigNumber';
 import { hexToRgbA } from '../../../shared/funcs/hexToRgba';
-import { userModel } from '../../user/model';
 import { TPlaylist } from '../model/types';
 import { PlaylistCover } from './PlaylistCover';
 
@@ -36,37 +35,11 @@ const PlaylistInfoStyled = styled.div<{ shadowColor: string }>`
     }
 `;
 
-const ShareButton = styled(Button)`
-    color: #fff;
-    filter: ${({ theme }) => theme.colors.brightness};
-
-    &:disabled {
-        opacity: 0.5;
-    }
-
-    &.primary {
-        background: ${({ color }) => color ?? 'grey'};
-        box-shadow: none;
-    }
-`;
-
-const Buttons = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-
-    @media (max-width: 768px) {
-        flex-direction: column-reverse;
-    }
-`;
-
 type Props = {
     playlist: TPlaylist | null;
 };
 
 export const PlaylistInfo = ({ playlist }: Props) => {
-    const [currentUser] = userModel.useUser();
     if (!playlist) return null;
 
     const {
@@ -79,20 +52,7 @@ export const PlaylistInfo = ({ playlist }: Props) => {
         isAlbum,
     } = playlist;
 
-    const formattedDate = new Date(creationDate).toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-    });
-
-    const handleShare = () => {
-        modalModel.events.open({
-            title: `Share ${name} with friends`,
-            content: <ShareModal entity={playlist} />,
-            sizeY: 'l',
-        });
-    };
-
+    const formattedDate = dateToString(new Date(creationDate));
     return (
         <PlaylistInfoStyled shadowColor={imageColors[0] ?? '#e0e0e0'}>
             <PlaylistCover
@@ -123,21 +83,11 @@ export const PlaylistInfo = ({ playlist }: Props) => {
 
                 <Flex gap={10} d="column">
                     <Subtext style={{ fontSize: '0.95rem' }}>
-                        Created: {formattedDate}
+                        {translate('created', { created: formattedDate })}
                     </Subtext>
                 </Flex>
             </Flex>
-            <Buttons style={{ width: '100%' }}>
-                <ShareButton
-                    className="primary"
-                    color={imageColors[0]}
-                    onClick={handleShare}
-                    disabled={!currentUser}
-                    $width="100%"
-                >
-                    Share
-                </ShareButton>
-            </Buttons>
+            <ShareButton entity={playlist} />
         </PlaylistInfoStyled>
     );
 };

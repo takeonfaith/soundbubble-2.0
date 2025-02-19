@@ -12,12 +12,14 @@ interface PopoverProps {
     position?: TPopoverPosition;
     style?: CSSProperties;
     showTongue?: boolean;
+    targetElementStyle?: CSSProperties;
 }
 
 const Popover: React.FC<PopoverProps> = ({
     content,
     children,
     style,
+    targetElementStyle,
     shift = SHIFT,
     position = 'top',
     showTongue = false,
@@ -69,6 +71,7 @@ const Popover: React.FC<PopoverProps> = ({
                 onClick={() => setIsVisible(false)}
                 onFocus={() => setIsVisible(true)}
                 onBlur={() => setIsVisible(false)}
+                style={targetElementStyle}
             >
                 {children}
             </TargetElement>

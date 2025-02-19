@@ -20,6 +20,7 @@ import { normalizeString } from '../../shared/funcs/normalizeString';
 import { SearchWithHints } from '../searchWithHints';
 import { TExtendedSuggestion } from '../searchWithHints/types';
 import { BrowseLink, TabsWrapper } from './styles';
+import { translate } from '../../i18n';
 
 const getTabUrl = (
     location: Location<unknown>,
@@ -155,7 +156,10 @@ export const GlobalSearch = ({ queryValue, where, showTabs = true }: Props) => {
                     <Flex gap={8} height="35px">
                         <kbd>/</kbd>
                         <Divider orientation="vertical" />
-                        <Popover content={'Browse'} position="bottom">
+                        <Popover
+                            content={translate('browse')}
+                            position="bottom"
+                        >
                             <BrowseLink to="/search">
                                 {({ isActive }) =>
                                     isActive ? (
@@ -168,7 +172,7 @@ export const GlobalSearch = ({ queryValue, where, showTabs = true }: Props) => {
                         </Popover>
                     </Flex>
                 }
-                placeholder="Search for songs, albums, authors..."
+                placeholder={translate('search_placeholder')}
             />
             {showTabs && (
                 <TabsWrapper>

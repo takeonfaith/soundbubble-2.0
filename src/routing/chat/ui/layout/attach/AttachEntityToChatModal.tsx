@@ -9,6 +9,7 @@ import { modalModel } from '../../../../../layout/modal/model';
 import { Flex } from '../../../../../shared/components/flex';
 import getUID from '../../../../../shared/funcs/getUID';
 import { AttachEntity } from './AttachEntity';
+import { translate } from '../../../../../i18n';
 
 const AttachEntityToChatModalStyled = styled.div`
     padding: 0px 20px;
@@ -77,7 +78,7 @@ export const AttachEntityToChatModal = () => {
             <Flex width="100%" d="column">
                 <AttachEntity
                     library={library}
-                    submitButtonText="Send"
+                    submitButtonText={translate('send')}
                     onSumbit={handleSave}
                 />
             </Flex>

@@ -1,4 +1,5 @@
 import { userModel } from '../../entities/user/model';
+import { translate } from '../../i18n';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { Message } from '../../shared/components/mesage';
@@ -24,7 +25,7 @@ export const ForgotPasswordModal = () => {
                 jc="center"
             >
                 <Message type="info">
-                    We will send you a reset password email
+                    {translate('reset_password_message')}
                 </Message>
                 <EmailInput
                     onChange={(value) => {
@@ -43,6 +44,7 @@ export const ForgotPasswordModal = () => {
                     loading={loading}
                     appearance="primary"
                     onClick={onSubmit}
+                    disabled={values.email.length === 0}
                 >
                     Send email
                 </DefaultButton>

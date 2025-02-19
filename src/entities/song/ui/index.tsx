@@ -39,6 +39,7 @@ import {
     SongNameAndListens,
     SongStyled,
 } from './styles';
+import { translate } from '../../../i18n';
 
 type Props = {
     song: TSong;
@@ -154,7 +155,7 @@ export const SongItem = ({
                                 ? 'Not ready yet'
                                 : isSlowVersion
                                 ? 'Disable slow version'
-                                : 'Slow version'
+                                : translate('slow_version')
                         }
                     >
                         <MoreInfoButton

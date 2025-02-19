@@ -8,6 +8,7 @@ import { SignUpModalStyled } from './styles';
 import { Subtext } from '../../shared/components/subtext';
 import { useUnit } from 'effector-react';
 import { signUpFx } from '../../entities/user/model/sign-up';
+import { translate } from '../../i18n';
 
 const WelcomeStyled = styled(SignUpModalStyled)`
     h3 {
@@ -37,9 +38,9 @@ export const Welcome = () => {
             <Flex width="100%" d="column" gap={20}>
                 <LeftSide />
                 <Flex d="column" gap={10}>
-                    <h3>Welcome to Soundbubble!</h3>
+                    <h3>{translate('welcome')}</h3>
                     <Subtext style={{ fontSize: '1rem' }}>
-                        The only thing left is to click that blue button
+                        {translate('the_only_thing_left')}
                     </Subtext>
                 </Flex>
             </Flex>
@@ -49,7 +50,7 @@ export const Welcome = () => {
                     appearance="primary"
                     onClick={onSubmit}
                 >
-                    Sign Up
+                    {translate('sign_up')}
                 </DefaultButton>
             </Flex>
         </WelcomeStyled>

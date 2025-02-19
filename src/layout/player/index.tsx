@@ -22,6 +22,7 @@ import {
     SongTitle,
 } from './styles';
 import { usePlayer } from './usePlayer';
+import { translate } from '../../i18n';
 
 export const Player = () => {
     const {
@@ -60,7 +61,9 @@ export const Player = () => {
                     </HoverIcon>
                 </SongCover>
                 <SongInfoStyled>
-                    <SongTitle>{currentSong?.name ?? 'Untitled'}</SongTitle>
+                    <SongTitle>
+                        {currentSong?.name ?? translate('untitled')}
+                    </SongTitle>
                     <Authors authors={currentSong?.authors} />
                 </SongInfoStyled>
                 <LikeButton

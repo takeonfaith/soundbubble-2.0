@@ -13,6 +13,7 @@ import { Flex } from '../../shared/components/flex';
 import { Input } from '../../shared/components/input';
 import { PhotoInput } from '../../shared/components/photoInput';
 import { useForm } from './model';
+import { translate } from '../../i18n';
 
 const CreatePlaylistModalStyled = styled.div`
     padding: 20px;
@@ -99,7 +100,7 @@ export const CreatePlaylistModal = ({ initialSongs }: Props) => {
             >
                 <Input
                     placeholder="Enter a playlist name"
-                    label="Playlist Name"
+                    label={translate('name')}
                     required
                     value={values.name}
                     id="name"
@@ -113,7 +114,7 @@ export const CreatePlaylistModal = ({ initialSongs }: Props) => {
                     appearance="primary"
                     loading={loading}
                 >
-                    Create
+                    {translate('create')}
                 </DefaultButton>
             </Flex>
         </CreatePlaylistModalStyled>

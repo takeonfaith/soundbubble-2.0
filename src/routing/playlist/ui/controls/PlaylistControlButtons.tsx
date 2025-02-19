@@ -22,6 +22,7 @@ import { PlaylistMoreContext } from './PlaylistMoreContext';
 import { PlaylistSearch } from './PlaylistSearch';
 import { ShuffleButton } from './ShuffleButton';
 import { SlowButton } from './SlowButton';
+import { translate } from '../../../../i18n';
 
 export const MainButtonsWrapper = styled.div`
     display: flex;
@@ -65,7 +66,7 @@ export const PlaylistControlButtons = ({
 
     const handleAddSongs = () => {
         modalModel.events.open({
-            title: 'Add songs to playlist',
+            title: translate('add_songs_to_playlist'),
             content: <AddSongsToPlaylistModal playlist={playlist} />,
             sizeY: 'l',
         });
@@ -87,7 +88,7 @@ export const PlaylistControlButtons = ({
                         onClick={handleEdit}
                     >
                         <IconCircleCheck size={20} />
-                        Done editing
+                        {translate('done_editing')}
                     </Button>
                 </Flex>
             )}
@@ -116,23 +117,24 @@ export const PlaylistControlButtons = ({
                     $primaryColor={primaryColor ?? 'grey'}
                 >
                     <IconPlus size={20} />
-                    Add songs
+                    {translate('add_songs')}
                 </Button>
             )}
             <Flex gap={6}>
                 {isAuthor && !isEditing && !noSongs && (
                     <Button
-                        $width="130px"
+                        $width="fit-content"
                         className="ghost"
                         style={{
                             fontWeight: noSongs ? '400' : '300',
                             color: noSongs ? '#fff' : undefined,
+                            padding: '0 10px',
                         }}
                         onClick={handleAddSongs}
                         $primaryColor={primaryColor}
                     >
                         <IconPlus size={20} />
-                        Add songs
+                        {translate('add_songs')}
                     </Button>
                 )}
                 {playlist && !isAuthor && (
@@ -148,18 +150,18 @@ export const PlaylistControlButtons = ({
                         }
                     >
                         <IconSearch size={18} />
-                        Search
+                        {translate('search')}
                     </Button>
                 )}
                 {isAuthor && !isEditing && (
                     <Button
-                        $width="90px"
+                        $width="fit-content"
                         className="ghost"
-                        style={{ fontWeight: '300' }}
+                        style={{ fontWeight: '300', padding: '0 10px' }}
                         onClick={handleEdit}
                     >
                         <IconPencil size={18} />
-                        Edit
+                        {translate('edit')}
                     </Button>
                 )}
 
@@ -178,7 +180,7 @@ export const PlaylistControlButtons = ({
                             style={{ fontWeight: '300' }}
                         >
                             <IconDots size={18} />
-                            More
+                            {translate('more')}
                         </Button>
                     </Popup>
                 )}

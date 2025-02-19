@@ -2,6 +2,7 @@ import { IconLogin } from '@tabler/icons-react';
 import { userModel } from '../../entities/user/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
+import { translate } from '../../i18n';
 
 export const LoginButton = () => {
     const { openLoginModal } = usePrivateAction();
@@ -16,7 +17,7 @@ export const LoginButton = () => {
             onClick={openLoginModal()}
             appearance="primary"
         >
-            Login
+            {translate('login')}
             <IconLogin size={18} />
         </DefaultButton>
     );

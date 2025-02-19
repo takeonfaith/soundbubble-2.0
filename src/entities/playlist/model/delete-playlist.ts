@@ -5,11 +5,12 @@ import { $user } from '../../user/model/user';
 import { TPlaylist } from './types';
 import { $currentPlaylist, $currentPlaylistSongs } from './playlist';
 import { removeOwnPlaylistFromLibrary } from '../../user/model/library/playlists';
+import { translate } from '../../../i18n';
 
 export const deletePlaylistFx = createEffectWithToast<
     { playlist: TPlaylist; onSuccess?: (playlist: TPlaylist) => void },
     TPlaylist
->('Playlist Deleted', 'Failed to delete playlist');
+>(translate('playlist_was_deleted'), 'Failed to delete playlist');
 
 export const deletePlaylist = createEvent<{
     playlist: TPlaylist;

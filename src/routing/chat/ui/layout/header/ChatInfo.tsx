@@ -29,6 +29,7 @@ import { AddUserButton } from './AddUserButton';
 import { ChatPhoto } from './ChatPhoto';
 import { ChatStatus } from './ChatStatus';
 import { toastModel } from '../../../../../layout/toast/model';
+import { translate } from '../../../../../i18n';
 
 const ChatInfoStyled = styled.div`
     display: flex;
@@ -331,7 +332,7 @@ export const ChatInfo = ({ cache }: Props) => {
                         appearance="primary"
                     >
                         <IconCircleCheck />
-                        Done editing
+                        {translate('done_editing')}
                     </DefaultButton>
                 )}
             </Flex>

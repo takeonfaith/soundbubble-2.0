@@ -13,6 +13,7 @@ import { PlayingAnimation } from '../../../../shared/components/playingAnimation
 import Popover from '../../../../shared/components/popover';
 import { $type, load } from './model';
 import { $pendingQueueLoading } from '../../../../entities/song/new-model/song-state';
+import { translate } from '../../../../i18n';
 
 type Props = {
     primaryColor: string | undefined;
@@ -66,7 +67,7 @@ export const SlowButton = ({ queue, primaryColor }: Props) => {
 
     return (
         <Popover
-            content={isSlowPlaying ? 'Pause slow version' : 'Play slow version'}
+            content={isSlowPlaying ? translate('pause_slow_version') : translate('play_slow_version')}
         >
             <Button
                 style={{

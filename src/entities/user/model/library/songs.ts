@@ -15,6 +15,7 @@ import { REMOVE_FROM_LIBRARY_TIMEOUT } from '../constants';
 import { TUser } from '../types';
 import { $user } from '../user';
 import { addAuthorsToLibrary } from './authors';
+import { translate } from '../../../../i18n';
 
 type TLibraryUpdateSongProps = {
     userId: string;
@@ -196,7 +197,7 @@ updateLibraryFx.use(async ({ userId, songs }) => {
 removeSongFromLibraryFx.done.watch(({ params: { canSaveRevert } }) => {
     if (canSaveRevert) {
         toastModel.events.add({
-            message: 'Removed from Liked',
+            message: translate('removed_from_like'),
             type: 'info',
             action: {
                 text: 'Undo',
@@ -220,7 +221,7 @@ removeSongFromLibraryFx.failData.watch((err) => {
 
 addSongToLibraryFx.doneData.watch(() => {
     toastModel.events.add({
-        message: 'Song added to Liked',
+        message: translate('song_added'),
         type: 'success',
         duration: 5000,
     });

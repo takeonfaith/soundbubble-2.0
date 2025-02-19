@@ -10,7 +10,6 @@ import { SongListSkeleton } from '../../../../../entities/song/ui/SongListSkelet
 import { TOrientation } from '../../../../../entities/user/types';
 import { AddEntitiesUI } from '../../../../../features/addEntitiesUI';
 import { getEntityPlace } from '../../../../../features/searchWithHints/lib/getEntityPlace';
-import { getEntityType } from '../../../../../features/searchWithHints/lib/getEntityType';
 import { Button } from '../../../../../shared/components/button';
 import { DefaultButton } from '../../../../../shared/components/button/DefaultButton';
 import { CheckIcon } from '../../../../../shared/components/checkIcon';
@@ -22,6 +21,7 @@ type Props<T extends TEntity> = {
     library: T[];
     submitButtonText: string;
     orientation: TOrientation;
+    placeholder: string;
     submitButtonDisabled?: (items: TEntity[]) => boolean;
     onEntityClick?: (items: TEntity[]) => void;
     onSubmit: (items: T[]) => void;
@@ -34,6 +34,7 @@ export const AttachEntity = <T extends TEntity>({
     onSubmit,
     onEntityClick,
     orientation,
+    placeholder,
     customCheckButton,
     submitButtonDisabled = () => false,
 }: Props<T>) => {
@@ -86,7 +87,7 @@ export const AttachEntity = <T extends TEntity>({
             initiallyAddedItems={[]}
             onSearchValueChange={onSearchValueChange}
             onAddItem={onEntityClick}
-            inputPlaceholder={`Search for ${getEntityType(library[0])}s`}
+            inputPlaceholder={placeholder}
             renderItem={(entity, checked, onClick, _, index) => {
                 const showTitle = index === 0;
 

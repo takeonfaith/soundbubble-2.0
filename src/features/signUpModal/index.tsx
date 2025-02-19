@@ -1,3 +1,4 @@
+import { translate } from '../../i18n';
 import { modalModel } from '../../layout/modal/model';
 import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
@@ -12,7 +13,7 @@ import { UserPhoto } from './UserPhoto';
 export const SignUpModal = () => {
     const handleNext = () => {
         modalModel.events.open({
-            title: 'Photo',
+            title: translate('photo'),
             content: <UserPhoto />,
             sizeX: 's',
             sizeY: 's',
@@ -35,7 +36,7 @@ export const SignUpModal = () => {
             >
                 <img src={backgroundImg} className="background" alt="" />
                 <Logo short size="60px" />
-                <h2>Hey there! 👋</h2>
+                <h2>{translate('hey_there')} 👋</h2>
                 <Subtext
                     style={{
                         fontSize: '1.1rem',
@@ -43,11 +44,11 @@ export const SignUpModal = () => {
                         maxWidth: '300px',
                     }}
                 >
-                    Please enter your name in the field below and hit next
+                    {translate('sign_up_subtext')}
                 </Subtext>
                 <Input
-                    placeholder="Enter your name..."
-                    label="Name"
+                    placeholder={translate('enter_user_name')}
+                    label={translate('user_name')}
                     id="name"
                     value={values.name}
                     required
@@ -59,8 +60,12 @@ export const SignUpModal = () => {
             </Flex>
 
             <Flex width="100%" gap={10}>
-                <DefaultButton appearance="primary" onClick={onSubmit}>
-                    Next
+                <DefaultButton
+                    disabled={!values.name}
+                    appearance="primary"
+                    onClick={onSubmit}
+                >
+                    {translate('next')}
                 </DefaultButton>
             </Flex>
         </SignUpWrapper>

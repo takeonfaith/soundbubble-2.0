@@ -12,6 +12,7 @@ import { Flex } from '../../shared/components/flex';
 import { AddEntitiesUI } from '../addEntitiesUI';
 import { addSongsToPlaylistsFx } from '../../entities/playlist/model/update-playlist';
 import { CreatePlaylistButton } from '../createPlaylistButton';
+import { translate } from '../../i18n';
 
 type Props = {
     song: TSong | null | undefined;
@@ -73,7 +74,7 @@ export const AddSongToPlaylistModal = ({ song }: Props) => {
                             onClick={handleAdd(playlists)}
                             loading={loading}
                         >
-                            Save changes
+                            {translate('save_changes')}
                         </DefaultButton>
                     </>
                 )}

@@ -2,9 +2,9 @@ import styled from 'styled-components';
 
 export const Skeleton = styled.div`
     background: ${({ theme }) => theme.colors.skeleton};
-    animation: pulse 2s infinite;
+    animation: pulseSkeleton 3s infinite;
 
-    @keyframes pulse {
+    @keyframes pulseSkeleton {
         0% {
             opacity: 1;
         }

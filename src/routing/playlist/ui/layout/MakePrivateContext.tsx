@@ -3,6 +3,7 @@ import { playlistModel } from '../../../../entities/playlist/model';
 import { TPlaylist } from '../../../../entities/playlist/model/types';
 import { Button } from '../../../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../../../shared/components/defaultContextMenu';
+import { translate } from '../../../../i18n';
 
 type Props = { playlist: TPlaylist | null; isOwner: boolean };
 
@@ -22,11 +23,11 @@ export const MakePrivateContext = ({ playlist, isOwner }: Props) => {
             <Button onClick={handlePrivate}>
                 {playlist?.isPrivate ? (
                     <>
-                        <IconWorld /> Make publuc
+                        <IconWorld /> {translate('make_public')}
                     </>
                 ) : (
                     <>
-                        <IconLock /> Make private
+                        <IconLock /> {translate('make_private')}
                     </>
                 )}
             </Button>

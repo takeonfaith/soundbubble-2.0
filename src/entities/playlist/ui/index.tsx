@@ -17,6 +17,7 @@ import { useUnit } from 'effector-react';
 import { $pendingQueueLoading } from '../../song/new-model/song-state';
 import { SongState } from '../../song/model/types';
 import { $type } from '../../../routing/playlist/ui/controls/model';
+import { translate } from '../../../i18n';
 
 type Props = {
     playlist: TPlaylist | null;
@@ -157,8 +158,8 @@ export const PlaylistItem = ({
                                 >
                                     {authors.length !== 0
                                         ? isAlbum
-                                            ? 'Album'
-                                            : 'Playlist'
+                                            ? translate('album')
+                                            : translate('playlist')
                                         : ''}{' '}
                                     {authors.length !== 0 && '·'}
                                 </Subtext>

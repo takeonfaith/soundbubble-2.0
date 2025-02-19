@@ -4,6 +4,7 @@ import { userModel } from '../../../../entities/user/model';
 import { TUser } from '../../../../entities/user/model/types';
 import { UserItem } from '../../../../entities/user/ui';
 import { AddEntitiesUI } from '../../../../features/addEntitiesUI';
+import { translate } from '../../../../i18n';
 import { modalModel } from '../../../../layout/modal/model';
 import { Button } from '../../../../shared/components/button';
 import { DefaultButton } from '../../../../shared/components/button/DefaultButton';
@@ -73,7 +74,7 @@ export const AddFriendsToPlaylistModal = () => {
                             onClick={handleSendRequest(addedItems)}
                             disabled={addedItems.length === 0}
                         >
-                            Done
+                            {translate('save_changes')}
                         </DefaultButton>
                     );
                 }}
