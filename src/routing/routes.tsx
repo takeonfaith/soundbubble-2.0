@@ -14,33 +14,34 @@ import {
     IconVinyl,
     IconWaveSine,
 } from '@tabler/icons-react';
+import {
+    ChatsPageLazy,
+    FriendsPageLazy,
+    HistoryPageLazy,
+    PlaylistPageLazy,
+    TrendsPageLazy,
+} from '.';
+import { translate } from '../i18n';
+import { AlbumPage } from './album';
 import { AuthorPage } from './author';
 import { AuthorSongs } from './author/pages/AuthorSongs';
 import { SimilarAuthorsPage } from './author/pages/SimilarAuthorsPage';
-import { ChatPage } from './chat';
 import { ChatDialog } from './chat/ui/layout/ChatDialog';
 import { DiscoverPage } from './discover';
-import { FriendsPage } from './friends';
-import { HistoryPage } from './history';
 import { Library } from './library';
+import { LikedAlbums } from './library/LikedAlbums';
 import { LikedAuthors } from './library/LikedAuthors';
 import { LikedPlaylists } from './library/LikedPlaylists';
 import { LikedSongs } from './library/LikedSongs';
-import { MePage } from './me';
-import { PlaylistPage } from './playlist';
 import { SearchPage } from './search';
 import { SongPage } from './song';
-import { TrendsPage } from './trends/ui';
-import { UserPage } from './user';
-import { AlbumPage } from './album';
-import { TrendsPageAlbums } from './trends/ui/TrendsPageAlbums';
-import { TrendsPageSongs } from './trends/ui/TrendsPageSongs';
-import { TrendsPageAuthors } from './trends/ui/TrendsPageAuthors';
-import { LikedAlbums } from './library/LikedAlbums';
-import { UserSongs } from './user/UserSongs';
 import { TestPage } from './test';
+import { TrendsPageAlbums } from './trends/ui/TrendsPageAlbums';
+import { TrendsPageAuthors } from './trends/ui/TrendsPageAuthors';
 import { TrendsPagePlaylists } from './trends/ui/TrendsPagePlaylists';
-import { translate } from '../i18n';
+import { TrendsPageSongs } from './trends/ui/TrendsPageSongs';
+import { UserPage } from './user';
+import { UserSongs } from './user/UserSongs';
 
 type Section = 'features' | 'your_activities' | 'your_music';
 
@@ -78,7 +79,7 @@ export const allRoutes: TRoute[] = [
         url: 'trends',
         title: translate('trends'),
         icon: <IconTrendingUp />,
-        component: <TrendsPage />,
+        component: <TrendsPageLazy />,
         section: 'features',
         private: false,
         children: [
@@ -164,7 +165,7 @@ export const allRoutes: TRoute[] = [
         url: 'history',
         title: translate('history'),
         icon: <IconHistory />,
-        component: <HistoryPage />,
+        component: <HistoryPageLazy />,
         section: 'your_music',
         private: true,
     },
@@ -172,7 +173,7 @@ export const allRoutes: TRoute[] = [
         url: 'chats',
         title: translate('chats'),
         icon: <IconMessage />,
-        component: <ChatPage />,
+        component: <ChatsPageLazy />,
         children: [
             {
                 url: ':id',
@@ -190,7 +191,7 @@ export const allRoutes: TRoute[] = [
         url: 'friends',
         title: translate('friends'),
         icon: <IconUsers />,
-        component: <FriendsPage />,
+        component: <FriendsPageLazy />,
         section: 'your_activities',
         private: true,
     },
@@ -206,7 +207,7 @@ export const allRoutes: TRoute[] = [
         url: 'playlist/:id',
         title: translate('playlist'),
         icon: <IconDisc />,
-        component: <PlaylistPage />,
+        component: <PlaylistPageLazy />,
         section: 'your_music',
         private: true,
     },

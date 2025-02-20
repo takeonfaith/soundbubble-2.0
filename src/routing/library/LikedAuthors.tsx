@@ -7,10 +7,12 @@ import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import { AuthorPageGridStyled } from './styles';
 import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
+import { useTypedTrasnlate } from '../../shared/hooks/useTypedTrasnlate';
 
 export const LikedAuthors = () => {
     const [addedAuthors, loading] = userModel.useAddedAuthors();
     const { isMobile } = useCurrentDevice();
+    const translate = useTypedTrasnlate();
 
     return (
         <ContentWrapper>
@@ -23,10 +25,8 @@ export const LikedAuthors = () => {
                 <Flex height="100%" width="100%" jc="center" padding="20vh">
                     <PageMessage
                         icon={IconMicrophone2Off}
-                        title={'No authors added'}
-                        description={
-                            'They will appear here if you subscribe or add song'
-                        }
+                        title={translate('no_authors_added')}
+                        description={translate('no_authors_added_subtext')}
                     />
                 </Flex>
             )}

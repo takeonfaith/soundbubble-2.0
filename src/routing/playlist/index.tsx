@@ -22,6 +22,7 @@ export const PlaylistPage = () => {
         updatePlaylistFx.pending,
         deletePlaylistFx.pending,
     ]);
+
     const isLoadingEditing = isDeleting || isUpdating;
     const { visible } = usePlaylistSearch(searching, currentPlaylistSongs);
 

@@ -47,7 +47,7 @@ export const PlaylistSearch = ({ searching }: Props) => {
                 style={{ borderRadius: '6px' }}
             />
 
-            <Button $width="120px" className="outline" onClick={handleCancel}>
+            <Button className="outline default" onClick={handleCancel}>
                 {translate('cancel')}
             </Button>
         </PlaylistSearchStyled>

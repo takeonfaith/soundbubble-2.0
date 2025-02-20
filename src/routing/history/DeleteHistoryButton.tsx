@@ -14,11 +14,7 @@ export const DeleteHistoryButton = ({ history }: Props) => {
 
     return (
         <Popup content={<DeleteHistoryPeriodContext />}>
-            <Button
-                className="outline"
-                style={{ padding: '0 10px' }}
-                $width="fit-content"
-            >
+            <Button className="outline default">
                 <IconTrash size={18} />
                 {translate('delete_history')} <IconChevronDown size={16} />
             </Button>

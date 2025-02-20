@@ -159,9 +159,7 @@ export const ChoosingAuthors = () => {
                         </Subtext>
                     </Flex>
                     <Button
-                        $width="fit-content"
-                        style={{ padding: '0 10px' }}
-                        className="secondary"
+                        className="default secondary"
                         onClick={onSubmit}
                     >
                         {translate('skip')}

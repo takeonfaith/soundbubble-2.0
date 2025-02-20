@@ -93,24 +93,38 @@ sample({
 
 sample({
     clock: removeSongsFromPlaylistsFx.doneData,
-    source: $ownPlaylists,
-    fn: (ownPlaylists, { playlists, songs }) => {
+    source: {
+        ownPlaylists: $ownPlaylists,
+        currentPlaylistSongs: $currentPlaylistSongs,
+    },
+    fn: ({ ownPlaylists, currentPlaylistSongs }, { playlists, songs }) => {
         const newPlaylists = [...ownPlaylists];
         const found = newPlaylists.find(
             // POTENTIAL BUG: ----------------------↓ because it's an array and I only change in the first element
             (playlist) => playlist.id === playlists[0].id
         )!;
+        console.log();
+
+        const filteredSongIds = filterOneArrayWithAnother(
+            found.songs,
+            songs,
+            (id) => id,
+            (songs) => songs.map((s) => s.id)
+        );
+
+        const filteredSongs = filterOneArrayWithAnother(
+            currentPlaylistSongs,
+            songs,
+            (song) => song.id,
+            (songs) => songs.map((s) => s.id)
+        );
 
         return {
             playlist: {
                 ...found,
-                songs: filterOneArrayWithAnother(
-                    found.songs,
-                    songs,
-                    (id) => id,
-                    (songs) => songs.map((s) => s.id)
-                ),
+                songs: filteredSongIds,
             } as TPlaylist,
+            songs: filteredSongs,
         };
     },
     target: updateLocalPlaylist,

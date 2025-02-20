@@ -183,6 +183,7 @@ export const useGetAppHotKeys = () => {
                         title: 'Settings',
                         content: <Settings />,
                         sizeX: 'm',
+                        sizeY: 'm',
                     });
                 }
             },

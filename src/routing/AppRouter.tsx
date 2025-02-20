@@ -3,12 +3,20 @@ import { Route, Routes } from 'react-router';
 import { TRoute, allRoutes } from './routes';
 import { Page404 } from './404';
 import { userModel } from '../entities/user/model';
+import { Suspense } from 'react';
+import { Loading } from '../shared/components/loading';
 
 const RenderRoute = (route: TRoute, isAdmin: boolean | undefined) => {
     if (!isAdmin && route.admin) return null;
 
     return (
-        <Route key={route.url} element={route.component} path={route.url}>
+        <Route
+            key={route.url}
+            element={
+                <Suspense fallback={<Loading />}>{route.component}</Suspense>
+            }
+            path={route.url}
+        >
             {route?.children?.map((c) => RenderRoute(c, isAdmin))}
         </Route>
     );

@@ -69,6 +69,11 @@ export const Button = styled.button<{
         color: ${({ theme }) => theme.colors.greyText2};
     }
 
+    &.default {
+        padding: 0 10px;
+        width: fit-content;
+    }
+
     &:active {
         filter: brightness(0.85);
         transform: scale(0.99);

@@ -34,9 +34,7 @@ export const SearchNotFoundError = ({ searching, songs }: Props) => {
             >
                 <Button
                     onClick={() => navigate(`/search?query=${searching.value}&type=query`)}
-                    className="outline"
-                    style={{ padding: '0 10px' }}
-                    $width="fit-content"
+                    className="outline default"
                 >
                     <IconSearch size={20} />
                     {translate('search_globally')}

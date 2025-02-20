@@ -20,11 +20,9 @@ export const Like = ({ playlist, likeModel }: Props) => {
                 entity={playlist}
                 likeColor={playlist.imageColors[0]}
                 isLiked={isLiked}
-                width="fit-content"
                 loading={performingAction}
                 onClick={handleToggleLike}
-                className="ghost"
-                style={{ padding: '0 10px' }}
+                className="ghost default"
             >
                 {isLiked ? translate('liked') : translate('add_to_liked')}
             </LikeButton>

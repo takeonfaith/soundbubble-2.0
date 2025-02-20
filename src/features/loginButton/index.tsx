@@ -1,24 +1,23 @@
 import { IconLogin } from '@tabler/icons-react';
 import { userModel } from '../../entities/user/model';
-import { DefaultButton } from '../../shared/components/button/DefaultButton';
-import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
 import { translate } from '../../i18n';
+import { Button } from '../../shared/components/button';
+import { usePrivateAction } from '../../shared/hooks/usePrivateAction';
 
 export const LoginButton = () => {
     const { openLoginModal } = usePrivateAction();
-    const [currentUser, loading] = userModel.useUser();
+    const [currentUser] = userModel.useUser();
 
     if (currentUser) return null;
 
     return (
-        <DefaultButton
-            loading={loading}
-            width="100px"
+        <Button
             onClick={openLoginModal()}
-            appearance="primary"
+            style={{ color: '#fff' }}
+            className="primary default"
         >
             {translate('login')}
             <IconLogin size={18} />
-        </DefaultButton>
+        </Button>
     );
 };

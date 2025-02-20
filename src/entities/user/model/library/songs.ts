@@ -200,7 +200,7 @@ removeSongFromLibraryFx.done.watch(({ params: { canSaveRevert } }) => {
             message: translate('removed_from_like'),
             type: 'info',
             action: {
-                text: 'Undo',
+                text: translate('undo'),
                 onClick: () => {
                     revertRemove();
                 },

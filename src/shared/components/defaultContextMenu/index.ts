@@ -24,6 +24,7 @@ export const DefaultContextMenuStyled = styled.div`
 
         svg {
             width: 20px;
+            min-width: 20px;
             height: 20px;
             color: ${({ theme }) => theme.colors.greyText};
         }

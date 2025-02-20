@@ -107,11 +107,12 @@ export const PlaylistControlButtons = ({
             )}
             {isAuthor && !isEditing && noSongs && (
                 <Button
-                    $width="130px"
+                    $width="fit-content"
                     className="primary"
                     style={{
                         fontWeight: noSongs ? '400' : '300',
                         color: noSongs ? '#fff' : undefined,
+                        padding: '0 10px',
                     }}
                     onClick={handleAddSongs}
                     $primaryColor={primaryColor ?? 'grey'}
@@ -142,8 +143,7 @@ export const PlaylistControlButtons = ({
                 )}
                 {!isEditing && !noSongs && (
                     <Button
-                        $width="100px"
-                        className="ghost"
+                        className="ghost default"
                         style={{ fontWeight: '300' }}
                         onClick={() =>
                             playlistModel.events.updateIsSearching(true)

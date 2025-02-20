@@ -16,13 +16,16 @@ import { Button } from '../../../shared/components/button';
 import { Divider } from '../../../shared/components/divider';
 import { Flex } from '../../../shared/components/flex';
 import { Input } from '../../../shared/components/input';
-import { Select } from '../../../shared/components/select';
+import { Select, TSelectItem } from '../../../shared/components/select';
 import { Subtext } from '../../../shared/components/subtext';
 import { TTheme } from '../../../shared/constants/theme';
 import { userModel } from '../../user/model';
 import { UserCover } from '../../user/ui/UserCover';
 import { ThemeSwitch } from './ThemeSwitch';
 import { TimeRange } from './TimeRange';
+import { LANGUAGES } from '../../../shared/constants/languages';
+import i18n from '../../../i18n';
+import { TLocales } from '../../../locales';
 
 const SettingsMenu = styled.div`
     display: flex;
@@ -108,9 +111,7 @@ const AccountSettings = () => {
                 required={false}
                 error={undefined}
             />
-            <h4>
-                Password
-            </h4>
+            <h4>Password</h4>
             <Divider />
             <Button className="outline">
                 <IconLogout size={20} />
@@ -131,21 +132,32 @@ const AccountSettings = () => {
 };
 
 const LanguageSettings = () => {
-    const items = [
-        { title: 'English', subtext: 'English' },
-        { title: 'Русский', subtext: 'Russian' },
-    ];
-    const [selected, setSelected] = useState(items[0]);
+    const [selected, setSelected] = useState<TSelectItem>(
+        LANGUAGES[i18n.language as TLocales]
+    );
+
+    const handleChangeLanguage = (selected: TSelectItem) => {
+        setSelected(selected);
+        const code = Object.keys(LANGUAGES).find(
+            (key) => LANGUAGES[key as TLocales].title === selected.title
+        );
+
+        i18n.changeLanguage(code).then(() => {
+            window.location.reload();
+        });
+    };
 
     return (
         <Flex d="column" gap={10}>
             <Select
-                items={items}
+                items={Object.keys(LANGUAGES).map(
+                    (key) => LANGUAGES[key as TLocales]
+                )}
                 placeholder="Select language"
                 icon={<IconLanguage />}
                 selected={selected?.title}
                 label="Language"
-                onSelect={(selected) => setSelected(selected)}
+                onSelect={handleChangeLanguage}
             />
         </Flex>
     );
@@ -184,8 +196,8 @@ export const Settings = () => {
             content: <AccountSettings />,
         },
         {
-            title: 'General',
-            icon: <IconSettings2 size={20} />,
+            title: 'Language',
+            icon: <IconLanguage size={20} />,
             content: <LanguageSettings />,
             color: 'green',
         },

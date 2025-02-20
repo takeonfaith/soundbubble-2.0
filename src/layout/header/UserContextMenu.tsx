@@ -1,4 +1,4 @@
-import { IconCirclePlus, IconSun } from '@tabler/icons-react';
+import { IconCirclePlus, IconSettings, IconSun } from '@tabler/icons-react';
 import { toggleTheme } from '../../app/theme';
 import { userModel } from '../../entities/user/model';
 import { UserCover } from '../../entities/user/ui/UserCover';
@@ -13,6 +13,7 @@ import { Flex } from '../../shared/components/flex';
 import { getShortString } from '../../shared/funcs/getShortString';
 import { modalModel } from '../modal/model';
 import { UserProfileModal } from './UserProfileModal';
+import { Settings } from '../../entities/settings/ui';
 
 export const UserContextMenu = () => {
     const [currentUser] = userModel.useUser();
@@ -28,6 +29,15 @@ export const UserContextMenu = () => {
         modalModel.events.open({
             title: translate('profile'),
             content: <UserProfileModal />,
+            sizeY: 'm',
+        });
+    };
+
+    const handleSettingsClick = () => {
+        modalModel.events.open({
+            title: translate('settings'),
+            content: <Settings />,
+            sizeX: 'm',
             sizeY: 'm',
         });
     };
@@ -48,15 +58,20 @@ export const UserContextMenu = () => {
                     {currentUser?.isAdmin && <BadgeStyled>Admin</BadgeStyled>}
                 </Flex>
             </Button>
-            <Divider />
-            <Button onClick={handleUploadSong}>
-                <IconCirclePlus />
-                {translate('upload_song')}
+            <Button onClick={handleSettingsClick}>
+                <IconSettings />
+                {translate('settings')}
             </Button>
             <Button onClick={() => toggleTheme()}>
                 <IconSun />
                 {translate('change_theme')}
             </Button>
+            <Divider />
+            <Button onClick={handleUploadSong}>
+                <IconCirclePlus />
+                {translate('upload_song')}
+            </Button>
+
             <Divider />
             <LogoutButton />
         </DefaultContextMenuStyled>

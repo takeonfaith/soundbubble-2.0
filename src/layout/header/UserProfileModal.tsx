@@ -56,6 +56,7 @@ export const UserProfileModal = () => {
             title: 'Settings',
             content: <Settings />,
             sizeX: 'm',
+            sizeY: 'm',
         });
     };
 

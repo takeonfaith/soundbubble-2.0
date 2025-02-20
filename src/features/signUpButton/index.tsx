@@ -17,12 +17,7 @@ export const SignUpButton = () => {
     if (currentUser) return null;
 
     return (
-        <Button
-            onClick={handleOpenSignUp}
-            $width="fit-content"
-            style={{ padding: '0 10px' }}
-            className="outline"
-        >
+        <Button onClick={handleOpenSignUp} className="outline default">
             {translate('sign_up')}
         </Button>
     );

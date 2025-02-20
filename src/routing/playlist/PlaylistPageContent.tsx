@@ -18,6 +18,7 @@ import {
 import { AddSongsButton } from './ui/editing/AddSongsButton';
 import { PageTop } from './ui/layout/PageTop';
 import { SearchNotFoundError } from './ui/layout/SearchNotFoundError';
+import { useTypedTrasnlate } from '../../shared/hooks/useTypedTrasnlate';
 
 type Props = {
     playlist: TPlaylist | null;
@@ -58,6 +59,7 @@ export const PlaylistPageContent = (props: Props) => {
     } = props;
 
     const error = !loading && !playlist;
+    const translate = useTypedTrasnlate();
 
     return (
         <PageWrapper>
@@ -91,8 +93,12 @@ export const PlaylistPageContent = (props: Props) => {
                                 currentPlaylistSongs?.length === 0 && (
                                     <PageMessage
                                         icon={IconMusicOff}
-                                        title="Playlist is empty"
-                                        description=""
+                                        title={translate('playlist_is_empty')}
+                                        description={
+                                            isOwner
+                                                ? translate('playlist_is_empty_subtext')
+                                                : ''
+                                        }
                                     />
                                 )}
                             <VerticalSongsList

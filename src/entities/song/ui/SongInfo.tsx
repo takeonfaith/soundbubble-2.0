@@ -165,13 +165,13 @@ export const SongInfo = ({ song }: Props) => {
                             style={{ fontSize: '0.8rem', fontWeight: '300' }}
                             onClick={() =>
                                 modalModel.events.open({
-                                    title: 'Lyrics',
+                                    title: translate('lyrics'),
                                     content: <Lyrics song={song} />,
                                 })
                             }
                         >
                             <IconQuote size={16} />
-                            Lyrics
+                            {translate('lyrics')}
                         </Button>
                     )}
                 </Flex>
@@ -182,7 +182,7 @@ export const SongInfo = ({ song }: Props) => {
                         className="outline"
                         onClick={handleOpenFriendsListeting}
                     >
-                        {translate('friends_listening', {listen: ''})}{' '}
+                        {translate('friends_listening', { listen: '' })}{' '}
                         <Flex>
                             <SmallAvatarList users={friendsListening}>
                                 {friendsListening.length > 2 && (
