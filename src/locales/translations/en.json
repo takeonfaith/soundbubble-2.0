@@ -213,5 +213,7 @@
     "lyrics": "Lyrics",
     "undo": "Undo",
     "repeat_segment_promo": "You can repeat exact segment of a song",
-    "repeat_segment_promo_subtext": "It happens that you like not a song, but a moment in it? Now you can listen to it endlessly"
+    "repeat_segment_promo_subtext": "It happens that you like not a song, but a moment in it? Now you can listen to it endlessly",
+    "we_glad_you_joined_us": "We glad you joined us!",
+    "we_glad_you_joined_us_subtext": "You can learn what features are available or skip this tutorial"
 }

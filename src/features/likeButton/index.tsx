@@ -31,6 +31,7 @@ export const LikeButton = ({
 
     const onLikeClick = loggedIn((e: Evt<'btn'>) => {
         e.stopPropagation();
+        e.preventDefault();
         if (entity) {
             onClick?.(e, entity);
         }

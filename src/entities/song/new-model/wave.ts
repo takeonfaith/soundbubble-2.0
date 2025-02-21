@@ -92,11 +92,11 @@ playWaveFx.use(async ({ authors }) => {
     });
 });
 
-playWaveFx.failData.watch(() => {
+playWaveFx.failData.watch((err) => {
     toastModel.events.add({
         type: 'error',
         message: 'Failed to play wave',
         duration: 10000,
-        reason: 'Failed to fetch wave data',
+        reason: err.message,
     });
 });

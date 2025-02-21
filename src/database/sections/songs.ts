@@ -271,16 +271,16 @@ export class Songs {
                 return await this.getTopSongsBySongIds(author.ownSongs);
             };
 
-            if (!('ownSongs' in authors[0])) {
+            if (authors.length > 0 && !('ownSongs' in authors[0])) {
                 const res = await asyncRequests(authors, (author) => {
                     return Users.getAuthorSongsByAuthorId(author.uid, false, 3);
                 });
 
-                const dsa = res
+                const songs = res
                     .filter((r) => r !== null)
                     .flatMap((r) => r.songs);
 
-                return shuffleArray(dsa);
+                return shuffleArray(uniqueArrayObjectsByField(songs, 'id'));
             }
 
             if (authors.length < 3) {
@@ -295,7 +295,7 @@ export class Songs {
                         .flat()
                         .filter((s) => s !== null),
                 ];
-                return shuffleArray(songs);
+                return shuffleArray(uniqueArrayObjectsByField(songs, 'id'));
             }
 
             const songs = (

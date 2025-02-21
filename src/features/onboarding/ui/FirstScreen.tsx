@@ -54,10 +54,9 @@ export const FirstScreen = () => {
                     </Icons>
                 </Flex>
                 <Flex jc="center" d="column" gap={10}>
-                    <h2>We glad you joined us!</h2>
+                    <h2>{translate('we_glad_you_joined_us')}</h2>
                     <Subtext>
-                        You can learn what features are available or skip this
-                        tutorial
+                        {translate('we_glad_you_joined_us_subtext')}
                     </Subtext>
                 </Flex>
             </Flex>
@@ -69,7 +68,7 @@ export const FirstScreen = () => {
                         localStorage.setItem(ONBOARDING_KEY, 'true');
                     }}
                 >
-                    Skip
+                    {translate('skip')}
                 </DefaultButton>
                 <DefaultButton
                     onClick={() =>

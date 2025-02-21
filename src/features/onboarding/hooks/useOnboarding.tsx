@@ -8,7 +8,9 @@ export const useOnboarding = () => {
     const [currentUser] = userModel.useUser();
     const shouldShow =
         !!currentUser &&
-        !((JSON.parse(localStorage.getItem(ONBOARDING_KEY) ?? 'false') as boolean));
+        !(JSON.parse(
+            localStorage.getItem(ONBOARDING_KEY) ?? 'false'
+        ) as boolean);
 
     useEffect(() => {
         if (shouldShow) {
@@ -17,5 +19,5 @@ export const useOnboarding = () => {
                 content: <FirstScreen />,
             });
         }
-    }, [shouldShow]);
+    }, [currentUser, shouldShow]);
 };

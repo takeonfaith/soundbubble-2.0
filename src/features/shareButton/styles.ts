@@ -19,4 +19,9 @@ export const ShareButtonStyled = styled(Button)`
         background: ${({ color }) => color ?? 'grey'};
         filter: brightness(${({ theme }) => theme.colors.brightness});
     }
+
+    &:disabled {
+        color: ${({ theme }) => theme.colors.header};
+        opacity: 0.3;
+    }
 `;
