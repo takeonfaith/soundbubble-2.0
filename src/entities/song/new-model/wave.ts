@@ -10,7 +10,7 @@ import { toastModel } from '../../../layout/toast/model';
 import { TUser } from '../../user/model/types';
 import { createQueueObject } from '../lib/createQueueObject';
 import { TAuthor, TQueue } from '../model/types';
-import { playPauseQueue, togglePlayPause } from './song-state';
+import { load, playPauseQueue, togglePlayPause } from './song-state';
 import { slowSongsApi } from './slow-songs';
 import { $queue } from './queue';
 import { $addedAuthors } from '../../user/model/library/authors';
@@ -42,10 +42,15 @@ sample({
 });
 
 sample({
+    clock: playWaveFx,
+    target: load,
+});
+
+sample({
     clock: playWave,
     source: { queue: $queue },
     filter: ({ queue }) => !!queue && queue.url === '/discover',
-    target: togglePlayPause,
+    target: [togglePlayPause],
 });
 
 sample({

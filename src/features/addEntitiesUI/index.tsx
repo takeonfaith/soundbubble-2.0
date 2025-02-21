@@ -15,6 +15,7 @@ type Props<T extends TEntity> = {
     inputPlaceholder: string;
     children?: React.ReactNode;
     gap?: number;
+    focusOnLoad?: boolean;
     renderItem: (
         item: T,
         checked: boolean,
@@ -42,6 +43,7 @@ export const AddEntitiesUI = <T extends TEntity>({
     onAddItem,
     children,
     gap,
+    focusOnLoad = false,
 }: Props<T>) => {
     const {
         visibleItems,
@@ -54,7 +56,12 @@ export const AddEntitiesUI = <T extends TEntity>({
         setAddedItems,
         getItemImage,
         inputRef,
-    } = useAddedItemsList(entities, initiallyAddedItems, onAddItem);
+    } = useAddedItemsList(
+        entities,
+        focusOnLoad,
+        initiallyAddedItems,
+        onAddItem
+    );
 
     return (
         <>

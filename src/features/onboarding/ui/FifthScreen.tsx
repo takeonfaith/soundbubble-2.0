@@ -1,17 +1,17 @@
 import { styled } from 'styled-components';
-import { translate } from '../../../i18n';
 import { modalModel } from '../../../layout/modal/model';
 import { DefaultButton } from '../../../shared/components/button/DefaultButton';
 import { Flex } from '../../../shared/components/flex';
-import { Subtext } from '../../../shared/components/subtext';
 import backgroundImg from '../../signUpModal/img/background.png';
-import { FifthScreen } from './FifthScreen';
 import { FirstScreenStyled } from './styles';
-import { IconRepeatSegment } from '../../../shared/icons/IconRepeatSegment';
+import { Subtext } from '../../../shared/components/subtext';
+import { IconWaveSine } from '@tabler/icons-react';
+import { ONBOARDING_KEY } from '../constants';
+import { translate } from '../../../i18n';
 
 const FourthScreenStyled = styled(FirstScreenStyled)`
     img.background1 {
-        filter: hue-rotate(20deg);
+        filter: hue-rotate(320deg);
         width: 400px;
         height: 300px;
     }
@@ -45,27 +45,27 @@ const Icon = styled.div`
         }
     }
 
-    svg,
-    img {
+    svg {
         width: 70px;
         height: 70px;
     }
 `;
 
-export const FourthScreen = () => {
+export const FifthScreen = () => {
     return (
         <FourthScreenStyled>
             <div className="bokeh" />
             <img src={backgroundImg} className="background1" alt="" />
-
             <Flex height="100%">
                 <Icon>
-                    <IconRepeatSegment />
+                    <IconWaveSine />
                 </Icon>
             </Flex>
             <Flex height="300px" d="column" gap={10}>
-                <h2>{translate('repeat_segment_promo')}</h2>
-                <Subtext>{translate('repeat_segment_promo_subtext')}</Subtext>
+                <h2>{translate('wave_promo')}</h2>
+                <Subtext>
+                    {translate('wave_promo_subtext')}
+                </Subtext>
             </Flex>
             <Flex width="100%" gap={10}>
                 <DefaultButton
@@ -78,14 +78,12 @@ export const FourthScreen = () => {
                 </DefaultButton>
                 <DefaultButton
                     onClick={() => {
-                        modalModel.events.open({
-                            content: <FifthScreen />,
-                            title: '',
-                        });
+                        modalModel.events.close();
+                        localStorage.setItem(ONBOARDING_KEY, 'true');
                     }}
                     appearance="primary"
                 >
-                    {translate('next')}
+                    {translate('done')}
                 </DefaultButton>
             </Flex>
         </FourthScreenStyled>

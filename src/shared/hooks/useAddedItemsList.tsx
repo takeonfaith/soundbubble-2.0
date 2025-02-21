@@ -12,6 +12,7 @@ import { UserCoverBackground } from '../../entities/user/ui/UserCoverBackground'
 
 export const useAddedItemsList = <T extends TEntity>(
     list: T[],
+    focusOnLoad: boolean,
     initiallyAddedItems: T[] = [],
     onAddItem?: (added: T[]) => void
 ) => {
@@ -81,10 +82,10 @@ export const useAddedItemsList = <T extends TEntity>(
     }, [list]);
 
     useEffect(() => {
-        if (inputRef.current) {
+        if (inputRef.current && focusOnLoad) {
             inputRef.current.focus();
         }
-    }, []);
+    }, [focusOnLoad]);
 
     return {
         visibleItems,

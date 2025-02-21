@@ -1,22 +1,34 @@
 import { useUnit } from 'effector-react';
 import { useCallback } from 'react';
-import { SongState } from '../../../entities/song/model/types';
 import { songModel as songModelNew } from '../../../entities/song/new-model';
 import { $loadedPercent } from '../../../entities/song/new-model/current-time';
 import { $currentSongDuration } from '../../../entities/song/new-model/duration';
+import {
+    $loopSegment,
+    loopSegmentApi,
+} from '../../../entities/song/new-model/queue';
 import { playWaveFx } from '../../../entities/song/new-model/wave';
 
 export const usePlayerMusicControls = () => {
     const { currentSong, state, loopMode, shuffleMode, queue } =
         songModelNew.useSong();
-    const [duration, loadedPercent, isLoadingWave] = useUnit([
+    const [duration, loadedPercent, loopSegment] = useUnit([
         $currentSongDuration,
         $loadedPercent,
+        $loopSegment,
         playWaveFx.pending,
     ]);
     const currentTime = songModelNew.useCurrentTime();
 
     const disableNextSongButton = false;
+
+    const handleChangeLoopSegment = (range: number[]) => {
+        loopSegmentApi.set(range);
+    };
+
+    const handleAfterChangeLoopSegment = ([start]: number[]) => {
+        songModelNew.playback.setCurrentTime(start);
+    };
 
     const handlePlay = useCallback(() => {
         if (!queue) {
@@ -53,7 +65,7 @@ export const usePlayerMusicControls = () => {
         currentTime,
         duration,
         colors: currentSong?.imageColors,
-        state: isLoadingWave ? SongState.loading : state,
+        state,
         loopMode,
         shuffle: shuffleMode,
         disableNextSongButton,
@@ -65,5 +77,8 @@ export const usePlayerMusicControls = () => {
         handleMouseUp,
         handleChangeTime,
         loadedPercent,
+        loopSegment,
+        handleChangeLoopSegment,
+        handleAfterChangeLoopSegment,
     };
 };

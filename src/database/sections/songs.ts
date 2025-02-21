@@ -23,6 +23,7 @@ import { ERRORS } from '../../shared/constants';
 import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import getUID from '../../shared/funcs/getUID';
 import { getDataFromDoc } from '../lib/getDataFromDoc';
+import { uniqueArrayObjectsByField } from '../../shared/funcs/uniqueArrayObjectsByFields';
 
 export class Songs {
     static ref = FB.get('songs');
@@ -303,7 +304,7 @@ export class Songs {
                 .flat()
                 .filter((s) => s !== null);
 
-            return shuffleArray(songs);
+            return shuffleArray(uniqueArrayObjectsByField(songs, 'id'));
         } catch (error) {
             console.error(error);
             throw new Error('Failed to get wave: ' + (error as Error).message);

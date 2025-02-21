@@ -1,4 +1,4 @@
-import { createEffect, createEvent, sample } from 'effector';
+import { createEffect, createEvent, createStore, sample } from 'effector';
 import { loadUserSearchHistoryFx } from '../../search/model/search-history';
 import { loadAddedAuthorsFx } from './library/authors';
 import { loadAddedPlaylistsFx, loadOwnPlaylistsFx } from './library/playlists';
@@ -14,14 +14,7 @@ export const loadUserDataFx = createEffect<User, TUser | null>();
 
 export const loadUserData = createEvent<User | null>();
 
-loadUserDataFx.failData.watch((err) => {
-    toastModel.events.add({
-        type: 'error',
-        message: 'Failed to load your data',
-        reason: err.message,
-        duration: 20000,
-    });
-});
+export const $isLoadingUser = createStore(true);
 
 export const setUser = createEvent<TUser>();
 
@@ -45,6 +38,26 @@ sample({
 });
 
 sample({
+    clock: loadUserData,
+    filter: Boolean,
+    fn: () => true,
+    target: $isLoadingUser,
+});
+
+sample({
+    clock: loadUserData,
+    filter: (creds) => !creds,
+    fn: () => false,
+    target: $isLoadingUser,
+});
+
+sample({
+    clock: loadUserDataFx.doneData,
+    fn: () => false,
+    target: $isLoadingUser,
+});
+
+sample({
     clock: loadUserDataFx.doneData,
     filter: Boolean,
     target: setUser,
@@ -65,4 +78,13 @@ sample({
 
 loadUserDataFx.use(async (user) => {
     return await Database.Users.getUserById(user.uid);
+});
+
+loadUserDataFx.failData.watch((err) => {
+    toastModel.events.add({
+        type: 'error',
+        message: 'Failed to load your data',
+        reason: err.message,
+        duration: 20000,
+    });
 });

@@ -7,7 +7,12 @@ export const $loopMode = createStore<LoopMode>(
 
 export const { toggleLoopMode } = createApi($loopMode, {
     toggleLoopMode: (loopMode) => {
-        const modes = [LoopMode.noloop, LoopMode.loopall, LoopMode.loopone];
+        const modes = [
+            LoopMode.noloop,
+            LoopMode.loopall,
+            LoopMode.loopone,
+            LoopMode.loopsegment,
+        ];
         const mode = modes[(loopMode + 1) % modes.length] ?? LoopMode.noloop;
 
         localStorage.setItem('loopMode', mode.toString());

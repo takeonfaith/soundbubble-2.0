@@ -29,25 +29,6 @@ export const InitialLoadingStyled = styled.div`
         width: 80%;
     }
 
-    & .logo {
-        animation: logopulse 2s infinite;
-
-        @keyframes logopulse {
-            0% {
-                transform: scale(1);
-                filter: brightness(1);
-            }
-            50% {
-                transform: scale(1.05);
-                filter: brightness(1.05);
-            }
-            100% {
-                transform: scale(1);
-                filter: brightness(1);
-            }
-        }
-    }
-
     img {
         width: 100px;
         height: 100px;

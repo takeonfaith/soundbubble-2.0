@@ -58,6 +58,12 @@ export const PlayerStyled = styled.div<{ $background: string }>`
                 &::before {
                     background: ${({ theme }) => theme.colors.textColor};
                 }
+
+                &.segment {
+                    &::before {
+                        display: none;
+                    }
+                }
             }
         }
     }

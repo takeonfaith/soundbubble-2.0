@@ -2,14 +2,19 @@ import { useRef, useState } from 'react';
 import { Progress } from '../progress';
 import { SLIDER_VALUE_BUBBLE_WIDTH } from './constants';
 import { LoadedStripe, SliderValueBubbleStyled, SliderWrapper } from './styles';
+import { DoubleRangeSlider } from '../double-range';
 
 type Props = {
     value: number;
     duration: number;
     loadedPercent?: number;
+    loopSegment?: [number, number] | null;
+    onChangeLoopSegment?: (value: number[]) => void;
+    onAfterChangeLoopSegment?: (value: number[]) => void;
     onChangeTime: (time: number) => void;
     onMouseUp: (time: number) => void;
     color?: string;
+    showSegment?: boolean;
     getSliderValue?: (value: number, duration: number) => string;
 };
 
@@ -19,7 +24,11 @@ export const Slider = ({
     onChangeTime,
     onMouseUp,
     loadedPercent,
+    loopSegment,
+    onChangeLoopSegment,
+    onAfterChangeLoopSegment,
     color,
+    showSegment,
     getSliderValue = (value) => `${(value * 100).toFixed(0)}%`,
 }: Props) => {
     const [sliderValuePos, setSliderValuePos] = useState(0);
@@ -107,6 +116,16 @@ export const Slider = ({
             onMouseDown={handleMouseDown}
             draggable={false}
         >
+            {showSegment && loopSegment && (
+                <DoubleRangeSlider
+                    max={duration}
+                    value={loopSegment}
+                    onChange={onChangeLoopSegment}
+                    onAfterChange={onAfterChangeLoopSegment}
+                    className="segment-slider"
+                    color={color}
+                />
+            )}
             {duration !== 0 && (
                 <SliderValueBubbleStyled
                     style={{
@@ -123,7 +142,6 @@ export const Slider = ({
                 color={color}
                 className="progress"
             />
-
             <LoadedStripe
                 style={{
                     width: `${loadedPercent}%`,

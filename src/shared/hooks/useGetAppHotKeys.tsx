@@ -5,17 +5,20 @@ import {
     IconArrowUp,
     IconCommand,
 } from '@tabler/icons-react';
+import { useUnit } from 'effector-react';
 import { toggleTheme } from '../../app/theme';
 import { Settings } from '../../entities/settings/ui';
+import { LoopMode } from '../../entities/song/model/types';
 import { songModel } from '../../entities/song/new-model';
+import { $loopMode } from '../../entities/song/new-model/queue';
 import { CreatePlaylistModal } from '../../features/createPlaylistModal';
+import { translate } from '../../i18n';
 import { confirmModel } from '../../layout/confirm/model';
 import { modalModel } from '../../layout/modal/model';
 import { popupModel } from '../../layout/popup/model';
 import { sidebarApi } from '../../layout/sidebar/model';
 import { THotKeys } from './useHotKeys';
 import { usePrivateAction } from './usePrivateAction';
-import { translate } from '../../i18n';
 
 export const useGetAppHotKeys = () => {
     const [modals] = modalModel.useModal();
@@ -23,6 +26,7 @@ export const useGetAppHotKeys = () => {
     const fullScreen = songModel.useFullScreenPlayer();
     const { loggedIn } = usePrivateAction();
     const { isOpen: isConfirmOpen } = confirmModel.useConfirm();
+    const [loopMode] = useUnit([$loopMode]);
 
     const escapeAction = (event: KeyboardEvent) => {
         if (modals.length > 0) {
@@ -198,7 +202,9 @@ export const useGetAppHotKeys = () => {
             name: '0-9',
             action: (event) => {
                 const num = +event.key;
-                songModel.playback.setPercent(num / 10);
+                if (loopMode !== LoopMode.loopsegment) {
+                    songModel.playback.setPercent(num / 10);
+                }
             },
             description: translate('playback_jump'),
         },

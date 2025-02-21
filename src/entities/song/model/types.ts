@@ -48,6 +48,7 @@ export enum LoopMode {
     noloop,
     loopall,
     loopone,
+    loopsegment,
 }
 
 export type TQueueStore = {

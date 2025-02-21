@@ -1,9 +1,12 @@
+import { IconExclamationCircle, IconReload } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { userModel } from '../../entities/user/model';
+import { Button } from '../../shared/components/button';
 import { Loading } from '../../shared/components/loading';
 import { Logo } from '../../shared/components/logo';
-import { InitialLoadingStyled } from './styles';
+import { PageMessage } from '../../shared/components/pageMessage';
 import { Subtext } from '../../shared/components/subtext';
+import { InitialLoadingStyled } from './styles';
 
 const TIMEOUTS = {
     slowInternetMessage: 15000,
@@ -29,33 +32,35 @@ export const InitialLoading = () => {
             }
         }, TIMEOUTS.fullStop);
 
-        if (currentUser) {
-            setShowSlowInternetMessage(false);
-            setTimeoutError(false);
-            clearTimeout(timeout1);
-            clearTimeout(timeout2);
-        }
-
         return () => {
             clearTimeout(timeout1);
             clearTimeout(timeout2);
+            setShowSlowInternetMessage(false);
+            setTimeoutError(false);
         };
     }, [currentUser]);
 
     return (
         <InitialLoadingStyled className={loading ? 'loading' : 'loaded'}>
-            <Logo short />
+            {!timeoutError && <Logo short />}
             {!timeoutError && showSlowInternetMessage && (
                 <Subtext>
                     It seems like You have slow internet connection...
                 </Subtext>
             )}
             {timeoutError && (
-                <Subtext>
-                    Failed to load Soundbubble. Please try again later
-                </Subtext>
+                <PageMessage
+                    icon={IconExclamationCircle}
+                    title={'Connection failed'}
+                    description={'Try again later'}
+                >
+                    <Button className="outline">
+                        <IconReload />
+                        Reload
+                    </Button>
+                </PageMessage>
             )}
-            {loading && <Loading />}
+            {!timeoutError && loading && <Loading />}
         </InitialLoadingStyled>
     );
 };

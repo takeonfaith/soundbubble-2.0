@@ -86,6 +86,11 @@ export const SliderWrapper = styled.div`
         }
     }
 
+    & .segment-slider {
+        position: absolute !important;
+        z-index: 10;
+    }
+
     &:hover {
         --slider-size: 10px;
 

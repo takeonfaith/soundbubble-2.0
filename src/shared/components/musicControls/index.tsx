@@ -8,6 +8,7 @@ import {
     IconRepeatOnce,
 } from '@tabler/icons-react';
 import { getHumanDuration } from '../../../entities/song/lib/getHumanDuration';
+import { IconRepeatSegment } from '../../icons/IconRepeatSegment';
 import { PlayPauseIcon } from '../playPauseIcon';
 import { Slider } from '../slider';
 import { Duration } from './Duration';
@@ -16,6 +17,7 @@ import {
     MusicControlsStyled,
     SmallControlButton,
 } from './styles';
+import Popover from '../popover';
 
 type Props = {
     state: SongState | null;
@@ -26,6 +28,9 @@ type Props = {
     shuffle: boolean;
     disableNextSongButton: boolean;
     loadedPercent: number;
+    loopSegment: [number, number] | null;
+    handleChangeLoopSegment: (range: number[]) => void;
+    handleAfterChangeLoopSegment: (range: number[]) => void;
     handleShuffle: () => void;
     handleLoopMode: () => void;
     onPlay: () => void;
@@ -51,8 +56,17 @@ export const MusicControls = ({
     handleChangeTime,
     handleMouseUp,
     loadedPercent,
+    loopSegment,
+    handleChangeLoopSegment,
+    handleAfterChangeLoopSegment,
 }: Props) => {
     const buttonColor = colors?.[0];
+    const loopIcons = [
+        <IconRepeat />,
+        <IconRepeat />,
+        <IconRepeatOnce />,
+        <IconRepeatSegment />,
+    ];
 
     return (
         <MusicControlsStyled className="music-controls">
@@ -63,6 +77,10 @@ export const MusicControls = ({
                 onChangeTime={handleChangeTime}
                 onMouseUp={handleMouseUp}
                 color={buttonColor}
+                loopSegment={loopSegment}
+                onChangeLoopSegment={handleChangeLoopSegment}
+                onAfterChangeLoopSegment={handleAfterChangeLoopSegment}
+                showSegment={loopMode === LoopMode.loopsegment}
                 getSliderValue={(value, duration) =>
                     getHumanDuration(value * duration)
                 }
@@ -103,16 +121,23 @@ export const MusicControls = ({
                         <IconPlayerTrackNextFilled className="next-icon-2" />
                     </ControlButton>
                 </Flex>
-                <SmallControlButton
-                    className={`queue-button ${
-                        loopMode !== LoopMode.noloop ? 'selected' : ''
-                    }`}
-                    onClick={handleLoopMode}
-                    $color1={buttonColor}
+                <Popover
+                    content={
+                        loopMode === LoopMode.loopsegment ? 'Loop segment' : null
+                    }
                 >
-                    {loopMode === LoopMode.loopone && <IconRepeatOnce />}
-                    {loopMode !== LoopMode.loopone && <IconRepeat />}
-                </SmallControlButton>
+                    <SmallControlButton
+                        className={`queue-button ${
+                            loopMode !== LoopMode.noloop ? 'selected' : ''
+                        } ${
+                            loopMode === LoopMode.loopsegment ? 'segment' : ''
+                        }`}
+                        onClick={handleLoopMode}
+                        $color1={buttonColor}
+                    >
+                        {loopIcons[loopMode]}
+                    </SmallControlButton>
+                </Popover>
             </Flex>
         </MusicControlsStyled>
     );

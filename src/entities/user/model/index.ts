@@ -20,7 +20,7 @@ import {
     subscribeToFriendsFx,
     updateFriends,
 } from './friends';
-import { loadUserData, loadUserDataFx, setUser } from './init';
+import { $isLoadingUser, loadUserData, setUser } from './init';
 import {
     $addedAuthors,
     loadAddedAuthorsFx,
@@ -44,7 +44,7 @@ import { $user } from './user';
 import { getUserPageById, userPage } from './user-page';
 
 export const userModel = {
-    useUser: () => useUnit([$user, loadUserDataFx.pending, loginFx.pending]),
+    useUser: () => useUnit([$user, $isLoadingUser, loginFx.pending]),
     useSongLibrary: () => useUnit([$library, loadLibraryFx.pending]),
     useOwnPlaylists: () => useUnit([$ownPlaylists, loadOwnPlaylistsFx.pending]),
     useAddedPlaylists: () =>

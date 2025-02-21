@@ -1,11 +1,11 @@
-import { IconEdit, IconInfoCircle } from '@tabler/icons-react';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { TPlaylist } from '../../entities/playlist/model/types';
 import { PlaylistInfo } from '../../entities/playlist/ui/PlaylistInfo';
 import { ShareButton } from '../../features/shareButton';
+import { translate } from '../../i18n';
 import { modalModel } from '../../layout/modal/model';
 import { Button } from '../../shared/components/button';
 import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
-import { Divider } from '../../shared/components/divider';
 
 type Props = {
     album: TPlaylist;
@@ -14,7 +14,7 @@ type Props = {
 export const AlbumContextMenu = ({ album }: Props) => {
     const handleInfo = () => {
         modalModel.events.open({
-            title: 'Playlist Information',
+            title: translate('info'),
             content: <PlaylistInfo playlist={album} />,
         });
     };
@@ -24,7 +24,7 @@ export const AlbumContextMenu = ({ album }: Props) => {
             <ShareButton type="menu" entity={album} />
             <Button onClick={handleInfo}>
                 <IconInfoCircle />
-                Info
+                {translate('info')}
             </Button>
         </DefaultContextMenuStyled>
     );
