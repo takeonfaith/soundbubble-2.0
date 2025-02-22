@@ -69,8 +69,8 @@ export const LikedSongs = () => {
                 {currentUser && !library.length && (
                     <PageMessage
                         icon={IconMusicOff}
-                        title="No songs added to library"
-                        description="You can add them from search!"
+                        title={translate('playlist_is_empty')}
+                        description={translate('playlist_is_empty_subtext')}
                     />
                 )}
             </SkeletonPageAnimation>

@@ -27,11 +27,6 @@ export const MessageList = memo(
     }: Props) => {
         if (!currentUser) return null;
 
-        console.log({
-            maxSeenAtInCurrentChat: new Date(maxSeenAtInCurrentChat ?? 0),
-            myLastReadAt: new Date(myLastReadAt ?? 0),
-        });
-
         return (
             <>
                 {messages.map((message, i) => {

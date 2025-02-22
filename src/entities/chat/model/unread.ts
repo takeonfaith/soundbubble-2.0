@@ -51,7 +51,7 @@ $currentChatId.watch(() => {
 });
 
 sample({
-    clock: $currentChat,
+    clock: $currentChatId,
     fn: () => 0,
     target: $messagesReadCount,
 });

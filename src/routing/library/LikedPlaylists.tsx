@@ -9,6 +9,7 @@ import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
 import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 import { PageGridStyled } from './styles';
+import { translate } from '../../i18n';
 
 export const LikedPlaylists = () => {
     const [added, loadingAdded] = userModel.useAddedPlaylists();
@@ -25,8 +26,8 @@ export const LikedPlaylists = () => {
         return (
             <PageMessage
                 icon={IconPlaylistOff}
-                title={'Need to log in'}
-                description={'To create playlists and share them'}
+                title={translate('need_to_login')}
+                description={''}
             >
                 <LoginButton />
             </PageMessage>
@@ -37,8 +38,8 @@ export const LikedPlaylists = () => {
         return (
             <PageMessage
                 icon={IconPlaylistOff}
-                title={'No playlists created'}
-                description={'They will appear here when you add them'}
+                title={translate('no_playlists')}
+                description={translate('no_playlists_subtext')}
             >
                 <CreatePlaylistButton main />
             </PageMessage>

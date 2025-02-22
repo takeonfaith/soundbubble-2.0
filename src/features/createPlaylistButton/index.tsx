@@ -32,8 +32,7 @@ export const CreatePlaylistButton = ({
         return (
             <Button
                 onClick={handleAddPlaylist}
-                className="primary"
-                $width="150px"
+                className="primary default"
                 color="#fff"
             >
                 <IconPlus size={20} />

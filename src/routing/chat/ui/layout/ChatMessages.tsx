@@ -72,13 +72,6 @@ export const ChatMessages = () => {
         chatModel.events.updateUnread(sentTime);
     }, []);
 
-    const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-        // const should =
-        //     e.currentTarget.scrollTop + window.innerHeight - 218.5 >=
-        //     e.currentTarget.scrollHeight;
-        // setShouldScrollToBottom(should);
-    };
-
     useEffect(() => {
         setShouldScrollToBottom(true);
     }, [currentChat?.id]);
@@ -98,7 +91,6 @@ export const ChatMessages = () => {
         <ChatMessagesStyled
             className={firstUnreadMessage ? 'shift-to-first-unread' : ''}
             ref={scrollRef}
-            onScroll={handleScroll}
         >
             <SkeletonPageAnimation
                 loading={loading}

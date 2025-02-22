@@ -103,7 +103,9 @@ export const CreateChatModal = () => {
                         >
                             Create {addedFriends.length > 1 ? 'group' : 'chat'}
                             {addedFriends.length > 1 && (
-                                <BadgeStyled>{addedFriends.length}</BadgeStyled>
+                                <BadgeStyled className="white">
+                                    {addedFriends.length}
+                                </BadgeStyled>
                             )}
                         </DefaultButton>
                     </>

@@ -32,45 +32,45 @@ export const AttachEntityToChatModal = () => {
     const [currentUser] = userModel.useUser();
 
     const handleSave = (entities: TEntity[]) => {
-        return () => {
-            if (currentChat && currentUser) {
-                const type = getEntityType(library[0]);
-                const attachedSongs: string[] = [];
-                const attachedAlbums: string[] = [];
-                const attachedAuthors: string[] = [];
-                const ids = entities.map((e) => getEntityId(e));
+        if (currentChat && currentUser) {
+            const type = getEntityType(library[0]);
+            const attachedSongs: string[] = [];
+            const attachedAlbums: string[] = [];
+            const attachedAuthors: string[] = [];
+            const ids = entities.map((e) => getEntityId(e));
 
-                if (type === 'song') {
-                    attachedSongs.push(...ids);
-                }
-
-                if (type === 'author' || type === 'user') {
-                    attachedAuthors.push(...ids);
-                }
-
-                if (type === 'album' || type === 'playlist') {
-                    attachedAlbums.push(...ids);
-                }
-
-                const messageId = getUID();
-                chatModel.events.sendMessage({
-                    chats: [currentChat],
-                    message: () => {
-                        return createMessageObject({
-                            id: messageId,
-                            sender: currentUser.uid,
-                            participants: currentChat.participants,
-                            attachedAlbums,
-                            attachedAuthors,
-                            attachedSongs,
-                        });
-                    },
-                    onSuccess: () => {
-                        modalModel.events.close();
-                    },
-                });
+            if (type === 'song') {
+                attachedSongs.push(...ids);
             }
-        };
+
+            if (type === 'author' || type === 'user') {
+                attachedAuthors.push(...ids);
+            }
+
+            if (type === 'album' || type === 'playlist') {
+                attachedAlbums.push(...ids);
+            }
+
+            const messageId = getUID();
+            console.log(messageId, attachedAuthors, attachedAlbums);
+
+            chatModel.events.sendMessage({
+                chats: [currentChat],
+                message: () => {
+                    return createMessageObject({
+                        id: messageId,
+                        sender: currentUser.uid,
+                        participants: currentChat.participants,
+                        attachedAlbums,
+                        attachedAuthors,
+                        attachedSongs,
+                    });
+                },
+                onSuccess: () => {
+                    modalModel.events.close();
+                },
+            });
+        }
     };
 
     return (
@@ -78,6 +78,7 @@ export const AttachEntityToChatModal = () => {
             <Flex width="100%" d="column">
                 <AttachEntity
                     library={library}
+                    placeholder={translate('search_placeholder')}
                     submitButtonText={translate('send')}
                     onSumbit={handleSave}
                 />
