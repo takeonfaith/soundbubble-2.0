@@ -14,26 +14,25 @@ export const getHumanDuration = (
     const minutes = Math.floor((duration % 3600) / 60);
     const seconds = Math.floor(duration % 60);
 
-    const hoursText =
-        hours > 0
-            ? `${hours} ${getPluralForm(hours, {
-                  one: translate('hour'),
-                  toFour: translate('hours_to_four'),
-                  fromFive: translate('hours_from_five'),
-              })}`
-            : '';
-    const minutesText = `${minutes} ${getPluralForm(minutes, {
-        one: translate('minute'),
-        toFour: translate('minutes_to_four'),
-        fromFive: translate('minutes_from_five'),
-    })}`;
-    const secondsText = `${minutes} ${getPluralForm(minutes, {
-        one: translate('second'),
-        toFour: translate('seconds_to_four'),
-        fromFive: translate('seconds_from_five'),
-    })}`;
-
     if (format === 'text') {
+        const hoursText =
+            hours > 0
+                ? `${hours} ${getPluralForm(hours, {
+                      one: translate('hour'),
+                      toFour: translate('hours_to_four'),
+                      fromFive: translate('hours_from_five'),
+                  })}`
+                : '';
+        const minutesText = `${minutes} ${getPluralForm(minutes, {
+            one: translate('minute'),
+            toFour: translate('minutes_to_four'),
+            fromFive: translate('minutes_from_five'),
+        })}`;
+        const secondsText = `${seconds} ${getPluralForm(seconds, {
+            one: translate('second'),
+            toFour: translate('seconds_to_four'),
+            fromFive: translate('seconds_from_five'),
+        })}`;
         return `${hoursText} ${minutesText} ${secondsText}`;
     }
 

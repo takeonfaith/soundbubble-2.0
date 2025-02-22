@@ -41,7 +41,7 @@ export const PhotoInput = ({
     const [dragActive, setDragActive] = useState(false);
 
     const getColors = (colors: string[]) => {
-        if (!colors) {
+        if (colors) {
             onColors(colors);
         }
     };

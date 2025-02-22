@@ -252,10 +252,10 @@ export const PlayerActionButtons = styled.div`
         }
     }
 
-    & .volume-button:hover ~ * {
+    /* & .volume-button:hover ~ * {
         opacity: 0;
         pointer-events: none;
-    }
+    } */
 
     & .like-button.liked {
         filter: brightness(${({ theme }) => theme.colors.brightness});

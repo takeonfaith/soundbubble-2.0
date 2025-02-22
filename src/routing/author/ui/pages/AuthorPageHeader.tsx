@@ -10,9 +10,15 @@ type Props = {
     author: TUser | null;
     children?: React.ReactNode;
     title: string;
+    isAuthor?: boolean;
 };
 
-export const AuthorPageHeader = ({ author, children, title }: Props) => {
+export const AuthorPageHeader = ({
+    author,
+    children,
+    title,
+    isAuthor = true,
+}: Props) => {
     const navigate = useNavigate();
 
     return (
@@ -22,7 +28,11 @@ export const AuthorPageHeader = ({ author, children, title }: Props) => {
                     $height="40px"
                     $width="40px"
                     style={{ borderRadius: '100%' }}
-                    onClick={() => navigate(`/author/${author?.uid}`)}
+                    onClick={() =>
+                        navigate(
+                            `/${isAuthor ? 'author' : 'user'}/${author?.uid}`
+                        )
+                    }
                 >
                     <IconArrowLeft size={20} />
                 </Button>

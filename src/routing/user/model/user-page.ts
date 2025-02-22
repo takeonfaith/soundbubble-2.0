@@ -1,10 +1,9 @@
-import { createEffect, createEvent, createStore, sample } from 'effector';
-import { useUnit } from 'effector-react';
+import { createEvent, createStore, sample } from 'effector';
 import { Database } from '../../../database';
+import { TPlaylist } from '../../../entities/playlist/model/types';
+import { TLastQueue, TSong } from '../../../entities/song/model/types';
+import { TUser } from '../../../entities/user/model/types';
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
-import { TPlaylist } from '../../playlist/model/types';
-import { TLastQueue, TSong } from '../../song/model/types';
-import { TUser } from './types';
 
 type GetPageProps = {
     userId: string;
@@ -22,7 +21,6 @@ type LoadedPageData = {
     playlists: TPlaylist[];
 } | null;
 
-export const loadSimilarAuthorsFx = createEffect<TSong[], TUser[]>();
 export const loadUserPageFx = createEffectWithToast<
     GetPageProps,
     LoadedPageData
@@ -37,12 +35,11 @@ export const loadSimilarAuthors = createEvent<TSong[]>();
 export const resetUserPage = createEvent();
 
 export const $pageUser = createStore<TUser | null>(null).reset(resetUserPage);
-const $topSongs = createStore<TSong[]>([]);
-const $allSongs = createStore<TSong[]>([]);
-const $playlists = createStore<TPlaylist[]>([]);
-const $similarAuthors = createStore<TUser[]>([]);
-const $lastSongPlayed = createStore<TSong | null>(null);
-const $friends = createStore<TUser[]>([]);
+export const $addedSongs = createStore<TSong[]>([]);
+export const $allSongs = createStore<TSong[]>([]);
+export const $playlists = createStore<TPlaylist[]>([]);
+export const $lastSongPlayed = createStore<TSong | null>(null);
+export const $friends = createStore<TUser[]>([]);
 
 sample({
     clock: getUserPageById,
@@ -72,7 +69,7 @@ sample({
     clock: loadUserPageFx.doneData,
     filter: Boolean,
     fn: (data) => data.songs,
-    target: $topSongs,
+    target: $addedSongs,
 });
 
 sample({
@@ -104,17 +101,6 @@ sample({
 });
 
 sample({
-    clock: loadSimilarAuthors,
-    target: loadSimilarAuthorsFx,
-});
-
-sample({
-    clock: loadSimilarAuthorsFx.doneData,
-    fn: (similarAuthors) => similarAuthors,
-    target: $similarAuthors,
-});
-
-sample({
     clock: loadAllUserSongsFx.doneData,
     fn: (allSongs) => allSongs,
     target: $allSongs,
@@ -133,14 +119,3 @@ loadAllUserSongsFx.use(async ({ userId }) => {
 
     return allSongs;
 });
-
-export const userPage = {
-    useUserData: () => useUnit([$pageUser, loadUserPageFx.pending]),
-    useTopSongs: () => useUnit([$topSongs]),
-    useAllSongs: () => useUnit([$allSongs, loadAllUserSongsFx.pending]),
-    useLastSongPlayed: () => useUnit([$lastSongPlayed]),
-    usePlaylists: () => useUnit([$playlists]),
-    useFriends: () => useUnit([$friends]),
-    useSimilarAuthors: () =>
-        useUnit([$similarAuthors, loadSimilarAuthorsFx.pending]),
-};

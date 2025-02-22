@@ -93,16 +93,17 @@ export const SliderWrapper = styled.div`
 
     &:hover {
         --slider-size: 10px;
+        position: relative;
 
         &.down {
             &::after {
                 content: '';
                 position: fixed;
-                left: -70%;
-                bottom: 50%;
-                transform: translateY(10%);
-                height: 100vh;
-                width: 100vw;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                height: 100%;
+                width: 100%;
                 z-index: 1000;
             }
         }

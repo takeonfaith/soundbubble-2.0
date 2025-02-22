@@ -3,16 +3,22 @@ import { PlaylistItem } from '../../../entities/playlist/ui';
 import { userModel } from '../../../entities/user/model';
 import { HorizontalList } from '../../../shared/components/horizontalList';
 import { NavigationTitle } from '../../../shared/components/navigationTitle';
-import { SectionStyled } from '../../user/styles';
+import { SectionStyled } from '../../user/ui/styles';
 import { MAX_PLAYLISTS } from './constants';
 
 type Props = {
     uid: string | undefined;
     title?: string;
     playlists: TPlaylist[];
+    isAuthor?: boolean;
 };
 
-export const Playlists = ({ title, uid, playlists }: Props) => {
+export const Playlists = ({
+    title,
+    uid,
+    playlists,
+    isAuthor = true,
+}: Props) => {
     const [currentUser] = userModel.useUser();
 
     if (!playlists || playlists.length === 0) {
@@ -24,7 +30,7 @@ export const Playlists = ({ title, uid, playlists }: Props) => {
             <div className="title">
                 <NavigationTitle
                     showNavigation={playlists.length > MAX_PLAYLISTS}
-                    to={`/authors/${uid}/playlists`}
+                    to={`/${isAuthor ? 'author' : 'user'}/${uid}/playlists`}
                 >
                     <h3>{title}</h3>
                 </NavigationTitle>

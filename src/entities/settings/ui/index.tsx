@@ -3,29 +3,30 @@ import {
     IconLogout,
     IconPalette,
     IconPencil,
-    IconSettings2,
+    IconUserMinus,
     IconUserOff,
 } from '@tabler/icons-react';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { EditPhotoModal } from '../../../features/editPhotoModal';
 import { EmailInput } from '../../../features/emailInput';
+import i18n from '../../../i18n';
 import { EditOverlayStyled } from '../../../layout/header/styles';
 import { modalModel } from '../../../layout/modal/model';
+import { TLocales } from '../../../locales';
 import { Button } from '../../../shared/components/button';
 import { Divider } from '../../../shared/components/divider';
 import { Flex } from '../../../shared/components/flex';
 import { Input } from '../../../shared/components/input';
 import { Select, TSelectItem } from '../../../shared/components/select';
 import { Subtext } from '../../../shared/components/subtext';
+import { LANGUAGES } from '../../../shared/constants/languages';
 import { TTheme } from '../../../shared/constants/theme';
 import { userModel } from '../../user/model';
 import { UserCover } from '../../user/ui/UserCover';
 import { ThemeSwitch } from './ThemeSwitch';
 import { TimeRange } from './TimeRange';
-import { LANGUAGES } from '../../../shared/constants/languages';
-import i18n from '../../../i18n';
-import { TLocales } from '../../../locales';
+import { confirmModel } from '../../../layout/confirm/model';
 
 const SettingsMenu = styled.div`
     display: flex;
@@ -88,8 +89,20 @@ const AccountSettings = () => {
         });
     };
 
+    const handleDeleteAccount = () => {
+        confirmModel.events.open({
+            text: 'Are you sure you want to delete your account?',
+            onAccept: () => {
+                userModel.events.deleteAccount();
+            },
+            subtext: 'THIS ACTION CANNOT BE UNDONE!',
+            icon: <IconUserMinus />,
+            iconColor: 'red',
+        });
+    };
+
     return (
-        <Flex ai="flex-start" width="300px" d="column" gap={10}>
+        <Flex ai="flex-start" width="100%" d="column" gap={10}>
             <UserCover
                 colors={currentUser?.imageColors}
                 size="100px"
@@ -123,7 +136,7 @@ const AccountSettings = () => {
                 All your data will be deleted without any possibility of
                 recovery
             </Subtext>
-            <Button className="outline danger">
+            <Button onClick={handleDeleteAccount} className="outline danger">
                 <IconUserOff size={20} />
                 Delete account
             </Button>
@@ -132,8 +145,10 @@ const AccountSettings = () => {
 };
 
 const LanguageSettings = () => {
+    console.log(i18n.language);
+
     const [selected, setSelected] = useState<TSelectItem>(
-        LANGUAGES[i18n.language as TLocales]
+        LANGUAGES[i18n.language as TLocales] ?? i18n.languages[0]
     );
 
     const handleChangeLanguage = (selected: TSelectItem) => {

@@ -1,19 +1,28 @@
 import { IconUserOff } from '@tabler/icons-react';
-import { createQueueObject } from '../../entities/song/lib/createQueueObject';
-import { GridSongList } from '../../entities/song/ui/gridList';
-import { userModel } from '../../entities/user/model';
-import { TUser } from '../../entities/user/model/types';
-import { UserItem } from '../../entities/user/ui';
-import { translate } from '../../i18n';
-import { HorizontalList } from '../../shared/components/horizontalList';
-import { NavigationTitle } from '../../shared/components/navigationTitle';
-import { PageMessage } from '../../shared/components/pageMessage';
-import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { Subtext } from '../../shared/components/subtext';
-import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
-import { MAX_SONGS } from '../author/ui/constants';
-import { Playlists } from '../author/ui/Playlists';
-import { AuthorPageWrapper } from '../author/ui/styles';
+import { useUnit } from 'effector-react';
+import { createQueueObject } from '../../../entities/song/lib/createQueueObject';
+import { GridSongList } from '../../../entities/song/ui/gridList';
+import { TUser } from '../../../entities/user/model/types';
+import { UserItem } from '../../../entities/user/ui';
+import { translate } from '../../../i18n';
+import { HorizontalList } from '../../../shared/components/horizontalList';
+import { NavigationTitle } from '../../../shared/components/navigationTitle';
+import { PageMessage } from '../../../shared/components/pageMessage';
+import { SkeletonPageAnimation } from '../../../shared/components/skeleton/SkeletonPageAnimation';
+import { Subtext } from '../../../shared/components/subtext';
+import { useUrlParamId } from '../../../shared/hooks/useUrlParamId';
+import { MAX_SONGS } from '../../author/ui/constants';
+import { Playlists } from '../../author/ui/Playlists';
+import { AuthorPageWrapper } from '../../author/ui/styles';
+import {
+    $addedSongs,
+    $friends,
+    $lastSongPlayed,
+    $pageUser,
+    $playlists,
+    getUserPageById,
+    loadUserPageFx,
+} from '../model/user-page';
 import { SkeletonLoading } from './SkeletonLoading';
 import { SectionStyled } from './styles';
 import { UserTop } from './UserTop';
@@ -24,18 +33,21 @@ type Props = {
 };
 
 export const UserPage = ({ data, loadingUser }: Props) => {
-    const [currentPageUser, loading] = userModel.userPage.useUserData();
-    const [songs] = userModel.userPage.useTopSongs();
-    const [playlists] = userModel.userPage.usePlaylists();
-    const [lastSongPlayed] = userModel.userPage.useLastSongPlayed();
-    const [friends] = userModel.userPage.useFriends();
-    const userPageData = data ?? currentPageUser;
+    const [user, loading, songs, playlists, friends, lastSongPlayed] = useUnit([
+        $pageUser,
+        loadUserPageFx.pending,
+        $addedSongs,
+        $playlists,
+        $friends,
+        $lastSongPlayed,
+    ]);
+    const userPageData = data ?? user;
     const id = useUrlParamId({
         page: 'user',
         onChangeId: (id) => {
             if (id) {
                 if (!data) {
-                    userModel.events.getUserPageById({
+                    getUserPageById({
                         userId: id,
                     });
                 }
@@ -43,7 +55,7 @@ export const UserPage = ({ data, loadingUser }: Props) => {
         },
     });
 
-    const loadingData = loadingUser || loading || id !== currentPageUser?.uid;
+    const loadingData = loadingUser || loading || id !== user?.uid;
 
     const queue = createQueueObject({
         name: userPageData?.displayName,
@@ -96,12 +108,13 @@ export const UserPage = ({ data, loadingUser }: Props) => {
                     playlists={playlists}
                     title={translate('playlists')}
                     uid={userPageData?.uid}
+                    isAuthor={false}
                 />
                 <SectionStyled>
                     <div className="title">
                         <NavigationTitle
                             showNavigation={songs.length > MAX_SONGS}
-                            to={`/author/${userPageData?.uid}/songs`}
+                            to={`/user/${userPageData?.uid}/friends`}
                         >
                             <h3>{translate('friends')}</h3>
                         </NavigationTitle>

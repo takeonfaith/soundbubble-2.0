@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { hexToRgbA } from '../../shared/funcs/hexToRgba';
-import { SongsStyled } from '../author/ui/styles';
+import { hexToRgbA } from '../../../shared/funcs/hexToRgba';
+import { SongsStyled } from '../../author/ui/styles';
 
 export const SectionStyled = styled(SongsStyled)`
     h3 {

@@ -5,21 +5,21 @@ import {
     IconUserX,
 } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
-import { getLastSeen } from '../../entities/user/lib/getLastSeen';
-import { userModel } from '../../entities/user/model';
+import { getLastSeen } from '../../../entities/user/lib/getLastSeen';
+import { userModel } from '../../../entities/user/model';
 import {
     cancelFriendRequestFx,
     deleteFromFriendsFx,
     friendRequestFx,
-} from '../../entities/user/model/friends';
-import { TUser } from '../../entities/user/model/types';
-import { UserCover } from '../../entities/user/ui/UserCover';
-import { OpenChatButton } from '../../features/openChatButton';
-import { confirmModel } from '../../layout/confirm/model';
-import { DefaultButton } from '../../shared/components/button/DefaultButton';
-import { Subtext } from '../../shared/components/subtext';
+} from '../../../entities/user/model/friends';
+import { TUser } from '../../../entities/user/model/types';
+import { UserCover } from '../../../entities/user/ui/UserCover';
+import { OpenChatButton } from '../../../features/openChatButton';
+import { confirmModel } from '../../../layout/confirm/model';
+import { DefaultButton } from '../../../shared/components/button/DefaultButton';
+import { Subtext } from '../../../shared/components/subtext';
 import { UserButtons, UserInfo, UserInfoName, UserTopStyled } from './styles';
-import { translate } from '../../i18n';
+import { translate } from '../../../i18n';
 
 type Props = {
     user: TUser | null;

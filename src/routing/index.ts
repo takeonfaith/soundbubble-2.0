@@ -6,7 +6,7 @@ import { FriendsPage } from './friends';
 import { HistoryPage } from './history';
 import { PlaylistPage } from './playlist';
 import { TrendsPage } from './trends/ui';
-import { UserPage } from './user';
+import { UserPage } from './user/ui';
 
 export const FriendsPageLazy = lazy(async () => ({ default: FriendsPage }));
 export const HistoryPageLazy = lazy(async () => ({ default: HistoryPage }));

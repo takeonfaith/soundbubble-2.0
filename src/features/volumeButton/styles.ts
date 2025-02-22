@@ -32,3 +32,14 @@ export const VolumeButtonStyled = styled.div`
         }
     }
 `;
+
+export const SliderWrapper = styled.div`
+    padding: 10px;
+    overflow: hidden;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    position: relative;
+`;

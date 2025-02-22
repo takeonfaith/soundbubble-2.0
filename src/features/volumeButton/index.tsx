@@ -1,9 +1,10 @@
 import { IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
 import { SmallControlButton } from '../../shared/components/musicControls/styles';
 import { Slider } from '../../shared/components/slider';
-import { VolumeButtonStyled } from './styles';
+import { SliderWrapper, VolumeButtonStyled } from './styles';
 import { songModel } from '../../entities/song/new-model';
 import { memo } from 'react';
+import { Popup } from '../../layout/newpopup';
 
 export const VolumeButton = memo(() => {
     const [volume, isMuted] = songModel.useVolume();
@@ -30,15 +31,25 @@ export const VolumeButton = memo(() => {
 
     return (
         <VolumeButtonStyled className="volume-button">
-            <SmallControlButton onClick={handleMute}>
-                {volumeIcon}
-            </SmallControlButton>
-            <Slider
-                value={isMuted ? 0 : volume * 100}
-                duration={100}
-                onChangeTime={handleChange}
-                onMouseUp={() => null}
-            />
+            <Popup
+                position="top"
+                closeOnClick={false}
+                content={
+                    <SliderWrapper>
+                        <Slider
+                            value={isMuted ? 0 : volume * 100}
+                            duration={100}
+                            onChangeTime={handleChange}
+                            onMouseUp={() => null}
+                        />
+                    </SliderWrapper>
+                }
+                triggers={['hover']}
+            >
+                <SmallControlButton onClick={handleMute}>
+                    {volumeIcon}
+                </SmallControlButton>
+            </Popup>
         </VolumeButtonStyled>
     );
 });

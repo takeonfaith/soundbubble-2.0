@@ -1,9 +1,9 @@
-import { PlaylistSkeleton } from '../../entities/playlist/ui/Skeleton';
-import { GridSongListStyled } from '../../entities/song/ui/gridList/styles';
-import { SongSkeleton } from '../../entities/song/ui/Skeleton';
-import { Flex } from '../../shared/components/flex';
-import { SkeletonShape } from '../../shared/components/skeleton';
-import { AuthorPageWrapper } from '../author/ui/styles';
+import { PlaylistSkeleton } from '../../../entities/playlist/ui/Skeleton';
+import { GridSongListStyled } from '../../../entities/song/ui/gridList/styles';
+import { SongSkeleton } from '../../../entities/song/ui/Skeleton';
+import { Flex } from '../../../shared/components/flex';
+import { SkeletonShape } from '../../../shared/components/skeleton';
+import { AuthorPageWrapper } from '../../author/ui/styles';
 import {
     SectionStyled,
     UserButtons,

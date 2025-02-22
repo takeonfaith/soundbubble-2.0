@@ -5,8 +5,6 @@ import {
     IconLogout,
     IconPencil,
     IconSettings,
-    IconTrash,
-    IconUserMinus,
 } from '@tabler/icons-react';
 import { useUnit } from 'effector-react';
 import { Settings } from '../../entities/settings/ui';
@@ -19,17 +17,17 @@ import { UserStatus } from '../../entities/user/ui/UserStatus';
 import { EditPhotoModal } from '../../features/editPhotoModal';
 import { HotkeysList } from '../../features/hotkeysList';
 import { SecondScreen } from '../../features/onboarding/ui/SecondScreen';
+import { translate } from '../../i18n';
 import { PlaylistName } from '../../routing/playlist/ui/layout/PlaylistName';
 import { Button } from '../../shared/components/button';
 import { Divider } from '../../shared/components/divider';
 import { Flex } from '../../shared/components/flex';
 import { LoadingWrapper } from '../../shared/components/loadingWrapper';
 import { Subtext } from '../../shared/components/subtext';
+import { dateToString } from '../../shared/funcs/dateToString';
 import { confirmModel } from '../confirm/model';
 import { modalModel } from '../modal/model';
-import { UserProfileModalStyled, EditOverlayStyled } from './styles';
-import { translate } from '../../i18n';
-import { dateToString } from '../../shared/funcs/dateToString';
+import { EditOverlayStyled, UserProfileModalStyled } from './styles';
 
 export const UserProfileModal = () => {
     const [currentUser] = userModel.useUser();
@@ -40,12 +38,12 @@ export const UserProfileModal = () => {
 
     const handleLogout = () => {
         confirmModel.events.open({
-            text: 'Are you sure you want to log out?',
+            text: translate('logout_warning_title'),
             onAccept: () => {
                 userModel.events.logout();
                 modalModel.events.close();
             },
-            subtext: 'All your data is saved',
+            subtext: '',
             icon: <IconLogout />,
             iconColor: 'red',
         });
@@ -53,7 +51,7 @@ export const UserProfileModal = () => {
 
     const handleOpenSettings = () => {
         modalModel.events.open({
-            title: 'Settings',
+            title: translate('settings'),
             content: <Settings />,
             sizeX: 'm',
             sizeY: 'm',
@@ -82,18 +80,6 @@ export const UserProfileModal = () => {
                     photo={currentUser?.photoURL ?? null}
                 />
             ),
-        });
-    };
-
-    const handleDeleteAccount = () => {
-        confirmModel.events.open({
-            text: 'Are you sure you want to delete your account?',
-            onAccept: () => {
-                userModel.events.deleteAccount();
-            },
-            subtext: 'THIS ACTION CANNOT BE UNDONE!',
-            icon: <IconUserMinus />,
-            iconColor: 'red',
         });
     };
 
@@ -204,17 +190,8 @@ export const UserProfileModal = () => {
                     $width="100%"
                     style={{ padding: '0 10px' }}
                 >
-                    <IconLogout size={20} />
+                    <IconLogout size={18} />
                     {translate('logout')}
-                </Button>
-                <Button
-                    className="danger"
-                    $width="100%"
-                    style={{ padding: '0 10px' }}
-                    onClick={handleDeleteAccount}
-                >
-                    <IconTrash size={20} />
-                    {translate('delete_account')}
                 </Button>
             </Flex>
         </UserProfileModalStyled>

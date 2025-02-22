@@ -37,11 +37,13 @@ import { TrendsPageAlbums } from './trends/ui/TrendsPageAlbums';
 import { TrendsPageAuthors } from './trends/ui/TrendsPageAuthors';
 import { TrendsPagePlaylists } from './trends/ui/TrendsPagePlaylists';
 import { TrendsPageSongs } from './trends/ui/TrendsPageSongs';
-import { UserPage } from './user';
-import { UserSongs } from './user/UserSongs';
+import { UserPage } from './user/ui';
+import { UserSongs } from './user/ui/pages/UserSongs';
 import { AuthorPage } from './author/ui';
 import { AuthorSongs } from './author/ui/pages/AuthorSongs';
 import { SimilarAuthorsPage } from './author/ui/pages/SimilarAuthorsPage';
+import { UserFriends } from './user/ui/pages/UserFriends';
+import { UserPlaylists } from './user/ui/pages/UserPlaylists';
 
 type Section = 'features' | 'your_activities' | 'your_music';
 
@@ -260,10 +262,18 @@ export const allRoutes: TRoute[] = [
         private: true,
     },
     {
-        url: 'user/:id',
-        title: 'User',
+        url: 'user/:id/friends',
+        title: 'Friends',
         icon: <IconUser />,
-        component: <UserPage />,
+        component: <UserFriends />,
+        section: 'your_music',
+        private: true,
+    },
+    {
+        url: 'user/:id/playlists',
+        title: 'Friends',
+        icon: <IconUser />,
+        component: <UserPlaylists />,
         section: 'your_music',
         private: true,
     },

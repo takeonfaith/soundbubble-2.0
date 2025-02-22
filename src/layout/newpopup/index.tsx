@@ -18,12 +18,14 @@ type Props = {
     children: React.ReactNode;
     content: React.ReactNode;
     triggers?: TTrigger[];
+    closeOnClick?: boolean;
 };
 
 export const Popup = ({
     position,
     children,
     content,
+    closeOnClick = true,
     triggers = ['click'],
 }: Props) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -153,7 +155,9 @@ export const Popup = ({
                         <PopupContainer
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleClose();
+                                if (closeOnClick) {
+                                    handleClose();
+                                }
                             }}
                             $closeDelay={closeDelay}
                             className={`${isVisible ? '' : 'hidden'}`}

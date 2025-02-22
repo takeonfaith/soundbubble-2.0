@@ -35,7 +35,6 @@ import { resetPassword } from './reset-password';
 import { signUp } from './sign-up';
 import './update-online';
 import { $user } from './user';
-import { getUserPageById, userPage } from './user-page';
 
 export const userModel = {
     useUser: () => useUnit([$user, $isLoadingUser, loginFx.pending]),
@@ -44,7 +43,6 @@ export const userModel = {
     useAddedPlaylists: () =>
         useUnit([$addedPlaylists, loadAddedPlaylistsFx.pending]),
     useAddedAuthors: () => useUnit([$addedAuthors, loadAddedAuthorsFx.pending]),
-    userPage,
     useFriends: () =>
         useUnit([
             $friends,
@@ -57,7 +55,6 @@ export const userModel = {
         logout,
         signUp,
         setUser,
-        getUserPageById,
         updateFriends,
         addOwnPlaylistToLibrary,
         toggleSongLiked,

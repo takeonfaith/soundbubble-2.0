@@ -1,6 +1,6 @@
 import { IconError404Off, IconMusicOff, IconPlus } from '@tabler/icons-react';
 import { playlistModel } from '../../entities/playlist/model';
-import { getHumanDuration } from '../../entities/song/lib/getHumanDuration';
+import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { VerticalSongsList } from '../../entities/song/ui/verticalList';
 import { userModel } from '../../entities/user/model';
 import { ShareModal } from '../../features/shareModal';
@@ -9,8 +9,10 @@ import { Button } from '../../shared/components/button';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { Subtext } from '../../shared/components/subtext';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
+import { PlaylistStatistics } from '../playlist/ui/layout/PlaylistStatistics';
+import { AddSongsButton } from './AddSongsButton';
+import { AddSongsToPlaylistModal } from './AddSongsToPlaylistModal';
 import { PageTop } from './PageTop';
 import { SkeletonLoading } from './Skeleton';
 import {
@@ -19,9 +21,6 @@ import {
     PlaylistPageStyled,
     PlaylistSimilar,
 } from './styles';
-import { AddSongsToPlaylistModal } from './AddSongsToPlaylistModal';
-import { AddSongsButton } from './AddSongsButton';
-import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 
 export const AlbumPage = () => {
     const [currentPlaylist, loading] = playlistModel.usePlaylist();
@@ -57,11 +56,6 @@ export const AlbumPage = () => {
             sizeY: 'l',
         });
     };
-
-    const totalDuration = currentPlaylistSongs?.reduce((acc, song) => {
-        acc += song.duration;
-        return acc;
-    }, 0);
 
     const queue = createQueueObject({
         name: currentPlaylist?.name,
@@ -121,15 +115,9 @@ export const AlbumPage = () => {
                         </PlaylistPageSongs>
                         <BottomPlaylist>
                             {(currentPlaylistSongs?.length ?? 0) > 0 && (
-                                <Subtext
-                                    style={{
-                                        fontSize: '0.85rem',
-                                        opacity: '0.4',
-                                    }}
-                                >
-                                    {currentPlaylistSongs?.length ?? 0} songs,
-                                    {getHumanDuration(totalDuration, 'text')}
-                                </Subtext>
+                                <PlaylistStatistics
+                                    songs={currentPlaylistSongs}
+                                />
                             )}
                         </BottomPlaylist>
                         <PlaylistSimilar></PlaylistSimilar>
