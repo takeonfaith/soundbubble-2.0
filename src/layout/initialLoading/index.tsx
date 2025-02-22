@@ -20,25 +20,27 @@ export const InitialLoading = () => {
     const [timeoutError, setTimeoutError] = useState(false);
 
     useEffect(() => {
-        const timeout1 = setTimeout(() => {
-            if (!currentUser) {
-                setShowSlowInternetMessage(true);
-            }
-        }, TIMEOUTS.slowInternetMessage);
+        if (loading) {
+            const timeout1 = setTimeout(() => {
+                if (!currentUser) {
+                    setShowSlowInternetMessage(true);
+                }
+            }, TIMEOUTS.slowInternetMessage);
 
-        const timeout2 = setTimeout(() => {
-            if (!currentUser) {
-                setTimeoutError(true);
-            }
-        }, TIMEOUTS.fullStop);
+            const timeout2 = setTimeout(() => {
+                if (!currentUser) {
+                    setTimeoutError(true);
+                }
+            }, TIMEOUTS.fullStop);
 
-        return () => {
-            clearTimeout(timeout1);
-            clearTimeout(timeout2);
-            setShowSlowInternetMessage(false);
-            setTimeoutError(false);
-        };
-    }, [currentUser]);
+            return () => {
+                clearTimeout(timeout1);
+                clearTimeout(timeout2);
+                setShowSlowInternetMessage(false);
+                setTimeoutError(false);
+            };
+        }
+    }, [currentUser, loading]);
 
     return (
         <InitialLoadingStyled className={loading ? 'loading' : 'loaded'}>

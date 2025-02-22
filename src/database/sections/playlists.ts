@@ -65,6 +65,7 @@ export class Playlists {
             await asyncRequests(playlistIds, (id) => {
                 return FB.updateById('playlists', id, {
                     songs: arrayUnion(...songIds),
+                    lastEditedTime: Date.now(),
                 });
             });
         } catch (error) {
@@ -345,6 +346,7 @@ export class Playlists {
             const removeSongs = async (p: TPlaylist) => {
                 await FB.updateById('playlists', p.id, {
                     songs: arrayRemove(...songs.map((s) => s.id)),
+                    lastEditedTime: Date.now(),
                 });
             };
 
