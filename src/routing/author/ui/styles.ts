@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { BeautifulBackground } from '../../shared/components/beautifulBackground';
-import { PageWrapper } from '../../shared/components/pageWrapper';
+import { BeautifulBackground } from '../../../shared/components/beautifulBackground';
+import { PageWrapper } from '../../../shared/components/pageWrapper';
 
 export const AuthorPageWrapper = styled(PageWrapper)`
     .title {

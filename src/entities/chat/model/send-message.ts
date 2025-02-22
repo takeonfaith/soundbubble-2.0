@@ -57,7 +57,7 @@ sample({
     target: insertChats,
 });
 
-// Reset unread message whem you send a message
+// Reset unread message when you send a message
 sample({
     clock: sendMessage,
     source: {

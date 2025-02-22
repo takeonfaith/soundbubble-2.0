@@ -542,7 +542,7 @@ export class Users {
             const songs = await Songs.getSongsByUids(
                 authorSongs?.reverse(),
                 sortSongs,
-                limit,
+                limit
             );
 
             return { author, songs };
@@ -568,10 +568,13 @@ export class Users {
                 author.ownPlaylists
             );
 
+            const similarAuthors = await this.getSimilarAuthorsBySongs(songs);
+
             return {
                 user: author,
                 songs,
                 playlists,
+                similarAuthors,
             };
         } catch (error) {
             console.log('Failed to get user page', error);

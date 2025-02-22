@@ -36,7 +36,6 @@ const updateLastReadAtFx = createEffect<
 
 const updateMaxSeenAt = createEvent<number[]>();
 export const updateUnread = createEvent<number>();
-const updateLastReadAt = createEvent();
 
 export const $userLastReadAt = createStore<number>(Infinity);
 export const $messagesReadCount = createStore(0);
@@ -45,9 +44,7 @@ export const $maxSeenAtInCurrentChat = createStore<number | null>(null);
 
 // Read messages with a delay so that it doesn't spam the server
 // while reading a bunch of unread messages
-debounce(updateUnread, READ_MESSAGES_COOLDOWN).watch(() => {
-    updateLastReadAt();
-});
+const updateLastReadAt = debounce(updateUnread, READ_MESSAGES_COOLDOWN);
 
 $currentChatId.watch(() => {
     unsubscribe?.();
@@ -168,8 +165,10 @@ sample({
 sample({
     clock: updateLastReadAtFx.doneData,
     fn: () => 0,
-    target: [$messagesReadCount],
+    target: $messagesReadCount,
 });
+
+$messagesReadCount.watch((s) => console.log(s));
 
 loadInitialUnreadCountFx.use(async ({ chatIds, userId }) => {
     const res = await Database.Chats.loadInitialUnreadCount(chatIds, userId);

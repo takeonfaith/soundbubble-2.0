@@ -3,7 +3,6 @@ import {
     arrayRemove,
     arrayUnion,
     collection,
-    DocumentData,
     getDocs,
     increment,
     limit,
@@ -11,7 +10,6 @@ import {
     or,
     orderBy,
     query,
-    QueryDocumentSnapshot,
     startAfter,
     where,
 } from 'firebase/firestore';
@@ -28,6 +26,7 @@ import {
 } from '../../entities/chat/model/types';
 import { TUser } from '../../entities/user/model/types';
 import { FB } from '../../firebase';
+import { Pagination } from '../../shared/effector/pagination';
 import { asyncRequests } from '../../shared/funcs/asyncRequests';
 import { convertToMap } from '../../shared/funcs/convertToMap';
 import getUID from '../../shared/funcs/getUID';
@@ -35,10 +34,8 @@ import { getDataFromDoc } from '../lib/getDataFromDoc';
 
 export class Chats {
     static ref = FB.get('newChats');
-    static lastVisible: QueryDocumentSnapshot<
-        DocumentData,
-        DocumentData
-    > | null;
+    static pagination = new Pagination();
+
     static ownChatsQuery(userId: string) {
         return [
             where('participants', 'array-contains', userId),
@@ -89,6 +86,7 @@ export class Chats {
         paginate = false
     ) {
         try {
+            this.pagination.initialize();
             const c = [];
 
             if (limitNumber !== undefined) c.push(limit(limitNumber));
@@ -99,25 +97,22 @@ export class Chats {
 
             // if no unread messages load as normal
             if (!firstUnreadDocument?.docs[0]?.data()) {
-                console.log(paginate && !!this.lastVisible?.data());
+                const constraints = paginate ? this.pagination.constraints : [];
 
-                if (paginate && !!this.lastVisible?.data()) {
-                    c.push(startAfter(this.lastVisible));
-                }
-
-                if (paginate && !this.lastVisible?.data())
+                if (paginate && !this.pagination.lastVisible?.data())
                     return { messages: [], firstUnreadMessage: null };
 
                 const q = query(
                     FB.getSubCollection('newChats', `${chatId}/messages`),
                     orderBy('sentTime', order ?? 'asc'),
-                    ...c
+                    ...c,
+                    ...constraints
                 );
 
                 const docs = await getDocs(q);
                 const messages = getDataFromDoc<TMessage>(docs);
 
-                this.lastVisible = docs.docs[docs.docs.length - 1];
+                this.pagination.saveLastVisible(docs);
 
                 return {
                     messages: messages.reverse(),
@@ -136,7 +131,7 @@ export class Chats {
                 limit(10)
             );
             const prevDocs = await getDocs(prevQuery);
-            this.lastVisible = prevDocs.docs[prevDocs.docs.length - 1];
+            this.pagination.saveLastVisible(prevDocs);
 
             const previousMessages =
                 getDataFromDoc<TMessage>(prevDocs).reverse();

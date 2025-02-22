@@ -1,9 +1,9 @@
-import { TPlaylist } from '../../entities/playlist/model/types';
-import { PlaylistItem } from '../../entities/playlist/ui';
-import { userModel } from '../../entities/user/model';
-import { HorizontalList } from '../../shared/components/horizontalList';
-import { NavigationTitle } from '../../shared/components/navigationTitle';
-import { SectionStyled } from '../user/styles';
+import { TPlaylist } from '../../../entities/playlist/model/types';
+import { PlaylistItem } from '../../../entities/playlist/ui';
+import { userModel } from '../../../entities/user/model';
+import { HorizontalList } from '../../../shared/components/horizontalList';
+import { NavigationTitle } from '../../../shared/components/navigationTitle';
+import { SectionStyled } from '../../user/styles';
 import { MAX_PLAYLISTS } from './constants';
 
 type Props = {

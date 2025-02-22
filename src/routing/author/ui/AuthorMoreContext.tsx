@@ -1,12 +1,12 @@
 import { IconInfoCircle } from '@tabler/icons-react';
-import { TUser } from '../../entities/user/model/types';
-import { UserInfo } from '../../entities/user/ui/UserInfo';
-import { ShareButton } from '../../features/shareButton';
-import { translate } from '../../i18n';
-import { modalModel } from '../../layout/modal/model';
-import { popupModel } from '../../layout/popup/model';
-import { Button } from '../../shared/components/button';
-import { DefaultContextMenuStyled } from '../../shared/components/defaultContextMenu';
+import { TUser } from '../../../entities/user/model/types';
+import { ShareButton } from '../../../features/shareButton';
+import { translate } from '../../../i18n';
+import { modalModel } from '../../../layout/modal/model';
+import { popupModel } from '../../../layout/popup/model';
+import { Button } from '../../../shared/components/button';
+import { DefaultContextMenuStyled } from '../../../shared/components/defaultContextMenu';
+import { UserInfo } from '../../../entities/user/ui/UserInfo';
 
 type Props = {
     author: TUser;

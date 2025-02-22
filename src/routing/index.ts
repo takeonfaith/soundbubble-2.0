@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { AuthorPage } from './author';
+import { AuthorPage } from './author'
 import { ChatPage } from './chat';
 import { DiscoverPage } from './discover';
 import { FriendsPage } from './friends';

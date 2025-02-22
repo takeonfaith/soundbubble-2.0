@@ -6,7 +6,7 @@ export const LoadedStripe = styled.div`
     background: ${({ theme }) => theme.colors.skeleton};
     border-radius: 020px;
     pointer-events: none;
-    border-radius: 8px;
+    border-radius: 8px 0 0 8px;
     position: absolute;
     left: 0;
     transition: 0.2s width, 0.2s height;

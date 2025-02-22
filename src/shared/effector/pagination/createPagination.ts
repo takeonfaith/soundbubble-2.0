@@ -57,25 +57,6 @@ export const createPagitation = <T extends object>({
     });
 
     sample({
-        clock: initialLoad,
-        source: {
-            user: $user,
-            isInitiallyLoaded: $isInitiallyLoaded,
-            isLoading: loadMoreFx.pending,
-        },
-        filter: ({ isInitiallyLoaded, isLoading }) => {
-            return !isInitiallyLoaded && !isLoading;
-        },
-        fn: ({ user }) => ({
-            page: 0,
-            quantity: initialLoadQuantity,
-            user: user,
-            isInitialLoad: true,
-        }),
-        target: loadMoreFx,
-    });
-
-    sample({
         clock: loadMore,
         source: {
             page: $currentPage,

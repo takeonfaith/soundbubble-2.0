@@ -13,7 +13,7 @@ import { BeautifulBackground } from '../../shared/components/beautifulBackground
 import { Flex } from '../../shared/components/flex';
 import { Subtext } from '../../shared/components/subtext';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
-import { ButtonsStyled } from '../author/styles';
+import { ButtonsStyled } from '../author/ui/styles';
 
 const TopAutorCardStyled = styled(Link)`
     width: 100%;

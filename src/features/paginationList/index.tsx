@@ -36,6 +36,8 @@ export const PaginationList = <T extends object>({
     const [currentUser] = userModel.useUser();
 
     useEffect(() => {
+        console.log('initialLoad');
+
         initialLoad();
     }, [currentUser, initialLoad]);
 

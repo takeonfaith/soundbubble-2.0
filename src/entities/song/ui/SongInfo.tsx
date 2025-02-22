@@ -1,4 +1,8 @@
-import { IconHeadphones, IconQuote } from '@tabler/icons-react';
+import {
+    IconChevronRight,
+    IconHeadphones,
+    IconQuote,
+} from '@tabler/icons-react';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 import { ShareButton } from '../../../features/shareButton';
@@ -154,13 +158,12 @@ export const SongInfo = ({ song }: Props) => {
                     />
                 </Flex>
                 <Flex gap={4} width="100%" d="column">
-                    <Subtext>
+                    <Subtext style={{ fontSize: '0.9rem' }}>
                         {translate('released', { released: formattedDate })}
                     </Subtext>
                     {song.hasLyrics && (
                         <Button
-                            className="ghost"
-                            $width="70px"
+                            className="ghost default"
                             $height="30px"
                             style={{ fontSize: '0.8rem', fontWeight: '300' }}
                             onClick={() =>
@@ -172,6 +175,7 @@ export const SongInfo = ({ song }: Props) => {
                         >
                             <IconQuote size={16} />
                             {translate('lyrics')}
+                            <IconChevronRight size={14} />
                         </Button>
                     )}
                 </Flex>

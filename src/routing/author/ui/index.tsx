@@ -1,30 +1,41 @@
-import { useEffect, useMemo } from 'react';
-import { createQueueObject } from '../../entities/song/lib/createQueueObject';
-import { GridSongList } from '../../entities/song/ui/gridList';
-import { userModel } from '../../entities/user/model';
-import { TUser } from '../../entities/user/model/types';
-import { NavigationTitle } from '../../shared/components/navigationTitle';
-import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
-import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
+import { useUnit } from 'effector-react';
+import { useMemo } from 'react';
+import { createQueueObject } from '../../../entities/song/lib/createQueueObject';
+import { GridSongList } from '../../../entities/song/ui/gridList';
+import { TUser } from '../../../entities/user/model/types';
+import { translate } from '../../../i18n';
+import { Flex } from '../../../shared/components/flex';
+import { NavigationTitle } from '../../../shared/components/navigationTitle';
+import { SkeletonPageAnimation } from '../../../shared/components/skeleton/SkeletonPageAnimation';
+import { TIME_IN_MS } from '../../../shared/constants/time';
+import { useUrlParamId } from '../../../shared/hooks/useUrlParamId';
+import {
+    $albums,
+    $pageAuthor,
+    $topSongs,
+    getAuthorPageById,
+    loadAuthorPageFx,
+} from '../model';
 import { AuthorPageTop } from './AuthorPageTop';
 import { Playlists } from './Playlists';
 import { SimilarAuthors } from './SimilarAuthors';
 import { SkeletonLoading } from './Skeleton';
 import { MAX_SONGS } from './constants';
 import { AuthorPageWrapper, SongsStyled } from './styles';
-import { TIME_IN_MS } from '../../shared/constants/time';
-import { Flex } from '../../shared/components/flex';
-import { translate } from '../../i18n';
 
 type Props = {
     userData?: TUser | null;
 };
 
 export const AuthorPage = ({ userData }: Props) => {
-    const [currentPageUser, loading] = userModel.authorPage.useAuthorPage();
-    const [songs] = userModel.authorPage.useTopSongs();
-    const [albums] = userModel.authorPage.useAlbums();
+    const [currentPageUser, loading, songs, albums] = useUnit([
+        $pageAuthor,
+        loadAuthorPageFx.pending,
+        $topSongs,
+        $albums,
+    ]);
     const userPageData = userData ?? currentPageUser;
+
     const lastSongs = useMemo(() => {
         return songs.filter((s) => {
             return (
@@ -38,18 +49,18 @@ export const AuthorPage = ({ userData }: Props) => {
         page: 'author',
         onChangeId: (id) => {
             if (id) {
-                userModel.events.getAuthorPageById({
+                getAuthorPageById({
                     userId: id,
                 });
             }
         },
     });
 
-    useEffect(() => {
-        return () => {
-            userModel.events.resetUserPage();
-        };
-    }, []);
+    // useEffect(() => {
+    //     return () => {
+    //         resetUserPage();
+    //     };
+    // }, []);
 
     const queue = createQueueObject({
         id: userPageData?.uid,
@@ -71,7 +82,7 @@ export const AuthorPage = ({ userData }: Props) => {
         <AuthorPageWrapper>
             <SkeletonPageAnimation
                 color={userPageData?.imageColors[0] ?? 'grey'}
-                loading={!currentPageUser || loading}
+                loading={loading}
                 skeleton={<SkeletonLoading />}
             >
                 <AuthorPageTop author={userPageData} queue={queue} />

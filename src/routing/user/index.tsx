@@ -1,23 +1,22 @@
 import { IconUserOff } from '@tabler/icons-react';
-import { useEffect } from 'react';
 import { createQueueObject } from '../../entities/song/lib/createQueueObject';
 import { GridSongList } from '../../entities/song/ui/gridList';
 import { userModel } from '../../entities/user/model';
 import { TUser } from '../../entities/user/model/types';
 import { UserItem } from '../../entities/user/ui';
+import { translate } from '../../i18n';
 import { HorizontalList } from '../../shared/components/horizontalList';
 import { NavigationTitle } from '../../shared/components/navigationTitle';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { Subtext } from '../../shared/components/subtext';
 import { useUrlParamId } from '../../shared/hooks/useUrlParamId';
-import { MAX_SONGS } from '../author/constants';
-import { Playlists } from '../author/Playlists';
-import { AuthorPageWrapper } from '../author/styles';
+import { MAX_SONGS } from '../author/ui/constants';
+import { Playlists } from '../author/ui/Playlists';
+import { AuthorPageWrapper } from '../author/ui/styles';
 import { SkeletonLoading } from './SkeletonLoading';
 import { SectionStyled } from './styles';
 import { UserTop } from './UserTop';
-import { translate } from '../../i18n';
 
 type Props = {
     data?: TUser | null;
@@ -45,12 +44,6 @@ export const UserPage = ({ data, loadingUser }: Props) => {
     });
 
     const loadingData = loadingUser || loading || id !== currentPageUser?.uid;
-
-    useEffect(() => {
-        return () => {
-            userModel.events.resetUserPage();
-        };
-    }, []);
 
     const queue = createQueueObject({
         name: userPageData?.displayName,

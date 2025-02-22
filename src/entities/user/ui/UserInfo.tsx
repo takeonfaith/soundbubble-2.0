@@ -12,6 +12,8 @@ import { formatBigNumber } from '../../../shared/funcs/formatBigNumber';
 import { hexToRgbA } from '../../../shared/funcs/hexToRgba';
 import { UserCover } from '../../user/ui/UserCover';
 import { TUser } from '../model/types';
+import { dateToString } from '../../../shared/funcs/dateToString';
+import { translate } from '../../../i18n';
 
 const UserInfoStyled = styled.div<{ shadowColor: string }>`
     width: 100%;
@@ -65,14 +67,7 @@ export const UserInfo = ({ user }: Props) => {
         regDate,
     } = user;
 
-    const formattedDate = new Date(regDate.toDate()).toLocaleDateString(
-        'en-US',
-        {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-        }
-    );
+    const formattedDate = dateToString(regDate.toDate());
 
     return (
         <UserInfoStyled shadowColor={imageColors[0] ?? '#e0e0e0'}>
@@ -113,8 +108,8 @@ export const UserInfo = ({ user }: Props) => {
                 </Flex>
 
                 <Flex gap={10}>
-                    <Subtext style={{ fontSize: '0.95rem' }}>
-                        On platform since: {formattedDate}
+                    <Subtext style={{ fontSize: '0.9rem' }}>
+                        {translate('registered')}: {formattedDate}
                     </Subtext>
                 </Flex>
             </Flex>

@@ -1,10 +1,11 @@
+
 import styled from 'styled-components';
-import { PlaylistSkeleton } from '../../entities/playlist/ui/Skeleton';
-import { SongSkeleton } from '../../entities/song/ui/Skeleton';
-import { GridSongListStyled } from '../../entities/song/ui/gridList/styles';
-import { UserSkeleton } from '../../entities/user/ui/Skeleton';
-import { Flex } from '../../shared/components/flex';
-import { SkeletonShape } from '../../shared/components/skeleton';
+import { PlaylistSkeleton } from '../../../entities/playlist/ui/Skeleton';
+import { GridSongListStyled } from '../../../entities/song/ui/gridList/styles';
+import { SongSkeleton } from '../../../entities/song/ui/Skeleton';
+import { UserSkeleton } from '../../../entities/user/ui/Skeleton';
+import { Flex } from '../../../shared/components/flex';
+import { SkeletonShape } from '../../../shared/components/skeleton';
 import { SongsStyled } from './styles';
 
 const AuthorPageWrapper = styled.div`

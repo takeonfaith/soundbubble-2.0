@@ -16,7 +16,6 @@ import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
 import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
 import { Wave } from '../../shared/images';
-import { ButtonsStyled } from '../author/styles';
 import {
     PageTopStyled,
     TopBackground,
@@ -25,6 +24,7 @@ import {
 } from './styles';
 import { Popup } from '../../layout/newpopup';
 import { AlbumContextMenu } from './AlbumContextMenu';
+import { ButtonsStyled } from '../author/ui/styles';
 
 type Props = {
     album: TPlaylist | null;

@@ -23,9 +23,6 @@ import {
 } from '.';
 import { translate } from '../i18n';
 import { AlbumPage } from './album';
-import { AuthorPage } from './author';
-import { AuthorSongs } from './author/pages/AuthorSongs';
-import { SimilarAuthorsPage } from './author/pages/SimilarAuthorsPage';
 import { ChatDialog } from './chat/ui/layout/ChatDialog';
 import { DiscoverPage } from './discover';
 import { Library } from './library';
@@ -42,6 +39,9 @@ import { TrendsPagePlaylists } from './trends/ui/TrendsPagePlaylists';
 import { TrendsPageSongs } from './trends/ui/TrendsPageSongs';
 import { UserPage } from './user';
 import { UserSongs } from './user/UserSongs';
+import { AuthorPage } from './author/ui';
+import { AuthorSongs } from './author/ui/pages/AuthorSongs';
+import { SimilarAuthorsPage } from './author/ui/pages/SimilarAuthorsPage';
 
 type Section = 'features' | 'your_activities' | 'your_music';
 

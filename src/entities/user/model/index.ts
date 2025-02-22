@@ -1,10 +1,4 @@
 import { useUnit } from 'effector-react';
-import {
-    authorPage,
-    getAuthorPageById,
-    loadSimilarAuthors,
-    resetUserPage,
-} from './author-page';
 import { createAuthor } from './create-author';
 import { deleteAccount } from './delete-account';
 import { editUser } from './edit-user';
@@ -50,7 +44,6 @@ export const userModel = {
     useAddedPlaylists: () =>
         useUnit([$addedPlaylists, loadAddedPlaylistsFx.pending]),
     useAddedAuthors: () => useUnit([$addedAuthors, loadAddedAuthorsFx.pending]),
-    authorPage,
     userPage,
     useFriends: () =>
         useUnit([
@@ -62,12 +55,9 @@ export const userModel = {
     events: {
         login,
         logout,
-        loadSimilarAuthors,
         signUp,
         setUser,
         getUserPageById,
-        getAuthorPageById,
-        resetUserPage,
         updateFriends,
         addOwnPlaylistToLibrary,
         toggleSongLiked,

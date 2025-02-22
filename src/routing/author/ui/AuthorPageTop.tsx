@@ -6,22 +6,26 @@ import {
     IconHeart,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
-import { TQueue } from '../../entities/song/model/types';
-import { useToggleUserLike } from '../../entities/user/hooks/useToggleUserLike';
-import { TUser } from '../../entities/user/model/types';
-import { UserCover } from '../../entities/user/ui/UserCover';
-import { UserStatus } from '../../entities/user/ui/UserStatus';
-import { ControlButtons } from '../../features/controlButtons';
-import { LikeButton } from '../../features/likeButton';
-import { Popup } from '../../layout/newpopup';
-import { Button } from '../../shared/components/button';
-import { Flex } from '../../shared/components/flex';
-import Popover from '../../shared/components/popover';
-import { formatBigNumber } from '../../shared/funcs/formatBigNumber';
-import { PageTopStyled, TopLeftCorner, TopRightCorner } from '../album/styles';
+import { TQueue } from '../../../entities/song/model/types';
+import { useToggleUserLike } from '../../../entities/user/hooks/useToggleUserLike';
+import { TUser } from '../../../entities/user/model/types';
+import { UserCover } from '../../../entities/user/ui/UserCover';
+import { UserStatus } from '../../../entities/user/ui/UserStatus';
+import { ControlButtons } from '../../../features/controlButtons';
+import { LikeButton } from '../../../features/likeButton';
+import { translate } from '../../../i18n';
+import { Popup } from '../../../layout/newpopup';
+import { Button } from '../../../shared/components/button';
+import { Flex } from '../../../shared/components/flex';
+import Popover from '../../../shared/components/popover';
+import { formatBigNumber } from '../../../shared/funcs/formatBigNumber';
+import {
+    PageTopStyled,
+    TopLeftCorner,
+    TopRightCorner,
+} from '../../album/styles';
 import { AuthorMoreContext } from './AuthorMoreContext';
 import { ButtonsStyled } from './styles';
-import { translate } from '../../i18n';
 
 type Props = {
     author: TUser | null;
