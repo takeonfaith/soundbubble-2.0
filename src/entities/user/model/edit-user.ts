@@ -4,6 +4,7 @@ import { Database } from '../../../database';
 import { $user } from './user';
 import { userIsLoggedIn } from '../../chat/lib/userIsLoggedIn';
 import { TUser } from './types';
+import { translate } from '../../../i18n';
 
 export type UpdatedUserFields = {
     displayName?: string;
@@ -19,7 +20,7 @@ type EditUserProps = {
 export const editUserFx = createEffectWithToast<
     EditUserProps & { user: TUser },
     UpdatedUserFields
->('User successfully updated', 'Failed to edit');
+>(translate('user_updated'), 'Failed to edit');
 
 export const editUser = createEvent<EditUserProps>();
 

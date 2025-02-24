@@ -196,6 +196,8 @@
     "song_plays_next": "Песня играет следующей",
     "song_plays_at_the_end": "Песня играет в конце",
     "song_added": "Песня добавлена",
+    "added_to": "добавлена в",
+    "song_added_to_playlist": "Песня добавлена в плейлист",
     "removed_from_like": "Песня удалена из лайков",
     "playlist_created": "Плейлист создан",
     "playlist_delete_warning": "Ты уверен, что хочешь удалить этот плейлист?",
@@ -216,5 +218,14 @@
     "repeat_segment_promo_subtext": "Бывает же, что нравится не песня, а момент в ней? Теперь его можно слушать бесконечно",
     "we_glad_you_joined_us": "Мы рады, что ты присоединился к нам!",
     "we_glad_you_joined_us_subtext": "Можешь прочитать какие тут есть фишки, а можешь пропустить",
-    "no_playlists_subtext": "Они повявятся тут, когда ты их создашь"
+    "no_playlists_subtext": "Они повявятся тут, когда ты их создашь",
+    "language": "Язык",
+    "user_updated": "Пользователь успешно обновлен",
+    "edit_photo": "Изменить фото",
+    "account": "Аккаунт",
+    "playlist_one": "плейлист",
+    "playlist_to_four": "плейлиста",
+    "playlist_from_five": "плейлистов",
+    "removed_from": "удалена из",
+    "many_removed_from": "удалены из"
 }

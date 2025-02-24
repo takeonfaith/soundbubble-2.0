@@ -366,7 +366,7 @@ export class FB {
         if (path && path.length > 0) {
             const name = path.split(folder + '%2F')[1];
             const [realName] = name.split('?');
-            const fileRef = ref(this.storage, `${folder}/${realName}`);
+            const fileRef = ref(this.storage, `${folder}/${realName.replace('%20', ' ')}`);
 
             await deleteObject(fileRef);
         }

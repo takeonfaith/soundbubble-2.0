@@ -22,7 +22,7 @@ const saveThemeToLocalStorageFx = createEffect((theme: ETheme) => {
 });
 
 export const toggleTheme = createEvent();
-const setTheme = createEvent<ETheme>();
+export const setTheme = createEvent<ETheme>();
 
 sample({
     clock: toggleTheme,

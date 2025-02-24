@@ -648,6 +648,8 @@ export class Users {
                 photoURL = await FB.uploadFile('usersImages', photoFile);
             }
 
+            console.log(user.photoURL);
+
             if (photoFile === null) {
                 await FB.deleteFile('usersImages', user.photoURL);
             }
@@ -697,7 +699,7 @@ export class Users {
         } catch (error) {
             console.log('Failed to edit user', error);
 
-            throw new Error('Failed to edit user');
+            throw new Error('Failed to edit user: ' + (error as Error).message);
         }
     }
 

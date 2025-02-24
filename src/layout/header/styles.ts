@@ -86,7 +86,8 @@ export const EditOverlayStyled = styled(LoadingOverlay)`
     cursor: pointer;
     transition: 0.2s opacity;
 
-    &:hover {
+    &:hover,
+    &.visible {
         opacity: 1;
     }
 `;

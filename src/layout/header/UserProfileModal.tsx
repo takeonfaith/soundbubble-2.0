@@ -185,14 +185,16 @@ export const UserProfileModal = () => {
                     <IconChevronRight size={18} />
                 </Button>
                 <Divider />
-                <Button
-                    onClick={handleLogout}
-                    $width="100%"
-                    style={{ padding: '0 10px' }}
-                >
-                    <IconLogout size={18} />
-                    {translate('logout')}
-                </Button>
+                {
+                    <Button
+                        onClick={handleLogout}
+                        $width="100%"
+                        style={{ padding: '0 10px' }}
+                    >
+                        <IconLogout size={18} />
+                        {translate('logout')}
+                    </Button>
+                }
             </Flex>
         </UserProfileModalStyled>
     );

@@ -184,7 +184,7 @@ export const useGetAppHotKeys = () => {
                 if (modals.length === 0) {
                     event.preventDefault();
                     modalModel.events.open({
-                        title: 'Settings',
+                        title: translate('settings'),
                         content: <Settings />,
                         sizeX: 'm',
                         sizeY: 'm',

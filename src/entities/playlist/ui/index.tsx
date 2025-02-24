@@ -141,7 +141,7 @@ export const PlaylistItem = ({
                             <Flex
                                 width={isAuthor ? '100%' : 'calc(100% - 30px)'}
                             >
-                                <Authors authors={authors} />
+                                <Authors authors={authors} isAuthor={isAlbum} />
                             </Flex>
                         )
                     ) : (

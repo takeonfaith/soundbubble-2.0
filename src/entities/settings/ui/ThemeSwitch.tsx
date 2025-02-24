@@ -1,6 +1,8 @@
 import { styled } from 'styled-components';
 import { THEMES } from '../../../app/theme/constants';
 import { Flex } from '../../../shared/components/flex';
+import { setTheme, useTheme } from '../../../app/theme';
+import { ETheme } from '../../../app/theme/types';
 
 const ThemeSwitchStyled = styled.div`
     display: flex;
@@ -14,7 +16,7 @@ const ThemeSwitchStyled = styled.div`
 
 const ThemeBlock = styled.div`
     width: 100%;
-    height: 74px;
+    height: 100px;
     border-radius: 8px;
     cursor: pointer;
     overflow: hidden;
@@ -131,21 +133,25 @@ const ThemeBlock = styled.div`
 `;
 
 export const ThemeSwitch = () => {
-    const value: string = 'light';
+    const { theme } = useTheme();
     return (
         <ThemeSwitchStyled>
             <Flex d="column" gap={8} width="100%">
                 <ThemeBlock
-                    className={`light ${value === 'light' ? 'current' : ''}`}
+                    className={`light ${
+                        theme === ETheme.light ? 'current' : ''
+                    }`}
                     onClick={() => {
-                        // settingsModel.events.updateSettings({
-                        //     path: 'settings.items.appearance.children.theme.items.darkMode.value',
-                        //     value: 'light',
-                        // });
+                        setTheme(ETheme.light);
                     }}
                 >
                     <div className="sidebar"></div>
                     <Flex padding="8px" d="column" ai="flex-start" gap={8}>
+                        <div className="line" />
+                        <Flex gap={8}>
+                            <div className="circle" />
+                            <div className="line" />
+                        </Flex>
                         <Flex gap={8}>
                             <div className="circle" />
                             <div className="line" />
@@ -161,16 +167,18 @@ export const ThemeSwitch = () => {
             </Flex>
             <Flex d="column" gap={8} width="100%">
                 <ThemeBlock
-                    className={`dark ${value === 'dark' ? 'current' : ''}`}
+                    className={`dark ${theme === ETheme.dark ? 'current' : ''}`}
                     onClick={() => {
-                        // settingsModel.events.updateSettings({
-                        //     path: 'settings.items.appearance.children.theme.items.darkMode.value',
-                        //     value: 'light',
-                        // });
+                        setTheme(ETheme.dark);
                     }}
                 >
                     <div className="sidebar"></div>
                     <Flex padding="8px" d="column" ai="flex-start" gap={8}>
+                        <div className="line" />
+                        <Flex gap={8}>
+                            <div className="circle" />
+                            <div className="line" />
+                        </Flex>
                         <Flex gap={8}>
                             <div className="circle" />
                             <div className="line" />
@@ -185,7 +193,7 @@ export const ThemeSwitch = () => {
                 <div className="text">Dark</div>
             </Flex>
 
-            <Flex d="column" gap={8} width="100%">
+            {/* <Flex d="column" gap={8} width="100%">
                 <ThemeBlock
                     className={`auto ${value === 'auto' ? 'current' : ''}`}
                     onClick={() => {
@@ -209,7 +217,7 @@ export const ThemeSwitch = () => {
                     </Flex>
                 </ThemeBlock>
                 <div className="text">Auto</div>
-            </Flex>
+            </Flex> */}
         </ThemeSwitchStyled>
     );
 };

@@ -3,6 +3,7 @@ import { DefaultButton } from '../../shared/components/button/DefaultButton';
 import { Flex } from '../../shared/components/flex';
 import { PhotoInput } from '../../shared/components/photoInput';
 import { subtractArrays } from '../../shared/funcs/subtractArrays';
+import { translate } from '../../i18n';
 
 type Props = {
     onSave: (
@@ -64,7 +65,7 @@ export const EditPhotoModal = ({ onSave, photo, imageColors }: Props) => {
                 disabled={!isAvailableToChange}
                 onClick={handleUpdatePhoto}
             >
-                Save
+                {translate('save_changes')}
             </DefaultButton>
         </Flex>
     );

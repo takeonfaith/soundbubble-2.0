@@ -9,8 +9,8 @@ import {
 import { useState } from 'react';
 import styled from 'styled-components';
 import { EditPhotoModal } from '../../../features/editPhotoModal';
-import { EmailInput } from '../../../features/emailInput';
-import i18n from '../../../i18n';
+import i18n, { translate } from '../../../i18n';
+import { confirmModel } from '../../../layout/confirm/model';
 import { EditOverlayStyled } from '../../../layout/header/styles';
 import { modalModel } from '../../../layout/modal/model';
 import { TLocales } from '../../../locales';
@@ -25,8 +25,9 @@ import { TTheme } from '../../../shared/constants/theme';
 import { userModel } from '../../user/model';
 import { UserCover } from '../../user/ui/UserCover';
 import { ThemeSwitch } from './ThemeSwitch';
-import { TimeRange } from './TimeRange';
-import { confirmModel } from '../../../layout/confirm/model';
+import { DefaultButton } from '../../../shared/components/button/DefaultButton';
+import { useUnit } from 'effector-react';
+import { editUserFx } from '../../user/model/edit-user';
 
 const SettingsMenu = styled.div`
     display: flex;
@@ -47,6 +48,8 @@ const SettingsContent = styled.div`
     margin: 0px;
     padding: 20px;
     padding-top: 28px;
+    padding-right: 40px;
+    position: relative;
 
     h3 {
         margin-bottom: 20px;
@@ -55,6 +58,15 @@ const SettingsContent = styled.div`
 
     h4 {
         font-weight: 400;
+    }
+
+    button.primary {
+        position: absolute;
+        color: #fff;
+        width: 120px;
+        padding: 0 10px;
+        top: 20px;
+        right: 40px;
     }
 `;
 
@@ -65,6 +77,10 @@ const SettingsMenuItem = styled(Button)<{ $color: keyof TTheme['scheme'] }>`
     font-weight: 300;
     width: 100%;
 
+    &.current {
+        background: ${({ theme }) => theme.scheme.blue.transparent};
+    }
+
     svg {
         color: ${({ $color, theme }) => theme.scheme[$color].main};
     }
@@ -72,26 +88,52 @@ const SettingsMenuItem = styled(Button)<{ $color: keyof TTheme['scheme'] }>`
 
 const AccountSettings = () => {
     const [currentUser] = userModel.useUser();
+    const [newUserName, setNewUserName] = useState(currentUser?.displayName);
+    const isEditing = useUnit(editUserFx.pending);
 
     if (!currentUser) return null;
 
     const handleEditPhoto = () => {
         // Open edit photo modal
         modalModel.events.open({
-            title: 'Edit Photo',
+            title: translate('edit_photo'),
             content: (
                 <EditPhotoModal
-                    onSave={() => null}
-                    imageColors={currentUser?.imageColors}
-                    photo={currentUser?.photoURL}
+                    onSave={(newPhoto, imageColors, setLoading) => {
+                        userModel.events.editUser({
+                            update: {
+                                photoFile: newPhoto,
+                                imageColors: imageColors,
+                            },
+                            onSuccess: () => {
+                                modalModel.events.close();
+                                setLoading(false);
+                            },
+                        });
+                        // Update user's photo URL
+                    }}
+                    imageColors={currentUser?.imageColors ?? []}
+                    photo={currentUser?.photoURL ?? null}
                 />
             ),
         });
     };
 
+    const handleLogout = () => {
+        confirmModel.events.open({
+            text: translate('logout_warning_title'),
+            onAccept: () => {
+                userModel.events.logout();
+            },
+            subtext: '',
+            icon: <IconUserMinus />,
+            iconColor: 'red',
+        });
+    };
+
     const handleDeleteAccount = () => {
         confirmModel.events.open({
-            text: 'Are you sure you want to delete your account?',
+            text: translate('delete_account'),
             onAccept: () => {
                 userModel.events.deleteAccount();
             },
@@ -109,37 +151,51 @@ const AccountSettings = () => {
                 src={currentUser?.photoURL}
                 isAuthor={false}
             >
-                <EditOverlayStyled onClick={handleEditPhoto}>
+                <EditOverlayStyled
+                    className="visible"
+                    onClick={handleEditPhoto}
+                >
                     <IconPencil size={30} color="#fff" />
                 </EditOverlayStyled>
             </UserCover>
             <Input
                 placeholder="Enter your name"
-                label="Name"
-                value={currentUser?.displayName}
+                label={translate('user_name')}
+                value={newUserName}
+                onChange={(e) => setNewUserName(e.currentTarget.value)}
             />
-            <EmailInput
-                value={currentUser?.displayName}
-                onChange={() => null}
-                required={false}
-                error={undefined}
-            />
-            <h4>Password</h4>
             <Divider />
-            <Button className="outline">
+            <h4>{translate('logout')}</h4>
+            <Button onClick={handleLogout} className="outline">
                 <IconLogout size={20} />
-                Logout
+                {translate('logout')}
             </Button>
             <Divider />
-            <h4>Delete account</h4>
+            <h4>{translate('delete_account')}</h4>
             <Subtext>
                 All your data will be deleted without any possibility of
                 recovery
             </Subtext>
             <Button onClick={handleDeleteAccount} className="outline danger">
                 <IconUserOff size={20} />
-                Delete account
+                {translate('delete_account')}
             </Button>
+            {newUserName !== currentUser.displayName && (
+                <DefaultButton
+                    className="primary"
+                    loading={isEditing}
+                    onClick={() => {
+                        userModel.events.editUser({
+                            update: {
+                                displayName: newUserName,
+                            },
+                            onSuccess: () => {},
+                        });
+                    }}
+                >
+                    {translate('save_changes')}
+                </DefaultButton>
+            )}
         </Flex>
     );
 };
@@ -171,7 +227,7 @@ const LanguageSettings = () => {
                 placeholder="Select language"
                 icon={<IconLanguage />}
                 selected={selected?.title}
-                label="Language"
+                label={translate('language')}
                 onSelect={handleChangeLanguage}
             />
         </Flex>
@@ -182,7 +238,7 @@ const AccountTheme = () => {
     return (
         <Flex width="100%" d="column" gap={10}>
             <ThemeSwitch />
-            <TimeRange />
+            {/* <TimeRange /> */}
         </Flex>
     );
 };
@@ -198,7 +254,7 @@ export const Settings = () => {
         color: keyof TTheme['scheme'];
     }[] = [
         {
-            title: 'Account',
+            title: translate('account'),
             icon: (
                 <UserCover
                     src={currentUser?.photoURL}
@@ -211,13 +267,13 @@ export const Settings = () => {
             content: <AccountSettings />,
         },
         {
-            title: 'Language',
+            title: translate('language'),
             icon: <IconLanguage size={20} />,
             content: <LanguageSettings />,
             color: 'green',
         },
         {
-            title: 'Theme',
+            title: translate('change_theme'),
             icon: <IconPalette size={20} />,
             content: <AccountTheme />,
             color: 'pink',
@@ -232,6 +288,9 @@ export const Settings = () => {
                         <SettingsMenuItem
                             onClick={() => setCurrentSetting(index)}
                             $color={m.color}
+                            className={
+                                currentSetting === index ? 'current' : ''
+                            }
                         >
                             {m.icon}
                             <div>{m.title}</div>

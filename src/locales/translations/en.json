@@ -196,6 +196,8 @@
     "song_plays_next": "Song plays next",
     "song_plays_at_the_end": "Song plays at the end",
     "song_added": "Song added to liked",
+    "song_added_to_playlist": "Song added to playlist",
+    "added_to": "added to",
     "removed_from_like": "Song removed from liked",
     "playlist_created": "Playlist created",
     "playlist_delete_warning": "Are you sure you want to delete this playlist?",
@@ -216,5 +218,14 @@
     "repeat_segment_promo_subtext": "It happens that you like not a song, but a moment in it? Now you can listen to it endlessly",
     "we_glad_you_joined_us": "We glad you joined us!",
     "we_glad_you_joined_us_subtext": "You can learn what features are available or skip this tutorial",
-    "no_playlists_subtext": "They will appear here when you add them"
+    "no_playlists_subtext": "They will appear here when you add them",
+    "language": "Language",
+    "user_updated": "User successfully updated",
+    "edit_photo": "Edit photo",
+    "account": "Account",
+    "playlist_one": "playlist",
+    "playlist_to_four": "playlists",
+    "playlist_from_five": "playlists",
+    "removed_from": "removed from",
+    "many_removed_from": "removed from"
 }

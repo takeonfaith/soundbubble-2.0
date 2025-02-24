@@ -6,18 +6,20 @@ import {
     sample,
 } from 'effector';
 import { Database } from '../../../database';
+import { translate } from '../../../i18n';
 import { toastModel } from '../../../layout/toast/model';
 import { createEffectWithToast } from '../../../shared/effector/createEffectWithToast';
 import { createPendingEffectsStore } from '../../../shared/effector/createPendingEffects';
+import { capitalize } from '../../../shared/funcs/capitalize';
 import { filterOneArrayWithAnother } from '../../../shared/funcs/filterOneArrayWithAnother';
 import { TSong } from '../../song/model/types';
-import { $currentPlaylist, $currentPlaylistSongs } from './playlist';
-import { TPlaylist, TUploadPlaylist } from './types';
 import {
     $ownPlaylists,
     updateOwnPlaylist,
 } from '../../user/model/library/playlists';
 import { $user } from '../../user/model/user';
+import { $currentPlaylist, $currentPlaylistSongs } from './playlist';
+import { TPlaylist, TUploadPlaylist } from './types';
 
 // #region Update Playlist
 type TUpdatePlaylistEffectProps = {
@@ -243,10 +245,15 @@ removeSongsFromPlaylistsFx.use(async ({ songs, playlists, onSuccess }) => {
 });
 
 addSongsToPlaylistsFx.done.watch(({ result: { songs, playlists } }) => {
+    const song =
+        songs.length > 1 ? translate('songs_to_four') : translate('song_one');
+    const playlist =
+        playlists.length > 1
+            ? translate('playlist_to_four')
+            : translate('playlist_one');
+
     toastModel.events.add({
-        message: `Song${songs.length > 1 ? 's' : ''} added to playlist${
-            playlists.length > 1 ? 's' : ''
-        }`,
+        message: `${capitalize(song)} ${translate('added_to')} ${playlist}`,
         type: 'success',
     });
 });
@@ -268,10 +275,19 @@ removeSongsFromPlaylistsFx.failData.watch((error) => {
 });
 
 removeSongsFromPlaylistsFx.done.watch(({ result: { songs, playlists } }) => {
+    const song =
+        songs.length > 1 ? translate('songs_to_four') : translate('song_one');
+    const playlist =
+        playlists.length > 1
+            ? translate('playlist_from_five')
+            : translate('playlist_to_four');
+    const removed =
+        songs.length > 1
+            ? translate('many_removed_from')
+            : translate('removed_from');
+
     toastModel.events.add({
         type: 'success',
-        message: `Song${songs.length > 1 ? 's' : ''} removed from playlist${
-            playlists.length > 1 ? 's' : ''
-        }`,
+        message: `${capitalize(song)} ${removed} ${playlist}`,
     });
 });
