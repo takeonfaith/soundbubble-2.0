@@ -45,7 +45,7 @@ function App() {
     }, []);
 
     return (
-        <I18nextProvider i18n={i18next} >
+        <I18nextProvider i18n={i18next}>
             <ThemeProvider theme={themeParams}>
                 <GlobalStyles collapsed={isCollapsed} />
                 <HashRouter>

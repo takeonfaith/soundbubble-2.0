@@ -8,6 +8,7 @@ import { EditPhotoModal } from '../../../../features/editPhotoModal';
 import { modalModel } from '../../../../layout/modal/model';
 import { IconWrapper } from '../../styles';
 import styled from 'styled-components';
+import { translate } from '../../../../i18n';
 
 const EditPhotoOverlay = styled(LoadingOverlay)`
     opacity: 0;
@@ -73,7 +74,7 @@ export const PlaylistPhoto = ({
                     className={isEditing ? 'visible' : ''}
                     onClick={() =>
                         modalModel.events.open({
-                            title: 'Edit playlist cover',
+                            title: translate('edit_photo'),
                             content: (
                                 <EditPhotoModal
                                     onSave={handleUpdatePlaylistPhoto}

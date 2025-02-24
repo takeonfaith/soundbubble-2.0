@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { DESKTOP_HEADER_HEIGHT } from './constants';
 import { LoadingOverlay } from '../../entities/song/ui/styles';
+import { Flex } from '../../shared/components/flex';
 
 export const HeaderStyled = styled.header`
     width: 100%;
@@ -36,6 +37,17 @@ export const HeaderStyled = styled.header`
         &.hide-on-desktop {
             display: flex;
         }
+    }
+`;
+
+export const AccountWrapper = styled(Flex)`
+    width: 100%;
+    gap: 20px;
+    display: flex;
+    justify-content: flex-end;
+
+    @media (max-width: 756px) {
+        width: fit-content;
     }
 `;
 

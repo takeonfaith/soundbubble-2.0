@@ -44,13 +44,13 @@ export const createPagitation = <T extends object>({
             isInitiallyLoaded: $isInitiallyLoaded,
             isLoading: loadMoreFx.pending,
         },
-        filter: ({ isInitiallyLoaded, user, isLoading }) => {
-            return !isInitiallyLoaded && !!user && !isLoading;
+        filter: ({ isInitiallyLoaded, isLoading }) => {
+            return !isInitiallyLoaded && !isLoading;
         },
         fn: ({ user }) => ({
             page: 0,
             quantity: initialLoadQuantity,
-            user: user!,
+            user,
             isInitialLoad: true,
         }),
         target: loadMoreFx,

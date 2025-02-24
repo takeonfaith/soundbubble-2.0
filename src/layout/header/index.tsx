@@ -9,6 +9,7 @@ import { Flex } from '../../shared/components/flex';
 import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 import { Popup } from '../newpopup';
 import {
+    AccountWrapper,
     AdminCircle,
     DesktopChildren,
     HeaderPageTitle,
@@ -82,7 +83,7 @@ export const Header = ({ children, hide, className, right }: Props) => {
                         : ''}
                 </HeaderPageTitle>
                 <DesktopChildren>{children}</DesktopChildren>
-                <Flex width="100%" gap={20} jc="flex-end">
+                <AccountWrapper width="100%" gap={20} jc="flex-end">
                     {right}
                     {isMobile && (
                         <>
@@ -102,7 +103,7 @@ export const Header = ({ children, hide, className, right }: Props) => {
                             <LoginButton />
                         </>
                     )}
-                </Flex>
+                </AccountWrapper>
             </Flex>
             <MobileChildren>{children}</MobileChildren>
         </HeaderStyled>

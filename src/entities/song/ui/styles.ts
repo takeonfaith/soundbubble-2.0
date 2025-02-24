@@ -39,8 +39,10 @@ export const MoreInfoButton = styled(Button)`
     cursor: pointer;
     opacity: 0;
 
-    &:hover {
-        background: ${({ theme }) => theme.colors.hover};
+    @media (hover: hover) {
+        &:hover {
+            background: ${({ theme }) => theme.colors.hover};
+        }
     }
 
     &:focus {

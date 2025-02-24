@@ -62,7 +62,11 @@ export const GridSongList = (props: Props) => {
                 className="grid-list"
                 onScroll={handleScroll}
                 ref={scrollElementRef}
-                columns={isMobile ? Math.ceil(songs.length / maxGridRows) : 3}
+                columns={
+                    isMobile
+                        ? Math.ceil(songs.length / maxGridRows)
+                        : 3
+                }
                 rows={songs.length > maxGridRows ? maxGridRows : songs.length}
             >
                 {items}

@@ -7,7 +7,7 @@ export const GridSongListStyled = styled.div<{ rows: number; columns: number }>`
     display: grid;
     grid-column-gap: 16px;
     grid-row-gap: 4px;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(${({ columns }) => columns}, 1fr);
     grid-template-rows: repeat(${({ rows }) => rows}, 50px);
     grid-auto-flow: column;
     container-type: size;

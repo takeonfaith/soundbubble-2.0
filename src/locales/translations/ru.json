@@ -227,5 +227,6 @@
     "playlist_to_four": "плейлиста",
     "playlist_from_five": "плейлистов",
     "removed_from": "удалена из",
-    "many_removed_from": "удалены из"
+    "many_removed_from": "удалены из",
+    "description": "Описание..."
 }

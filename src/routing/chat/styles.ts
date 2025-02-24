@@ -56,4 +56,8 @@ export const ChatListStyled = styled.div`
     padding: 0 20px;
     padding-bottom: 20px;
     gap: 4px;
+
+    @media (max-width: 768px) {
+        padding: 0 0px;
+    }
 `;

@@ -20,7 +20,6 @@ export const getPlaceToType = (type: TPlace): keyof typeof ENTITIES_ICONS => {
         songs: 'song',
         users: 'author',
     };
-    console.log(type);
 
     return dic[type];
 };

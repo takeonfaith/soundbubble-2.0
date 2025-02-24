@@ -137,7 +137,7 @@ const AccountSettings = () => {
             onAccept: () => {
                 userModel.events.deleteAccount();
             },
-            subtext: 'THIS ACTION CANNOT BE UNDONE!',
+            subtext: translate('playlist_delete_warning_subtext'),
             icon: <IconUserMinus />,
             iconColor: 'red',
         });

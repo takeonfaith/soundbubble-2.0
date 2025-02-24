@@ -18,7 +18,7 @@ export const PlaylistPageSongs = styled.div`
     padding-bottom: 0;
 
     @media (max-width: 1000px) {
-        padding: 40px var(--page-padding);
+        padding: 0px var(--page-padding);
         padding-bottom: 0;
 
         display: flex;

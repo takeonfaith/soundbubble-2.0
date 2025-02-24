@@ -120,7 +120,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
 
     @media (max-width: 1000px) {
         padding: 6px;
-        min-height: auto;
+        min-height: 60px;
         border-radius: 10px;
         margin: 0 12px;
         width: calc(100% - 24px);
@@ -215,6 +215,10 @@ export const SongStyled = styled.div`
     @media (max-width: 1000px) {
         min-width: calc(100% - 40px);
         width: calc(100% - 40px);
+
+        & .like-button {
+            display: none;
+        }
     }
 `;
 

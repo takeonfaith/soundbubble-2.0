@@ -9,6 +9,7 @@ import {
     PlaylistNameStyled,
 } from '../../styles';
 import { Subtext } from '../../../../shared/components/subtext';
+import { translate } from '../../../../i18n';
 
 type Props = {
     description: string | undefined;
@@ -134,7 +135,7 @@ export const PlaylistDescription = ({
                         onBlur={handleBlur}
                         onChange={handleChange}
                         maxLength={300}
-                        placeholder="Enter description here"
+                        placeholder={translate('description')}
                     />
                 )}
             </PlaylistNameStyled>

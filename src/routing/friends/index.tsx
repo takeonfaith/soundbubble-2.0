@@ -1,12 +1,13 @@
-import { IconFriendsOff, IconSearch, IconUserOff } from '@tabler/icons-react';
+import { IconFriendsOff, IconUserOff } from '@tabler/icons-react';
 import { styled } from 'styled-components';
 import { userModel } from '../../entities/user/model';
 import { UserItem } from '../../entities/user/ui';
 import { UserListSkeleton } from '../../entities/user/ui/UserListSkeleton';
+import { LoginButton } from '../../features/loginButton';
 import { OpenChatButton } from '../../features/openChatButton';
+import { translate } from '../../i18n';
 import { Header } from '../../layout/header';
 import { Flex } from '../../shared/components/flex';
-import { Input } from '../../shared/components/input';
 import { PageMessage } from '../../shared/components/pageMessage';
 import {
     ContentWrapper,
@@ -14,8 +15,6 @@ import {
 } from '../../shared/components/pageWrapper';
 import { SkeletonPageAnimation } from '../../shared/components/skeleton/SkeletonPageAnimation';
 import { FriendRequests } from './FriendRequests';
-import { translate } from '../../i18n';
-import { LoginButton } from '../../features/loginButton';
 
 const FriendsWrapper = styled.div`
     width: 100%;
@@ -46,16 +45,7 @@ export const FriendsPage = () => {
 
     return (
         <PageWrapper>
-            <Header>
-                {!!currentUser && (
-                    <FriendsWrapper>
-                        <Input
-                            placeholder="Search for friends..."
-                            icon={<IconSearch />}
-                        />
-                    </FriendsWrapper>
-                )}
-            </Header>
+            <Header />
             <ContentWrapper>
                 <FriendsWrapper>
                     <SkeletonPageAnimation

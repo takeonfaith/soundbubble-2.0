@@ -96,6 +96,7 @@ export class Users {
             return await FB.login(email, password);
         } catch (error) {
             console.error(error);
+            throw new Error((error as Error).message);
         }
     }
 
@@ -104,6 +105,7 @@ export class Users {
             return await FB.logout();
         } catch (error) {
             console.error(error);
+            throw new Error((error as Error).message);
         }
     }
 
@@ -189,7 +191,7 @@ export class Users {
             return getDataFromDoc<TPlaylist>(snapshot);
         } catch (error) {
             console.error(error);
-            return [];
+            throw new Error((error as Error).message);
         }
     }
 
@@ -208,7 +210,7 @@ export class Users {
             return await this.getUsersByUids(ids, true);
         } catch (error) {
             console.error(error);
-            return [];
+            throw new Error((error as Error).message);
         }
     }
 
@@ -224,8 +226,7 @@ export class Users {
             );
             return getDataFromDoc<TUser>(snapshot);
         } catch (error) {
-            console.error(error);
-            return [];
+            throw new Error((error as Error).message);
         }
     }
 

@@ -51,6 +51,10 @@ const PageTopWrapper = styled.div`
         flex-direction: column;
         align-items: center;
         justify-content: center;
+
+        & .authors-wrapper {
+            justify-content: center;
+        }
     }
 `;
 
@@ -164,7 +168,11 @@ export const PageTop = ({
                                         </Popup>
                                     )}
                             </Flex>
-                            <Flex gap={8} width="100%">
+                            <Flex
+                                className="authors-wrapper"
+                                gap={8}
+                                width="100%"
+                            >
                                 {authors && (
                                     <Authors
                                         authors={authors}

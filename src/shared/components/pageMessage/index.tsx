@@ -28,7 +28,7 @@ export const PageMessage = ({
                     style={{
                         fontSize: '1rem',
                         textAlign: 'center',
-                        maxWidth: '350px',
+                        maxWidth: '370px',
                     }}
                 >
                     {description}
