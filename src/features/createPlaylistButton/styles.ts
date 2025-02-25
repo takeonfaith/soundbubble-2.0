@@ -1,4 +1,5 @@
 import { styled } from 'styled-components';
+import { MEDIA_QUERIES } from '../../shared/constants/screenSize';
 
 export const IconWrapper = styled.div`
     height: 35%;
@@ -52,6 +53,12 @@ export const AddPlaylistStyled = styled.div`
         svg {
             width: 80%;
             height: 80%;
+        }
+    }
+
+    ${MEDIA_QUERIES.isTablet} {
+        &.horizontal {
+            left: 0;
         }
     }
 `;

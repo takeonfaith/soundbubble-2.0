@@ -15,6 +15,7 @@ import { CreateAuthor } from './CreateAuthor';
 import { useForm } from './model';
 import { SongCover } from './SongCover';
 import { IconMusic } from '@tabler/icons-react';
+import { translate } from '../../i18n';
 
 const CreateAuthorButton = styled(Button)`
     font-size: 0.85rem;
@@ -30,7 +31,7 @@ const CreateAuthorButton = styled(Button)`
 export const SongNameAndAuthor = () => {
     const handleNext = () => {
         modalModel.events.open({
-            title: 'Song cover',
+            title: translate('photo'),
             content: <SongCover />,
             sizeX: 's',
             sizeY: 's',
@@ -161,7 +162,9 @@ export const SongNameAndAuthor = () => {
                 </CreateAuthorButton>
             </Flex>
             <Flex width="100%" onClick={onSubmit}>
-                <DefaultButton appearance="primary">Next</DefaultButton>
+                <DefaultButton appearance="primary">
+                    {translate('next')}
+                </DefaultButton>
             </Flex>
         </SignUpModalStyled>
     );

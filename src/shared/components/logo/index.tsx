@@ -20,7 +20,7 @@ export const Logo = ({ size, appLike, short = false }: Props) => {
                 className={`logo`}
                 alt="Logo"
             />{' '}
-            {!short && <LogoText className="logo-text">Soundbubble</LogoText>}
+            {!short && <LogoText className="logo-text">Lavasound</LogoText>}
         </LogoWrapper>
     );
 };

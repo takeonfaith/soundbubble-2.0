@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import { MEDIA_QUERIES } from './shared/constants/screenSize';
 
 export const GlobalStyles = createGlobalStyle<{ collapsed: boolean }>`
 	* {
@@ -27,7 +28,7 @@ export const GlobalStyles = createGlobalStyle<{ collapsed: boolean }>`
 			--sidebar-width: 90px;
 		}
 
-		@media (max-width: 1000px) {
+		${MEDIA_QUERIES.isTablet} {
 			--page-padding: 20px;
 			--player-size: 70px
 		}

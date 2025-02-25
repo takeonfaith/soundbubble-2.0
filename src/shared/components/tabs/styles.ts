@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { MEDIA_QUERIES } from '../../constants/screenSize';
 
 export const TabsStyled = styled.div`
     width: fit-content;
@@ -18,7 +19,7 @@ export const TabsStyled = styled.div`
         padding: 0;
     }
 
-    @media (max-width: 768px) {
+    ${MEDIA_QUERIES.isMobile} {
         width: 100%;
         background: transparent;
     }
@@ -65,13 +66,13 @@ export const TabItemStyled = styled(Link)<{ $width?: string; $height: string }>`
         }
     }
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isMobile} {
         font-size: 0.9rem;
         height: 32px;
         padding: 4px 12px;
 
         &.selected {
-            color: ${({ theme }) => theme.scheme.blue.action};
+            color: ${({ theme }) => theme.scheme.blue.main};
         }
     }
 `;
@@ -105,7 +106,7 @@ export const CurrentTabItem = styled.div<{
         background: ${({ theme }) => theme.scheme.blue.action};
     }
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isMobile} {
         height: 32px;
         padding: 4px 12px;
     }

@@ -158,17 +158,14 @@ export const ChoosingAuthors = () => {
                             {errors.added ?? translate('so_we_know_your_taste')}
                         </Subtext>
                     </Flex>
-                    <Button
-                        className="default secondary"
-                        onClick={onSubmit}
-                    >
+                    <Button className="default secondary" onClick={onSubmit}>
                         {translate('skip')}
                     </Button>
                 </Flex>
                 <AttachEntity
                     library={values.authors}
                     placeholder={translate('search_for_authors')}
-                    submitButtonText={'Next'}
+                    submitButtonText={translate('next')}
                     onEntityClick={(added) => {
                         console.log({ added });
 

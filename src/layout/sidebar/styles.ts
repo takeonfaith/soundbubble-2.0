@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { TTheme } from '../../shared/constants/theme';
+import { MEDIA_QUERIES } from '../../shared/constants/screenSize';
 
 export const SidebarSectionTitle = styled.div`
     font-size: 0.8rem;
@@ -177,7 +178,7 @@ export const SidebarStyled = styled.aside`
         }
     }
 
-    @media (max-width: 756px) {
+    ${MEDIA_QUERIES.isTablet} {
         display: none;
     }
 `;

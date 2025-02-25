@@ -15,6 +15,7 @@ import { Sidebar } from './sidebar';
 import { useSidebar } from './sidebar/model';
 import { Toast } from './toast/ui';
 import { LayoutHeader } from './layoutHeader';
+import { MEDIA_QUERIES } from '../shared/constants/screenSize';
 
 export const LayoutStyled = styled.div`
     height: calc(100dvh - var(--player-size) - var(--page-gap) * 2 - 56px);
@@ -22,7 +23,7 @@ export const LayoutStyled = styled.div`
     padding-top: var(--page-gap);
     padding-right: var(--page-gap);
 
-    @media (max-width: 756px) {
+    ${MEDIA_QUERIES.isTablet} {
         height: calc(100dvh - 130px);
         padding: 0;
 
@@ -42,8 +43,9 @@ const RightSide = styled.div`
     background: ${({ theme }) => theme.colors.pageBackground};
     border: 1px solid ${({ theme }) => theme.colors.border};
 
-    @media (max-width: 756px) {
+    ${MEDIA_QUERIES.isTablet} {
         border-radius: 0;
+        border: none;
     }
 `;
 

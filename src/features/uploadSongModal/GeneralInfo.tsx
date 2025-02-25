@@ -99,6 +99,7 @@ const LANGUAGES: TExtendedSuggestion[] = [
     { uid: 'korean', fullName: 'Korean', place: 'users' },
     { uid: 'italian', fullName: 'Italian', place: 'users' },
     { uid: 'portuguese', fullName: 'Portuguese', place: 'users' },
+    { uid: 'indian', fullName: 'Indian', place: 'users' },
 ];
 
 export const GeneralInfo = () => {

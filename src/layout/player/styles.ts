@@ -3,6 +3,7 @@ import { BeautifulBackground } from '../../shared/components/beautifulBackground
 import { hexToRgbA } from '../../shared/funcs/hexToRgba';
 import { ANIMATION_DURATION } from './constants';
 import { Button } from '../../shared/components/button';
+import { MEDIA_QUERIES } from '../../shared/constants/screenSize';
 
 export const PlayerStyled = styled.div<{ $background: string }>`
     width: calc(100% - var(--sidebar-width) - var(--page-gap));
@@ -118,7 +119,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
         }
     }
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isTablet} {
         padding: 6px;
         min-height: 60px;
         border-radius: 10px;
@@ -166,7 +167,7 @@ export const SongTitle = styled.h1`
     white-space: nowrap;
     overflow: hidden;
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isTablet} {
         font-size: 0.95rem;
     }
 `;
@@ -212,7 +213,7 @@ export const SongStyled = styled.div`
         max-width: 208px;
     }
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isTablet} {
         min-width: calc(100% - 40px);
         width: calc(100% - 40px);
 
@@ -238,7 +239,7 @@ export const LyricsWrapper = styled(BeautifulBackground)`
 export const MobilePlayButton = styled.div`
     display: none;
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isTablet} {
         display: block;
         width: fit-content;
     }
@@ -269,7 +270,7 @@ export const PlayerActionButtons = styled.div`
         min-width: 208px;
     }
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isTablet} {
         display: none;
     }
 `;

@@ -15,6 +15,7 @@ import { useGetAppHotKeys } from './shared/hooks/useGetAppHotKeys';
 import useHotkeys from './shared/hooks/useHotKeys';
 import { I18nextProvider } from 'react-i18next';
 import i18next from './i18n';
+import { MEDIA_QUERIES } from './shared/constants/screenSize';
 
 const AppStyled = styled.div`
     height: 100dvh;
@@ -24,7 +25,7 @@ const AppStyled = styled.div`
     flex-direction: column;
     width: 100%;
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isTablet} {
         background: ${({ theme }) => theme.colors.pageBackground};
     }
 `;

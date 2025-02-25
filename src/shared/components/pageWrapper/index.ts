@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { MEDIA_QUERIES } from '../../constants/screenSize';
 
 export const PageWrapper = styled.div`
     overflow-y: auto;
@@ -16,7 +17,7 @@ export const ContentWrapper = styled.div`
     gap: 2px;
     position: relative;
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isTablet} {
         padding: 0 var(--page-padding);
         padding-bottom: 10px;
         gap: 4px;

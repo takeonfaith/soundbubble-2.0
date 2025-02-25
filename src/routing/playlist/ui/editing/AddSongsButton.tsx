@@ -5,6 +5,7 @@ import { modalModel } from '../../../../layout/modal/model';
 import { AddSongsToPlaylistModal } from './AddSongsToPlaylistModal';
 import { TPlaylist } from '../../../../entities/playlist/model/types';
 import { translate } from '../../../../i18n';
+import { MEDIA_QUERIES } from '../../../../shared/constants/screenSize';
 
 const AddSongsButtonStyled = styled(Button)`
     font-weight: 200;
@@ -16,7 +17,7 @@ const AddSongsButtonStyled = styled(Button)`
     width: 100%;
     padding: 8px;
 
-    @media (max-width: 768px) {
+    ${MEDIA_QUERIES.isTablet} {
         padding: 4px 0;
         gap: 14px;
     }
@@ -35,7 +36,7 @@ const IconWrapper = styled.div`
         color: ${({ theme }) => theme.scheme.blue.action};
     }
 
-    @media (max-width: 768px) {
+    ${MEDIA_QUERIES.isTablet} {
         width: 40px;
         height: 40px;
     }

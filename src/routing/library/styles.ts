@@ -1,14 +1,14 @@
 import styled from 'styled-components';
 import { Button } from '../../shared/components/button';
+import { MEDIA_QUERIES } from '../../shared/constants/screenSize';
 
 export const PageGridStyled = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
     height: fit-content;
-    
 
-    @media (max-width: 768px) {
+    ${MEDIA_QUERIES.isMobile} {
         gap: 0px;
     }
 `;
@@ -16,7 +16,7 @@ export const PageGridStyled = styled.div`
 export const AuthorPageGridStyled = styled(PageGridStyled)`
     gap: 32px;
 
-    @media (max-width: 768px) {
+    ${MEDIA_QUERIES.isMobile} {
         gap: 4px;
     }
 `;
@@ -35,7 +35,7 @@ export const SearchButton = styled(Button)`
         height: 18px;
     }
 
-    @media (max-width: 768px) {
+    ${MEDIA_QUERIES.isMobile} {
         min-width: 40px;
         width: 40px;
         height: 40px;

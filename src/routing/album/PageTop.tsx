@@ -25,6 +25,7 @@ import {
 import { Popup } from '../../layout/newpopup';
 import { AlbumContextMenu } from './AlbumContextMenu';
 import { ButtonsStyled } from '../author/ui/styles';
+import { translate } from '../../i18n';
 
 type Props = {
     album: TPlaylist | null;
@@ -66,12 +67,15 @@ export const PageTop = ({ album, queue }: Props) => {
                                         opacity: '0.6',
                                     }}
                                 >
-                                    {album?.isAlbum ? 'Album' : 'Playlist'} ·{' '}
+                                    {album?.isAlbum
+                                        ? translate('album')
+                                        : translate('playlist')}{' '}
+                                    ·{' '}
                                 </span>
                             }
                             <Authors
                                 width="fit-content"
-                                authors={album?.authors}
+                                 authors={album?.authors}
                                 isAuthor={album?.isAlbum}
                             />
                         </Flex>

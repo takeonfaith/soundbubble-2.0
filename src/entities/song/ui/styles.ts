@@ -1,6 +1,7 @@
 import { Button } from '@components/button';
 import styled from 'styled-components';
 import { SONG_RADIUS } from '../constants';
+import { MEDIA_QUERIES } from '../../../shared/constants/screenSize';
 
 export const PlayButton = styled.div`
     border: none;
@@ -231,7 +232,7 @@ export const SongStyled = styled.div`
         }
     }
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isTablet} {
         padding: 0;
 
         &:active {

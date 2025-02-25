@@ -1,49 +1,48 @@
-import { useLayoutEffect, useState } from 'react';
-import { JS_QUERIES } from '../constants/screenSize';
+import { useState, useEffect } from 'react';
+import {
+    MOBILE_SCREEN,
+    TABLET_SCREEN,
+    SMALL_DESKTOP,
+    MIDDLE_DESKTOP,
+} from '../constants/screenSize';
 
-type QueryType = typeof JS_QUERIES;
+type DeviceType =
+    | 'mobile'
+    | 'tablet'
+    | 'small-desktop'
+    | 'middle-desktop'
+    | 'not-mobile';
 
-const getValues = (
-    mediaQueryList: {
-        mql: MediaQueryList;
-        title: QueryType[number]['title'];
-    }[]
-) => {
-    return mediaQueryList.reduce((acc, value) => {
-        acc[value.title] = value.mql.matches;
-        return acc;
-    }, {} as Record<QueryType[number]['title'], boolean>);
+const handleResize = () => {
+    if (matchMedia(MOBILE_SCREEN).matches) {
+        return 'mobile';
+    } else if (matchMedia(TABLET_SCREEN).matches) {
+        return 'tablet';
+    } else if (matchMedia(SMALL_DESKTOP).matches) {
+        return 'small-desktop';
+    } else if (matchMedia(MIDDLE_DESKTOP).matches) {
+        return 'middle-desktop';
+    } else {
+        return 'not-mobile';
+    }
 };
 
-const useCurrentDevice = () => {
-    const mediaQueryList = JS_QUERIES.map(({ query, title }) => ({
-        mql: matchMedia(query),
-        title,
-    }));
-    const [values, setValues] = useState(getValues(mediaQueryList));
+const useDevice = () => {
+    const [device, setDevice] = useState<DeviceType>(handleResize());
 
-    useLayoutEffect(() => {
-        mediaQueryList.forEach(({ mql }) =>
-            mql.addEventListener('change', () => {
-                setValues(getValues(mediaQueryList));
-            })
-        );
+    useEffect(() => {
+        addEventListener('resize', () => {
+            setDevice(handleResize);
+        }); // Listen for resize events
 
-        return () =>
-            mediaQueryList.forEach(({ mql }) =>
-                mql.removeEventListener('change', () => {
-                    setValues(getValues(mediaQueryList));
-                })
-            );
-    }, [mediaQueryList]);
+        return () => {
+            removeEventListener('resize', () => {
+                setDevice(handleResize);
+            }); // Clean up event listener
+        };
+    }, []);
 
-    return {
-        ...values,
-        currentDevice:
-            Object.keys(values).find(
-                (el: string) => values[el as keyof typeof values] === true
-            ) ?? 'desktop',
-    };
+    return { isMobile: device === 'mobile', device };
 };
 
-export default useCurrentDevice;
+export default useDevice;

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { PLAYLIST_RADIUS } from '../constants';
+import { MEDIA_QUERIES } from '../../../shared/constants/screenSize';
 
 export const PlaylistStyled = styled(Link)<{ $color1: string }>`
     --size: calc((100vw - var(--sidebar-width)) / 6 - 27.5px);
@@ -147,7 +148,7 @@ export const PlaylistStyled = styled(Link)<{ $color1: string }>`
         }
     }
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isTablet} {
         &.vertical {
             --size: calc(100vw / 4 - 25px);
         }

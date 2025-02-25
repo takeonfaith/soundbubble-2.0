@@ -6,9 +6,9 @@ import { LinksList, ListItem, MobileMenuStyled } from './styles';
 
 export const MobileMenu = () => {
     const [chat] = chatModel.useCurrentChat();
-    const { isMobile } = useCurrentDevice();
+    const { device } = useCurrentDevice();
 
-    if (chat || !isMobile) return null;
+    if (chat || (device !== 'tablet' && device !== 'mobile')) return null;
 
     return (
         <MobileMenuStyled>

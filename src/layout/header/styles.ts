@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { DESKTOP_HEADER_HEIGHT } from './constants';
 import { LoadingOverlay } from '../../entities/song/ui/styles';
 import { Flex } from '../../shared/components/flex';
+import { MEDIA_QUERIES } from '../../shared/constants/screenSize';
 
 export const HeaderStyled = styled.header`
     width: 100%;
@@ -28,7 +29,7 @@ export const HeaderStyled = styled.header`
         display: none;
     }
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isTablet} {
         padding: 10px 20px;
         min-height: fit-content;
         display: flex;
@@ -46,7 +47,7 @@ export const AccountWrapper = styled(Flex)`
     display: flex;
     justify-content: flex-end;
 
-    @media (max-width: 756px) {
+    ${MEDIA_QUERIES.isMobile} {
         width: fit-content;
     }
 `;
@@ -56,7 +57,7 @@ export const DesktopChildren = styled.div`
     display: flex;
     justify-content: center;
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isTablet} {
         display: none;
     }
 `;
@@ -64,7 +65,7 @@ export const DesktopChildren = styled.div`
 export const MobileChildren = styled.div`
     width: 100%;
 
-    @media (min-width: 1001px) {
+    ${MEDIA_QUERIES.isNotTablet} {
         display: none;
     }
 `;
@@ -76,7 +77,7 @@ export const HeaderPageTitle = styled.h2`
     overflow: hidden;
     font-weight: 400;
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isTablet} {
         font-weight: 500;
         width: 100%;
     }

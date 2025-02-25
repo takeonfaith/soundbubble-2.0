@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Button } from '../../shared/components/button';
+import { MEDIA_QUERIES } from '../../shared/constants/screenSize';
 
 export const LayoutHeaderStyled = styled.div`
     display: flex;
@@ -29,7 +30,7 @@ export const LayoutHeaderStyled = styled.div`
         }
     }
 
-    @media (max-width: 768px) {
+    ${MEDIA_QUERIES.isTablet} {
         display: none;
     }
 `;
