@@ -228,5 +228,7 @@
     "playlist_from_five": "playlists",
     "removed_from": "removed from",
     "many_removed_from": "removed from",
-    "description": "Description..."
+    "description": "Description...",
+    "playlist_updated": "Playlist updated",
+    "leave_chat": "Leave chat"
 }

@@ -228,5 +228,7 @@
     "playlist_from_five": "плейлистов",
     "removed_from": "удалена из",
     "many_removed_from": "удалены из",
-    "description": "Описание..."
+    "description": "Описание...",
+    "playlist_updated": "Плейлист обновлен",
+    "leave_chat": "Покинуть чат"
 }

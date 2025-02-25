@@ -134,11 +134,11 @@ export const ChatItem = ({
                             )}
                         </LastMessageStyled>
                     </ChatTypingIndicator>
-                    {!!unreadCount && (
+                    {/* {!!unreadCount && (
                         <NotificationBadge background="blue">
                             {unreadCount}
                         </NotificationBadge>
-                    )}
+                    )} */}
                 </Flex>
             </Flex>
             {children}
