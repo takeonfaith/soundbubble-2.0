@@ -1,9 +1,7 @@
 import {
     IconCircleCheck,
     IconDots,
-    IconLogout,
     IconPencil,
-    IconTrash,
     IconUserCircle,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -15,21 +13,20 @@ import { TCache } from '../../../../../entities/chat/model/types';
 import { userModel } from '../../../../../entities/user/model';
 import { TUser } from '../../../../../entities/user/model/types';
 import { UserItem } from '../../../../../entities/user/ui';
+import { translate } from '../../../../../i18n';
 import { confirmModel } from '../../../../../layout/confirm/model';
 import { modalModel } from '../../../../../layout/modal/model';
-import { popupModel } from '../../../../../layout/popup/model';
+import { Popup } from '../../../../../layout/newpopup';
 import { Button } from '../../../../../shared/components/button';
 import { DefaultButton } from '../../../../../shared/components/button/DefaultButton';
-import { DefaultContextMenuStyled } from '../../../../../shared/components/defaultContextMenu';
 import { Flex } from '../../../../../shared/components/flex';
 import { LoadingWrapper } from '../../../../../shared/components/loadingWrapper';
 import { Subtext } from '../../../../../shared/components/subtext';
 import { PlaylistName } from '../../../../playlist/ui/layout/PlaylistName';
 import { AddUserButton } from './AddUserButton';
+import { ChatInfoContextMenu } from './ChatInfoContextMenu';
 import { ChatPhoto } from './ChatPhoto';
 import { ChatStatus } from './ChatStatus';
-import { toastModel } from '../../../../../layout/toast/model';
-import { translate } from '../../../../../i18n';
 
 const ChatInfoStyled = styled.div`
     display: flex;
@@ -117,59 +114,8 @@ export const ChatInfo = ({ cache }: Props) => {
     const users = chat?.participants.map(
         (participant) => cache[participant] as TUser
     );
+
     const [isFullSize, setIsFullSize] = useState(false);
-
-    const handleOpenContextMenu = (e: Evt<'btn'>) => {
-        e.stopPropagation();
-
-        popupModel.events.open({
-            e,
-            height: isAdmin ? 96 : 56,
-            content: (
-                <DefaultContextMenuStyled>
-                    <Button
-                        onClick={() => {
-                            if (chat && currentUser) {
-                                confirmModel.events.open({
-                                    text: 'Are you sure you want to leave chat?',
-                                    onAccept: () => {
-                                        chatModel.events.editChat({
-                                            chat,
-                                            update: {
-                                                participants:
-                                                    chat.participants.filter(
-                                                        (p) =>
-                                                            p !==
-                                                            currentUser.uid
-                                                    ),
-                                            },
-                                            onSuccess: () => {
-                                                toastModel.events.add({
-                                                    type: 'success',
-                                                    message:
-                                                        'You left the chat',
-                                                    duration: 10000,
-                                                });
-                                            },
-                                        });
-                                    },
-                                });
-                            }
-                        }}
-                    >
-                        <IconLogout />
-                        Leave chat
-                    </Button>
-                    {isAdmin && (
-                        <Button className="danger" onClick={() => null}>
-                            <IconTrash />
-                            Delete chat
-                        </Button>
-                    )}
-                </DefaultContextMenuStyled>
-            ),
-        });
-    };
 
     const handleDeleteUserFromChat = (user: TUser) => {
         if (chat) {
@@ -281,23 +227,24 @@ export const ChatInfo = ({ cache }: Props) => {
                                     }}
                                 >
                                     <IconPencil size={20} />
-                                    Edit
+                                    {translate('edit')}
                                 </Button>
-                                <Button
-                                    $width="80px"
-                                    $height="60px"
-                                    className="outline"
-                                    style={{
-                                        flexDirection: 'column',
-                                        gap: '6px',
-                                        fontWeight: '300',
-                                        fontSize: '0.8rem',
-                                    }}
-                                    onClick={handleOpenContextMenu}
-                                >
-                                    <IconDots size={20} />
-                                    More
-                                </Button>
+                                <Popup content={<ChatInfoContextMenu />}>
+                                    <Button
+                                        $width="80px"
+                                        $height="60px"
+                                        className="outline"
+                                        style={{
+                                            flexDirection: 'column',
+                                            gap: '6px',
+                                            fontWeight: '300',
+                                            fontSize: '0.8rem',
+                                        }}
+                                    >
+                                        <IconDots size={20} />
+                                        {translate('more')}
+                                    </Button>
+                                </Popup>
                             </>
                         )}
                         {!isGroupChat && (
@@ -342,6 +289,7 @@ export const ChatInfo = ({ cache }: Props) => {
                     {users?.map((user) => {
                         const isOwner =
                             chat.admins?.includes(user?.uid ?? '') ?? false;
+
                         return (
                             <UserItem
                                 orientation="horizontal"

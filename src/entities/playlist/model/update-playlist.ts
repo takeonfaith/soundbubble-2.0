@@ -49,7 +49,7 @@ const getSongs = (
 export const updatePlaylistFx = createEffectWithToast<
     TUpdatePlaylistEffectProps,
     TPlaylist
->('Playlist updated', 'Failed to update playlist');
+>(translate('playlist_updated'), 'Failed to update playlist');
 
 export const addSongsToPlaylistsFx = createEffect<
     AddSongsToPlaylistProps,
