@@ -259,7 +259,7 @@ export const SongMoreContextMenu = ({ song, onRemove }: Props) => {
                 <Popover
                     content={
                         !song.slowSrc && !currentUser?.isAdmin ? (
-                            <div>Not ready yet</div>
+                            <div>{translate('not_ready_yet')}</div>
                         ) : undefined
                     }
                     position="top"

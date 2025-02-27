@@ -152,9 +152,9 @@ export const SongItem = ({
                     <Popover
                         content={
                             !song.slowSrc
-                                ? 'Not ready yet'
+                                ? translate('not_ready_yet')
                                 : isSlowVersion
-                                ? 'Disable slow version'
+                                ? translate('disable_slow_version')
                                 : translate('slow_version')
                         }
                     >

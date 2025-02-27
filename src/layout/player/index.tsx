@@ -1,16 +1,18 @@
-import { IconMaximize } from '@tabler/icons-react';
+import { IconMaximize, IconPlayerTrackNextFilled } from '@tabler/icons-react';
+import { useUnit } from 'effector-react';
 import { useTheme } from 'styled-components';
 import { chatModel } from '../../entities/chat/model';
 import { SongState } from '../../entities/song/model/types';
 import { SongCover } from '../../entities/song/ui/SongCover';
 import { LikeButton } from '../../features/likeButton';
+import { translate } from '../../i18n';
 import { Authors } from '../../shared/components/authors';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
 import { MusicControls } from '../../shared/components/musicControls';
 import { MusicControlsStyled } from '../../shared/components/musicControls/styles';
 import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
-import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
+import { $isMobileOrTablet } from '../../shared/hooks/useDevice/model';
 import { Buttons } from './Buttons';
 import {
     HoverIcon,
@@ -22,7 +24,6 @@ import {
     SongTitle,
 } from './styles';
 import { usePlayer } from './usePlayer';
-import { translate } from '../../i18n';
 
 export const Player = () => {
     const {
@@ -39,7 +40,7 @@ export const Player = () => {
     } = usePlayer();
     const theme = useTheme();
 
-    const { isMobile } = useCurrentDevice();
+    const isMobile = useUnit($isMobileOrTablet);
 
     const [currentChat] = chatModel.useCurrentChat();
 
@@ -82,21 +83,26 @@ export const Player = () => {
             <Flex jc="flex-end" onClick={(e) => e.stopPropagation()}>
                 <MobilePlayButton>
                     <MusicControlsStyled>
-                        <Button
-                            $width="40px"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                controls.onPlay();
-                            }}
-                        >
-                            <PlayPauseIcon
-                                loading={
-                                    controls.state === SongState.loading ||
-                                    controls.state === SongState.loadingThenPlay
-                                }
-                                playling={controls.state === 'playing'}
-                            />
-                        </Button>
+                        <Flex width="100%" gap={0}>
+                            <Button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    controls.onPlay();
+                                }}
+                            >
+                                <PlayPauseIcon
+                                    loading={
+                                        controls.state === SongState.loading ||
+                                        controls.state ===
+                                            SongState.loadingThenPlay
+                                    }
+                                    playling={controls.state === 'playing'}
+                                />
+                            </Button>
+                            <Button onClick={controls.onNext}>
+                                <IconPlayerTrackNextFilled size={20} />
+                            </Button>
+                        </Flex>
                     </MusicControlsStyled>
                 </MobilePlayButton>
                 <Buttons

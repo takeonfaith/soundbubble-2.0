@@ -1,14 +1,15 @@
+import { useUnit } from 'effector-react';
 import { chatModel } from '../../entities/chat/model';
 import { mobileMenuRoutes } from '../../routing/routes';
-import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
+import { $isMobileOrTablet } from '../../shared/hooks/useDevice/model';
 import { MobileLinkItem } from './MobileLinkItem';
 import { LinksList, ListItem, MobileMenuStyled } from './styles';
 
 export const MobileMenu = () => {
     const [chat] = chatModel.useCurrentChat();
-    const { device } = useCurrentDevice();
+    const isMobile = useUnit($isMobileOrTablet);
 
-    if (chat || (device !== 'tablet' && device !== 'mobile')) return null;
+    if (chat || !isMobile) return null;
 
     return (
         <MobileMenuStyled>

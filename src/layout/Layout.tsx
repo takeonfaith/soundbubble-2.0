@@ -24,7 +24,7 @@ export const LayoutStyled = styled.div`
     padding-right: var(--page-gap);
 
     ${MEDIA_QUERIES.isTablet} {
-        height: calc(100dvh - 130px);
+        min-height: calc(100dvh - 130px);
         padding: 0;
 
         &.chat-page {

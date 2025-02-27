@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { BeautifulBackground } from '../../shared/components/beautifulBackground';
+import { MEDIA_QUERIES } from '../../shared/constants/screenSize';
 
 export const DESKTOP_COVER_WIDTH = '400px';
 const MOBILE_COVER_WIDTH = '86vw';
@@ -22,7 +23,7 @@ export const FullScreenPlayerStyled = styled(BeautifulBackground)`
         color: #fff;
     }
 
-    @media (max-width: 1000px) {
+    ${MEDIA_QUERIES.isMobile} {
         &::before {
             content: '';
             display: block;

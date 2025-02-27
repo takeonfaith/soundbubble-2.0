@@ -20,17 +20,17 @@ export const GlobalStyles = createGlobalStyle<{ collapsed: boolean }>`
 		--header-height: 70px;
 
 
-		@media (max-width: 1270px) {
+		${MEDIA_QUERIES.isSmallDesktop} {
         --player-size: 80px;
     	}
 
-		@media (max-width: 1100px) {
-			--sidebar-width: 90px;
-		}
-
 		${MEDIA_QUERIES.isTablet} {
 			--page-padding: 20px;
-			--player-size: 70px
+			--player-size: 60px
+		}
+
+		${MEDIA_QUERIES.isMobile} {
+			--player-size: 55px
 		}
 	}
 

@@ -5,13 +5,15 @@ import { Flex } from '../../shared/components/flex';
 import { Loading } from '../../shared/components/loading';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
-import { AuthorPageGridStyled } from './styles';
-import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 import { useTypedTrasnlate } from '../../shared/hooks/useTypedTrasnlate';
+import { AuthorPageGridStyled } from './styles';
+import { useUnit } from 'effector-react';
+import { $isMobileOrTablet } from '../../shared/hooks/useDevice/model';
 
 export const LikedAuthors = () => {
     const [addedAuthors, loading] = userModel.useAddedAuthors();
-    const { isMobile } = useCurrentDevice();
+    const isMobile = useUnit($isMobileOrTablet);
+
     const translate = useTypedTrasnlate();
 
     return (

@@ -1,5 +1,6 @@
 import { styled } from 'styled-components';
 import { ANIMATION_DURATION, INITIAL_SCALE } from './constants';
+import { MEDIA_QUERIES } from '../../shared/constants/screenSize';
 
 export const PopupContainer = styled.div<{
     $coords: {
@@ -48,5 +49,14 @@ export const PopupContainer = styled.div<{
             transform: scale(1);
             opacity: 1;
         }
+    }
+
+    ${MEDIA_QUERIES.isMobile} {
+        width: calc(100% - 20px);
+        border-radius: 10px;
+        left: 10px;
+        bottom: 10px;
+        top: unset;
+        transform-origin: bottom center;
     }
 `;

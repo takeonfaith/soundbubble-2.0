@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { BeautifulBackground } from '../../../shared/components/beautifulBackground';
 import { PageWrapper } from '../../../shared/components/pageWrapper';
+import { MEDIA_QUERIES } from '../../../shared/constants/screenSize';
 
 export const AuthorPageWrapper = styled(PageWrapper)`
     .title {
@@ -151,12 +152,18 @@ export const ButtonsStyled = styled.div<{ $color: string }>`
         }
     }
 
-    @media (max-width: 500px) {
+    ${MEDIA_QUERIES.isMobile} {
         width: 100%;
-        padding: 0 20px;
+        padding: 10px 20px;
+        justify-content: center;
 
         button {
             height: 43px;
+            border-radius: 8px !important;
+
+            &::before {
+                border-radius: 8px !important;
+            }
         }
     }
 `;

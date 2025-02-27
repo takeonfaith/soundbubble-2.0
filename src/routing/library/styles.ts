@@ -8,7 +8,7 @@ export const PageGridStyled = styled.div`
     gap: 16px;
     height: fit-content;
 
-    ${MEDIA_QUERIES.isMobile} {
+    ${MEDIA_QUERIES.isTablet} {
         gap: 0px;
     }
 `;
@@ -16,7 +16,7 @@ export const PageGridStyled = styled.div`
 export const AuthorPageGridStyled = styled(PageGridStyled)`
     gap: 32px;
 
-    ${MEDIA_QUERIES.isMobile} {
+    ${MEDIA_QUERIES.isTablet} {
         gap: 4px;
     }
 `;

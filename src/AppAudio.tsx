@@ -15,11 +15,7 @@ import { useEffectOnce } from './shared/hooks/useEffectOnce';
 const audioCtx = new AudioContext();
 const analyserNode = audioCtx.createAnalyser();
 
-console.log(audioCtx.state);
-
 const resumeCtx = () => {
-    console.log('resume');
-
     audioCtx.resume();
 };
 
@@ -99,7 +95,6 @@ const useAppAudio = () => {
             );
             const duration = audioRef.current.duration;
             const percent = (bufferedEnd / duration) * 100;
-            console.log(percent);
 
             if (duration > 0) {
                 songModel.playback.loadedPercentApi.set(percent);
@@ -116,8 +111,6 @@ const useAppAudio = () => {
             audioRef.current.currentTime = currentTime;
         }
     }, [currentTime, isSliding]);
-
-    // console.log(audioRef.current.currentTime);
 
     useEffect(() => {
         if (audioRef.current) {

@@ -14,6 +14,7 @@ import { PlayPauseIcon } from '../../shared/components/playPauseIcon';
 import { SwitchToggle } from '../../shared/components/switchToggle';
 import { MeshGradientBubblesWithAudio } from './Bubble';
 import { translate } from '../../i18n';
+import { MEDIA_QUERIES } from '../../shared/constants/screenSize';
 
 const DiscoverPageStyled = styled.div`
     position: relative;
@@ -51,13 +52,18 @@ const PlaybuttonStyled = styled.div`
     height: 300px;
     height: 300px;
 
+    & .play-wave-btn {
+        font-size: 2rem;
+        width: fit-content;
+        white-space: nowrap;
+    }
+
     .slow-btn {
         background: #2a2a2a4f;
         padding: 10px 14px;
         border-radius: 20px;
         opacity: 0;
         position: absolute;
-        width: fit-content;
         transition: 0.2s transform, 0.1s opacity;
         transform: translateY(60px);
         gap: 20px;
@@ -65,6 +71,7 @@ const PlaybuttonStyled = styled.div`
         align-items: center;
         justify-content: space-between;
         color: #fff;
+        white-space: nowrap;
 
         &:hover {
             background: #2a2a2a33;
@@ -82,6 +89,12 @@ const PlaybuttonStyled = styled.div`
     @media (hover: none) {
         .slow-btn {
             opacity: 1;
+        }
+    }
+
+    ${MEDIA_QUERIES.isMobile} {
+        .play-wave-btn {
+            font-size: 1.8rem;
         }
     }
 `;
@@ -119,11 +132,6 @@ export const DiscoverPage = () => {
             )}
             <PlaybuttonStyled>
                 <Button
-                    style={{
-                        fontSize: '2rem',
-                        minHeight: '60px',
-                        minWidth: '260px',
-                    }}
                     onClick={() => {
                         songModel.wave.playWave();
                     }}
@@ -143,8 +151,7 @@ export const DiscoverPage = () => {
                     </Flex>
                 </Button>
                 <Button
-                    $width="fit-content"
-                    className="slow-btn"
+                    className="slow-btn default"
                     onClick={handleSlow}
                 >
                     <Flex gap={10}>
@@ -155,7 +162,7 @@ export const DiscoverPage = () => {
                         onChange={handleSlow}
                         size="s"
                         checked={isSlow}
-                        primaryColor={currentSong?.imageColors[3]}
+                        primaryColor={currentSong?.imageColors[0]}
                     />
                 </Button>
             </PlaybuttonStyled>

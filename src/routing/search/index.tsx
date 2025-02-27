@@ -1,3 +1,4 @@
+import { useUnit } from 'effector-react';
 import { useSearchParams } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { TPlace } from '../../entities/search/model/types';
@@ -6,7 +7,7 @@ import { Header } from '../../layout/header';
 import { Divider } from '../../shared/components/divider';
 import { PageWrapper } from '../../shared/components/pageWrapper';
 import { SearchResult } from './SearchResult';
-import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
+import { $isMobileOrTablet } from '../../shared/hooks/useDevice/model';
 
 const SearchBarStyled = styled.div`
     max-width: 650px;
@@ -33,7 +34,7 @@ const SearchBarStyled = styled.div`
 
 export const SearchPage = () => {
     const [params] = useSearchParams();
-    const { isMobile } = useCurrentDevice();
+    const isMobile = useUnit($isMobileOrTablet);
     const queryValue = params.get('query') ?? '';
     const where = (params.get('where') ?? '') as TPlace | '';
 

@@ -151,28 +151,26 @@ export const Popup = ({
             {isOpen &&
                 content &&
                 ReactDOM.createPortal(
-                    <>
-                        <PopupContainer
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                if (closeOnClick) {
-                                    handleClose();
-                                }
-                            }}
-                            $closeDelay={closeDelay}
-                            className={`${isVisible ? '' : 'hidden'}`}
-                            ref={popupRef}
-                            $coords={coords}
-                            onMouseEnter={() => {
-                                if (triggers.includes('hover')) handleOpen();
-                            }}
-                            onMouseLeave={() => {
-                                if (triggers.includes('hover')) handleClose();
-                            }}
-                        >
-                            {content}
-                        </PopupContainer>
-                    </>,
+                    <PopupContainer
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (closeOnClick) {
+                                handleClose();
+                            }
+                        }}
+                        $closeDelay={closeDelay}
+                        className={`${isVisible ? '' : 'hidden'}`}
+                        ref={popupRef}
+                        $coords={coords}
+                        onMouseEnter={() => {
+                            if (triggers.includes('hover')) handleOpen();
+                        }}
+                        onMouseLeave={() => {
+                            if (triggers.includes('hover')) handleClose();
+                        }}
+                    >
+                        {content}
+                    </PopupContainer>,
                     document.body
                 )}
         </>

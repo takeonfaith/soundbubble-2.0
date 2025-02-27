@@ -106,6 +106,21 @@ export const Slider = ({
         }
     };
 
+    const handleTouchStart = (event) => {
+        if (rangeRef.current && duration !== 0) {
+            const touch = event.touches[0];
+            const rect = rangeRef.current.getBoundingClientRect();
+            const offsetX = Math.max(
+                (touch.clientX - rect.left) / rect.width,
+                0
+            );
+
+            setMouseDown(true);
+
+            onChangeTime(Math.min(+(offsetX * duration).toFixed(2), duration));
+        }
+    };
+
     return (
         <SliderWrapper
             className={`song-slider ${mouseDown ? 'down' : ''}`}
@@ -114,7 +129,9 @@ export const Slider = ({
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
             draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
         >
             {showSegment && loopSegment && (
                 <DoubleRangeSlider

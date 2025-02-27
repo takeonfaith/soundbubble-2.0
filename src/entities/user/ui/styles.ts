@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { MEDIA_QUERIES } from '../../../shared/constants/screenSize';
 
 export const UserItemStyled = styled(Link)<{ disabled?: boolean }>`
     --size: calc((100vw - var(--sidebar-width)) / 8 - 39px);
@@ -136,7 +137,11 @@ export const UserItemStyled = styled(Link)<{ disabled?: boolean }>`
         --size: calc((100vw - var(--sidebar-width)) / 5 - 43px);
     }
 
-    @media (max-width: 1000px) {
+    @media (max-width: 1280px) {
+        --size: calc((100vw - var(--sidebar-width)) / 4 - 43px);
+    }
+
+    ${MEDIA_QUERIES.isTablet} {
         --size: calc(100vw / 5 - 34px);
 
         h4 {

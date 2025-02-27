@@ -70,7 +70,7 @@ export const PlaylistInfo = ({ playlist }: Props) => {
                         className="stats"
                     >
                         <Flex gap={4}>
-                            {formatBigNumber(listens)}
+                            {listens}
                             <IconHeadphones size={16} />
                         </Flex>
                         ·

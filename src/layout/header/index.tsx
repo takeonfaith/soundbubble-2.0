@@ -6,7 +6,6 @@ import { LoginButton } from '../../features/loginButton';
 import { allRoutes, TRoute } from '../../routing/routes';
 import { Button } from '../../shared/components/button';
 import { Flex } from '../../shared/components/flex';
-import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 import { Popup } from '../newpopup';
 import {
     AccountWrapper,
@@ -17,6 +16,8 @@ import {
     MobileChildren,
 } from './styles';
 import { UserContextMenu } from './UserContextMenu';
+import { useUnit } from 'effector-react';
+import { $isMobileOrTablet } from '../../shared/hooks/useDevice/model';
 
 function getCurrentRoute(routes: TRoute[], currentUrl: string): TRoute | null {
     const findRoute = (
@@ -62,7 +63,7 @@ type Props = {
 export const Header = ({ children, hide, className, right }: Props) => {
     const [currentUser] = userModel.useUser();
     const location = useLocation();
-    const { isMobile } = useCurrentDevice();
+    const isMobile = useUnit($isMobileOrTablet);
     const currentRoute = useMemo(
         () => getCurrentRoute(allRoutes, location.pathname),
         [location.pathname]

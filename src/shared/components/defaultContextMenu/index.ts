@@ -1,4 +1,5 @@
 import { styled } from 'styled-components';
+import { MEDIA_QUERIES } from '../../constants/screenSize';
 
 export const DefaultContextMenuStyled = styled.div`
     padding: 8px 0;
@@ -27,6 +28,14 @@ export const DefaultContextMenuStyled = styled.div`
             min-width: 20px;
             height: 20px;
             color: ${({ theme }) => theme.colors.greyText};
+        }
+    }
+
+    ${MEDIA_QUERIES.isMobile} {
+        width: 100%;
+        button {
+            font-size: 1rem;
+            height: 50px;
         }
     }
 `;

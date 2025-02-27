@@ -26,3 +26,10 @@ sample({
     }),
     target: indicatorModel.show,
 });
+
+sample({
+    clock: isMutedApi.toggle,
+    source: $isMuted,
+    fn: (isMuted) => ({ content: !isMuted ? 'Unmuted' : 'Muted' }),
+    target: indicatorModel.show,
+});

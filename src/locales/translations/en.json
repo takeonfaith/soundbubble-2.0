@@ -230,5 +230,7 @@
     "many_removed_from": "removed from",
     "description": "Description...",
     "playlist_updated": "Playlist updated",
-    "leave_chat": "Leave chat"
+    "leave_chat": "Leave chat",
+    "not_ready_yet": "Not ready yet",
+    "disable_slow_version": "Disable slow version"
 }

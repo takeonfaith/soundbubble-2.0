@@ -10,6 +10,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
     border-radius: var(--desktop-page-radius);
     margin: var(--page-gap);
     min-height: var(--player-size);
+    height: var(--player-size);
     display: flex;
     align-self: flex-end;
     align-items: center;
@@ -113,7 +114,7 @@ export const PlayerStyled = styled.div<{ $background: string }>`
         width: calc(100% - var(--page-gap) * 2);
     }
 
-    @media (max-width: 1170px) {
+    ${MEDIA_QUERIES.isSmallDesktop} {
         & .order1 {
             display: none;
         }
@@ -121,7 +122,6 @@ export const PlayerStyled = styled.div<{ $background: string }>`
 
     ${MEDIA_QUERIES.isTablet} {
         padding: 6px;
-        min-height: 60px;
         border-radius: 10px;
         margin: 0 12px;
         width: calc(100% - 24px);
@@ -189,9 +189,11 @@ export const HoverIcon = styled.div`
     transition: 0.1s opacity, 0.1s transform;
     cursor: pointer;
 
-    &:hover {
-        svg {
-            transform: scale(1.1);
+    @media (hover: hover) {
+        &:hover {
+            svg {
+                transform: scale(1.1);
+            }
         }
     }
 `;
@@ -204,8 +206,10 @@ export const SongStyled = styled.div`
     max-width: 340px;
     overflow: hidden;
 
-    &:hover ${HoverIcon} {
-        opacity: 1;
+    @media (hover: hover) {
+        &:hover ${HoverIcon} {
+            opacity: 1;
+        }
     }
 
     @media (max-width: 1170px) {
@@ -214,11 +218,20 @@ export const SongStyled = styled.div`
     }
 
     ${MEDIA_QUERIES.isTablet} {
-        min-width: calc(100% - 40px);
-        width: calc(100% - 40px);
+        min-width: calc(100% - 100px);
+        width: calc(100% - 100px);
 
         & .like-button {
             display: none;
+        }
+    }
+
+    ${MEDIA_QUERIES.isMobile} {
+        .general-cover {
+            width: 45px;
+            height: 45px;
+            min-width: 45px;
+            min-height: 45px;
         }
     }
 `;
@@ -241,7 +254,7 @@ export const MobilePlayButton = styled.div`
 
     ${MEDIA_QUERIES.isTablet} {
         display: block;
-        width: fit-content;
+        width: 90px;
     }
 `;
 

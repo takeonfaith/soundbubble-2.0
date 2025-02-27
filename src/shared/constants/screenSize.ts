@@ -9,7 +9,7 @@ export const MEDIA_QUERIES = {
     isMobile: `@media ${MOBILE_SCREEN}`,
     isNotMobile: `@media ${NOT_MOBILE_SCREEN}`,
     isTablet: `@media ${TABLET_SCREEN}`,
-    isSmallTesktop: `@media ${SMALL_DESKTOP}`,
+    isSmallDesktop: `@media ${SMALL_DESKTOP}`,
     isMiddleTesktop: `@media ${MIDDLE_DESKTOP}`,
     isNotTablet: `@media ${NOT_TABLET_SCREEN}`,
 } as const;

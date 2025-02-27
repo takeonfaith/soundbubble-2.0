@@ -16,6 +16,7 @@ import useHotkeys from './shared/hooks/useHotKeys';
 import { I18nextProvider } from 'react-i18next';
 import i18next from './i18n';
 import { MEDIA_QUERIES } from './shared/constants/screenSize';
+import useCurrentDevice from './shared/hooks/useDevice/useCurrentDevice';
 
 const AppStyled = styled.div`
     height: 100dvh;
@@ -38,6 +39,8 @@ function App() {
     useOnboarding();
 
     useHotkeys(hotkeys);
+
+    useCurrentDevice();
 
     useEffect(() => {
         FB.onAuthStateChanged(async (userCred) => {

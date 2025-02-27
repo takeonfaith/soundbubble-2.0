@@ -33,6 +33,7 @@ export const Sidebar = ({ collapsed }: Props) => {
     const preparedRoutes = groupByField(menuRoutes, 'section');
     const { loggedIn } = usePrivateAction();
     const [ownPlaylists] = userModel.useOwnPlaylists();
+    const [addedPlaylists] = userModel.useAddedPlaylists();
     const [, , awaiting] = userModel.useFriends();
     const [currentUser] = userModel.useUser();
     const [unreadMap] = chatModel.useUnread();
@@ -124,7 +125,7 @@ export const Sidebar = ({ collapsed }: Props) => {
                             {translate('no_playlists')}
                         </Subtext>
                     )}
-                    {ownPlaylists?.slice(0, 4)?.map((playlist) => (
+                    {[...ownPlaylists, ...addedPlaylists]?.map((playlist) => (
                         <Popover
                             content={collapsed ? playlist.name : null}
                             position="right"

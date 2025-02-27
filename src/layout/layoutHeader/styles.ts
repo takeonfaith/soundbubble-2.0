@@ -24,12 +24,6 @@ export const LayoutHeaderStyled = styled.div`
         outline: 2px solid ${({ theme }) => theme.colors.pageBackground2};
     }
 
-    @media (max-width: 1100px) {
-        .logo-text {
-            display: none;
-        }
-    }
-
     ${MEDIA_QUERIES.isTablet} {
         display: none;
     }

@@ -7,9 +7,10 @@ import { LoginButton } from '../../features/loginButton';
 import { Loading } from '../../shared/components/loading';
 import { PageMessage } from '../../shared/components/pageMessage';
 import { ContentWrapper } from '../../shared/components/pageWrapper';
-import useCurrentDevice from '../../shared/hooks/useCurrentDevice';
 import { PageGridStyled } from './styles';
 import { translate } from '../../i18n';
+import { useUnit } from 'effector-react';
+import { $isMobileOrTablet } from '../../shared/hooks/useDevice/model';
 
 export const LikedPlaylists = () => {
     const [added, loadingAdded] = userModel.useAddedPlaylists();
@@ -20,7 +21,7 @@ export const LikedPlaylists = () => {
         () => [...own, ...added.filter((p) => !p.isAlbum)],
         [added, own]
     );
-    const { isMobile } = useCurrentDevice();
+    const isMobile = useUnit($isMobileOrTablet);
 
     if (!currentUser) {
         return (

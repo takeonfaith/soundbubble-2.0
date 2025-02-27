@@ -91,30 +91,61 @@ export const SliderWrapper = styled.div`
         z-index: 10;
     }
 
-    &:hover {
-        --slider-size: 10px;
-        position: relative;
+    @media (hover: hover) {
+        &:hover {
+            --slider-size: 10px;
+            position: relative;
 
-        &.down {
-            &::after {
-                content: '';
-                position: fixed;
-                left: 0;
-                top: 50%;
-                transform: translateY(-50%);
-                height: 100%;
-                width: 100%;
-                z-index: 1000;
+            &.down {
+                &::after {
+                    content: '';
+                    position: fixed;
+                    left: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    height: 100%;
+                    width: 100%;
+                    z-index: 1000;
+                }
+            }
+
+            ${SliderValueBubbleStyled} {
+                transition: 0.2s opacity;
+                opacity: 1;
+            }
+
+            & .progress {
+                height: var(--slider-size);
             }
         }
+    }
 
-        ${SliderValueBubbleStyled} {
-            transition: 0.2s opacity;
-            opacity: 1;
-        }
+    @media (hover: none) {
+        &:active {
+            --slider-size: 12px;
+            position: relative;
 
-        & .progress {
-            height: var(--slider-size);
+            &.down {
+                &::after {
+                    content: '';
+                    position: fixed;
+                    left: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    height: 100%;
+                    width: 100%;
+                    z-index: 1000;
+                }
+            }
+
+            ${SliderValueBubbleStyled} {
+                transition: 0.2s opacity;
+                opacity: 1;
+            }
+
+            & .progress {
+                height: var(--slider-size);
+            }
         }
     }
 

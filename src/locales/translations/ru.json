@@ -230,5 +230,7 @@
     "many_removed_from": "удалены из",
     "description": "Описание...",
     "playlist_updated": "Плейлист обновлен",
-    "leave_chat": "Покинуть чат"
+    "leave_chat": "Покинуть чат",
+    "not_ready_yet": "Пока еще не готово",
+    "disable_slow_version": "Отключить слоу-версию"
 }

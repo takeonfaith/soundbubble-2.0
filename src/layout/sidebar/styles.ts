@@ -21,10 +21,6 @@ export const SidebarSectionTitle = styled.div`
             }
         }
     }
-
-    @media (max-width: 1100px) {
-        display: none;
-    }
 `;
 
 export const SidebarLink = styled(NavLink)`
@@ -60,11 +56,6 @@ export const SidebarLink = styled(NavLink)`
         svg {
             color: ${({ theme }) => theme.scheme.blue.action};
         }
-    }
-
-    @media (max-width: 1100px) {
-        display: flex;
-        justify-content: center;
     }
 `;
 
@@ -104,36 +95,33 @@ export const SidebarSection = styled.div`
             color: ${({ theme }) => theme.scheme.blue.main};
         }
     }
-
-    @media (max-width: 1100px) {
-        & .icon {
-            width: 22px;
-            height: 22px;
-
-            svg {
-                width: 22px;
-                height: 22px;
-            }
-        }
-
-        & .text {
-            display: none;
-        }
-    }
 `;
 
 export const SidebarStyled = styled.aside`
     min-width: var(--sidebar-width);
     width: var(--sidebar-width);
-    height: 100dvh;
+    height: calc(100dvh - 160px);
     padding: 10px 18px;
-    /* background: ${({ theme }) => theme.colors.sidebar}; */
-    /* border-right: 1px solid ${({ theme }) => theme.colors.border}; */
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 30px;
     padding-top: 30px;
+    overflow-y: auto;
+
+    &::before {
+        content: '';
+        position: fixed;
+        left: 0;
+        bottom: 0px;
+        width: var(--sidebar-width);
+        height: 20px;
+        height: 100px;
+        box-shadow: -10px -10px 10px ${({ theme }) => theme.colors.pageBackground2};
+        background: ${({ theme }) => theme.colors.pageBackground2};
+        background-size: cover;
+        z-index: 10;
+    }
 
     &.collapsed {
         gap: 10px;

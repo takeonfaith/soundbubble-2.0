@@ -2,10 +2,23 @@ import { DarkBackground } from '@components/darkBackground';
 import styled from 'styled-components';
 import { MOBILE_MODAL_SIZE, SIZES } from '../model/constants';
 import { PAGE_TRANSITION_DURATION } from '../../../shared/components/pageStack/constants';
+import { MEDIA_QUERIES } from '../../../shared/constants/screenSize';
 
 export const ModalBackground = styled(DarkBackground)`
     position: absolute;
+    top: 0;
+    left: 0;
     z-index: 1200;
+
+    &.only-on-mobile {
+        background: transparent;
+    }
+
+    ${MEDIA_QUERIES.isMobile} {
+        &.only-on-mobile {
+            display: block;
+        }
+    }
 `;
 
 export const ModalStyled = styled.div<{

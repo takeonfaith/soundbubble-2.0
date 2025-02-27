@@ -9,6 +9,7 @@ import { getPlaceToType } from '../../features/searchWithHints/lib/getEntityPlac
 import { Loading } from '../../shared/components/loading';
 import { ENTITIES_ICONS } from '../../shared/constants/icons';
 import { TTheme } from '../../shared/constants/theme';
+import { MEDIA_QUERIES } from '../../shared/constants/screenSize';
 
 const TOTAL_TRENDING_QUANTITY = 50;
 
@@ -44,9 +45,25 @@ const BlockGrid = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-gap: 8px;
+    grid-template-columns: repeat(
+        5,
+        minmax(150px, 1fr)
+    ); /* Колонки от 100px до равномерного распределения */
     padding: 12px 10px;
 
     ${getAnimationDelay(TOTAL_TRENDING_QUANTITY)}
+
+    ${MEDIA_QUERIES.isSmallDesktop} {
+        grid-template-columns: repeat(3, minmax(100px, 1fr));
+    }
+
+    ${MEDIA_QUERIES.isTablet} {
+        grid-template-columns: repeat(2, minmax(100px, 1fr));
+    }
+
+    ${MEDIA_QUERIES.isMobile} {
+        grid-template-columns: repeat(1, minmax(100px, 1fr));
+    }
 `;
 
 const TrendingLink = styled(Link)`
@@ -82,8 +99,10 @@ const TrendingLink = styled(Link)`
         color: ${({ color, theme }) => theme.scheme[color].main};
     }
 
-    &:hover {
-        background: ${({ theme }) => theme.colors.pageBackground2};
+    @media (hover: hover) {
+        &:hover {
+            background: ${({ theme }) => theme.colors.pageBackground2};
+        }
     }
 `;
 

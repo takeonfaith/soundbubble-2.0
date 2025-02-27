@@ -2,10 +2,11 @@ import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { SongItem } from '..';
 import { ArrowButton } from '../../../../shared/components/horizontalList/styles';
 import { useScrollList } from '../../../../shared/components/horizontalList/useScrollList';
-import useCurrentDevice from '../../../../shared/hooks/useCurrentDevice';
 import { useSongPlay } from '../../hooks/useSongPlay';
 import { TQueue, TSong } from '../../model/types';
 import { GridSongListStyled, GridWrapper } from './styles';
+import { useUnit } from 'effector-react';
+import { $isMobileOrTablet } from '../../../../shared/hooks/useDevice/model';
 
 type Props = {
     queue: TQueue;
@@ -15,7 +16,7 @@ type Props = {
 
 export const GridSongList = (props: Props) => {
     const { queue, children, maxSongs } = props;
-    const { isMobile } = useCurrentDevice();
+    const isMobile = useUnit($isMobileOrTablet);
     const maxGridRows = isMobile ? 4 : 3;
     const { songs } = queue;
     const songProps = useSongPlay({ queue });
@@ -62,11 +63,7 @@ export const GridSongList = (props: Props) => {
                 className="grid-list"
                 onScroll={handleScroll}
                 ref={scrollElementRef}
-                columns={
-                    isMobile
-                        ? Math.ceil(songs.length / maxGridRows)
-                        : 3
-                }
+                columns={isMobile ? Math.ceil(songs.length / maxGridRows) : 3}
                 rows={songs.length > maxGridRows ? maxGridRows : songs.length}
             >
                 {items}
