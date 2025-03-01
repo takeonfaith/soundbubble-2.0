@@ -1,6 +1,18 @@
 import styled from 'styled-components';
 import { Button } from '../../../shared/components/button';
 import { hexToRgbA } from '../../../shared/funcs/hexToRgba';
+import { MEDIA_QUERIES } from '../../../shared/constants/screenSize';
+
+export const SettingsStyled = styled.div`
+    display: flex;
+    align-items: center;
+    height: 100%;
+
+    ${MEDIA_QUERIES.isMobile} {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+`;
 
 export const SettingButton = styled(Button)`
     justify-content: space-between;

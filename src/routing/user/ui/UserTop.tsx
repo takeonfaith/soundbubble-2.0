@@ -68,7 +68,7 @@ export const UserTop = ({ user }: Props) => {
                 text: (
                     <>
                         <IconUserX size={18} />
-                        Cancel request
+                        {translate('cancel')}
                     </>
                 ),
                 onClick: () => {
@@ -91,7 +91,7 @@ export const UserTop = ({ user }: Props) => {
                 text: (
                     <>
                         <IconCheck size={18} />
-                        Accept Friend request
+                        {translate('accept')}
                     </>
                 ),
             };

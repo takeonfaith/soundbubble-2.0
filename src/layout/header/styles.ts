@@ -81,6 +81,10 @@ export const HeaderPageTitle = styled.h2`
         font-weight: 500;
         width: 100%;
     }
+
+    ${MEDIA_QUERIES.isMobile} {
+        font-size: 1.3rem;
+    }
 `;
 
 export const AdminCircle = styled.div`

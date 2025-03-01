@@ -41,7 +41,7 @@ export const FullScreenPlayerLeftSide = ({
     const onAuthorsClick = () => songModel.fullscreenPlayer.close();
 
     return (
-        <LeftSide>
+        <LeftSide className={type !== null ? 'opened-right-side' : ''}>
             <PlayerWrapper>
                 <PlayerCover $color1={currentSong?.imageColors[0]}>
                     <SongCover

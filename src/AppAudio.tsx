@@ -11,6 +11,7 @@ import {
 } from './entities/song/new-model/current-time';
 import { $songSrc } from './entities/song/new-model/slow-songs';
 import { useEffectOnce } from './shared/hooks/useEffectOnce';
+import { toastModel } from './layout/toast/model';
 
 const audioCtx = new AudioContext();
 const analyserNode = audioCtx.createAnalyser();
@@ -89,7 +90,7 @@ const useAppAudio = () => {
     };
 
     const handleLoaded = () => {
-        if (audioRef.current && audioRef.current.buffered) {
+        if (audioRef.current && audioRef.current.buffered.length) {
             const bufferedEnd = audioRef.current.buffered.end(
                 audioRef.current.buffered.length - 1
             );

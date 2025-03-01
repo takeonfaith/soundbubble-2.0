@@ -1,11 +1,11 @@
 import { CloseButton } from '@components/closeButton';
 import { IconChevronLeft } from '@tabler/icons-react';
+import { translate } from '../../../i18n';
 import { Button } from '../../../shared/components/button';
 import { Flex } from '../../../shared/components/flex';
 import { PageStack } from '../../../shared/components/pageStack';
-import { useMobileSheetSwipe } from '../../../shared/hooks/useMobileSheetSwipe';
 import { modalModel } from '../model';
-import { MOBILE_MODAL_SIZE, SIZES } from '../model/constants';
+import { SIZES } from '../model/constants';
 import {
     ModalBackground,
     ModalContent,
@@ -13,15 +13,10 @@ import {
     ModalStyled,
     ModalTitle,
 } from './styles';
-import { translate } from '../../../i18n';
 
 export const Modal = () => {
     const [modals, slidingBack] = modalModel.useModal();
     const visibleModal = slidingBack ? modals.at(-2) : modals.at(-1);
-    const { style, onTouchEnd } = useMobileSheetSwipe(
-        modalModel.events.close,
-        MOBILE_MODAL_SIZE
-    );
 
     if (!modals.length) return null;
 
@@ -35,8 +30,6 @@ export const Modal = () => {
                 role="dialog"
                 width={`${SIZES[visibleModal?.sizeX ?? 's']}px`}
                 height={`${SIZES[visibleModal?.sizeY ?? 's']}px`}
-                onTouchEnd={onTouchEnd}
-                style={style}
                 onClick={(e) => e.stopPropagation()}
             >
                 <PageStack

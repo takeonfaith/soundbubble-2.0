@@ -234,5 +234,8 @@
     "not_ready_yet": "Not ready yet",
     "disable_slow_version": "Disable slow version",
     "light": "Light",
-    "dark": "Dark"
+    "dark": "Dark",
+    "friend_requests": "Friend requests",
+    "accept": "Accept",
+    "reject": "Reject"
 }

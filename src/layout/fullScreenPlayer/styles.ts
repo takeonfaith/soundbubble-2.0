@@ -155,16 +155,23 @@ export const LeftSide = styled.div`
         height: 100%;
     }
 
-    & button:hover {
-        background: #ffffff3b !important;
+    @media (hover: hover) {
+        & button:hover {
+            background: #ffffff3b !important;
+        }
     }
 
     & button:disabled {
         opacity: 0.4;
     }
 
-    @media (max-width: 768px) {
+    ${MEDIA_QUERIES.isMobile} {
         padding-bottom: 40px;
+
+        &.opened-right-side {
+            opacity: 0;
+            pointer-events: none;
+        }
     }
 `;
 
@@ -213,6 +220,14 @@ export const RightSide = styled.div`
             width: 100%;
         }
     }
+
+    ${MEDIA_QUERIES.isMobile} {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        padding: var(--page-padding);
+        padding-top: 60px;
+    }
 `;
 
 export const LyricsStyled = styled.div`
@@ -222,6 +237,11 @@ export const LyricsStyled = styled.div`
     color: #fff;
     font-size: 1.8rem;
     position: relative;
+
+    ${MEDIA_QUERIES.isMobile} {
+        gap: 10px;
+        font-size: 1.4rem;
+    }
 `;
 
 export const Lyric = styled.div`

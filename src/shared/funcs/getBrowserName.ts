@@ -1,5 +1,6 @@
 export enum Browsers {
     Chrome = 'Chrome',
+    iPhone = 'iPhone',
     Firefox = 'Firefox',
     Safari = 'Safari',
     Edge = 'Edge',
@@ -10,9 +11,12 @@ export enum Browsers {
 
 export function getBrowserName(): Browsers {
     const userAgent = navigator.userAgent;
+    console.log(userAgent);
 
     if (/firefox/i.test(userAgent)) {
         return Browsers.Firefox;
+    } else if (/iPhone/.test(userAgent)) {
+        return Browsers.iPhone;
     } else if (
         /chrome|chromium|crios/i.test(userAgent) &&
         !/edg/i.test(userAgent)

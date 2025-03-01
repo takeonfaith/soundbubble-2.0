@@ -29,6 +29,8 @@ import { userModel } from '../../user/model';
 import { editUserFx } from '../../user/model/edit-user';
 import { UserCover } from '../../user/ui/UserCover';
 import { ThemeSwitch } from './ThemeSwitch';
+import { SettingsStyled } from './styles';
+import { MEDIA_QUERIES } from '../../../shared/constants/screenSize';
 
 const SettingsMenu = styled.div`
     display: flex;
@@ -39,6 +41,16 @@ const SettingsMenu = styled.div`
     height: 100%;
     gap: 4px;
     z-index: 100;
+
+    ${MEDIA_QUERIES.isMobile} {
+        flex-direction: row;
+        height: fit-content;
+        padding: 0;
+        padding: 20px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        width: 100%;
+    }
 `;
 
 const SettingsContent = styled.div`
@@ -69,6 +81,10 @@ const SettingsContent = styled.div`
         top: 20px;
         right: 40px;
     }
+
+    ${MEDIA_QUERIES.isMobile} {
+        padding-right: 20px;
+    }
 `;
 
 const SettingsMenuItem = styled(Button)<{ $color: keyof TTheme['scheme'] }>`
@@ -77,6 +93,7 @@ const SettingsMenuItem = styled(Button)<{ $color: keyof TTheme['scheme'] }>`
     gap: 12px;
     font-weight: 300;
     width: 100%;
+    white-space: nowrap;
 
     &.current {
         background: ${({ theme }) => theme.scheme.blue.transparent};
@@ -287,7 +304,7 @@ export const Settings = () => {
     ];
 
     return (
-        <Flex height="100%" ai="flex-start" gap={10} width="100%">
+        <SettingsStyled>
             <SettingsMenu>
                 {menu.map((m, index) => {
                     return (
@@ -308,6 +325,6 @@ export const Settings = () => {
                 <h3>{menu[currentSetting].title}</h3>
                 {menu[currentSetting].content}
             </SettingsContent>
-        </Flex>
+        </SettingsStyled>
     );
 };

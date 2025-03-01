@@ -61,7 +61,7 @@ const drawBubble = (
     const centerY = canvas.height / 2;
 
     ctx.save();
-    if (browserName !== Browsers.Safari) {
+    if (browserName !== Browsers.Safari && browserName !== Browsers.iPhone) {
         ctx.filter = 'blur(100px)';
     }
     ctx.globalAlpha = 0.8;
@@ -173,26 +173,27 @@ export const MeshGradientBubblesWithAudio = ({
             }}
             className="mesh-gradient"
         >
-            {browserName !== Browsers.Safari && (
-                <svg xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <filter id="goo">
-                            <feGaussianBlur
-                                in="SourceGraphic"
-                                stdDeviation="120"
-                                result="blur"
-                            />
-                            <feColorMatrix
-                                in="blur"
-                                mode="matrix"
-                                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -4"
-                                result="goo"
-                            />
-                            <feBlend in="SourceGraphic" in2="goo" />
-                        </filter>
-                    </defs>
-                </svg>
-            )}
+            {browserName !== Browsers.Safari &&
+                browserName !== Browsers.iPhone && (
+                    <svg xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <filter id="goo">
+                                <feGaussianBlur
+                                    in="SourceGraphic"
+                                    stdDeviation="120"
+                                    result="blur"
+                                />
+                                <feColorMatrix
+                                    in="blur"
+                                    mode="matrix"
+                                    values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -4"
+                                    result="goo"
+                                />
+                                <feBlend in="SourceGraphic" in2="goo" />
+                            </filter>
+                        </defs>
+                    </svg>
+                )}
             <canvas
                 ref={canvasRef}
                 style={{
@@ -203,9 +204,10 @@ export const MeshGradientBubblesWithAudio = ({
                     width: '100%',
                     height: '100%',
                     filter:
-                        browserName !== Browsers.Safari
+                        browserName !== Browsers.Safari &&
+                        browserName !== Browsers.iPhone
                             ? 'url(#goo)'
-                            : 'blur(50px)',
+                            : 'blur(20px)',
                 }}
             />
         </div>

@@ -1,12 +1,10 @@
 import { CloseButton } from '@components/closeButton';
 import { songModel as songModelNew } from '@song/new-model';
-import { songModel } from '@song/model';
+import { useEffect, useState } from 'react';
 import { FullScreenPlayerLeftSide } from './FullScreenPlayerLeftSide';
 import { FullScreenPlayerRightSide } from './FullScreenPlayerRightSide';
 import { FullScreenPlayerStyled } from './styles';
-import { useEffect, useState } from 'react';
 import { TRightSideType } from './types';
-import { useMobileSheetSwipe } from '../../shared/hooks/useMobileSheetSwipe';
 
 type Props = {
     open: boolean;
@@ -16,10 +14,6 @@ export const FullScreenFullScreenPlayer = ({ open }: Props) => {
     const { currentSong, queue } = songModelNew.useSong();
     const [animatedOpen, setAnimatedOpen] = useState(open);
     const [rightSideType, setRightSideType] = useState<TRightSideType>(null);
-    const { style, onTouchEnd } = useMobileSheetSwipe(
-        songModel.fullscreen.close,
-        '100dvh'
-    );
 
     const handleClose = () => {
         songModelNew.fullscreenPlayer.close();
@@ -52,8 +46,6 @@ export const FullScreenFullScreenPlayer = ({ open }: Props) => {
         <FullScreenPlayerStyled
             className={open ? 'open' : 'close'}
             $colors={currentSong?.imageColors}
-            style={style}
-            onTouchEnd={onTouchEnd}
         >
             {animatedOpen && (
                 <>

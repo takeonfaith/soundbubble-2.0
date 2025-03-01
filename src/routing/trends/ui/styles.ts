@@ -55,16 +55,20 @@ export const TopPlateStyled = styled(BeautifulBackground)`
         gap: 20px;
     }
 
-    &:hover {
-        transform: scale(1.01);
-        filter: brightness(0.9);
+    @media (hover: hover) {
+        &:hover {
+            transform: scale(1.01);
+            filter: brightness(0.9);
 
-        .playbutton {
-            transform: scale(1.05);
+            .playbutton {
+                transform: scale(1.05);
+            }
         }
     }
 
     &:active {
+        transform: scale(0.99);
+
         .play-button {
             transform: scale(1);
         }

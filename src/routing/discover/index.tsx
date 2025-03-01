@@ -74,8 +74,10 @@ const PlaybuttonStyled = styled.div`
         color: #fff;
         white-space: nowrap;
 
-        &:hover {
-            background: #2a2a2a33;
+        @media (hover: hover) {
+            &:hover {
+                background: #2a2a2a33;
+            }
         }
     }
 

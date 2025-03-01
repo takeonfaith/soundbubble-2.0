@@ -82,7 +82,7 @@ export const PlayButton = ({
     children,
     short = true,
 }: Props) => {
-    const [type, pendingQueue, isMobile] = useUnit([
+    const [type, pendingQueue] = useUnit([
         $type,
         $pendingQueueLoading,
         $isMobileOrTablet,
@@ -154,7 +154,7 @@ export const PlayButton = ({
                     playling={isPlaying}
                     size={20}
                 />
-                {(!short || isMobile) && translate('play')}
+                {!short && translate('play')}
             </div>
             {showPlayingAnimation && isPlaying && (
                 <PlayingAnimation
