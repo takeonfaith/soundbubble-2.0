@@ -232,5 +232,7 @@
     "playlist_updated": "Плейлист обновлен",
     "leave_chat": "Покинуть чат",
     "not_ready_yet": "Пока еще не готово",
-    "disable_slow_version": "Отключить слоу-версию"
+    "disable_slow_version": "Отключить слоу-версию",
+    "light": "Светлая",
+    "dark": "Темная"
 }

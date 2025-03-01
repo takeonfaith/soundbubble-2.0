@@ -28,7 +28,7 @@ export const LogoStyled = styled.img<{ size?: string }>`
 
 export const LogoText = styled.span`
     font-size: 1.1rem;
-    font-weight: 300;
+    font-weight: 400;
     color: ${({ theme }) => theme.colors.textColor};
     opacity: 0.9;
     cursor: pointer;

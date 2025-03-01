@@ -35,7 +35,7 @@ sample({
     clock: setTheme,
     source: $theme,
     fn: (_, value) => value,
-    target: $theme,
+    target: [$theme, saveThemeToLocalStorageFx],
 });
 
 export const useTheme = () => {

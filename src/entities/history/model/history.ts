@@ -9,6 +9,7 @@ export const historyPaginationModel = createPagitation({
     dataPlace: 'end',
     quantity: MAX_HISTORY_ITEMS_PER_LOAD,
     loadMoreButton: false,
+    onlyWithAuth: true,
     onLoadMore: async (_, __, user) => {
         if (user) {
             const res = await Database.History.getHistoryByUserId(user.uid);

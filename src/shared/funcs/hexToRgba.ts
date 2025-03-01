@@ -10,5 +10,6 @@ export function hexToRgbA(hex: string | undefined) {
         const rgba = Number('0x' + c.join(''));
         return [(rgba >> 16) & 255, (rgba >> 8) & 255, rgba & 255].join(',');
     }
-    throw new Error('Bad Hex');
+
+    return undefined;
 }

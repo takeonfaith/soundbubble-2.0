@@ -6,6 +6,7 @@ export type TPaginationProps<T extends object> = {
     quantity: number;
     dataPlace: 'start' | 'end';
     initialLoadQuantity?: number;
+    onlyWithAuth?: boolean;
     onLoadMore: (
         page: number,
         quantity: number,

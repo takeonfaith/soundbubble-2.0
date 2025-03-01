@@ -56,6 +56,7 @@ const PlaybuttonStyled = styled.div`
         font-size: 2rem;
         width: fit-content;
         white-space: nowrap;
+        padding: 10px;
     }
 
     .slow-btn {
@@ -150,10 +151,7 @@ export const DiscoverPage = () => {
                             : translate('wave_vibin')}
                     </Flex>
                 </Button>
-                <Button
-                    className="slow-btn default"
-                    onClick={handleSlow}
-                >
+                <Button className="slow-btn default" onClick={handleSlow}>
                     <Flex gap={10}>
                         <IconSparkles size={22} />
                         {translate('slow_version')}

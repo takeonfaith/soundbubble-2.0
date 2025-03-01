@@ -15,6 +15,7 @@ export const createPagitation = <T extends object>({
     dataPlace,
     onLoadMore,
     initialLoadQuantity = quantity,
+    onlyWithAuth = false,
     maxElements = Infinity,
     loadMoreButton = false,
 }: TPaginationProps<T>): TPaginationModel<T> => {
@@ -44,8 +45,12 @@ export const createPagitation = <T extends object>({
             isInitiallyLoaded: $isInitiallyLoaded,
             isLoading: loadMoreFx.pending,
         },
-        filter: ({ isInitiallyLoaded, isLoading }) => {
-            return !isInitiallyLoaded && !isLoading;
+        filter: ({ isInitiallyLoaded, isLoading, user }) => {
+            return (
+                !isInitiallyLoaded &&
+                !isLoading &&
+                ((onlyWithAuth && !!user) || !onlyWithAuth)
+            );
         },
         fn: ({ user }) => ({
             page: 0,

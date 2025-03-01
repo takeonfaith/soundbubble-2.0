@@ -4,6 +4,8 @@ import { Browsers, getBrowserName } from '../../shared/funcs/getBrowserName';
 
 const browserName = getBrowserName();
 
+console.log(browserName);
+
 interface Bubble {
     radius: number;
     targetRadius: number; // Target size used for smooth transitions

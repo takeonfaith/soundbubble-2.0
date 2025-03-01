@@ -14,6 +14,7 @@ import { PlayingAnimation } from '../../../../shared/components/playingAnimation
 import styled from 'styled-components';
 import { toastModel } from '../../../../layout/toast/model';
 import { translate } from '../../../../i18n';
+import { $isMobileOrTablet } from '../../../../shared/hooks/useDevice/model';
 
 const PlayButtonStyled = styled(Button)`
     .playing-animation {
@@ -81,7 +82,11 @@ export const PlayButton = ({
     children,
     short = true,
 }: Props) => {
-    const [type, pendingQueue] = useUnit([$type, $pendingQueueLoading]);
+    const [type, pendingQueue, isMobile] = useUnit([
+        $type,
+        $pendingQueueLoading,
+        $isMobileOrTablet,
+    ]);
     const { queue: currentQueue, state } = songModel.useSong();
     const isCurrent = currentQueue?.id === queue?.id && type === 'default';
     const isSlow = currentQueue?.id === queue?.id && type === 'slow';
@@ -149,7 +154,7 @@ export const PlayButton = ({
                     playling={isPlaying}
                     size={20}
                 />
-                {!short && translate('play')}
+                {(!short || isMobile) && translate('play')}
             </div>
             {showPlayingAnimation && isPlaying && (
                 <PlayingAnimation

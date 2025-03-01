@@ -3,6 +3,7 @@ import { THEMES } from '../../../app/theme/constants';
 import { Flex } from '../../../shared/components/flex';
 import { setTheme, useTheme } from '../../../app/theme';
 import { ETheme } from '../../../app/theme/types';
+import { translate } from '../../../i18n';
 
 const ThemeSwitchStyled = styled.div`
     display: flex;
@@ -163,7 +164,7 @@ export const ThemeSwitch = () => {
                         <div className="btn"></div>
                     </Flex>
                 </ThemeBlock>
-                <div className="text">Light</div>
+                <div className="text">{translate('light')}</div>
             </Flex>
             <Flex d="column" gap={8} width="100%">
                 <ThemeBlock
@@ -190,7 +191,7 @@ export const ThemeSwitch = () => {
                         <div className="btn"></div>
                     </Flex>
                 </ThemeBlock>
-                <div className="text">Dark</div>
+                <div className="text">{translate('dark')}</div>
             </Flex>
 
             {/* <Flex d="column" gap={8} width="100%">

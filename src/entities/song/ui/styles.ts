@@ -293,6 +293,12 @@ export const SongNameAndListens = styled.div`
 
 export const SongAuthors = styled.div`
     width: 100%;
+    overflow: hidden;
+
+    & .authors {
+        width: 100%;
+        padding-right: 10px;
+    }
 `;
 
 export const Listens = styled.div`

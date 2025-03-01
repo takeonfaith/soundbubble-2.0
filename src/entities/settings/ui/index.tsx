@@ -6,6 +6,7 @@ import {
     IconUserMinus,
     IconUserOff,
 } from '@tabler/icons-react';
+import { useUnit } from 'effector-react';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { EditPhotoModal } from '../../../features/editPhotoModal';
@@ -13,8 +14,10 @@ import i18n, { translate } from '../../../i18n';
 import { confirmModel } from '../../../layout/confirm/model';
 import { EditOverlayStyled } from '../../../layout/header/styles';
 import { modalModel } from '../../../layout/modal/model';
+import { toastModel } from '../../../layout/toast/model';
 import { TLocales } from '../../../locales';
 import { Button } from '../../../shared/components/button';
+import { DefaultButton } from '../../../shared/components/button/DefaultButton';
 import { Divider } from '../../../shared/components/divider';
 import { Flex } from '../../../shared/components/flex';
 import { Input } from '../../../shared/components/input';
@@ -23,11 +26,9 @@ import { Subtext } from '../../../shared/components/subtext';
 import { LANGUAGES } from '../../../shared/constants/languages';
 import { TTheme } from '../../../shared/constants/theme';
 import { userModel } from '../../user/model';
+import { editUserFx } from '../../user/model/edit-user';
 import { UserCover } from '../../user/ui/UserCover';
 import { ThemeSwitch } from './ThemeSwitch';
-import { DefaultButton } from '../../../shared/components/button/DefaultButton';
-import { useUnit } from 'effector-react';
-import { editUserFx } from '../../user/model/edit-user';
 
 const SettingsMenu = styled.div`
     display: flex;
@@ -159,7 +160,7 @@ const AccountSettings = () => {
                 </EditOverlayStyled>
             </UserCover>
             <Input
-                placeholder="Enter your name"
+                placeholder={translate('enter_user_name')}
                 label={translate('user_name')}
                 value={newUserName}
                 onChange={(e) => setNewUserName(e.currentTarget.value)}
@@ -172,10 +173,7 @@ const AccountSettings = () => {
             </Button>
             <Divider />
             <h4>{translate('delete_account')}</h4>
-            <Subtext>
-                All your data will be deleted without any possibility of
-                recovery
-            </Subtext>
+            <Subtext>{translate('playlist_delete_warning_subtext')}</Subtext>
             <Button onClick={handleDeleteAccount} className="outline danger">
                 <IconUserOff size={20} />
                 {translate('delete_account')}
@@ -185,12 +183,20 @@ const AccountSettings = () => {
                     className="primary"
                     loading={isEditing}
                     onClick={() => {
-                        userModel.events.editUser({
-                            update: {
-                                displayName: newUserName,
-                            },
-                            onSuccess: () => {},
-                        });
+                        if (newUserName?.length !== 0) {
+                            userModel.events.editUser({
+                                update: {
+                                    displayName: newUserName,
+                                },
+                                onSuccess: () => {},
+                            });
+                        } else {
+                            setNewUserName(currentUser.displayName);
+                            toastModel.events.add({
+                                type: 'error',
+                                message: 'Name should not be empty',
+                            });
+                        }
                     }}
                 >
                     {translate('save_changes')}

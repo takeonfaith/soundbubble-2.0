@@ -21,6 +21,7 @@ import {
     PlaylistPageStyled,
     PlaylistSimilar,
 } from './styles';
+import { translate } from '../../i18n';
 
 export const AlbumPage = () => {
     const [currentPlaylist, loading] = playlistModel.usePlaylist();
@@ -85,8 +86,8 @@ export const AlbumPage = () => {
                             {currentPlaylist?.songs.length === 0 && (
                                 <PageMessage
                                     icon={IconMusicOff}
-                                    title="Oops!"
-                                    description="Playlist is empty"
+                                    title={translate('playlist_is_empty')}
+                                    description={translate('playlist_is_empty_subtext')}
                                 >
                                     {isOwner && (
                                         <Button
